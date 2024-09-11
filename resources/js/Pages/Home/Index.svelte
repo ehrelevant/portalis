@@ -1,5 +1,5 @@
 <script context="module">
-    export { default as layout } from "../../Shared/Layout.svelte";
+    export { default as layout } from "@/Layout.svelte";
 </script>
 
 <div>

@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from "node:url";
+
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
@@ -10,4 +12,14 @@ export default defineConfig({
         }),
         svelte({}),
     ],
+    resolve: {
+        alias: [
+            {
+                find: "@",
+                replacement: fileURLToPath(
+                    new URL("./resources/js/Shared", import.meta.url)
+                ),
+            },
+        ],
+    },
 });
