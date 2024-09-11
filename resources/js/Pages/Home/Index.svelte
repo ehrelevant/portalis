@@ -3,5 +3,5 @@
 </script>
 
 <div>
-    <p>This is inside Home</p>
+    <p class="bg-black text-white">This is inside Home</p>
 </div>
