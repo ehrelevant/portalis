@@ -9,7 +9,7 @@
             "options": { "parser": "svelte", "svelteAllowShorthand": true }
         },
         {
-            "files": "*.yml",
+            "files": ".github/**/*.yml",
             "options": {
                 "tabWidth": 2
             }
