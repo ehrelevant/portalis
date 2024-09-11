@@ -1,13 +1,13 @@
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from "vite";
-import laravel from "laravel-vite-plugin";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ["resources/css/app.css", "resources/js/app.js"],
+            input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
         svelte({}),
@@ -15,9 +15,9 @@ export default defineConfig({
     resolve: {
         alias: [
             {
-                find: "@",
+                find: '@',
                 replacement: fileURLToPath(
-                    new URL("./resources/js/Shared", import.meta.url)
+                    new URL('./resources/js/Shared', import.meta.url),
                 ),
             },
         ],
