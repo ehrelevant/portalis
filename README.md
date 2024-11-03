@@ -1,66 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CS 195 Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository contains the main project files used for the implementation of a "CS 195 Portal". This project is being developed for the accomplishment of the CS 191/CS 192 subject of the University of the Philippines - Diliman.
 
-## About Laravel
+## Setting up project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Cloning the repository
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+To get started, first clone the repository to your local device:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+git clone git@github.com:ehrelevant/cs195-portal.git
+```
 
-## Learning Laravel
+> [!IMPORTANT]
+> For the succeeding steps, it is assumed that you are using a **Linux environment** (i.e. Virtual Machine, Windows Subsystem for Linux) to develop the application.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Installing requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+To run the project locally, the following tools are required:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. [`docker 27.2.x`](https://www.docker.com/)
+2. [`php 8.3.x`](https://www.php.net/)
+3. [`composer 2.7.x`](https://getcomposer.org/)
+4. [`pnpm 9.12.x`](https://pnpm.io/)
 
-## Laravel Sponsors
+#### Installing `php 8.3.x`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Note that this project currently uses `php 8.3.x`. For debian/ubuntu, the following may be used to install the appropriate version:
 
-### Premium Partners
+```bash
+sudo apt install php8.3
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+For older versions of debian/ubuntu, these `apt` repositories may not be available. In this case, run the following:
 
-## Contributing
+```bash
+sudo apt-get update && sudo apt-get upgrade
+sudo add-apt-repository ppa:ondrej/php
+sudo apt install php8.3
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+You may verify your `php` version by running:
 
-## Code of Conduct
+```bash
+php --version
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Installing Dependencies
 
-## Security Vulnerabilities
+To install the frontend dependencies of the application, run:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Install the project dependencies
+pnpm install
+```
 
-## License
+To install the backend dependencies, run the following:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php83-composer:latest \
+    composer install --ignore-platform-reqs
+```
+
+### Running the application
+
+After installing all the dependencies, you may run the application with the following command:
+
+```bash
+./vendor/bin/sail up
+```
+
+## Linting & Formatting
+
+Before pushing or submitting a pull request to the repository, be sure to run the formatters and linters. This is done to ensure that the codebase remains clean and consistent.
+
+```bash
+# Fix code formatting with Prettier.
+pnpm format
+
+# Checks code with Prettier & ESLint.
+pnpm lint
+```
