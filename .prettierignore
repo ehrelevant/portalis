@@ -6,3 +6,4 @@ package-lock.json
 composer.json
 composer.lock
 README.md
+/public/build
