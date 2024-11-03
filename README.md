@@ -9,7 +9,11 @@ This repository contains the main project files used for the implementation of a
 To get started, first clone the repository to your local device:
 
 ```bash
+# Via ssh
 git clone git@github.com:ehrelevant/cs195-portal.git
+
+# Via https
+git clone https://github.com/ehrelevant/cs195-portal.git
 ```
 
 > [!IMPORTANT]
@@ -19,51 +23,27 @@ git clone git@github.com:ehrelevant/cs195-portal.git
 
 To run the project locally, the following tools are required:
 
-1. [`docker 27.2.x`](https://www.docker.com/)
-2. [`php 8.3.x`](https://www.php.net/)
-3. [`composer 2.7.x`](https://getcomposer.org/)
-4. [`pnpm 9.12.x`](https://pnpm.io/)
+1. [`php 8.3.x`](https://www.php.net/)
+2. [`composer 2.7.x` or higher](https://getcomposer.org/)
+3. [`pnpm 9.12.x` or higher](https://pnpm.io/)
 
-#### Installing `php 8.3.x`
-
-Note that this project currently uses `php 8.3.x`. For debian/ubuntu, the following may be used to install the appropriate version:
-
-```bash
-sudo apt install php8.3
-```
-
-For older versions of debian/ubuntu, these `apt` repositories may not be available. In this case, run the following:
-
-```bash
-sudo apt-get update && sudo apt-get upgrade
-sudo add-apt-repository ppa:ondrej/php
-sudo apt install php8.3
-```
-
-You may verify your `php` version by running:
-
-```bash
-php --version
-```
+> [!TIP]
+> If you are using a Linux environment, you can use the following [convenience script from the Laravel website](https://laravel.com/docs/11.x/installation#installing-php) to quickly install `php` and `composer`.
 
 ### Installing Dependencies
 
 To install the frontend dependencies of the application, run:
 
 ```bash
-# Install the project dependencies
+# Install frontend project dependencies
 pnpm install
 ```
 
 To install the backend dependencies, run the following:
 
 ```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php83-composer:latest \
-    composer install --ignore-platform-reqs
+# Install backend project dependencies
+composer install --ignore-platform-reqs
 ```
 
 ### Running the application
@@ -71,10 +51,10 @@ docker run --rm \
 After installing all the dependencies, you may run the application with the following command:
 
 ```bash
-composer run-script dev
+composer run dev
 ```
 
-Afterwards, the server should be available at `localhost`.
+The application will then be available at `http://localhost:8000/`.
 
 ## Linting & Formatting
 
