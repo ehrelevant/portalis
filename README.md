@@ -71,8 +71,10 @@ docker run --rm \
 After installing all the dependencies, you may run the application with the following command:
 
 ```bash
-./vendor/bin/sail up
+composer run-script dev
 ```
+
+Afterwards, the server should be available at `localhost`.
 
 ## Linting & Formatting
 
