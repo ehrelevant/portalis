@@ -12,9 +12,10 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': '/resources/js',
+            '@': '/resources',
+            '@assets': '/resources/assets',
+            '@js': '/resources/js',
             '@shared': '/resources/js/shared',
-            '@assets': '/resources/js/assets',
         },
     },
 });
