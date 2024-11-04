@@ -28,5 +28,6 @@
     },
     "dependencies": {
         "@inertiajs/svelte": "^1.2.0"
-    }
+    },
+    "packageManager": "pnpm@9.12.3"
 }
