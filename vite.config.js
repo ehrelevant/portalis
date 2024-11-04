@@ -17,7 +17,7 @@ export default defineConfig({
             {
                 find: '@',
                 replacement: fileURLToPath(
-                    new URL('./resources/js/Shared', import.meta.url),
+                    new URL('./resources/js/shared', import.meta.url),
                 ),
             },
         ],
