@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
         "paths": {
-            "@/*": ["./resources/js/shared/*"]
+            "@/*": ["./resources/js/*"],
+            "@shared/*": ["./resources/js/shared/*"],
+            "@assets/*": ["./resources/js/assets/*"]
         }
     }
 }

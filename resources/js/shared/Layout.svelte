@@ -1,5 +1,5 @@
 <script>
-    import Navbar from './components/Navbar.svelte';
+    import Navbar from '@shared/components/Navbar.svelte';
 </script>
 
 <main class="flex min-h-screen flex-row">
