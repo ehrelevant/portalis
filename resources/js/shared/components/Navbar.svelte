@@ -1,59 +1,73 @@
 <script>
     import { inertia } from '@inertiajs/svelte';
-    import Home from '@assets/home_logo.svg';
-    import Dashboard from '@assets/dashboard_logo.svg';
-    import Privacy from '@assets/privacy_logo.svg';
-    import Account from '@assets/account_logo.svg';
+    
+    import Home from '@assets/home_logo.svelte';
+    import Dashboard from '@assets/dashboard_logo.svelte';
+    import Privacy from '@assets/privacy_logo.svelte';
+    import Account from '@assets/account_logo.svelte';
 </script>
 
 <nav class="
+    hidden md:block
     bg-light-primary
     w-24
     text-center text-light-primary-text
 ">
     <ul>
         <a use:inertia href="/">
-            <li class="
-                py-4 my-1
+            <div class="
+                transition ease-linear
+                py-4
+                hover:bg-light-secondary
+                hover:text-light-secondary-text
             ">
                 <div class="flex justify-center ">
-                    <img alt="Home Logo" src={ Home } class="w-10"/>
+                    <Home />
                 </div>
                 Home
-            </li>
+            </div>
         </a>
 
         <a use:inertia href="/dashboard">
-            <li class="
-                py-4 my-1
+            <div class="
+                transition ease-linear
+                py-4
+                hover:bg-light-secondary
+                hover:text-light-secondary-text
             ">
                 <div class="flex justify-center ">
-                    <img alt="Dashboard Logo" src={ Dashboard } class="w-10"/>
+                    <Dashboard />
                 </div>
                 Dashboard
-            </li>
+            </div>
         </a>
 
         <a use:inertia href="/privacy">
-            <li class="
-                py-4 my-1
+            <div class="
+                transition ease-linear
+                py-4
+                hover:bg-light-secondary
+                hover:text-light-secondary-text
             ">
                 <div class="flex justify-center ">
-                    <img alt="Privacy Logo" src={ Privacy } class="w-10"/>
+                    <Privacy />
                 </div>
                 Privacy
-            </li>
+            </div>
         </a>
 
         <a use:inertia href="/account">
-            <li class="
-                py-4 my-1
+            <div class="
+                transition ease-linear
+                py-4
+                hover:bg-light-secondary
+                hover:text-light-secondary-text
             ">
                 <div class="flex justify-center ">
-                    <img alt="Account Logo" src={ Account } class="w-10"/>
+                    <Account />
                 </div>
                 Account
-            </li>
+            </div>
         </a>
     </ul>
 </nav>

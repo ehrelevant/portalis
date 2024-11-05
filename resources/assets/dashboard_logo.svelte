@@ -1,0 +1,10 @@
+<svg class="
+    w-10 h-10 
+    stroke-light-primary-text
+    fill-none"
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+<path d="M42 16V42H6V16M20 24H28M2 6H46V16H2V6Z" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

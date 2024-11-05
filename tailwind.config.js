@@ -15,7 +15,7 @@ export default {
                 'primary-text' : '#1E1E1E',
                 'secondary-text' : '#F1F1F1',
             },
-            
+
             'dark' : {
                 'primary' : '#227A3D',
                 'secondary' : '#C7EAD2',
