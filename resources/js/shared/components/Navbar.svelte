@@ -7,9 +7,9 @@
 </script>
 
 <nav class="
-    bg-mint
+    bg-light-primary
     w-24
-    text-center
+    text-center text-light-primary-text
 ">
     <ul>
         <a use:inertia href="/">

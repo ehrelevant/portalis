@@ -9,29 +9,41 @@ export default {
             'sans': ['FiraSans', 'ui-sans-serif', 'system-ui'],
         },
         colors: {
-            'mint' : '#C7EAD2',
-            'lighttint' : '#F1F1F1',
-            'green' : '#227A3D',
-            'darktint' : '#1E1E1E',
-            'blue' : {
-                light: '#b2c1d1',
-                DEFAULT: '#2663a6',
+            'light' : {
+                'primary' : '#C7EAD2',
+                'secondary' : '#227A3D',
+                'primary-text' : '#1E1E1E',
+                'secondary-text' : '#F1F1F1',
             },
-            'forest' : {
-                light: '#adc8b5',
-                DEFAULT: '#227a3d',
+            
+            'dark' : {
+                'primary' : '#227A3D',
+                'secondary' : '#C7EAD2',
+                'primary-text' : '#F1F1F1',
+                'secondary-text' : '#1E1E1E',
             },
-            'purple' : {
-                light: '#cbbce3',
-                DEFAULT: '#8054d0',
-            },
-            'brown' : {
-                light: '#cbc2b0',
-                DEFAULT: '#866b26',
-            },
-            'red' : {
-                light: '#dcafb2',
-                DEFAULT: '#bf2a30',
+            
+            'floating' : {
+                'blue' : {
+                    light: '#b2c1d1',
+                    DEFAULT: '#2663a6',
+                },
+                'forest' : {
+                    light: '#adc8b5',
+                    DEFAULT: '#227a3d',
+                },
+                'purple' : {
+                    light: '#cbbce3',
+                    DEFAULT: '#8054d0',
+                },
+                'brown' : {
+                    light: '#cbc2b0',
+                    DEFAULT: '#866b26',
+                },
+                'red' : {
+                    light: '#dcafb2',
+                    DEFAULT: '#bf2a30',
+                },
             },
         },
         extend: {},
