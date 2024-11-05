@@ -25,5 +25,5 @@ Route::get('/login', function () {
 });
 
 Route::post('/login', [LoginController::class, 'authenticate']);
-
 Route::post('/login/send_pin', [LoginController::class, 'sendPin']);
+Route::post('/logout', [LoginController::class, 'logout']);
