@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -34,9 +37,17 @@ class LoginController extends Controller
      */
     public function sendPin(Request $request): RedirectResponse
     {
-        $email = $request->validate([
+        $credentials = $request->validate([
             'email' => ['required', 'email']
-        ])['email'];
+        ]);
+        $email = $credentials['email'];
+
+        $generated_pin = Str::random(6);
+
+        $user = User::where('email', $email)->firstOrFail();
+        $user->pin = Hash::make($generated_pin);
+        $user->pin_expiry = now()->addMinutes(10);
+        $user->saveQuietly();
 
         return back();
     }
