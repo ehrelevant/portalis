@@ -45,8 +45,8 @@ class LoginController extends Controller
         $generated_pin = Str::random(6);
 
         $user = User::where('email', $email)->firstOrFail();
-        $user->pin = Hash::make($generated_pin);
-        $user->pin_expiry = now()->addMinutes(10);
+        $user->password = Hash::make($generated_pin);
+        $user->password_expiry = now()->addMinutes(5);
         $user->saveQuietly();
 
         return back();

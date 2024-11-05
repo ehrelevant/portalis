@@ -29,8 +29,8 @@ class UserFactory extends Factory
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
-            'pin' => null,
-            'pin_expiry' => null,
+            'password' => null,
+            'password_expiry' => null,
         ]);
     }
 }
