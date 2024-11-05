@@ -5,6 +5,9 @@ export default {
         './resources/**/*.{svelte,js,ts,jsx,tsx}',
     ],
     theme: {
+        fontFamily: {
+            'sans': ['FiraSans', 'ui-sans-serif', 'system-ui'],
+        },
         colors: {
             'mint' : '#C7EAD2',
             'lighttint' : '#F1F1F1',
