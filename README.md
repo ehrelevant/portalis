@@ -61,9 +61,15 @@ The application will then be available at `http://localhost:8000/`.
 Before pushing or submitting a pull request to the repository, be sure to run the formatters and linters. This is done to ensure that the codebase remains clean and consistent.
 
 ```bash
-# Fix code formatting with Prettier.
-pnpm format
+# Fix frontend code formatting with Prettier.
+pnpm fmt
 
 # Checks code with Prettier & ESLint.
 pnpm lint
+
+# Fix backend code formatting with PHP-CS-Fixer.
+composer fmt
+
+# Checks code with PHP-CS-Fixer.
+composer lint
 ```
