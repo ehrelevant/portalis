@@ -22,13 +22,13 @@ class LoginController extends Controller
         ]);
 
         $user = User::where('email', $credentials['email'])->firstOrFail();
-        if($user->password_expiry < now()) {
+        if ($user->password_expiry < now()) {
             $user->password = null;
             $user->password_expiry = null;
             $user->saveQuietly();
 
             return back()->withErrors([
-                'pin' => 'The provided pin has either expired or does not match the given email.'
+                'pin' => 'The provided pin has either expired or does not match the given email.',
             ]);
         }
 
@@ -54,7 +54,7 @@ class LoginController extends Controller
     public function sendPin(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email']
+            'email' => ['required', 'email'],
         ]);
         $email = $credentials['email'];
 
