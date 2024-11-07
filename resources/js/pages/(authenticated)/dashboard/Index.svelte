@@ -1,1 +1,3 @@
-<div>Dashboard</div>
+<div class="main-screen">
+    Dashboard
+</div>

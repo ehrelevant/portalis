@@ -1,5 +1,5 @@
 <script>
-    import { inertia } from '@inertiajs/svelte';
+    import { inertia, page } from '@inertiajs/svelte';
     
     import Home from '@assets/home_logo.svelte';
     import Dashboard from '@assets/dashboard_logo.svelte';
@@ -12,10 +12,10 @@
     fixed overflow-hidden
     bg-light-primary
     w-24 h-screen
-    text-center text-light-primary-text
+    text-center
 ">
     <a use:inertia href="/">
-        <div class="sidebar-div">
+        <div class="sidebar-div" class:active-nav={$page.url === '/'}>
             <div class="sidebar-icon">
                 <Home />
             </div>
@@ -27,7 +27,7 @@
     </a>
 
     <a use:inertia href="/dashboard">
-        <div class="sidebar-div">
+        <div class="sidebar-div" class:active-nav={$page.url.startsWith('/dashboard')}>
             <div class="sidebar-icon">
                 <Dashboard />
             </div>
@@ -39,7 +39,7 @@
     </a>
 
     <a use:inertia href="/privacy">
-        <div class="sidebar-div">
+        <div class="sidebar-div" class:active-nav={$page.url.startsWith('/privacy')}>
             <div class="sidebar-icon">
                 <Privacy />
             </div>
@@ -51,7 +51,7 @@
     </a>
 
     <a use:inertia href="/account">
-        <div class="sidebar-div">
+        <div class="sidebar-div" class:active-nav={$page.url.startsWith('/account')}>
             <div class="sidebar-icon">
                 <Account />
             </div>

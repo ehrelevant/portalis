@@ -1,1 +1,3 @@
-<div>Login</div>
+<div class="main-screen">
+    Login
+</div>

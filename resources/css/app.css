@@ -12,15 +12,29 @@
 }
 
 @layer components {
+    
     .sidebar-div {
         @apply transition ease-in-out duration-200
-            text-light-primary-text
             py-4
             hover:bg-light-secondary
-            hover:text-light-secondary-text ;
+            hover:text-light-secondary-text;
     }
 
     .sidebar-icon {
         @apply flex justify-center;
+    }
+
+    .active-nav {
+        @apply bg-light-secondary
+            text-light-secondary-text;
+    }
+
+    .inactive-nav {
+        @apply bg-light-primary
+            text-light-primary-text;
+    }
+
+    .main-screen {
+        @apply ml-0 p-1 md:ml-24;
     }
 }
