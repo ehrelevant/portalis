@@ -25,23 +25,23 @@ export default {
             
             'floating' : {
                 'blue' : {
-                    light: '#b2c1d1',
+                    dark: '#b2c1d1',
                     DEFAULT: '#2663a6',
                 },
                 'forest' : {
-                    light: '#adc8b5',
+                    dark: '#adc8b5',
                     DEFAULT: '#227a3d',
                 },
                 'purple' : {
-                    light: '#cbbce3',
+                    dark: '#cbbce3',
                     DEFAULT: '#8054d0',
                 },
                 'brown' : {
-                    light: '#cbc2b0',
+                    dark: '#cbc2b0',
                     DEFAULT: '#866b26',
                 },
                 'red' : {
-                    light: '#dcafb2',
+                    dark: '#dcafb2',
                     DEFAULT: '#bf2a30',
                 },
             },
