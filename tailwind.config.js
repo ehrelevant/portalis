@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode : 'class',
     content: [
         './resources/**/*.blade.php',
         './resources/**/*.{svelte,js,ts,jsx,tsx}',
@@ -10,6 +11,7 @@ export default {
         },
         colors: {
             'light' : {
+                'background' : '#F1F1F1',
                 'primary' : '#C7EAD2',
                 'secondary' : '#227A3D',
                 'primary-text' : '#1E1E1E',
@@ -17,6 +19,7 @@ export default {
             },
 
             'dark' : {
+                'background' : '#1E1E1E',
                 'primary' : '#227A3D',
                 'secondary' : '#C7EAD2',
                 'primary-text' : '#F1F1F1',

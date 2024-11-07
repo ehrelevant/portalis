@@ -12,12 +12,11 @@
 }
 
 @layer components {
-    
     .sidebar-div {
-        @apply transition ease-in-out duration-200
+        @apply
             py-4
-            hover:bg-light-secondary
-            hover:text-light-secondary-text;
+            text-light-primary-text dark:text-dark-primary-text
+            hover:bg-light-secondary dark:hover:bg-dark-secondary
     }
 
     .sidebar-icon {
@@ -25,16 +24,20 @@
     }
 
     .active-nav {
-        @apply bg-light-secondary
-            text-light-secondary-text;
+        @apply bg-light-secondary dark:bg-dark-secondary
+            text-light-secondary-text dark:text-dark-secondary-text;
     }
 
     .inactive-nav {
-        @apply bg-light-primary
-            text-light-primary-text;
+        @apply bg-light-primary dark:bg-dark-primary
+            text-light-primary-text dark:text-dark-primary-text;
     }
 
     .main-screen {
-        @apply ml-0 p-1 md:ml-24;
+        @apply bg-light-background dark:bg-dark-background
+            text-light-primary-text dark:text-dark-primary-text
+            ml-0 md:ml-24
+            p-1
+            w-screen;
     }
 }
