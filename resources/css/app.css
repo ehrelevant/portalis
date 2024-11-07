@@ -10,3 +10,17 @@
         src: url(@assets/fonts/FiraSans-Regular.ttf);
     }
 }
+
+@layer components {
+    .sidebar-div {
+        @apply transition ease-in-out duration-200
+            text-light-primary-text
+            py-4
+            hover:bg-light-secondary
+            hover:text-light-secondary-text ;
+    }
+
+    .sidebar-icon {
+        @apply flex justify-center;
+    }
+}

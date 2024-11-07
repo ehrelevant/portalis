@@ -7,67 +7,58 @@
     import Account from '@assets/account_logo.svelte';
 </script>
 
-<nav class="
+<div class="
     hidden md:block
+    fixed overflow-hidden
     bg-light-primary
-    w-24
+    w-24 h-screen
     text-center text-light-primary-text
 ">
-    <ul>
-        <a use:inertia href="/">
-            <div class="
-                transition ease-linear
-                py-4
-                hover:bg-light-secondary
-                hover:text-light-secondary-text
-            ">
-                <div class="flex justify-center ">
-                    <Home />
-                </div>
+    <a use:inertia href="/">
+        <div class="sidebar-div">
+            <div class="sidebar-icon">
+                <Home />
+            </div>
+            
+            <div>
                 Home
             </div>
-        </a>
+        </div>
+    </a>
 
-        <a use:inertia href="/dashboard">
-            <div class="
-                transition ease-linear
-                py-4
-                hover:bg-light-secondary
-                hover:text-light-secondary-text
-            ">
-                <div class="flex justify-center ">
-                    <Dashboard />
-                </div>
+    <a use:inertia href="/dashboard">
+        <div class="sidebar-div">
+            <div class="sidebar-icon">
+                <Dashboard />
+            </div>
+            
+            <div>
                 Dashboard
             </div>
-        </a>
+        </div>
+    </a>
 
-        <a use:inertia href="/privacy">
-            <div class="
-                transition ease-linear
-                py-4
-                hover:bg-light-secondary
-                hover:text-light-secondary-text
-            ">
-                <div class="flex justify-center ">
-                    <Privacy />
-                </div>
+    <a use:inertia href="/privacy">
+        <div class="sidebar-div">
+            <div class="sidebar-icon">
+                <Privacy />
+            </div>
+            
+            <div>
                 Privacy
             </div>
-        </a>
+        </div>
+    </a>
 
-        <a use:inertia href="/account">
-            <div class="
-                transition ease-linear
-                py-4
-                hover:bg-light-secondary
-                hover:text-light-secondary-text
-            ">
-                <div class="flex justify-center ">
-                    <Account />
-                </div>
+    <a use:inertia href="/account">
+        <div class="sidebar-div">
+            <div class="sidebar-icon">
+                <Account />
+            </div>
+            
+            <div>
                 Account
             </div>
-        </a>
-    </ul>
-</nav>
+        </div>
+    </a>
+</div>
