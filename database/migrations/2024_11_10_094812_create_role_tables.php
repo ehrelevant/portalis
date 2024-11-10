@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -27,7 +26,7 @@ return new class extends Migration
 
             // foreign keys
             // todo: try to use constrained() instead of references()->on()
-            $table->foreignId('company_id')->references('company_id')->on('company');           
+            $table->foreignId('company_id')->references('company_id')->on('company');
 
             // other keys
             $table->string('first_name', length: 50);
@@ -52,7 +51,7 @@ return new class extends Migration
         Schema::create('student', function (Blueprint $table) {
             // primary key
             $table->integer('student_number')->primary();
-            
+
             // foreign keys
             // todo: try to use constrained() instead of references()->on()
             $table->foreignId('supervisor_number')->references('supervisor_number')->on('supervisor');
