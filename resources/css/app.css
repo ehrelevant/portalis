@@ -18,6 +18,7 @@
             text-light-primary-text dark:text-dark-primary-text
             hover:text-light-secondary-text dark:hover:text-dark-secondary-text
             hover:bg-light-secondary dark:hover:bg-dark-secondary
+            hover:scale-105 transition-all
     }
 
     .sidebar-icon {
@@ -37,7 +38,8 @@
     .main-screen {
         @apply bg-light-background dark:bg-dark-background
             text-light-primary-text dark:text-dark-primary-text
-            ml-0 md:ml-24
+            ml-0 mt-24
+            sm:ml-24 sm:mt-0
             p-1
             w-screen;
     }

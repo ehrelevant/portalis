@@ -6,12 +6,24 @@
     import Privacy from '@assets/privacy_logo.svelte';
     import Account from '@assets/account_logo.svelte';
     import Toggle from '@assets/theme_switch.svelte';
+    import Menu from '@assets/menu_logo.svelte';
+
+    let isMenuOpen = false;
+
+	function openMenu() {
+		isMenuOpen = true;
+	}
+
+	function closeMenu() {
+		isMenuOpen = false;
+	}
 </script>
 
-<div class="
-    hidden md:grid
+<!-- Desktop Navbar -->
+<nav class="
+    hidden sm:grid
     content-between
-    fixed overflow-auto
+    fixed overflow-y-auto overflow-x-hidden
     bg-light-primary dark:bg-dark-primary
     w-24 h-screen
     text-center
@@ -69,4 +81,4 @@
     <div class = "py-4 justify-center">
         <Toggle />
     </div>
-</div>
+</nav>
