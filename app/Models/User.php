@@ -13,13 +13,18 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_FACULTY = 'faculty';
+    public const ROLE_SUPERVISOR = 'supervisor';
+    public const ROLE_STUDENT = 'student';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'email', 'password',
+        'email',
     ];
 
     /**
@@ -30,6 +35,7 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token',
         'password',
+        'role',
         'password_expiry',
     ];
 }
