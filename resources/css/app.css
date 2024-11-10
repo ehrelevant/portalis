@@ -13,7 +13,7 @@
 
 @layer components {
     .sidebar-div {
-        @apply py-4 text-light-primary-text transition-all hover:scale-105 hover:bg-light-secondary hover:text-light-secondary-text dark:text-dark-primary-text dark:hover:bg-dark-secondary dark:hover:text-dark-secondary-text;
+        @apply text-light-primary-text transition-all hover:bg-light-secondary hover:text-light-secondary-text dark:text-dark-primary-text dark:hover:bg-dark-secondary dark:hover:text-dark-secondary-text;
     }
 
     .sidebar-icon {
@@ -29,6 +29,6 @@
     }
 
     .main-screen {
-        @apply ml-0 mt-24 w-screen bg-light-background p-1 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text sm:ml-24 sm:mt-0;
+        @apply min-h-full w-full bg-light-background p-1 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text;
     }
 }

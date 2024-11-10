@@ -21,15 +21,14 @@
 <!-- Desktop Navbar -->
 <nav
     class="
-    fixed hidden
-    h-screen
-    w-24 content-between overflow-y-auto
-    overflow-x-hidden bg-light-primary
-    text-center dark:bg-dark-primary
-    sm:grid
+    sticky hidden
+    min-h-full
+    w-24 flex-col justify-between
+    bg-light-primary text-center
+    dark:bg-dark-primary sm:flex
 "
 >
-    <ul>
+    <ul class="flex flex-col">
         <NavBtn href="/" Icon={Home}>Home</NavBtn>
         <NavBtn href="/dashboard" Icon={Dashboard}>Dashboard</NavBtn>
         <NavBtn href="/privacy" Icon={Privacy}>Privacy</NavBtn>

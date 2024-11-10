@@ -7,8 +7,8 @@
     $: isActive = $page.url === href ? 'active-nav' : '';
 </script>
 
-<li class="sidebar-div {isActive}">
-    <Link {href}>
+<li class="sidebar-div flex items-center justify-center {isActive}">
+    <Link {href} class="h-full w-full py-2">
         <div class="sidebar-icon">
             <svelte:component this={Icon} />
         </div>
