@@ -16,6 +16,7 @@
         @apply
             py-4
             text-light-primary-text dark:text-dark-primary-text
+            hover:text-light-secondary-text dark:hover:text-dark-secondary-text
             hover:bg-light-secondary dark:hover:bg-dark-secondary
     }
 
