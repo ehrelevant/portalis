@@ -13,12 +13,7 @@
 
 @layer components {
     .sidebar-div {
-        @apply
-            py-4
-            text-light-primary-text dark:text-dark-primary-text
-            hover:text-light-secondary-text dark:hover:text-dark-secondary-text
-            hover:bg-light-secondary dark:hover:bg-dark-secondary
-            hover:scale-105 transition-all
+        @apply py-4 text-light-primary-text transition-all hover:scale-105 hover:bg-light-secondary hover:text-light-secondary-text dark:text-dark-primary-text dark:hover:bg-dark-secondary dark:hover:text-dark-secondary-text;
     }
 
     .sidebar-icon {
@@ -26,21 +21,14 @@
     }
 
     .active-nav {
-        @apply bg-light-secondary dark:bg-dark-secondary
-            text-light-secondary-text dark:text-dark-secondary-text;
+        @apply bg-light-secondary text-light-secondary-text dark:bg-dark-secondary dark:text-dark-secondary-text;
     }
 
     .inactive-nav {
-        @apply bg-light-primary dark:bg-dark-primary
-            text-light-primary-text dark:text-dark-primary-text;
+        @apply bg-light-primary text-light-primary-text dark:bg-dark-primary dark:text-dark-primary-text;
     }
 
     .main-screen {
-        @apply bg-light-background dark:bg-dark-background
-            text-light-primary-text dark:text-dark-primary-text
-            ml-0 mt-24
-            sm:ml-24 sm:mt-0
-            p-1
-            w-screen;
+        @apply ml-0 mt-24 w-screen bg-light-background p-1 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text sm:ml-24 sm:mt-0;
     }
 }

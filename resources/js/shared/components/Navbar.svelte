@@ -1,84 +1,42 @@
 <script>
-    import { inertia, page } from '@inertiajs/svelte';
-    
+    import NavBtn from './NavBtn.svelte';
     import Home from '@assets/home_logo.svelte';
     import Dashboard from '@assets/dashboard_logo.svelte';
     import Privacy from '@assets/privacy_logo.svelte';
     import Account from '@assets/account_logo.svelte';
-    import Toggle from '@assets/theme_switch.svelte';
+    import Toggle from './ThemeSwitch.svelte';
     import Menu from '@assets/menu_logo.svelte';
 
     let isMenuOpen = false;
 
-	function openMenu() {
-		isMenuOpen = true;
-	}
+    function openMenu() {
+        isMenuOpen = true;
+    }
 
-	function closeMenu() {
-		isMenuOpen = false;
-	}
+    function closeMenu() {
+        isMenuOpen = false;
+    }
 </script>
 
 <!-- Desktop Navbar -->
-<nav class="
-    hidden sm:grid
-    content-between
-    fixed overflow-y-auto overflow-x-hidden
-    bg-light-primary dark:bg-dark-primary
-    w-24 h-screen
-    text-center
-">
-    <div>
-        <a use:inertia href="/">
-            <div class="sidebar-div" class:active-nav={$page.url === '/'}>
-                <div class="sidebar-icon">
-                    <Home />
-                </div>
-                
-                <div>
-                    Home
-                </div>
-            </div>
-        </a>
+<nav
+    class="
+    fixed hidden
+    h-screen
+    w-24 content-between overflow-y-auto
+    overflow-x-hidden bg-light-primary
+    text-center dark:bg-dark-primary
+    sm:grid
+"
+>
+    <ul>
+        <NavBtn href="/" Icon={Home}>Home</NavBtn>
+        <NavBtn href="/dashboard" Icon={Dashboard}>Dashboard</NavBtn>
+        <NavBtn href="/privacy" Icon={Privacy}>Privacy</NavBtn>
+        <NavBtn href="/account" Icon={Account}>Account</NavBtn>
+    </ul>
 
-        <a use:inertia href="/dashboard">
-            <div class="sidebar-div" class:active-nav={$page.url.startsWith('/dashboard')}>
-                <div class="sidebar-icon">
-                    <Dashboard />
-                </div>
-                
-                <div>
-                    Dashboard
-                </div>
-            </div>
-        </a>
-
-        <a use:inertia href="/privacy">
-            <div class="sidebar-div" class:active-nav={$page.url.startsWith('/privacy')}>
-                <div class="sidebar-icon">
-                    <Privacy />
-                </div>
-                
-                <div>
-                    Privacy
-                </div>
-            </div>
-        </a>
-
-        <a use:inertia href="/account">
-            <div class="sidebar-div" class:active-nav={$page.url.startsWith('/account')}>
-                <div class="sidebar-icon">
-                    <Account />
-                </div>
-                
-                <div>
-                    Account
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <div class = "py-4 justify-center">
+    <div class="justify-center py-4">
         <Toggle />
     </div>
 </nav>

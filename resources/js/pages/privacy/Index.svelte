@@ -1,3 +1,1 @@
-<div class="main-screen">
-    Privacy
-</div>
+<div class="main-screen">Privacy</div>
