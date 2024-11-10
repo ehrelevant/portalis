@@ -20,7 +20,7 @@
     }
 </script>
 
-<article class="flex w-full flex-col items-center justify-center">
+<article class="main-screen flex flex-col items-center justify-center">
     Login Form
 
     <form on:submit|preventDefault={handleSubmit}>

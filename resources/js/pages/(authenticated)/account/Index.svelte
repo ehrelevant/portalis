@@ -1,1 +1,3 @@
-<div>Account</div>
+<div class="main-screen">
+    Account
+</div>
