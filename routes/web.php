@@ -2,12 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
-use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\FacultyMiddleware;
-use App\Http\Middleware\StudentMiddleware;
-use App\Http\Middleware\SupervisorMiddleware;
-use App\Http\Middleware\EnsureUserHasRole;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\EnsureCorrectPhase;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,7 +22,8 @@ Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/login/send_pin', [LoginController::class, 'sendPin']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'show']);
+    Route::get('/dashboard', [DashboardController::class, 'redirectPhase']);
+    Route::get('/dashboard/{phase}', [DashboardController::class, 'show'])->middleware(EnsureCorrectPhase::class);
 
     Route::get('/account', function () {
         return Inertia::render('account/Index');
