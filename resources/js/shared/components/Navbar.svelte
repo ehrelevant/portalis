@@ -39,3 +39,16 @@
         <Toggle />
     </div>
 </nav>
+
+<!-- Mobile Navbar -->
+
+<nav
+    class="
+    sticky flex
+    min-w-screen
+    h-24 flex-row
+    bg-light-primary text-center
+    dark:bg-dark-primary sm:hidden
+">
+
+</nav>
