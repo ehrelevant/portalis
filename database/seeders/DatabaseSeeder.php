@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\WebsiteState;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,8 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'email' => 'student@example.com',
             'role' => 'student',
@@ -30,6 +29,10 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'admin@example.com',
             'role' => 'admin',
+        ]);
+
+        WebsiteState::factory()->create([
+            'phase' => 'pre'
         ]);
     }
 }
