@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         WebsiteState::factory()->create([
-            'phase' => 'pre'
+            'phase' => 'pre',
         ]);
     }
 }

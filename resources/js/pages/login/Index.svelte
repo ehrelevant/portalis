@@ -21,45 +21,61 @@
 </script>
 
 <div class="main-screen flex flex-col items-center justify-center">
-<article class="min-w-1/4">
-    <div>
-        <div class="content-end py-2 flex text-3xl"> Account Login </div>
-        <div class="bg-light-primary dark:bg-dark-primary p-5 rounded-xl">
-            <form
-                class="m-2"
-                on:submit|preventDefault={handleSubmit}
-            >
-                <label class="text-xl">
-                    Email:
-                    <input
-                        class="w-full text-light-primary-text p-2"
-                        type="email"
-                        placeholder="Input email address"
-                        bind:value={values.email}
-                    />
-                </label>
-                {#if errors.email}<div class="text-floating-red dark:text-floating-red-dark pb-1">{errors.email}</div> {:else} <div class="pb-7"></div> {/if}
-                <div class="flex items-end">
-                    <label class="text-xl content-center">
-                        PIN:
+    <article class="min-w-1/4">
+        <div>
+            <div class="flex content-end py-2 text-3xl">Account Login</div>
+            <div class="rounded-xl bg-light-primary p-5 dark:bg-dark-primary">
+                <form class="m-2" on:submit|preventDefault={handleSubmit}>
+                    <label class="text-xl">
+                        Email:
                         <input
-                            class="text-light-primary-text p-2 w-full"
-                            type="text"
-                            placeholder="Input PIN"
-                            bind:value={values.pin}
+                            class="w-full p-2 text-light-primary-text"
+                            type="email"
+                            placeholder="Input email address"
+                            bind:value={values.email}
                         />
                     </label>
+                    {#if errors.email}<div
+                            class="pb-1 text-floating-red dark:text-floating-red-dark"
+                        >
+                            {errors.email}
+                        </div>
+                    {:else}
+                        <div class="pb-7"></div>
+                    {/if}
+                    <div class="flex items-end">
+                        <label class="content-center text-xl">
+                            PIN:
+                            <input
+                                class="w-full p-2 text-light-primary-text"
+                                type="text"
+                                placeholder="Input PIN"
+                                bind:value={values.pin}
+                            />
+                        </label>
+                        <input
+                            class="ml-2 w-1/2 cursor-pointer rounded-2xl border-4 p-1 text-xl transition-all ease-in hover:bg-light-secondary-text dark:hover:bg-dark-secondary-text"
+                            type="submit"
+                            name="send_pin"
+                            value="Send PIN"
+                        />
+                    </div>
+                    {#if errors.pin}<div
+                            class="pb-4 text-floating-red dark:text-floating-red-dark"
+                        >
+                            {errors.pin}
+                        </div>
+                    {:else}
+                        <div class="pb-10"></div>
+                    {/if}
                     <input
-                        class="border-4 rounded-2xl cursor-pointer text-xl ml-2 p-1 w-1/2 hover:bg-light-secondary-text  dark:hover:bg-dark-secondary-text transition-all ease-in"
                         type="submit"
-                        name="send_pin"
-                        value="Send PIN"
+                        name="login"
+                        value="Login"
+                        class="w-full cursor-pointer rounded-full border-4 text-2xl transition-all ease-in hover:bg-light-secondary-text dark:hover:bg-dark-secondary-text"
                     />
-                </div>
-                {#if errors.pin}<div class="text-floating-red dark:text-floating-red-dark pb-4">{errors.pin}</div> {:else} <div class="pb-10"></div> {/if}
-                <input type="submit" name="login" value="Login" class="border-4 cursor-pointer w-full text-2xl rounded-full hover:bg-light-secondary-text  dark:hover:bg-dark-secondary-text transition-all ease-in"/>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
-</article>
+    </article>
 </div>
