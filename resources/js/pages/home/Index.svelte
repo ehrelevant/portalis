@@ -38,25 +38,34 @@
             sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
             Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         </div>
-        <div class="flex flex-col sm:flex-row justify-around items-center py-4">
-            <div class="flex flex-col content-center p-2"> <Pre /> Pre-Internship</div>
-            <div class="flex flex-col content-center p-2"> <During /> During Internship</div>
-            <div class="flex flex-col content-center p-2"> <Post /> Post-Internship</div>
-        </div>
-    </article>
-    <article>
-        <div class="text-xl italic"> Getting Started </div>
-        <div class="text-md"> 
-            Lorem ipsum dolor sit amet, 
-            consectetur adipiscing elit. Duis consectetur cursus libero, 
-            sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
-            Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-        </div>
-        <div class="flex flex-col p-4">
-            <div class={dropdown}> Student <Dropdown /> </div>
-            <div class={dropdown}> Faculty Advisor <Dropdown /> </div>
-            <div class={dropdown}> Company Supervisor <Dropdown /> </div>
-            <div class={dropdown}> Administrator <Dropdown /> </div>
+        <div class="flex flex-col sm:flex-row justify-around items-center py-4 gap-4">
+            <div class="flex flex-col items-center p-2"> 
+                <Pre /> Pre-Internship
+                <div class="pt-3 text-md text-justify"> 
+                    Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit. Duis consectetur cursus libero, 
+                    sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
+                    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                </div>
+            </div>
+            <div class="flex flex-col items-center p-2"> 
+                <During /> During Internship
+                <div class="pt-3 text-md text-justify"> 
+                    Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit. Duis consectetur cursus libero, 
+                    sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
+                    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                </div>
+            </div>
+            <div class="flex flex-col items-center p-2"> 
+                <Post /> Post-Internship
+                <div class="pt-3 text-md text-justify"> 
+                    Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit. Duis consectetur cursus libero, 
+                    sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
+                    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                </div>
+            </div>
         </div>
     </article>
     <br>
