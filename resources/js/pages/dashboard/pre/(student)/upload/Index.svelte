@@ -1,6 +1,8 @@
 <script>
     import { useForm } from '@inertiajs/svelte';
 
+    export let errors = {};
+
     let form = useForm({
         formName: null,
         file: null,
@@ -30,6 +32,11 @@
                 <option value="guardianIDs">Parent/Guardian's ID</option>
             </select>
         </label>
+        {#if errors.formName}
+            <p class="pb-1 text-floating-red dark:text-floating-red-dark">
+                {errors.formName}
+            </p>
+        {/if}
         <label>
             Upload <strong>.pdf</strong> file below:
             <input
@@ -43,6 +50,11 @@
                 </progress>
             {/if}
         </label>
+        {#if errors.file}
+            <div class="pb-1 text-floating-red dark:text-floating-red-dark">
+                {errors.file}
+            </div>
+        {/if}
         <input
             type="submit"
             value="Submit Document"
