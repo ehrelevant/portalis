@@ -27,7 +27,7 @@
     <div class="text-md">
         Welcome and thank you for diving into Portalis. Portalis is the dedicated portal for your CS 195 experience, granted to you by the University of the Philippines Diliman - Department of Computer Science. 
         <br> <br>
-        This portal was created to ensure a streamlined process for every person involved, and that includes you!
+        This portal was created to ensure a streamlined CS195 Internship process for every person involved, and that includes you!
     </div>
     <br>
     <article>
@@ -38,7 +38,7 @@
             sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
             Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         </div>
-        <div class="flex flex-col sm:flex-row justify-around items-center py-4 gap-4">
+        <div class="flex flex-col md:flex-row justify-around items-center py-4 gap-4">
             <div class="flex flex-col items-center p-2"> 
                 <Pre /> Pre-Internship
                 <div class="pt-3 text-md text-justify"> 
