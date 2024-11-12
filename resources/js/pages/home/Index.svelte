@@ -63,19 +63,19 @@
 
     <!--Some helpful buttons-->
     <div class="flex flex-col sm:flex-row justify-center items-center text-xl"> 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-forest-light dark:bg-floating-forest hover:opacity-80 transition-all ease-linear">
+        <a href="https://github.com/ehrelevant/cs195-portal" target="_blank" class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl cursor-pointer bg-floating-forest-light dark:bg-floating-forest hover:opacity-80 transition-all ease-linear">
             <Github />
             <div class="ml-2"> Github Repository </div>
-        </button>
+        </a>
 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-red-light dark:bg-floating-red hover:opacity-80 transition-all ease-linear">
+        <a href="https://github.com/ehrelevant/cs195-portal/issues/new" target="_blank" class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl cursor-pointer bg-floating-red-light dark:bg-floating-red hover:opacity-80 transition-all ease-linear">
             <Bug />
             <div class="ml-2"> Bug Report </div>
-        </button>
+        </a>
 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-brown-light dark:bg-floating-brown hover:opacity-80 transition-all ease-linear">
+        <a href="/privacy" class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl cursor-pointer bg-floating-brown-light dark:bg-floating-brown hover:opacity-80 transition-all ease-linear">
             <Privacy />
             <div class="ml-2"> Privacy Policy </div>
-        </button>
+        </a>
     </div>
 </div>
