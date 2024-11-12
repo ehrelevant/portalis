@@ -21,8 +21,8 @@
 <!-- Desktop Navbar -->
 <nav
     class="
-    sticky hidden
-    min-h-full
+    sticky top-0 left-0 hidden
+    min-h-full max-h-screen
     w-24 flex-col justify-between
     bg-light-primary text-center
     dark:bg-dark-primary sm:flex

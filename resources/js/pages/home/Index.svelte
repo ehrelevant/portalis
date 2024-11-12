@@ -2,7 +2,7 @@
     import Dashboard from '@assets/dashboard_logo.svelte'; 
 </script>
 
-<div class="main-screen p-4">
+<div class="main-screen p-4 min-h-full">
     <div class = "flex flex-row justify-center sm:justify-start"> 
         <!-- Temporary spot for logos-->
         <div class="p-2">
@@ -53,6 +53,6 @@
 
     <!--Some helpful buttons-->
     <div> 
-        
+
     </div>
 </div>
