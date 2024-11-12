@@ -6,6 +6,10 @@
     import Pre from '@assets/pre_logo.svelte';
     import During from '@assets/during_logo.svelte';
     import Post from '@assets/post_logo.svelte';
+    import Dropdown from '@assets/dropdown_logo.svelte';
+    import Dropup from '@assets/dropup_logo.svelte';
+
+    const dropdown = "flex flex-row justify-between hover:bg-light-primary/80 dark:hover:bg-dark-primary/80 w-full p-3 my-1 rounded-xl"
 </script>
 
 <div class="main-screen p-4 min-h-full">
@@ -34,7 +38,7 @@
             sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
             Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         </div>
-        <div class="flex flex-row justify-around py-4">
+        <div class="flex flex-col sm:flex-row justify-around items-center py-4">
             <div class="flex flex-col content-center p-2"> <Pre /> Pre-Internship</div>
             <div class="flex flex-col content-center p-2"> <During /> During Internship</div>
             <div class="flex flex-col content-center p-2"> <Post /> Post-Internship</div>
@@ -47,6 +51,12 @@
             consectetur adipiscing elit. Duis consectetur cursus libero, 
             sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
             Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        </div>
+        <div class="flex flex-col p-4">
+            <div class={dropdown}> Student <Dropdown /> </div>
+            <div class={dropdown}> Faculty Advisor <Dropdown /> </div>
+            <div class={dropdown}> Company Supervisor <Dropdown /> </div>
+            <div class={dropdown}> Administrator <Dropdown /> </div>
         </div>
     </article>
     <br>
