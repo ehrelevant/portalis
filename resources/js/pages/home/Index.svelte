@@ -3,6 +3,9 @@
     import Privacy from '@assets/privacy_logo.svelte';
     import Github from '@assets/github_logo.svelte';
     import Bug from '@assets/bug_logo.svelte';
+    import Pre from '@assets/pre_logo.svelte';
+    import During from '@assets/during_logo.svelte';
+    import Post from '@assets/post_logo.svelte';
 </script>
 
 <div class="main-screen p-4 min-h-full">
@@ -31,8 +34,12 @@
             sed pretium erat venenatis ut. Vivamus iaculis justo in velit facilisis posuere. 
             Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         </div>
+        <div class="flex flex-row justify-around py-4">
+            <div class="flex flex-col content-center p-2"> <Pre /> Pre-Internship</div>
+            <div class="flex flex-col content-center p-2"> <During /> During Internship</div>
+            <div class="flex flex-col content-center p-2"> <Post /> Post-Internship</div>
+        </div>
     </article>
-    <br>
     <article>
         <div class="text-xl italic"> Getting Started </div>
         <div class="text-md"> 
@@ -56,17 +63,17 @@
 
     <!--Some helpful buttons-->
     <div class="flex flex-col sm:flex-row justify-center items-center text-xl"> 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-forest-light dark:bg-floating-forest">
+        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-forest-light dark:bg-floating-forest hover:opacity-80 transition-all ease-linear">
             <Github />
             <div class="ml-2"> Github Repository </div>
         </button>
 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-red-light dark:bg-floating-red">
+        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-red-light dark:bg-floating-red hover:opacity-80 transition-all ease-linear">
             <Bug />
             <div class="ml-2"> Bug Report </div>
         </button>
 
-        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-brown-light dark:bg-floating-brown">
+        <button class="flex flex-row w-fit items-center p-4 m-2 rounded-2xl bg-floating-brown-light dark:bg-floating-brown hover:opacity-80 transition-all ease-linear">
             <Privacy />
             <div class="ml-2"> Privacy Policy </div>
         </button>
