@@ -66,7 +66,9 @@ class LoginController extends Controller
         $user->password_expiry = now()->addMinutes(5);
         $user->saveQuietly();
 
-        return back();
+        return back()->withErrors([
+            'email' => 'Provided email not found.'
+        ]);
     }
 
     /**
