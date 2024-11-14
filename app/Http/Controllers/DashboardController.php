@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Submission;
+use App\Models\SubmissionStatus;
 use App\Models\User;
 use App\Models\WebsiteState;
 use Illuminate\Http\RedirectResponse;
@@ -36,14 +38,32 @@ class DashboardController extends Controller
 
     public function submitStudentDocument(Request $request): RedirectResponse
     {
-        $request->validate([
-            'formName' => ['required'],
+        $form_values = $request->validate([
+            'requirementId' => ['required'],
             'file' => ['required', 'mimes:pdf', 'max:2048'],
         ]);
 
-        $path = $request->file('file')->store('student/documents');
+        $requirement_id = (int)$form_values['requirementId'];
+        $student_number = Auth::user()->role_id;
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail();
+        $submission_status->status = 'submitted';
+        $submission_status->save();
 
-        dd($path);
+        $submission = new Submission;
+        $submission->student_number = $student_number;
+        $submission->requirement_id = $requirement_id;
+        $submission->submission_date = now();
+
+        // TODO: Add proper revision and submission numbering
+        $submission->revision_number = 1;
+        $submission->submission_number = 1;
+
+        $filepath = $request->file('file')->store('student/documents');
+        $submission->filepath = $filepath;
+
+        $submission->save();
 
         return redirect('/dashboard');
     }

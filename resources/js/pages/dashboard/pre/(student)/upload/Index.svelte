@@ -4,7 +4,7 @@
     export let errors = {};
 
     let form = useForm({
-        formName: null,
+        requirementId: null,
         file: null,
     });
 
@@ -22,14 +22,14 @@
     >
         <label>
             Select document to submit:
-            <select form="student_upload" bind:value={$form.formName}>
-                <option value="agreement">Internship Agreement</option>
-                <option value="medicalCert">Medical Certificate</option>
-                <option value="workPlan">Signed Work Plan</option>
-                <option value="studentId">Student's ID</option>
-                <option value="facultyId">Faculty Adviser's IDs</option>
-                <option value="supervisorId">Supervisor's IDs</option>
-                <option value="guardianIDs">Parent/Guardian's ID</option>
+            <select form="student_upload" bind:value={$form.requirementId}>
+                <option value="1">Internship Agreement</option>
+                <option value="2">Medical Certificate</option>
+                <option value="3">Signed Work Plan</option>
+                <option value="4">Student's ID</option>
+                <option value="5">Faculty Adviser's IDs</option>
+                <option value="6">Supervisor's IDs</option>
+                <option value="7">Parent/Guardian's ID</option>
             </select>
         </label>
         {#if errors.formName}
