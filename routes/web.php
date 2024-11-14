@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\EnsureCorrectPhase;
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,6 +29,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/account', function () {
         return Inertia::render('account/Index');
     });
+
+    Route::get('/dashboard/pre/upload', function () {
+        return Inertia::render('dashboard/pre/(student)/upload/Index');
+    })->middleware(EnsureUserHasRole::class . ':student');
+
+    Route::post('/dashboard/pre/submit', [DashboardController::class, 'submitStudentDocument']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });
