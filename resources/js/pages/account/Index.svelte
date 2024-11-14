@@ -4,7 +4,7 @@
     $: email = $page.props.auth.user?.email;
 </script>
 
-<div class="main-screen">
+<div class="main-screen w-full">
     <p>Currently logged into: {email}</p>
     <form on:submit|preventDefault={() => router.post('/logout')}>
         <input type="submit" class="border-2" value="logout" />

@@ -12,7 +12,7 @@
     const dropdown = "flex flex-row justify-between hover:bg-light-primary/80 dark:hover:bg-dark-primary/80 w-full p-3 my-1 rounded-xl"
 </script>
 
-<div class="main-screen p-4 min-h-full">
+<div class="main-screen p-4 min-h-full w-full">
     <div class = "flex flex-row justify-center sm:justify-start"> 
         <!-- Temporary spot for logos-->
         <div class="p-2">
