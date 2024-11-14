@@ -11,7 +11,7 @@
 
     let submission_intern = [
         "Internship Agreements,Pending",
-        "Medical Certificate (Optional),Submitted",
+        "Medical Certificate (Optional),Pending",
         "Work Plan Signed by Company Supervisor,Pending",
     ].map(item => item.split(','));
 
@@ -64,7 +64,7 @@
         <p class="text-xl pt-2"> Internship Documents </p>
         <ul>
             {#each submission_intern as data}
-                    <li> <div class="flex p-4 my-1 justify-between bg-white dark:bg-black rounded-xl">
+                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
                         <div class="flex flex-col justify-center">
                             <div class="text-md"> {data[0]} </div>
                         </div>
@@ -78,7 +78,7 @@
         <p class="text-xl pt-2 "> Government IDs </p>
         <ul>
             {#each submission_ID as data}
-                    <li> <div class="flex p-4 my-1 justify-between bg-white dark:bg-black rounded-xl">
+                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
                         <div class="flex flex-col justify-center">
                             <div class="text-md"> {data[0]} </div>
                         </div>
@@ -91,9 +91,9 @@
     </div>
 
     <!-- Link to Submission Bin -->
-    <Link href="/dashboard/pre/upload" class="border-2">Submit Document
-        <div class="flex w-stretch p-4 justify-center border-2">
-            <div class="bg-light-secondary text-3xl p-4 text-light-secondary-text hover:opacity-90"> Submit Documents </div>
+    <Link href="/dashboard/pre/upload">
+        <div class="flex w-stretch p-4 justify-center">
+            <div class="bg-light-secondary text-3xl p-4 text-light-secondary-text hover:opacity-90 border-2"> Submit Documents </div>
         </div>
     </Link>
 </div>
