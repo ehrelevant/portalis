@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function redirectPhase(): RedirectResponse
     {
         $phase = WebsiteState::findOrFail(1)->phase;
-        return redirect('/dashboard/pre');
+        return redirect('/dashboard/' . $phase);
     }
 
     public function show(string $phase): Response
