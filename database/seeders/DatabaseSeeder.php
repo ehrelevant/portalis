@@ -22,17 +22,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Company::factory()->create([
-            'company_name' => 'Company Name'
+            'company_name' => 'Company Name',
         ]);
         Supervisor::factory()->create([
-            'company_id' => 1
+            'company_id' => 1,
         ]);
         Faculty::factory()->create([]);
         Student::factory()->create([
             'student_number' => 202200000,
             'supervisor_id' => 1,
             'faculty_id' => 1,
-            'grade' => 69.21
+            'grade' => 69.21,
         ]);
 
         User::factory()->create([
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'role_id' => 202200000,
             'first_name' => 'first',
             'middle_name' => 'middle',
-            'last_name' => 'last'
+            'last_name' => 'last',
         ]);
         User::factory()->create([
             'email' => 'supervisor@example.com',
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
-            'last_name' => 'last'
+            'last_name' => 'last',
         ]);
         User::factory()->create([
             'email' => 'faculty@example.com',
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
-            'last_name' => 'last'
+            'last_name' => 'last',
         ]);
         User::factory()->create([
             'email' => 'admin@example.com',
@@ -65,16 +65,16 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
-            'last_name' => 'last'
+            'last_name' => 'last',
         ]);
 
         $this->call([
             RequirementSeeder::class,
-            SubmissionStatusSeeder::class
+            SubmissionStatusSeeder::class,
         ]);
 
         WebsiteState::factory()->create([
-            'phase' => 'pre'
+            'phase' => 'pre',
         ]);
     }
 }

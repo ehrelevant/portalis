@@ -16,37 +16,37 @@ class SubmissionStatusSeeder extends Seeder
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 1,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 2,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 3,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 4,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 5,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 6,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
         SubmissionStatus::factory()->create([
             'student_number' => 202200000,
             'requirement_id' => 7,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
     }
 }

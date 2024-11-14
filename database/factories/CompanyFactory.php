@@ -18,7 +18,7 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_name' => Str::random(10)
+            'company_name' => Str::random(10),
         ];
     }
 }

@@ -17,7 +17,7 @@ class RequirementFactory extends Factory
     public function definition(): array
     {
         return [
-            'due_date' => fake()->date()
+            'due_date' => fake()->date(),
         ];
     }
 }

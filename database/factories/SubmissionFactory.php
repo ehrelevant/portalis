@@ -23,7 +23,7 @@ class SubmissionFactory extends Factory
             'student_number' => Student::factory(),
             'requirement_id' => Requirement::factory(),
             'submission_number' => fake()->numberBetween(1, 100),
-            'filepath' => fake()->file('/', '/storage/app/private/student/documents')
+            'filepath' => fake()->file('/', '/storage/app/private/student/documents'),
         ];
     }
 }

@@ -21,7 +21,7 @@ class StudentFactory extends Factory
         return [
             'supervisor_id' => Supervisor::factory(),
             'faculty_id' => Faculty::factory(),
-            'grade' => fake()->randomFloat()
+            'grade' => fake()->randomFloat(),
         ];
     }
 }

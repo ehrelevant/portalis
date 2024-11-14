@@ -43,7 +43,7 @@ class DashboardController extends Controller
             'file' => ['required', 'mimes:pdf', 'max:2048'],
         ]);
 
-        $requirement_id = (int)$form_values['requirementId'];
+        $requirement_id = (int) $form_values['requirementId'];
         $student_number = Auth::user()->role_id;
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
@@ -51,7 +51,7 @@ class DashboardController extends Controller
         $submission_status->status = 'submitted';
         $submission_status->save();
 
-        $submission = new Submission;
+        $submission = new Submission();
         $submission->student_number = $student_number;
         $submission->requirement_id = $requirement_id;
         $submission->submission_date = now();
