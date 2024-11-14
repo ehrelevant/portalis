@@ -29,6 +29,6 @@
     }
 
     .main-screen {
-        @apply min-h-full w-full bg-light-background p-1 text-light-primary-text transition-colors dark:bg-dark-background dark:text-dark-primary-text;
+        @apply min-h-full grow bg-light-background p-1 text-light-primary-text transition-colors dark:bg-dark-background dark:text-dark-primary-text;
     }
 }

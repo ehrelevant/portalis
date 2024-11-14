@@ -1,1 +1,10 @@
-<div class="main-screen">Faculty Pre Dashboard</div>
+<script>
+    import Header from '@shared/components/InternshipHeader.svelte';
+</script>
+
+<div class="main-screen p-4 w-full">
+    <Header txt="Pre-Internship Phase"/>
+
+    <!-- Search Function -->
+
+</div>
