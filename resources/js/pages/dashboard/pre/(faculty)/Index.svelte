@@ -2,7 +2,8 @@
     import { router, page } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
-    import Search from '@assets/search_logo.svelte'
+    import Search from '@assets/search_logo.svelte';
+    import Status from '@shared/components/Status.svelte';
 
     let student_data = ['fn1,mn1,ln1,sn1,Validated', 'fn2,mn2,ln2,sn2,Pending', 'fn3,mn3,ln3,sn3,Submitted'].map(item => item.split(','));
 
@@ -29,12 +30,12 @@
             {#each student_data as data}
                 <a href="{$page.url}/students/{data[3]}">
                     <li> <div class="flex p-4 my-2 justify-between bg-white dark:bg-black rounded-xl hover:opacity-80">
-                        <div class="flex flex-col">
+                        <div class="flex flex-col justify-center">
                             <div> {data[2]}, {data[0]} {data[1]} </div>
                             <div> {data[3]} </div>
                         </div>
                         <div class="flex items-center">
-                            --- {data[4]}
+                            <Status s_type={data[4]}/>
                         </div>
                     </div> </li>
                 </a>
