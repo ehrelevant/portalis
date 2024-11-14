@@ -91,10 +91,10 @@
     </div>
 
     <!-- Link to Submission Bin -->
-    <Link href="/dashboard/pre/upload">
-        <div class="flex w-stretch p-4 justify-center">
+    <div class="flex w-stretch p-4 justify-center">
+        <Link href="/dashboard/pre/upload">
             <div class="bg-light-secondary text-3xl p-4 text-light-secondary-text hover:opacity-90 border-2"> Submit Documents </div>
-        </div>
-    </Link>
+        </Link>
+    </div>
 </div>
 
