@@ -7,6 +7,7 @@ use App\Models\Faculty;
 use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\Submission;
+use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
 use App\Models\WebsiteState;
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Faculty::factory()->create([]);
         Student::factory()->create([
-            'student_number' => '202200000',
+            'student_number' => 202200000,
             'supervisor_id' => 1,
             'faculty_id' => 1,
             'grade' => 69.21
@@ -74,6 +75,16 @@ class DatabaseSeeder extends Seeder
         Requirement::factory()->create([
             'requirement_name' => 'Medical Certificate',
             'due_date' => now()->addDays(5)
+        ]);
+        SubmissionStatus::factory()->create([
+            'student_number' => 202200000,
+            'requirement_id' => 1,
+            'status' => 'pending'
+        ]);
+        SubmissionStatus::factory()->create([
+            'student_number' => 202200000,
+            'requirement_id' => 2,
+            'status' => 'pending'
         ]);
 
         WebsiteState::factory()->create([
