@@ -10,6 +10,8 @@ export default {
             sans: ['FiraSans', 'ui-sans-serif', 'system-ui'],
         },
         colors: {
+            white: '#FFFFFF',
+            black: '#101010',
             light: {
                 background: '#F1F1F1',
                 primary: '#C7EAD2',
