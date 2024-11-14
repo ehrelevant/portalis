@@ -1,11 +1,10 @@
 <script>
+    import { Link } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
 </script>
 
-<div class="main-screen p-4 w-full">
-    <Header txt="During Internship Phase"/>
+<div class="main-screen w-full p-4">
+    <Header txt="During Internship Phase" />
 
-    <!-- Search Function -->
-
+    <Link href="/dashboard/during/report/1">Week 1</Link>
 </div>
-

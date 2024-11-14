@@ -32,8 +32,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/pre/upload', function () {
         return Inertia::render('dashboard/pre/(student)/upload/Index');
     })->middleware(EnsureUserHasRole::class . ':student');
-
     Route::post('/dashboard/pre/submit', [DashboardController::class, 'submitStudentDocument']);
+
+    Route::get('/dashboard/during/report/1', function () {
+        return Inertia::render('dashboard/during/(supervisor)/report/Index');
+    });
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });
