@@ -4,7 +4,7 @@
     export let href = '#';
     export let Icon;
 
-    $: isActive = $page.url === href ? 'active-nav' : '';
+    $: isActive = '/' + $page.url.split('/')[1] === href ? 'active-nav' : '';
 </script>
 
 <li class="sidebar-div flex items-center justify-center {isActive}">
