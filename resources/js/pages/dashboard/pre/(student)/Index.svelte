@@ -4,12 +4,26 @@
     import Pending from '@assets/pending_logo.svelte';
     import Submitted from '@assets/submitted_logo.svelte';
     import Validated from '@assets/validated_logo.svelte';
+    import Status from '@shared/components/Status.svelte';
 
     let totalStatus = "Pending";
     let date = "mm/dd/yyyy";
+
+    let submission_intern = [
+        "Internship Agreements,Pending",
+        "Medical Certificate (Optional),Submitted",
+        "Work Plan Signed by Company Supervisor,Pending",
+    ].map(item => item.split(','));
+
+    let submission_ID = [
+        "Student’s ID,Pending",
+        "Faculty Adviser’s ID,Pending",
+        "Company Supervisor’s ID,Pending",
+        "Parent’s / Guardian’s ID,Pending",
+    ].map(item => item.split(','));
 </script>
 
-<div class="main-screen p-4 w-full">
+<div class="main-screen px-4 py-2 w-full">
     <Header txt="Pre-Internship Phase"/>
 
     {#if totalStatus == "Pending"}
@@ -18,7 +32,7 @@
             <div class="px-5 content-center"> <Pending /> </div>
             <div class="py-5 flex flex-col justify-center">
                 <p class="text-4xl font-semibold"> Pending Files </p>
-                <div class="flex flex-row"> <p class="text-2xl font-medium"> Please update/upload ALL pending documents before </p> <p class="text-2xl font-semibold pl-2">{date}.</p> </div>
+                <div class="flex flex-row"> <p class="text-2xl font-medium"> Please update/upload ALL pending documents before <i>{date}</i>.</p></div>
             </div>
         </div>
     {/if}
@@ -40,9 +54,47 @@
             <div class="px-5 content-center"> <Validated /> </div>
             <div class="py-5 flex flex-col justify-center">
                 <p class="text-4xl font-semibold"> Validated All Documents </p>
-                <div class="flex flex-row"> <p class="text-2xl font-medium"> Congratulations! Good luck on your internship! </p> <p class="text-2xl font-semibold pl-2">{date}</p> </div>
+                <div class="flex flex-row"> <p class="text-2xl font-medium"> Congratulations! Good luck on your internship! </p> </div>
             </div>
         </div>
     {/if}
+    
+    <!-- File Submission Statuses -->
+    <div>
+        <p class="text-xl pt-2"> Internship Documents </p>
+        <ul>
+            {#each submission_intern as data}
+                    <li> <div class="flex p-4 my-1 justify-between bg-white dark:bg-black rounded-xl">
+                        <div class="flex flex-col justify-center">
+                            <div class="text-md"> {data[0]} </div>
+                        </div>
+                        <div class="flex items-center">
+                            <Status s_type={data[1]}/>
+                        </div>
+                    </div> </li>
+            {/each}
+        </ul>
+
+        <p class="text-xl pt-2 "> Government IDs </p>
+        <ul>
+            {#each submission_ID as data}
+                    <li> <div class="flex p-4 my-1 justify-between bg-white dark:bg-black rounded-xl">
+                        <div class="flex flex-col justify-center">
+                            <div class="text-md"> {data[0]} </div>
+                        </div>
+                        <div class="flex items-center">
+                            <Status s_type={data[1]}/>
+                        </div>
+                    </div> </li>
+            {/each}
+        </ul>
+    </div>
+
+    <!-- Link to Submission Bin -->
+    <a href="/dashboard/pre/(student)/upload/Index"> <!-- edit this later -->
+        <div class="flex w-stretch p-4 justify-center">
+            <div class="bg-light-secondary text-3xl p-4 text-light-secondary-text hover:opacity-90"> Submit Documents </div>
+        </div>
+    </a>
 </div>
 
