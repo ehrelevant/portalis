@@ -28,7 +28,7 @@
     <div class="py-4">
         <ul>
             {#each student_data as data}
-                <a href="{$page.url}/students/{data[3]}">
+                <a href="{$page.url}/students/{data[3]}"> <!-- edit this later -->
                     <li> <div class="flex p-4 my-2 justify-between bg-white dark:bg-black rounded-xl hover:opacity-80">
                         <div class="flex flex-col justify-center">
                             <div> {data[2]}, {data[0]} {data[1]} </div>
