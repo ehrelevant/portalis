@@ -68,23 +68,9 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'last'
         ]);
 
-        Requirement::factory()->create([
-            'requirement_name' => 'Internship Agreement',
-            'due_date' => now()->addDays(5)
-        ]);
-        Requirement::factory()->create([
-            'requirement_name' => 'Medical Certificate',
-            'due_date' => now()->addDays(5)
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 1,
-            'status' => 'pending'
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 2,
-            'status' => 'pending'
+        $this->call([
+            RequirementSeeder::class,
+            SubmissionStatusSeeder::class
         ]);
 
         WebsiteState::factory()->create([
