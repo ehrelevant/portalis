@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Faculty;
+use App\Models\Requirement;
 use App\Models\Student;
+use App\Models\Submission;
 use App\Models\Supervisor;
 use App\Models\User;
 use App\Models\WebsiteState;
@@ -35,7 +37,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'student@example.com',
             'role' => 'student',
-            'role_id' => '202200000',
+            'role_id' => 202200000,
             'first_name' => 'first',
             'middle_name' => 'middle',
             'last_name' => 'last'
@@ -43,7 +45,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'supervisor@example.com',
             'role' => 'supervisor',
-            'role_id' => '1',
+            'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
             'last_name' => 'last'
@@ -51,7 +53,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'faculty@example.com',
             'role' => 'faculty',
-            'role_id' => '1',
+            'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
             'last_name' => 'last'
@@ -59,14 +61,23 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'admin@example.com',
             'role' => 'admin',
-            'role_id' => '1',
+            'role_id' => 1,
             'first_name' => 'first',
             'middle_name' => 'middle',
             'last_name' => 'last'
         ]);
 
+        Requirement::factory()->create([
+            'requirement_name' => 'Internship Agreement',
+            'due_date' => now()->addDays(5)
+        ]);
+        Requirement::factory()->create([
+            'requirement_name' => 'Medical Certificate',
+            'due_date' => now()->addDays(5)
+        ]);
+
         WebsiteState::factory()->create([
-            'phase' => 'pre',
+            'phase' => 'pre'
         ]);
     }
 }
