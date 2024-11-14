@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Student extends Model
+class Submission extends Model
 {
     /** @use HasFactory<\Database\Factories\StudentFactory> */
     use HasFactory;
@@ -19,18 +18,13 @@ class Student extends Model
      */
     public $timestamps = false;
 
-    public function supervisor(): BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(Supervisor::class);
+        return $this->belongsTo(Student::class);
     }
 
-    public function faculty(): BelongsTo
+    public function requirement(): BelongsTo
     {
-        return $this->belongsTo(Faculty::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(Submission::class);
+        return $this->belongsTo(Requirement::class);
     }
 }
