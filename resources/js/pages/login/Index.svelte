@@ -20,7 +20,7 @@
     }
 </script>
 
-<div class="main-screen flex flex-col items-center justify-center">
+<div class="main-screen flex flex-col items-center w-full justify-center">
     <article class="min-w-1/4">
         <div>
             <div class="flex content-end py-2 text-3xl">Account Login</div>

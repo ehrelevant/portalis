@@ -10,6 +10,8 @@ export default {
             sans: ['FiraSans', 'ui-sans-serif', 'system-ui'],
         },
         colors: {
+            white: '#FFFFFF',
+            black: '#101010',
             light: {
                 background: '#F1F1F1',
                 primary: '#C7EAD2',
@@ -28,23 +30,23 @@ export default {
 
             floating: {
                 blue: {
-                    dark: '#b2c1d1',
+                    light: '#b2c1d1',
                     DEFAULT: '#2663a6',
                 },
                 forest: {
-                    dark: '#adc8b5',
+                    light: '#adc8b5',
                     DEFAULT: '#227a3d',
                 },
                 purple: {
-                    dark: '#cbbce3',
+                    light: '#cbbce3',
                     DEFAULT: '#8054d0',
                 },
                 brown: {
-                    dark: '#cbc2b0',
+                    light: '#cbc2b0',
                     DEFAULT: '#866b26',
                 },
                 red: {
-                    dark: '#dcafb2',
+                    light: '#dcafb2',
                     DEFAULT: '#bf2a30',
                 },
             },
