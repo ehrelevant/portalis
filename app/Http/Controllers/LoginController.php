@@ -59,16 +59,15 @@ class LoginController extends Controller
         $email = $credentials['email'];
 
         $generated_pin = Str::random(6);
-        info('Pin: ' . $generated_pin);
 
         $user = User::where('email', $email)->firstOrFail();
         $user->password = Hash::make($generated_pin);
         $user->password_expiry = now()->addMinutes(5);
         $user->saveQuietly();
 
-        return back()->withErrors([
-            'email' => 'Provided email not found.'
-        ]);
+        info('Pin: ' . $generated_pin);
+
+        return back();
     }
 
     /**
