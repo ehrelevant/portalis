@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\EnsureCorrectPhase;
@@ -26,9 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'redirectPhase']);
     Route::get('/dashboard/{phase}', [DashboardController::class, 'show'])->middleware(EnsureCorrectPhase::class);
 
-    Route::get('/account', function () {
-        return Inertia::render('account/Index');
-    });
+    Route::get('/account', [AccountController::class, 'show']);
 
     Route::get('/dashboard/pre/upload', function () {
         return Inertia::render('dashboard/pre/(student)/upload/Index');
