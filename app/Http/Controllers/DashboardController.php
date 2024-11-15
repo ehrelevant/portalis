@@ -21,7 +21,7 @@ class DashboardController extends Controller
         return redirect('/dashboard/' . $phase);
     }
 
-    public function show(string $phase): Response
+    public function show(string $phase, Request $request): Response
     {
         switch (Auth::user()->role) {
             case User::ROLE_STUDENT:
@@ -32,8 +32,17 @@ class DashboardController extends Controller
                 // TODO: Move to a more dedicated function
                 if ($phase == 'pre') {
                     $faculty_user = Auth::user();
-                    $students_data = DB::table('students')
+
+                    $search_text = $request->query('search') ?? '';
+
+                    // TODO: Add student number search
+                    $students_partial = DB::table('students')
                         ->where('supervisor_id', $faculty_user->role_id)
+                        ->where('first_name', 'LIKE', '%' . $search_text . '%')
+                        ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
+                        ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
+
+                    $students_data = $students_partial
                         ->join('users', 'students.student_number', '=', 'users.role_id')
                         ->join('submission_statuses', 'students.student_number', '=', 'submission_statuses.student_number')
                         ->where('role', 'student')

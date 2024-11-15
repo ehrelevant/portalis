@@ -6,6 +6,13 @@
     import Status from '@shared/components/Status.svelte';
 
     export let students;
+
+    /** @type {string} */
+    let searchText = '';
+
+    function search() {
+        router.get(`/dashboard/pre?search=${searchText}`);
+    }
 </script>
 
 <div class="main-screen w-full p-4">
@@ -13,13 +20,14 @@
 
     <!-- Search Function -->
     <div class="flex flex-row content-center justify-center">
-        <div class="flex items-center px-2">
+        <button class="flex items-center px-2" on:click={search}>
             <Search />
-        </div>
+        </button>
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
-            type="email"
+            type="text"
             placeholder="Search by Name or Student Number"
+            bind:value={searchText}
         />
     </div>
 
