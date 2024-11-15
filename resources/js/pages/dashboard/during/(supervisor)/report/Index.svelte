@@ -1,5 +1,6 @@
 <script>
     import { useForm } from '@inertiajs/svelte';
+    import Header from '@shared/components/InternshipHeader.svelte';
 
     export let students = [
         {
@@ -57,81 +58,92 @@
     }
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
-    <div class="flex flex-col gap-4">
-        <div>
-            <p>Non-Technical Criteria</p>
-            {#each students as student, i}
-                {@const { last_name, first_name } = student}
-                <label class="flex flex-row">
-                    {last_name}, {first_name}
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].ratings[1]}
-                    />
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].ratings[2]}
-                    />
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].ratings[3]}
-                    />
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].ratings[4]}
-                    />
-                </label>
-            {/each}
-        </div>
-        <div>
-            <p>Technical Criteria</p>
-            {#each students as student, i}
-                {@const { last_name, first_name } = student}
-                <label class="flex flex-row">
-                    {last_name}, {first_name}
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].ratings[5]}
-                    />
-                </label>
-            {/each}
+<div class="main-screen p-4">
+    <Header txt="During Internship: Form Response" />
+
+    <form on:submit|preventDefault={handleSubmit}>
+        <div class="flex flex-col gap-4">
+            <div>
+                <p>Non-Technical Criteria</p>
+                {#each students as student, i}
+                    {@const { last_name, first_name } = student}
+                    <label class="flex flex-row">
+                        {last_name}, {first_name}
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].ratings[1]}
+                        />
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].ratings[2]}
+                        />
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].ratings[3]}
+                        />
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].ratings[4]}
+                        />
+                    </label>
+                {/each}
+            </div>
+
+            <div>
+                <p>Technical Criteria</p>
+                {#each students as student, i}
+                    {@const { last_name, first_name } = student}
+                    <label class="flex flex-row">
+                        {last_name}, {first_name}
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].ratings[5]}
+                        />
+                    </label>
+                {/each}
+            </div>
+
+            <div>
+                <p>Number of Hours</p>
+                {#each students as student, i}
+                    {@const { last_name, first_name } = student}
+                    <label class="flex flex-row">
+                        {last_name}, {first_name}
+                        <input
+                            class="border-2"
+                            type="number"
+                            bind:value={$form.evaluations[i].hours}
+                        />
+                    </label>
+                {/each}
+            </div>
+
+            <div>
+                <p>Comments or Concerns</p>
+                {#each students as student, i}
+                    {@const { last_name, first_name } = student}
+                    <label class="flex flex-row">
+                        {last_name}, {first_name}
+                        <textarea
+                            class="border-2"
+                            bind:value={$form.evaluations[i]['comments']}
+                        />
+                    </label>
+                {/each}
+            </div>
         </div>
 
-        <div>
-            <p>Number of Hours</p>
-            {#each students as student, i}
-                {@const { last_name, first_name } = student}
-                <label class="flex flex-row">
-                    {last_name}, {first_name}
-                    <input
-                        class="border-2"
-                        type="number"
-                        bind:value={$form.evaluations[i].hours}
-                    />
-                </label>
-            {/each}
+        <div class="m-2 flex justify-center">
+            <input
+                type="submit"
+                value="Submit Response"
+                class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+            />
         </div>
-
-        <div>
-            <p>Comments or Concerns</p>
-            {#each students as student, i}
-                {@const { last_name, first_name } = student}
-                <label class="flex flex-row">
-                    {last_name}, {first_name}
-                    <textarea
-                        class="border-2"
-                        bind:value={$form.evaluations[i].comments}
-                    />
-                </label>
-            {/each}
-        </div>
-    </div>
-
-    <input type="submit" value="Submit Response" class="border-2" />
-</form>
+    </form>
+</div>
