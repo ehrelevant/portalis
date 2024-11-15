@@ -30,9 +30,26 @@
     ];
     export let week = 1;
 
+    const evaluations = students.map((student) => {
+        return {
+            student_number: student.student_number,
+            last_name: student.last_name,
+            first_name: student.first_name,
+            week: week,
+            ratings: {
+                1: null,
+                2: null,
+                3: null,
+                4: null,
+                5: null,
+            },
+            hours: null,
+        };
+    });
+
     let form = useForm({
         week: week,
-        evaluations: students,
+        evaluations: evaluations,
     });
 
     function handleSubmit() {
@@ -51,22 +68,22 @@
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['1']}
+                        bind:value={$form.evaluations[i].ratings[1]}
                     />
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['2']}
+                        bind:value={$form.evaluations[i].ratings[2]}
                     />
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['3']}
+                        bind:value={$form.evaluations[i].ratings[3]}
                     />
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['4']}
+                        bind:value={$form.evaluations[i].ratings[4]}
                     />
                 </label>
             {/each}
@@ -80,14 +97,14 @@
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['5']}
+                        bind:value={$form.evaluations[i].ratings[5]}
                     />
                 </label>
             {/each}
         </div>
 
         <div>
-            <p>Number of Hours per Week</p>
+            <p>Number of Hours</p>
             {#each students as student, i}
                 {@const { last_name, first_name } = student}
                 <label class="flex flex-row">
@@ -95,7 +112,7 @@
                     <input
                         class="border-2"
                         type="number"
-                        bind:value={$form.evaluations[i]['hours']}
+                        bind:value={$form.evaluations[i].hours}
                     />
                 </label>
             {/each}
@@ -109,7 +126,7 @@
                     {last_name}, {first_name}
                     <textarea
                         class="border-2"
-                        bind:value={$form.evaluations[i]['comments']}
+                        bind:value={$form.evaluations[i].comments}
                     />
                 </label>
             {/each}
