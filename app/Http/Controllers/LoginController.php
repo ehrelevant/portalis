@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Mail;
+use App\Mail\LoginMail;
 
 class LoginController extends Controller
 {
@@ -66,6 +68,10 @@ class LoginController extends Controller
         $user->saveQuietly();
 
         info('Pin: ' . $generated_pin);
+        Mail::to($email)->send(new LoginMail([
+            'title' => 'CS 195 Portal - Login Code',
+            'body' => 'Pin: ' . $generated_pin,
+        ]));
 
         return back();
     }
