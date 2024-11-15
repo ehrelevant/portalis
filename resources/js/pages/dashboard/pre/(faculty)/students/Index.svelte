@@ -3,54 +3,48 @@
     import Status from '@shared/components/Status.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
 
-    /** @type {string} */
-    export let first_name;
-    /** @type {string} */
-    export let middle_name;
-    /** @type {string} */
-    export let last_name;
-    /** @type {int} */
-    export let student_number;
+    export let student;
+    $: ({ student_number, first_name, middle_name, last_name } = student);
 
-    let submission_intern = [
-        "Internship Agreements,Pending",
-        "Medical Certificate (Optional),Pending",
-        "Work Plan Signed by Company Supervisor,Pending",
-    ].map(item => item.split(','));
-
-    let submission_ID = [
-        "Student's ID,Pending",
-        "Faculty Adviser's ID,Pending",
-        "Company Supervisor's ID,Pending",
-        "Parent's / Guardian's ID,Pending",
-    ].map(item => item.split(','));
+    export let submissions;
 </script>
 
-<div class="main-screen p-4 w-full">
-    <Header txt="Pre-Internship: Student's View"/>
+<div class="main-screen w-full p-4">
+    <Header txt="Pre-Internship: Student's View" />
 
-    <div class="p-4 bg-light-secondary dark:bg-dark-secondary text-light-secondary-text dark:text-dark-secondary-text text-xl">
-        Name: {first_name} {middle_name} {last_name} <br>
+    <div
+        class="bg-light-secondary p-4 text-xl text-light-secondary-text dark:bg-dark-secondary dark:text-dark-secondary-text"
+    >
+        Name: {first_name}
+        {middle_name}
+        {last_name} <br />
         Student Number: {student_number}
     </div>
 
     <!-- File Submission Statuses -->
     <div>
-        <p class="text-xl pt-2"> Internship Documents </p>
+        <p class="pt-2 text-xl">Internship Documents</p>
         <ul>
-            {#each submission_intern as data}
-                <Submission file_name={data[0]} sub_status={data[1]} faculty=1 />
+            {#each submissions.slice(0, 3) as submission}
+                {@const { requirement_name, status } = submission}
+                <Submission
+                    file_name={requirement_name}
+                    sub_status={status}
+                    faculty="1"
+                />
             {/each}
         </ul>
 
-        <p class="text-xl pt-2 "> Government IDs </p>
+        <p class="pt-2 text-xl">Government IDs</p>
         <ul>
-            {#each submission_ID as data}
-                <Submission file_name={data[0]} sub_status={data[1]} faculty=1 />
+            {#each submissions.slice(3) as submission}
+                {@const { requirement_name, status } = submission}
+                <Submission
+                    file_name={requirement_name}
+                    sub_status={status}
+                    faculty="1"
+                />
             {/each}
         </ul>
     </div>
-
-
-
 </div>
