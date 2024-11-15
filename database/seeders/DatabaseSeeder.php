@@ -68,6 +68,68 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'last',
         ]);
 
+
+        Student::factory()->create([
+            'student_number' => 202200001,
+            'supervisor_id' => 1,
+            'faculty_id' => 1,
+            'grade' => 69.21,
+        ]);
+        User::factory()->create([
+            'email' => 'eacastillo1@up.edu.ph',
+            'role' => 'student',
+            'role_id' => 202200001,
+            'first_name' => 'Ehren',
+            'middle_name' => 'Middle',
+            'last_name' => 'Castillo',
+        ]);
+
+        Student::factory()->create([
+            'student_number' => 202200002,
+            'supervisor_id' => 1,
+            'faculty_id' => 1,
+            'grade' => 69.21,
+        ]);
+        User::factory()->create([
+            'email' => 'csacyatan1@up.edu.ph',
+            'role' => 'student',
+            'role_id' => 202200002,
+            'first_name' => 'Clyde Ambroz',
+            'middle_name' => 'Middle',
+            'last_name' => 'Acyatan',
+        ]);
+
+        Student::factory()->create([
+            'student_number' => 202200003,
+            'supervisor_id' => 1,
+            'faculty_id' => 1,
+            'grade' => 69.21,
+        ]);
+        User::factory()->create([
+            'email' => 'elsaavedra@up.edu.ph',
+            'role' => 'student',
+            'role_id' => 202200003,
+            'first_name' => 'Eoghaine Czeriel',
+            'middle_name' => 'Middle',
+            'last_name' => 'Saavedra',
+        ]);
+
+        Student::factory()->create([
+            'student_number' => 202200004,
+            'supervisor_id' => 1,
+            'faculty_id' => 1,
+            'grade' => 69.21,
+        ]);
+        User::factory()->create([
+            'email' => 'drbermudez1@up.edu.ph',
+            'role' => 'student',
+            'role_id' => 202200004,
+            'first_name' => 'Dominic Lawrence',
+            'middle_name' => 'Middle',
+            'last_name' => 'Bermudez',
+        ]);
+
+
         $this->call([
             RequirementSeeder::class,
             SubmissionStatusSeeder::class,
@@ -79,7 +141,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         WebsiteState::factory()->create([
-            'phase' => 'during',
+            'phase' => 'pre',
         ]);
     }
 }

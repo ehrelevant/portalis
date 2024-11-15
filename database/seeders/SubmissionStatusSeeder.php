@@ -13,40 +13,14 @@ class SubmissionStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 1,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 2,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 3,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 4,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 5,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 6,
-            'status' => 'pending',
-        ]);
-        SubmissionStatus::factory()->create([
-            'student_number' => 202200000,
-            'requirement_id' => 7,
-            'status' => 'pending',
-        ]);
+        for($sn = 202200000; $sn <= 202200004; ++$sn) {
+            for($id = 1; $id <= 7; ++$id) {
+                SubmissionStatus::factory()->create([
+                    'student_number' => $sn,
+                    'requirement_id' => $id,
+                    'status' => 'pending',
+                ]);
+            }
+        }
     }
 }
