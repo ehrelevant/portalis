@@ -15,23 +15,23 @@ class RatingQuestionSeeder extends Seeder
     {
         RatingQuestion::factory()->create([
             'criterion' => 'Work Ethic',
-            'maximum_score' => 10
+            'maximum_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'criterion' => 'Attitude and Personality',
-            'maximum_score' => 10
+            'maximum_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'criterion' => 'Attendance and Punctuality',
-            'maximum_score' => 10
+            'maximum_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'criterion' => 'Respect for Authority',
-            'maximum_score' => 10
+            'maximum_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'criterion' => 'Technical Output',
-            'maximum_score' => 60
+            'maximum_score' => 60,
         ]);
     }
 }

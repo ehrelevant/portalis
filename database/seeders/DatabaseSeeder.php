@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RatingQuestionSeeder::class,
-            OpenEndedQuestionSeeder::class
+            OpenEndedQuestionSeeder::class,
         ]);
 
         WebsiteState::factory()->create([

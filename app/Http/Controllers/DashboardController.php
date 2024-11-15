@@ -62,7 +62,7 @@ class DashboardController extends Controller
                         ->get();
 
                     return Inertia::render('dashboard/pre/(faculty)/Index', [
-                        'students' => $students_data
+                        'students' => $students_data,
                     ]);
                 }
                 return Inertia::render('dashboard/' . $phase . '/(faculty)/Index');

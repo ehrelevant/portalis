@@ -13,7 +13,8 @@ use Inertia\Inertia;
 
 class WeeklyReportController extends Controller
 {
-    public function show(int $week) {
+    public function show(int $week)
+    {
         $supervisor_user = Auth::user();
 
         $supervised_students = DB::table('students')
