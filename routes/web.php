@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\WeeklyReportController;
 use App\Http\Middleware\EnsureCorrectPhase;
 use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Support\Facades\Route;
@@ -34,9 +35,8 @@ Route::middleware(['auth'])->group(function () {
     })->middleware(EnsureUserHasRole::class . ':student');
     Route::post('/dashboard/pre/submit', [DashboardController::class, 'submitStudentDocument']);
 
-    Route::get('/dashboard/during/report/1', function () {
-        return Inertia::render('dashboard/during/(supervisor)/report/Index');
-    });
+    Route::get('/dashboard/during/report/{week}', [WeeklyReportController::class, 'show']);
+    Route::post('/dashboard/during/report/submit', [WeeklyReportController::class, 'submitWeeklyReport']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });

@@ -28,8 +28,10 @@
             first_name: 'first',
         },
     ];
+    export let week = 1;
 
     let form = useForm({
+        week: week,
         evaluations: students,
     });
 
