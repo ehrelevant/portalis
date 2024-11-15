@@ -9,6 +9,7 @@ use App\Models\WebsiteState;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,6 +29,33 @@ class DashboardController extends Controller
             case User::ROLE_SUPERVISOR:
                 return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index');
             case User::ROLE_FACULTY:
+                // TODO: Move to a more dedicated function
+                if ($phase == 'pre') {
+                    $faculty_user = Auth::user();
+                    $students_data = DB::table('students')
+                        ->where('supervisor_id', $faculty_user->role_id)
+                        ->join('users', 'students.student_number', '=', 'users.role_id')
+                        ->join('submission_statuses', 'students.student_number', '=', 'submission_statuses.student_number')
+                        ->where('role', 'student')
+                        ->select(
+                            'students.student_number',
+                            'users.first_name',
+                            'users.middle_name',
+                            'users.last_name',
+                            DB::raw("MIN(submission_statuses.status) as total_status")
+                        )
+                        ->groupBy(
+                            'students.student_number',
+                            'users.first_name',
+                            'users.middle_name',
+                            'users.last_name',
+                        )
+                        ->get();
+
+                    return Inertia::render('dashboard/pre/(faculty)/Index', [
+                        'students' => $students_data
+                    ]);
+                }
                 return Inertia::render('dashboard/' . $phase . '/(faculty)/Index');
             case User::ROLE_ADMIN:
                 return Inertia::render('dashboard/' . $phase . '/(admin)/Index');
