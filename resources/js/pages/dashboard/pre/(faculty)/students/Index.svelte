@@ -1,6 +1,7 @@
 <script>
     import Header from '@shared/components/InternshipHeader.svelte';
     import Status from '@shared/components/Status.svelte';
+    import Submission from '@shared/components/SubmissionComponent.svelte';
 
     /** @type {string} */
     export let first_name;
@@ -38,28 +39,14 @@
         <p class="text-xl pt-2"> Internship Documents </p>
         <ul>
             {#each submission_intern as data}
-                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
-                        <div class="flex flex-col justify-center">
-                            <div class="text-md"> {data[0]} </div>
-                        </div>
-                        <div class="flex items-center">
-                            <Status s_type={data[1]}/>
-                        </div>
-                    </div> </li>
+                <Submission file_name={data[0]} sub_status={data[1]} faculty=1 />
             {/each}
         </ul>
 
         <p class="text-xl pt-2 "> Government IDs </p>
         <ul>
             {#each submission_ID as data}
-                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
-                        <div class="flex flex-col justify-center">
-                            <div class="text-md"> {data[0]} </div>
-                        </div>
-                        <div class="flex items-center">
-                            <Status s_type={data[1]}/>
-                        </div>
-                    </div> </li>
+                <Submission file_name={data[0]} sub_status={data[1]} faculty=1 />
             {/each}
         </ul>
     </div>

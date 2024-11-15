@@ -4,7 +4,8 @@
     import Pending from '@assets/pending_logo.svelte';
     import Submitted from '@assets/submitted_logo.svelte';
     import Validated from '@assets/validated_logo.svelte';
-    import Status from '@shared/components/Status.svelte';
+    import Submission from '@shared/components/SubmissionComponent.svelte';
+
 
     let totalStatus = "Pending";
     let date = "mm/dd/yyyy";
@@ -64,28 +65,14 @@
         <p class="text-xl pt-2"> Internship Documents </p>
         <ul>
             {#each submission_intern as data}
-                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
-                        <div class="flex flex-col justify-center">
-                            <div class="text-md"> {data[0]} </div>
-                        </div>
-                        <div class="flex items-center">
-                            <Status s_type={data[1]}/>
-                        </div>
-                    </div> </li>
+                <Submission file_name={data[0]} sub_status={data[1]} />
             {/each}
         </ul>
 
         <p class="text-xl pt-2 "> Government IDs </p>
         <ul>
             {#each submission_ID as data}
-                    <li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
-                        <div class="flex flex-col justify-center">
-                            <div class="text-md"> {data[0]} </div>
-                        </div>
-                        <div class="flex items-center">
-                            <Status s_type={data[1]}/>
-                        </div>
-                    </div> </li>
+                <Submission file_name={data[0]} sub_status={data[1]} />
             {/each}
         </ul>
     </div>
