@@ -16,10 +16,10 @@
     ].map(item => item.split(','));
 
     let submission_ID = [
-        "Student’s ID,Pending",
-        "Faculty Adviser’s ID,Pending",
-        "Company Supervisor’s ID,Pending",
-        "Parent’s / Guardian’s ID,Pending",
+        "Student's ID,Pending",
+        "Faculty Adviser's ID,Pending",
+        "Company Supervisor's ID,Pending",
+        "Parent's / Guardian's ID,Pending",
     ].map(item => item.split(','));
 </script>
 
