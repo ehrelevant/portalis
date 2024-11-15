@@ -73,8 +73,13 @@ class DatabaseSeeder extends Seeder
             SubmissionStatusSeeder::class,
         ]);
 
+        $this->call([
+            RatingQuestionSeeder::class,
+            OpenEndedQuestionSeeder::class,
+        ]);
+
         WebsiteState::factory()->create([
-            'phase' => 'pre',
+            'phase' => 'during',
         ]);
     }
 }
