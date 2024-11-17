@@ -67,14 +67,12 @@ class LoginController extends Controller
         $user->password_expiry = now()->addMinutes(5);
         $user->saveQuietly();
 
-        if (getenv('SEND_PIN_TO_EMAIL'))
-        {
+        if (getenv('SEND_PIN_TO_EMAIL')) {
             Mail::to($email)->send(new LoginMail([
                 'title' => 'CS 195 Portal - Login Code',
                 'body' => 'Pin: ' . $generated_pin,
             ]));
-        }
-        else {
+        } else {
             info('Pin: ' . $generated_pin);
         }
 

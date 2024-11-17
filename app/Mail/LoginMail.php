@@ -12,14 +12,15 @@ use Illuminate\Mail\Mailables\Address;
 
 class LoginMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $data;
 
     /**
      * Create a new message instance.
      */
-    public function __construct( $data )
+    public function __construct($data)
     {
         $this->data = $data;
     }
