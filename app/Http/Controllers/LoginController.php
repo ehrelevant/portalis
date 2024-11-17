@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\LoginMail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LoginController extends Controller
 {
@@ -62,11 +63,16 @@ class LoginController extends Controller
 
         $generated_pin = Str::random(6);
 
-        $user = User::where('email', $email)->firstOrFail();
-        $user->password = Hash::make($generated_pin);
-        $user->password_expiry = now()->addMinutes(5);
-        $user->saveQuietly();
-
+        try {
+            $user = User::where('email', $email)->firstOrFail();
+            $user->password = Hash::make($generated_pin);
+            $user->password_expiry = now()->addMinutes(5);
+            $user->saveQuietly();
+        } catch (ModelNotFoundException) {
+            return back()->withErrors([
+                'email' => 'The provided email cannot be found.',
+            ]);
+        }
 
         if (env('SEND_PIN_TO_EMAIL')) {
             Mail::to($email)->send(new LoginMail([
