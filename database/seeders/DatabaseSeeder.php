@@ -4,10 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Faculty;
-use App\Models\Requirement;
 use App\Models\Student;
-use App\Models\Submission;
-use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
 use App\Models\WebsiteState;
@@ -39,33 +36,33 @@ class DatabaseSeeder extends Seeder
             'email' => 'student@example.com',
             'role' => 'student',
             'role_id' => 202200000,
-            'first_name' => 'first',
-            'middle_name' => 'middle',
-            'last_name' => 'last',
+            'first_name' => 'First',
+            'middle_name' => 'Middle',
+            'last_name' => 'Last',
         ]);
         User::factory()->create([
             'email' => 'supervisor@example.com',
             'role' => 'supervisor',
             'role_id' => 1,
-            'first_name' => 'first',
-            'middle_name' => 'middle',
-            'last_name' => 'last',
+            'first_name' => 'First',
+            'middle_name' => 'Middle',
+            'last_name' => 'Last',
         ]);
         User::factory()->create([
             'email' => 'faculty@example.com',
             'role' => 'faculty',
             'role_id' => 1,
-            'first_name' => 'first',
-            'middle_name' => 'middle',
-            'last_name' => 'last',
+            'first_name' => 'First',
+            'middle_name' => 'Middle',
+            'last_name' => 'Last',
         ]);
         User::factory()->create([
             'email' => 'admin@example.com',
             'role' => 'admin',
             'role_id' => 1,
-            'first_name' => 'first',
-            'middle_name' => 'middle',
-            'last_name' => 'last',
+            'first_name' => 'First',
+            'middle_name' => 'Middle',
+            'last_name' => 'Last',
         ]);
 
 
@@ -128,7 +125,6 @@ class DatabaseSeeder extends Seeder
             'middle_name' => 'Middle',
             'last_name' => 'Bermudez',
         ]);
-
 
         $this->call([
             RequirementSeeder::class,
