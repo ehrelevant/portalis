@@ -16,7 +16,7 @@ return new class extends Migration {
 
             // Foreign keys
             $table->foreignId('intern_evaluation_id')->constrained();
-            $table->foreignId('rating_question_id')->constrained();
+            $table->foreignId('open_ended_question_id')->constrained();
 
             // Other keys
             $table->text('answer');
