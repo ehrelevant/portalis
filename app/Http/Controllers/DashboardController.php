@@ -27,7 +27,7 @@ class DashboardController extends Controller
             case User::ROLE_STUDENT:
                 return Inertia::render('dashboard/' . $phase . '/(student)/Index');
             case User::ROLE_SUPERVISOR:
-                return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index');
+                return $this->showSupervisor($phase);
             case User::ROLE_FACULTY:
                 return $this->showFaculty($phase, $request);
             case User::ROLE_ADMIN:
@@ -37,7 +37,36 @@ class DashboardController extends Controller
         abort(404);
     }
 
-    public function showFaculty(string $phase, Request $request)
+    public function showSupervisor(string $phase): Response
+    {
+        if ($phase === 'during') {
+            $supervisor_id = Auth::user()->role_id;
+            $company_name = DB::table('supervisors')
+                ->where('supervisors.id', $supervisor_id)
+                ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+                ->select('companies.company_name')
+                ->firstOrFail()
+                ->company_name;
+
+            $weekly_report_statuses = DB::table('weekly_report_statuses')
+                ->where('supervisor_id', $supervisor_id)
+                ->select(
+                    'week',
+                    'status'
+                )
+                ->distinct()
+                ->get();
+
+            return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index', [
+                'company_name' => $company_name,
+                'weekly_report_statuses' => $weekly_report_statuses,
+            ]);
+        }
+
+        return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index');
+    }
+
+    public function showFaculty(string $phase, Request $request): Response
     {
         if ($phase === 'pre') {
             $faculty_user = Auth::user();
