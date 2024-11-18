@@ -31,7 +31,7 @@ class WeeklyReportController extends Controller
         ]);
     }
 
-    public function submitWeeklyReport(Request $request): RedirectResponse
+    public function submit(Request $request): RedirectResponse
     {
         $form_values = $request->validate([
             'week' => ['integer', 'numeric'],
@@ -39,7 +39,8 @@ class WeeklyReportController extends Controller
             'evaluations.*.ratings' => ['required', 'array'],
             'evaluations.*.ratings.*' => ['required', 'integer', 'numeric'],
             'evaluations.*.hours' => ['required', 'integer', 'numeric'],
-            'evaluations.*.comments' => ['string'],
+            'evaluations.*.open_ended' => ['array'],
+            'evaluations.*.open_ended.*' => ['nullable', 'string'],
         ]);
 
         $supervisor_user = Auth::user();
@@ -65,11 +66,13 @@ class WeeklyReportController extends Controller
                 $report_rating->save();
             }
 
-            $report_comments = new WeeklyReportAnswer();
-            $report_comments->weekly_report_id = $new_report->id;
-            $report_comments->open_ended_question_id = 1;
-            $report_comments->answer = $evaluation['comments'];
-            $report_comments->save();
+            foreach ($evaluation['open_ended'] as $i => $open_ended) {
+                $report_open_ended = new WeeklyReportAnswer();
+                $report_open_ended->weekly_report_id = $new_report->id;
+                $report_open_ended->open_ended_question_id = $i;
+                $report_open_ended->answer = $open_ended ?? '';
+                $report_open_ended->save();
+            }
         }
 
         return redirect('/dashboard');

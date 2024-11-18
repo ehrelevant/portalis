@@ -18,6 +18,9 @@
                 4: null,
                 5: null,
             },
+            open_ended: {
+                1: null,
+            },
             hours: null,
         };
     });
@@ -136,7 +139,7 @@
                         <p>{last_name}, {first_name}</p>
                         <textarea
                             class="w-full border-2 p-2 text-light-primary-text"
-                            bind:value={$form.evaluations[i]['comments']}
+                            bind:value={$form.evaluations[i]['open_ended']}
                         />
                     {/each}
                 </div>
