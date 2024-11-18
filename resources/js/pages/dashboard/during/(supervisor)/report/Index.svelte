@@ -139,7 +139,7 @@
                         <p>{last_name}, {first_name}</p>
                         <textarea
                             class="w-full border-2 p-2 text-light-primary-text"
-                            bind:value={$form.evaluations[i]['open_ended']}
+                            bind:value={$form.evaluations[i]['open_ended'][1]}
                         />
                     {/each}
                 </div>
