@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Requirement extends Model
 {
@@ -18,8 +19,13 @@ class Requirement extends Model
      */
     public $timestamps = false;
 
-    public function submissions(): HasMany
+    public function submissionStatuses(): HasMany
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(SubmissionStatus::class);
+    }
+
+    public function submissions(): HasManyThrough
+    {
+        return $this->hasManyThrough(Submission::class, SubmissionStatus::class);
     }
 }

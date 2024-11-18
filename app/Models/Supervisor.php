@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Supervisor extends Model
 {
@@ -27,5 +28,25 @@ class Supervisor extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function weeklyReportStatuses(): HasMany
+    {
+        return $this->hasMany(WeeklyReportStatus::class);
+    }
+
+    public function weeklyReports(): HasManyThrough
+    {
+        return $this->hasManyThrough(WeeklyReport::class, WeeklyReportStatus::class);
+    }
+
+    public function internEvaluationStatuses(): HasMany
+    {
+        return $this->hasMany(InternEvaluationStatus::class);
+    }
+
+    public function internEvaluations(): HasManyThrough
+    {
+        return $this->hasManyThrough(InternEvaluation::class, InternEvaluationStatus::class);
     }
 }

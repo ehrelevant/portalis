@@ -6,20 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class InternEvaluation extends Model
 {
     /** @use HasFactory<\Database\Factories\InternEvaluationFactory> */
     use HasFactory;
 
-    public function supervisor(): BelongsTo
+    public function internEvaluationStatus(): BelongsTo
     {
-        return $this->belongsTo(Supervisor::class);
+        return $this->belongsTo(InternEvaluationStatus::class);
     }
 
-    public function student(): BelongsTo
+    public function supervisor(): HasOneThrough
     {
-        return $this->belongsTo(Student::class);
+        return $this->hasOneThrough(Supervisor::class, InternEvaluationStatus::class);
+    }
+
+    public function student(): HasOneThrough
+    {
+        return $this->hasOneThrough(Student::class, InternEvaluationStatus::class);
     }
 
     public function ratings(): HasMany
