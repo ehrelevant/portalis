@@ -16,5 +16,14 @@ class OpenEndedQuestionSeeder extends Seeder
         OpenEndedQuestion::factory()->create([
             'question' => 'Any comments or concerns?',
         ]);
+        OpenEndedQuestion::factory()->create([
+            'question' => 'What are the intern’s main strengths? In terms of technical skills, work ethic, etc.?',
+        ]);
+        OpenEndedQuestion::factory()->create([
+            'question' => 'Are there areas (communication, technical, work ethic, etc.) where the intern seems to be lacking?',
+        ]);
+        OpenEndedQuestion::factory()->create([
+            'question' => 'Would you consider the intern to be “industry-ready?“ Would you consider hiring the intern after he/she graduates?',
+        ]);
     }
 }
