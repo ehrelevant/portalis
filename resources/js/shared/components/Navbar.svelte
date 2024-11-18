@@ -59,7 +59,7 @@
                 <div class="flex h-24 flex-row content-center justify-between">
                     <div class="content-center p-4">
                         <p class="font-bold italic">Portalis:</p>
-                         CS195 Portal
+                        CS195 Portal
                     </div>
                     <button class="cursor-pointer p-4" on:click={closeMenu}>
                         <Close />
@@ -91,7 +91,7 @@
     {:else}
         <div class="content-center p-4">
             <p class="font-bold italic">Portalis:</p>
-             CS195 Portal
+            CS195 Portal
         </div>
 
         <button class="cursor-pointer p-4" on:click={openMenu}>

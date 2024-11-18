@@ -2,9 +2,8 @@
     import Header from '@shared/components/InternshipHeader.svelte';
 </script>
 
-<div class="main-screen p-4 w-full">
-    <Header txt="Post-Internship Phase"/>
+<div class="main-screen w-full p-4">
+    <Header txt="Post-Internship Phase" />
 
     <!-- Search Function -->
-
 </div>

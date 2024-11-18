@@ -6,14 +6,18 @@
     export let faculty = 0;
 </script>
 
-<li> <div class="flex p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
-    <div class="flex flex-col justify-center">
-        <div class="text-md"> {file_name} </div>
+<li>
+    <div
+        class="my-1 flex justify-between rounded-xl bg-white p-3 dark:bg-black"
+    >
+        <div class="flex flex-col justify-center">
+            <div class="text-md">{file_name}</div>
+        </div>
+        <div class="flex items-center">
+            {#if faculty == 1}
+                Validate status
+            {/if}
+            <Status s_type={sub_status} />
+        </div>
     </div>
-    <div class="flex items-center">
-        {#if faculty == 1}
-            Validate status
-        {/if}
-        <Status s_type={sub_status}/>
-    </div>
-</div> </li>
+</li>

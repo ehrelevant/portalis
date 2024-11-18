@@ -20,7 +20,7 @@
     }
 </script>
 
-<div class="main-screen flex flex-col items-center w-full justify-center">
+<div class="main-screen flex w-full flex-col items-center justify-center">
     <article class="min-w-1/4">
         <div>
             <div class="flex content-end py-2 text-3xl">Account Login</div>
@@ -36,7 +36,7 @@
                         />
                     </label>
                     {#if errors.email}<div
-                            class="pb-1 text-floating-red dark:text-floating-red-dark"
+                            class="dark:text-floating-red-dark pb-1 text-floating-red"
                         >
                             {errors.email}
                         </div>
@@ -61,7 +61,7 @@
                         />
                     </div>
                     {#if errors.pin}<div
-                            class="pb-4 text-floating-red dark:text-floating-red-dark"
+                            class="dark:text-floating-red-dark pb-4 text-floating-red"
                         >
                             {errors.pin}
                         </div>
