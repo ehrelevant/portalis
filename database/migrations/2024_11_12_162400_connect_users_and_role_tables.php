@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -89,7 +89,7 @@ return new class extends Migration {
         Schema::enableForeignKeyConstraints();
 
         // COMPANY table
-        Schema::create('company', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
             // Primary key
             $table->id('company_id');
 
@@ -98,12 +98,12 @@ return new class extends Migration {
         });
 
         // SUPERVISOR table
-        Schema::create('supervisor', function (Blueprint $table) {
+        Schema::create('supervisors', function (Blueprint $table) {
             // Primary key
             $table->id('supervisor_number');
 
             // Foreign keys
-            $table->foreignId('company_id')->references('company_id')->on('company');
+            $table->foreignId('company_id')->references('company_id')->on('companies');
 
             // Other keys
             $table->string('first_name', length: 50);
@@ -113,7 +113,7 @@ return new class extends Migration {
         });
 
         // FACULTY table
-        Schema::create('faculty', function (Blueprint $table) {
+        Schema::create('faculties', function (Blueprint $table) {
             // Primary key
             $table->id('class_id');
 
@@ -125,13 +125,13 @@ return new class extends Migration {
         });
 
         // STUDENT table
-        Schema::create('student', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             // Primary key
             $table->integer('student_number')->primary();
 
             // Foreign keys
-            $table->foreignId('supervisor_number')->references('supervisor_number')->on('supervisor');
-            $table->foreignId('class_id')->references('class_id')->on('faculty');
+            $table->foreignId('supervisor_number')->references('supervisor_number')->on('supervisors');
+            $table->foreignId('class_id')->references('class_id')->on('faculties');
 
             // Other keys
             $table->string('first_name', length: 50);
