@@ -2,34 +2,8 @@
     import { useForm } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
 
-    export let students = [
-        {
-            student_number: 202200000,
-            last_name: 'last',
-            first_name: 'first',
-        },
-        {
-            student_number: 202200001,
-            last_name: 'last',
-            first_name: 'first',
-        },
-        {
-            student_number: 202200002,
-            last_name: 'last',
-            first_name: 'first',
-        },
-        {
-            student_number: 202200003,
-            last_name: 'last',
-            first_name: 'first',
-        },
-        {
-            student_number: 202200004,
-            last_name: 'last',
-            first_name: 'first',
-        },
-    ];
-    export let week = 1;
+    export let students;
+    export let week;
 
     const evaluations = students.map((student) => {
         return {
