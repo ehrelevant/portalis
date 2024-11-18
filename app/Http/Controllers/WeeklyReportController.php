@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WeeklyReport;
 use App\Models\WeeklyReportAnswer;
 use App\Models\WeeklyReportRating;
+use App\Models\WeeklyReportStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,10 +45,15 @@ class WeeklyReportController extends Controller
         $supervisor_user = Auth::user();
 
         foreach ($form_values['evaluations'] as $evaluation) {
+            $report_status = WeeklyReportStatus::where('supervisor_id', $supervisor_user->role_id)
+                ->where('student_number', $evaluation['student_number'])
+                ->where('week', $form_values['week'])
+                ->firstOrFail();
+            $report_status->status = 'submitted';
+            $report_status->save();
+
             $new_report = new WeeklyReport();
-            $new_report->supervisor_id = $supervisor_user->role_id;
-            $new_report->student_number = $evaluation['student_number'];
-            $new_report->week = $form_values['week'];
+            $new_report->weekly_report_status_id = $report_status->id;
             $new_report->total_hours = $evaluation['hours'];
             $new_report->save();
 

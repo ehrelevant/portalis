@@ -60,7 +60,7 @@ class DashboardController extends Controller
                     'users.first_name',
                     'users.middle_name',
                     'users.last_name',
-                    DB::raw("MIN(submission_statuses.status) as total_status")
+                    DB::raw("MIN(submission_statuses.status) AS total_status")
                 )
                 ->groupBy(
                     'students.student_number',
@@ -122,9 +122,7 @@ class DashboardController extends Controller
         $submission_status->save();
 
         $submission = new Submission();
-        $submission->student_number = $student_number;
-        $submission->requirement_id = $requirement_id;
-        $submission->submission_date = now();
+        $submission->submission_status_id = $submission_status->id;
 
         // TODO: Add proper revision and submission numbering
         $submission->revision_number = 1;
