@@ -128,7 +128,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RequirementSeeder::class,
-            SubmissionStatusSeeder::class,
+            StatusSeeder::class,
         ]);
 
         $this->call([
