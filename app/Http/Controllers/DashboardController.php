@@ -57,9 +57,20 @@ class DashboardController extends Controller
                 ->distinct()
                 ->get();
 
+            /*
+             * This might have issues if for some reason two interns under the
+             * same supervisor do not have the same status, which should never happen.
+             */
+            $intern_evaluation_status = DB::table('intern_evaluation_statuses')
+                ->where('supervisor_id', $supervisor_id)
+                ->select('status')
+                ->firstOrFail()
+                ->status;
+
             return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index', [
                 'company_name' => $company_name,
                 'weekly_report_statuses' => $weekly_report_statuses,
+                'intern_evaluation_status' => $intern_evaluation_status,
             ]);
         }
 

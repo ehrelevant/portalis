@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InternEvaluationController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Middleware\EnsureCorrectPhase;
@@ -37,7 +38,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pre/submit', [DashboardController::class, 'submitStudentDocument']);
 
     Route::get('/dashboard/during/report/{week}', [WeeklyReportController::class, 'show']);
-    Route::post('/dashboard/during/report/submit', [WeeklyReportController::class, 'submitWeeklyReport']);
+    Route::post('/dashboard/during/report/submit', [WeeklyReportController::class, 'submit']);
+
+    Route::get('/dashboard/during/final', [InternEvaluationController::class, 'show']);
+    Route::post('/dashboard/during/final/submit', [InternEvaluationController::class, 'submit']);
 
     Route::get('/dashboard/pre/students/{student_number}', [DashboardController::class, 'showFacultyStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
 

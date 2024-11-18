@@ -5,10 +5,8 @@
     import Status from '@shared/components/Status.svelte';
 
     export let company_name;
-
-    $: console.log(company_name);
-
     export let weekly_report_statuses;
+    export let intern_evaluation_status;
 </script>
 
 <div class="main-screen flex w-full flex-col gap-8 p-4">
@@ -47,12 +45,21 @@
     <div class="flex flex-col gap-2">
         <h2 class="text-xl">Final Report</h2>
 
-        <Link
-            href="/dashboard/during/report/final"
-            class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-        >
-            <div class="flex items-center">Final Report</div>
-            <Status s_type="pending" />
-        </Link>
+        {#if intern_evaluation_status != 'pending'}
+            <div
+                class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+            >
+                <div class="flex items-center">Final Report</div>
+                <Status s_type={intern_evaluation_status} />
+            </div>
+        {:else}
+            <Link
+                href="/dashboard/during/final"
+                class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+            >
+                <div class="flex items-center">Final Report</div>
+                <Status s_type={intern_evaluation_status} />
+            </Link>
+        {/if}
     </div>
 </div>
