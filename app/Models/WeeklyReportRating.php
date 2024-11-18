@@ -18,7 +18,7 @@ class WeeklyReportRating extends Model
      */
     public $timestamps = false;
 
-    public function weekly_report(): BelongsTo
+    public function weeklyReport(): BelongsTo
     {
         return $this->belongsTo(WeeklyReport::class);
     }

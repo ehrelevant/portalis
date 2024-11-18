@@ -18,7 +18,7 @@ class CompanyEvaluationRating extends Model
      */
     public $timestamps = false;
 
-    public function company_evaluation(): BelongsTo
+    public function companyEvaluation(): BelongsTo
     {
         return $this->belongsTo(CompanyEvaluation::class);
     }

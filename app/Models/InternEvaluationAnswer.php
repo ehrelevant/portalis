@@ -18,7 +18,7 @@ class InternEvaluationAnswer extends Model
      */
     public $timestamps = false;
 
-    public function intern_evaluation(): BelongsTo
+    public function internEvaluation(): BelongsTo
     {
         return $this->belongsTo(InternEvaluation::class);
     }
