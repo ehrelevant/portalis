@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/during/final/submit', [InternEvaluationController::class, 'submit']);
 
     Route::get('/dashboard/pre/students/{student_number}', [DashboardController::class, 'showFacultyStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::get('/dashboard/pre/students/{student_number}/{requirement_id}', [DashboardController::class, 'showStudentDocument'])->middleware(EnsureUserHasRole::class . ':faculty');
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });

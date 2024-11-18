@@ -1,5 +1,5 @@
 <script>
-    import { router, page } from '@inertiajs/svelte';
+    import { router, Link } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
@@ -42,7 +42,7 @@
                     last_name,
                     total_status,
                 } = student}
-                <a href="{$page.url}/students/{student_number}">
+                <Link href="/dashboard/pre/students/{student_number}">
                     <!-- edit this later -->
                     <li>
                         <div
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </li>
-                </a>
+                </Link>
             {/each}
         </ul>
     </div>

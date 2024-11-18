@@ -1,6 +1,5 @@
 <script>
     import Header from '@shared/components/InternshipHeader.svelte';
-    import Status from '@shared/components/Status.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
 
     export let student;
@@ -26,10 +25,12 @@
         <p class="pt-2 text-xl">Internship Documents</p>
         <ul>
             {#each submissions.slice(0, 3) as submission}
-                {@const { requirement_name, status } = submission}
+                {@const { requirement_id, requirement_name, status } =
+                    submission}
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
+                    href="/dashboard/pre/students/{student_number}/{requirement_id}"
                     faculty="1"
                 />
             {/each}
@@ -38,11 +39,13 @@
         <p class="pt-2 text-xl">Government IDs</p>
         <ul>
             {#each submissions.slice(3) as submission}
-                {@const { requirement_name, status } = submission}
+                {@const { requirement_id, requirement_name, status } =
+                    submission}
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
-                    faculty="1"
+                    href="/dashboard/pre/students/{student_number}/{requirement_id}"
+                    faculty={1}
                 />
             {/each}
         </ul>

@@ -10,8 +10,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -135,8 +138,9 @@ class DashboardController extends Controller
             ->where('student_number', $student_number)
             ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
             ->select(
+                'requirements.id AS requirement_id',
                 'requirements.requirement_name',
-                'submission_statuses.status'
+                'submission_statuses.status',
             )
             ->get();
 
@@ -144,6 +148,26 @@ class DashboardController extends Controller
             'student' => $student,
             'submissions' => $submission_statuses,
         ]);
+    }
+
+    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
+    {
+        $filepath = DB::table('submission_statuses')
+            ->where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->join('submissions', 'submission_statuses.id', '=', 'submissions.submission_status_id')
+            ->orderBy('created_at', 'desc')
+            ->firstOrFail()
+            ->filepath;
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+        ];
+
+        return Storage::response(
+            $filepath,
+            headers: $headers
+        );
     }
 
     public function submitStudentDocument(Request $request): RedirectResponse
