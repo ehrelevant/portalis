@@ -23,7 +23,7 @@ class RequirementSeeder extends Seeder
             'requirement_name' => 'Signed Work Plan',
         ]);
         Requirement::factory()->create([
-            'requirement_name' => 'Student\'s Id',
+            'requirement_name' => 'Student\'s ID',
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Faculty Adviser\'s ID',
