@@ -14,12 +14,16 @@
         <div class="flex flex-col justify-center">
             <div class="text-md">{file_name}</div>
         </div>
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
             {#if faculty == 1}
                 Validate status
             {/if}
             {#if href && sub_status !== 'pending'}
-                <a {href} class="border-2">View File</a>
+                <a
+                    {href}
+                    class="rounded-xl bg-light-primary p-2 transition-colors hover:bg-light-secondary hover:text-light-secondary-text dark:bg-dark-primary dark:text-dark-primary-text dark:hover:bg-dark-secondary dark:hover:text-dark-secondary-text"
+                    >View</a
+                >
             {/if}
             <Status s_type={sub_status} />
         </div>
