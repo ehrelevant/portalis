@@ -32,7 +32,7 @@ class DashboardController extends Controller
             case User::ROLE_SUPERVISOR:
                 return $this->showSupervisor($phase);
             case User::ROLE_FACULTY:
-                return $this->showFaculty($phase, $request);
+                return Inertia::render('dashboard/' . $phase . '/(faculty)/Index');
             case User::ROLE_ADMIN:
                 return Inertia::render('dashboard/' . $phase . '/(admin)/Index');
         }
@@ -108,76 +108,6 @@ class DashboardController extends Controller
         }
 
         return Inertia::render('dashboard/' . $phase . '/(supervisor)/Index');
-    }
-
-    public function showFaculty(string $phase, Request $request): Response
-    {
-        if ($phase === 'pre') {
-            $faculty_user = Auth::user();
-
-            $search_text = $request->query('search') ?? '';
-
-            // TODO: Add student number search
-            $students_partial = DB::table('students')
-                ->where('supervisor_id', $faculty_user->role_id)
-                ->where('first_name', 'LIKE', '%' . $search_text . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
-                ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
-
-            $students_data = $students_partial
-                ->join('users', 'students.student_number', '=', 'users.role_id')
-                ->join('submission_statuses', 'students.student_number', '=', 'submission_statuses.student_number')
-                ->where('role', 'student')
-                ->select(
-                    'students.student_number',
-                    'users.first_name',
-                    'users.middle_name',
-                    'users.last_name',
-                    DB::raw("MIN(submission_statuses.status) AS total_status")
-                )
-                ->groupBy(
-                    'students.student_number',
-                    'users.first_name',
-                    'users.middle_name',
-                    'users.last_name',
-                )
-                ->get();
-
-            return Inertia::render('dashboard/pre/(faculty)/Index', [
-                'students' => $students_data,
-            ]);
-        }
-        return Inertia::render('dashboard/' . $phase . '/(faculty)/Index');
-    }
-
-    public function showFacultyStudent(int $student_number): Response
-    {
-        $student = DB::table('students')
-            ->where('student_number', $student_number)
-            ->join('users', 'students.student_number', '=', 'users.role_id')
-            ->where('users.role', 'student')
-            ->select(
-                'students.student_number',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-            )
-            ->firstOrFail();
-
-        $submission_statuses = DB::table('submission_statuses')
-            ->where('student_number', $student_number)
-            ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
-            ->select(
-                'requirements.id AS requirement_id',
-                'requirements.requirement_name',
-                'submission_statuses.status',
-            )
-            ->get();
-
-        return Inertia::render('dashboard/pre/(faculty)/students/Index', [
-            'student' => $student,
-            'submissions' => $submission_statuses,
-        ]);
     }
 
     public function submitStudentDocument(Request $request): RedirectResponse

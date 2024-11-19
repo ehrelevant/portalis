@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\InternEvaluationController;
 use App\Http\Controllers\LoginController;
@@ -43,7 +44,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/during/final', [InternEvaluationController::class, 'show']);
     Route::post('/dashboard/during/final/submit', [InternEvaluationController::class, 'submit']);
 
-    Route::get('/dashboard/pre/students/{student_number}', [DashboardController::class, 'showFacultyStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::get('/dashboard/pre/students', [FacultyController::class, 'showStudents'])->middleware(EnsureUserHasRole::class . ':faculty');
+    ;
+    Route::get('/dashboard/pre/students/{student_number}', [FacultyController::class, 'showStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::get('/dashboard/pre/supervisors', [FacultyController::class, 'showSupervisors'])->middleware(EnsureUserHasRole::class . ':faculty');
+    ;
+    Route::get('/dashboard/pre/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor'])->middleware(EnsureUserHasRole::class . ':faculty');
+    ;
 
     Route::get('/file/student/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
 

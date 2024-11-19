@@ -3,9 +3,8 @@
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
-    import Status from '@shared/components/Status.svelte';
 
-    export let students;
+    export let supervisors;
 
     /** @type {string} */
     let searchText = '';
@@ -26,23 +25,18 @@
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
-            placeholder="Search by Name or Student Number"
+            placeholder="Search by Name"
             bind:value={searchText}
         />
     </div>
 
-    <!-- List of Students -->
+    <!-- List of Supervisorss -->
     <div class="py-4">
         <ul>
-            {#each students as student}
-                {@const {
-                    student_number,
-                    first_name,
-                    middle_name,
-                    last_name,
-                    total_status,
-                } = student}
-                <Link href="/dashboard/pre/students/{student_number}">
+            {#each supervisors as supervisor}
+                {@const { supervisor_id, first_name, middle_name, last_name } =
+                    supervisor}
+                <Link href="/dashboard/pre/supervisors/{supervisor_id}">
                     <!-- edit this later -->
                     <li>
                         <div
@@ -53,10 +47,6 @@
                                     {last_name}, {first_name}
                                     {middle_name}
                                 </div>
-                                <div>{student_number}</div>
-                            </div>
-                            <div class="flex items-center">
-                                <Status s_type={total_status} />
                             </div>
                         </div>
                     </li>
