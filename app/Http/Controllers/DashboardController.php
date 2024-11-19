@@ -28,7 +28,7 @@ class DashboardController extends Controller
     {
         switch (Auth::user()->role) {
             case User::ROLE_STUDENT:
-                return Inertia::render('dashboard/' . $phase . '/(student)/Index');
+                return $this->showStudent($phase);
             case User::ROLE_SUPERVISOR:
                 return $this->showSupervisor($phase);
             case User::ROLE_FACULTY:
@@ -38,6 +38,36 @@ class DashboardController extends Controller
         }
 
         abort(404);
+    }
+
+    public function showStudent(string $phase): Response
+    {
+        if ($phase === 'pre') {
+            $student_number = Auth::user()->role_id;
+
+            $submission_statuses_partial = DB::table('submission_statuses')
+                ->where('student_number', $student_number)
+                ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
+                ->select(
+                    'requirements.id AS requirement_id',
+                    'requirements.requirement_name',
+                    'submission_statuses.status',
+                );
+
+            $submission_statuses = $submission_statuses_partial->get();
+
+            $total_status = $submission_statuses_partial
+                ->select(DB::raw("MIN(submission_statuses.status) AS total_status"))
+                ->groupBy('submission_statuses.status')
+                ->firstOrFail();
+
+            return Inertia::render('dashboard/' . $phase . '/(student)/Index', [
+                'student_number' => $student_number,
+                'submissions' => $submission_statuses,
+                'total_status' => $total_status,
+            ]);
+        }
+        return Inertia::render('dashboard/' . $phase . '/(student)/Index');
     }
 
     public function showSupervisor(string $phase): Response

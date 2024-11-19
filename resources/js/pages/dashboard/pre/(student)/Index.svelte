@@ -6,27 +6,17 @@
     import Validated from '@assets/validated_logo.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
 
-    let totalStatus = 'Pending';
     let date = 'mm/dd/yyyy';
 
-    let submission_intern = [
-        'Internship Agreements,Pending',
-        'Medical Certificate (Optional),Pending',
-        'Work Plan Signed by Company Supervisor,Pending',
-    ].map((item) => item.split(','));
-
-    let submission_ID = [
-        "Student's ID,Pending",
-        "Faculty Adviser's ID,Pending",
-        "Company Supervisor's ID,Pending",
-        "Parent's / Guardian's ID,Pending",
-    ].map((item) => item.split(','));
+    export let student_number;
+    export let submissions;
+    export let total_status;
 </script>
 
 <div class="main-screen w-full px-4 py-2">
     <Header txt="Pre-Internship Phase" />
 
-    {#if totalStatus == 'Pending'}
+    {#if total_status == 'pending'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-brown-light text-floating-brown"
         >
@@ -45,7 +35,7 @@
         </div>
     {/if}
 
-    {#if totalStatus == 'Submitted'}
+    {#if total_status == 'submitted'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-forest-light text-floating-forest"
         >
@@ -63,7 +53,7 @@
         </div>
     {/if}
 
-    {#if totalStatus == 'Validated'}
+    {#if total_status == 'validated'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-blue-light text-floating-blue"
         >
@@ -84,15 +74,27 @@
     <div>
         <p class="pt-2 text-xl">Internship Documents</p>
         <ul>
-            {#each submission_intern as data}
-                <Submission file_name={data[0]} sub_status={data[1]} />
+            {#each submissions.slice(0, 3) as submission}
+                {@const { requirement_id, requirement_name, status } =
+                    submission}
+                <Submission
+                    file_name={requirement_name}
+                    sub_status={status}
+                    href="/file/student/{student_number}/{requirement_id}"
+                />
             {/each}
         </ul>
 
         <p class="pt-2 text-xl">Government IDs</p>
         <ul>
-            {#each submission_ID as data}
-                <Submission file_name={data[0]} sub_status={data[1]} />
+            {#each submissions.slice(3) as submission}
+                {@const { requirement_id, requirement_name, status } =
+                    submission}
+                <Submission
+                    file_name={requirement_name}
+                    sub_status={status}
+                    href="/file/student/{student_number}/{requirement_id}"
+                />
             {/each}
         </ul>
     </div>
