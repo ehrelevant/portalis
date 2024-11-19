@@ -6,11 +6,6 @@
     import Pre from '@assets/pre_logo.svelte';
     import During from '@assets/during_logo.svelte';
     import Post from '@assets/post_logo.svelte';
-    import Dropdown from '@assets/dropdown_logo.svelte';
-    import Dropup from '@assets/dropup_logo.svelte';
-
-    const dropdown =
-        'flex flex-row justify-between hover:bg-light-primary/80 dark:hover:bg-dark-primary/80 w-full p-3 my-1 rounded-xl';
 </script>
 
 <div class="main-screen min-h-full w-full p-4">

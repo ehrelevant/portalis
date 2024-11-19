@@ -1,5 +1,5 @@
 <script>
-    import { router, page, Link } from '@inertiajs/svelte';
+    import { Link } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
     import Pending from '@assets/pending_logo.svelte';
     import Submitted from '@assets/submitted_logo.svelte';

@@ -18,9 +18,13 @@
     function updateTheme() {
         if (darkMode) {
             icon = DarkMode;
+
+            // eslint-disable-next-line no-undef
             document.documentElement.classList.add('dark');
         } else {
             icon = LightMode;
+
+            // eslint-disable-next-line no-undef
             document.documentElement.classList.remove('dark');
         }
     }
