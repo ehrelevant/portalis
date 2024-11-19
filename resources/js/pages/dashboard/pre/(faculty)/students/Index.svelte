@@ -30,8 +30,8 @@
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
-                    href="/dashboard/pre/students/{student_number}/{requirement_id}"
-                    faculty="1"
+                    href="/file/student/{student_number}/{requirement_id}"
+                    faculty={1}
                 />
             {/each}
         </ul>
@@ -44,7 +44,7 @@
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
-                    href="/dashboard/pre/students/{student_number}/{requirement_id}"
+                    href="/file/student/{student_number}/{requirement_id}"
                     faculty={1}
                 />
             {/each}

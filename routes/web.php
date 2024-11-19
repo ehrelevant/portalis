@@ -2,12 +2,12 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\InternEvaluationController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Middleware\EnsureCorrectPhase;
 use App\Http\Middleware\EnsureUserHasRole;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -44,7 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/during/final/submit', [InternEvaluationController::class, 'submit']);
 
     Route::get('/dashboard/pre/students/{student_number}', [DashboardController::class, 'showFacultyStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
-    Route::get('/dashboard/pre/students/{student_number}/{requirement_id}', [DashboardController::class, 'showStudentDocument'])->middleware(EnsureUserHasRole::class . ':faculty');
+
+    Route::get('/file/student/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });

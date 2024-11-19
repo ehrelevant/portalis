@@ -150,26 +150,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
-    {
-        $filepath = DB::table('submission_statuses')
-            ->where('student_number', $student_number)
-            ->where('requirement_id', $requirement_id)
-            ->join('submissions', 'submission_statuses.id', '=', 'submissions.submission_status_id')
-            ->orderBy('created_at', 'desc')
-            ->firstOrFail()
-            ->filepath;
-
-        $headers = [
-            'Content-Type' => 'application/pdf',
-        ];
-
-        return Storage::response(
-            $filepath,
-            headers: $headers
-        );
-    }
-
     public function submitStudentDocument(Request $request): RedirectResponse
     {
         $form_values = $request->validate([
