@@ -18,4 +18,12 @@ export default defineConfig({
             '@shared': '/resources/js/shared',
         },
     },
+    server: {
+        watch: {
+            ignored: [
+                '**/vendor/**',
+                '**/storage/**'
+            ]
+        }
+    },
 });
