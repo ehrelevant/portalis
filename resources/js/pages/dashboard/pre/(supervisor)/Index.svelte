@@ -6,6 +6,6 @@
     <Header txt="Pre-Internship Phase" />
 
     <div class="text-2xl">
-        Currently Unavailable for Supervisors. Please wait during Internship.
+        Unavailable for Supervisors. Please wait during Internship.
     </div>
 </div>
