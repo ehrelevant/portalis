@@ -47,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/pre/students', [FacultyController::class, 'showStudents'])->middleware(EnsureUserHasRole::class . ':faculty');
     ;
     Route::get('/dashboard/pre/students/{student_number}', [FacultyController::class, 'showStudent'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission'])->middleware(EnsureUserHasRole::class . ':faculty');
+    Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission'])->middleware(EnsureUserHasRole::class . ':faculty');
+
     Route::get('/dashboard/pre/supervisors', [FacultyController::class, 'showSupervisors'])->middleware(EnsureUserHasRole::class . ':faculty');
     ;
     Route::get('/dashboard/pre/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor'])->middleware(EnsureUserHasRole::class . ':faculty');

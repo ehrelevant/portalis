@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SubmissionStatus;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +76,51 @@ class FacultyController extends Controller
             'student' => $student,
             'submissions' => $submission_statuses,
         ]);
+    }
+
+    public function validateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    {
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail();
+
+        if ($submission_status->status === 'submitted') {
+            $submission_status->status = 'validated';
+        }
+
+        $submission_status->save();
+
+        return back();
+    }
+
+    public function invalidateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    {
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail();
+
+        if ($submission_status->status === 'validated') {
+            $submission_status->status = 'submitted';
+        }
+
+        $submission_status->save();
+
+        return back();
+    }
+
+    public function rejectStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    {
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail();
+
+        if ($submission_status->status === 'submitted') {
+            $submission_status->status = 'pending';
+        }
+
+        $submission_status->save();
+
+        return back();
     }
 
 
