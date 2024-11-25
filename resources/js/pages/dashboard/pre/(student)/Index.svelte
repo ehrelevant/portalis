@@ -80,7 +80,8 @@
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
-                    href="/file/student/{student_number}/{requirement_id}"
+                    {student_number}
+                    {requirement_id}
                 />
             {/each}
         </ul>
@@ -93,7 +94,8 @@
                 <Submission
                     file_name={requirement_name}
                     sub_status={status}
-                    href="/file/student/{student_number}/{requirement_id}"
+                    {student_number}
+                    {requirement_id}
                 />
             {/each}
         </ul>

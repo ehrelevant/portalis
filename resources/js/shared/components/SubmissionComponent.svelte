@@ -1,34 +1,13 @@
 <script>
     import Status from '@shared/components/Status.svelte';
     import Valid from '@assets/validated_faculty_logo.svelte';
+    import { Link } from '@inertiajs/svelte';
 
     export let file_name;
     export let sub_status;
     export let faculty = 0;
-    export let href;
-    
-    // Validation
-    let enabled = sub_status === "submitted";
-    let enable_style = enabled ? "cursor-pointer" : "cursor-not-allowed"
-    let validity = sub_status === "validated";
-    let iconColor = "";
-
-    function notEnabled() {
-        // Validation is not enabled due to pending.
-    }
-
-    function handleValidity(){
-        validity = !validity;
-        toggleValidity();
-    }
-
-    function toggleValidity(){
-        if (validity) {
-            //change validity in backend here
-        } else {
-            //change validity in backend here
-        }
-    }
+    export let student_number;
+    export let requirement_id;
 </script>
 
 <li> <div class="flex flex-col sm:flex-row p-3 my-1 justify-between bg-white dark:bg-black rounded-xl">
@@ -36,25 +15,42 @@
         <div class="text-md"> {file_name} </div>
     </div>
     <div class="flex flex-col sm:flex-row items-center content-center justify-center">
-        <div class="my-3">
-            {#if href && sub_status !== 'pending'}
-                <a
-                    {href}
-                    class="rounded-full mr-3 bg-light-primary py-2 px-4 transition-colors hover:bg-light-secondary hover:text-light-secondary-text dark:bg-dark-primary dark:text-dark-primary-text dark:hover:bg-dark-secondary dark:hover:text-dark-secondary-text"
-                    >View</a
-                >
-            {/if}
-        </div>
-        <div class="flex flex-row">
-            {#if faculty == 1}
-            <button class="w-36 w-stretch flex flex-row items-center justify-between rounded-full bg-light-primary dark:bg-dark-primary p-2 mr-3 hover:opacity-90 {enable_style}"
-                on:click={enabled ? handleValidity : notEnabled}
+        {#if student_number && requirement_id && sub_status !== 'pending'}
+            <a
+                href="/file/student/{student_number}/{requirement_id}"
+                class="w-20 flex flex-row items-center justify-center rounded-full bg-light-primary dark:bg-dark-primary p-2 mr-3 hover:opacity-90"
+                >View</a
             >
-                <p class="text-md mx-2 font-medium"> Validate? </p>
-                <div class={validity ? "text-light-secondary dark:text-light-primary" : "text-light-primary dark:text-dark-primary"}> <Valid /> </div>
-            </button>
+        {/if}
+        {#if faculty === 1}
+            {#if sub_status === 'submitted'}
+                <Link
+                    href="/dashboard/pre/students/{student_number}/{requirement_id}/reject"
+                    method="post"
+                    preserveScroll
+                    class="w-20 flex flex-row items-center justify-center rounded-full bg-floating-red-light dark:bg-floating-red p-2 mr-3 hover:opacity-90"
+                >
+                    Reject
+                </Link>
+                <Link
+                    href="/dashboard/pre/students/{student_number}/{requirement_id}/validate"
+                    method="post"
+                    preserveScroll
+                    class="w-28 flex flex-row items-center justify-center rounded-full bg-light-primary dark:bg-dark-primary p-2 mr-3 hover:opacity-90"
+                >
+                    Validate
+                </Link>
+            {:else if sub_status === 'validated'}
+                <Link
+                    href="/dashboard/pre/students/{student_number}/{requirement_id}/invalidate"
+                    method="post"
+                    preserveScroll
+                    class="w-28 flex flex-row items-center justify-center rounded-full bg-floating-red-light dark:bg-floating-red p-2 mr-3 hover:opacity-90"
+                >
+                    Invalidate
+                </Link>
             {/if}
+        {/if}
         <Status s_type={sub_status}/>
-        </div>
     </div>
 </div> </li>
