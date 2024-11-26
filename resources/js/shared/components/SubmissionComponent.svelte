@@ -51,7 +51,7 @@
                         href="/dashboard/pre/students/{student_number}/{requirement_id}/invalidate"
                         method="post"
                         preserveScroll
-                        class="sm:mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        class="sm:mr-3 flex my-2 w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     >
                         Invalidate
                     </Link>
