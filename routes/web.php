@@ -20,12 +20,14 @@ Route::get('/privacy', function () {
     return Inertia::render('privacy/Index');
 });
 
-Route::get('/login', function () {
-    return Inertia::render('login/Index');
-});
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', function () {
+        return Inertia::render('login/Index');
+    });
 
-Route::post('/login', [LoginController::class, 'authenticate']);
-Route::post('/login/send_pin', [LoginController::class, 'sendPin']);
+    Route::post('/login', [LoginController::class, 'authenticate']);
+    Route::post('/login/send_pin', [LoginController::class, 'sendPin']);
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'redirectPhase']);

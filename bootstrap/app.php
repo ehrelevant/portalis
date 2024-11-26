@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo('/account');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
