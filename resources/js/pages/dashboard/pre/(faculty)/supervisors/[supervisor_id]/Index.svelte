@@ -1,4 +1,6 @@
 <script>
+    import { router, Link } from '@inertiajs/svelte';
+
     import Header from '@shared/components/InternshipHeader.svelte';
 
     export let supervisor;
@@ -14,5 +16,16 @@
         Name: {first_name}
         {middle_name}
         {last_name}
+    </div>
+
+    <!-- Back to Supervisor List -->
+    <div class="w-stretch flex justify-center p-4">
+        <Link href="/dashboard/pre/supervisors">
+            <div
+                class="border-2 bg-light-secondary p-4 text-3xl text-light-secondary-text hover:opacit y-90 text-center"
+            >
+                Back to Supervisor List
+            </div>
+        </Link>
     </div>
 </div>

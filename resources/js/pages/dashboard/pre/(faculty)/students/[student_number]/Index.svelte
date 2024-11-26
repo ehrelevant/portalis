@@ -1,4 +1,6 @@
 <script>
+    import { router, Link } from '@inertiajs/svelte';
+
     import Header from '@shared/components/InternshipHeader.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
 
@@ -51,5 +53,16 @@
                 />
             {/each}
         </ul>
+    </div>
+
+    <!-- Back to Student List -->
+    <div class="w-stretch flex justify-center p-4">
+        <Link href="/dashboard/pre/students">
+            <div
+                class="border-2 bg-light-secondary p-4 text-3xl text-light-secondary-text hover:opacity-90 text-center"
+            >
+                Back to Student List
+            </div>
+        </Link>
     </div>
 </div>
