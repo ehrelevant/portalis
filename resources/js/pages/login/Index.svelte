@@ -36,7 +36,7 @@
                         />
                     </label>
                     {#if errors.email}<div
-                            class="dark:text-floating-red-dark pb-1 text-floating-red"
+                            class="dark:text-floating-red-dark pb-1 text-floating-red dark:text-floating-red-light"
                         >
                             {errors.email}
                         </div>
@@ -61,7 +61,7 @@
                         />
                     </div>
                     {#if errors.pin}<div
-                            class="dark:text-floating-red-dark pb-4 text-floating-red"
+                            class="dark:text-floating-red-dark pb-4 text-floating-red dark:text-floating-red-light"
                         >
                             {errors.pin}
                         </div>
