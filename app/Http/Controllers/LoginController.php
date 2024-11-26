@@ -66,7 +66,7 @@ class LoginController extends Controller
         try {
             $user = User::where('email', $email)->firstOrFail();
             $user->password = Hash::make($generated_pin);
-            $user->password_expiry = now()->addMinutes(5);
+            $user->password_expiry = now()->addSeconds(intval(env('PIN_DURATION', 300)));
             $user->saveQuietly();
         } catch (ModelNotFoundException) {
             return back()->withErrors([

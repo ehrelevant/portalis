@@ -60,11 +60,12 @@
                             value="Send PIN"
                         />
                     </div>
-                    {#if errors.pin}<div
-                            class="dark:text-floating-red-dark pb-4 text-floating-red dark:text-floating-red-light"
+                    {#if errors.pin}
+                        <p
+                            class="pb-4 text-floating-red dark:text-floating-red-light"
                         >
                             {errors.pin}
-                        </div>
+                        </p>
                     {:else}
                         <div class="pb-10"></div>
                     {/if}
