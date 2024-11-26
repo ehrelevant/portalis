@@ -8,10 +8,10 @@
     export let students;
 
     /** @type {string} */
-    let searchText = '';
+    let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/pre?search=${searchText}`);
+        router.get(`/dashboard/pre/students?search=${searchQuery}`);
     }
 </script>
 
@@ -19,17 +19,20 @@
     <Header txt="Pre-Internship Phase" />
 
     <!-- Search Function -->
-    <div class="flex flex-row content-center justify-center">
-        <button class="flex items-center px-2" on:click={search}>
+    <form
+        class="flex flex-row content-center justify-center"
+        on:submit|preventDefault={search}
+    >
+        <button class="flex items-center px-2" type="submit">
             <Search />
         </button>
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name or Student Number"
-            bind:value={searchText}
+            bind:value={searchQuery}
         />
-    </div>
+    </form>
 
     <!-- List of Students -->
     <div class="py-4">
