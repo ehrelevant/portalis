@@ -11,13 +11,6 @@ class Submission extends Model
     /** @use HasFactory<\Database\Factories\StudentFactory> */
     use HasFactory;
 
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
-
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
