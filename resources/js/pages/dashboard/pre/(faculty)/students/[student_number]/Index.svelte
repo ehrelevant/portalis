@@ -1,5 +1,5 @@
 <script>
-    import { router, Link } from '@inertiajs/svelte';
+    import { Link } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
@@ -59,7 +59,7 @@
     <div class="w-stretch flex justify-center p-4">
         <Link href="/dashboard/pre/students">
             <div
-                class="border-2 bg-light-secondary p-4 text-3xl text-light-secondary-text hover:opacity-90 text-center"
+                class="border-2 bg-light-secondary p-4 text-center text-3xl text-light-secondary-text hover:opacity-90"
             >
                 Back to Student List
             </div>

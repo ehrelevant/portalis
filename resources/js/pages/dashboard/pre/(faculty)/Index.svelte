@@ -7,21 +7,21 @@
 <div class="main-screen w-full p-4">
     <Header txt="Faculty Dashboard" />
 
-    <div class="flex flex-col sm:flex-row w-full">
+    <div class="flex w-full flex-col sm:flex-row">
         <Link
             href="/dashboard/pre/students"
-            class="w-full flex flex-col items-center justify-center rounded-xl bg-white p-3 m-2 text-2xl dark:bg-black hover:opacity-80"
+            class="m-2 flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-        <Account />
-        <p>Student List</p>
+            <Account />
+            <p>Student List</p>
         </Link>
 
         <Link
             href="/dashboard/pre/supervisors"
-            class="w-full flex flex-col items-center justify-center rounded-xl bg-white p-3 m-2 text-2xl dark:bg-black hover:opacity-80"
+            class="m-2 flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-        <Account />
-        <p>Supervisor List</p>
+            <Account />
+            <p>Supervisor List</p>
         </Link>
     </div>
 </div>

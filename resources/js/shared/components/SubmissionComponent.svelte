@@ -22,13 +22,13 @@
             {#if student_number && requirement_id && sub_status !== 'pending'}
                 <a
                     href="/file/student/{student_number}/{requirement_id}"
-                    class="sm:mr-3 flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                    class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary sm:mr-3"
                     >View</a
                 >
             {/if}
             {#if faculty === 1}
                 {#if sub_status === 'submitted'}
-                    <div class="flex flex-row my-2">
+                    <div class="my-2 flex flex-row">
                         <Link
                             href="/dashboard/pre/students/{student_number}/{requirement_id}/reject"
                             method="post"
@@ -41,7 +41,7 @@
                             href="/dashboard/pre/students/{student_number}/{requirement_id}/validate"
                             method="post"
                             preserveScroll
-                            class="sm:mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                            class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary sm:mr-3"
                         >
                             Validate
                         </Link>
@@ -51,7 +51,7 @@
                         href="/dashboard/pre/students/{student_number}/{requirement_id}/invalidate"
                         method="post"
                         preserveScroll
-                        class="sm:mr-3 flex my-2 w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        class="my-2 flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red sm:mr-3"
                     >
                         Invalidate
                     </Link>
