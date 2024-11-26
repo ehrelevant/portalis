@@ -29,7 +29,7 @@
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
-            placeholder="Search by Name or Student Number"
+            placeholder="Search by Name"
             bind:value={searchQuery}
         />
     </form>
