@@ -1,5 +1,5 @@
 <script>
-    import { router } from '@inertiajs/svelte';
+    import { router, page } from '@inertiajs/svelte';
 
     export let errors = {};
 
@@ -77,5 +77,8 @@
                 </form>
             </div>
         </div>
+        {#if $page.props.flash.message}
+            <p class="italic">(For testing) PIN: {$page.props.flash.message}</p>
+        {/if}
     </article>
 </div>

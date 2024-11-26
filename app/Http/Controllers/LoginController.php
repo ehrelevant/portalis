@@ -74,13 +74,21 @@ class LoginController extends Controller
             ]);
         }
 
-        if (env('SEND_PIN_TO_EMAIL')) {
+        if (env('SEND_PIN_TO_EMAIL', false)) {
             Mail::to($email)->send(new LoginMail([
                 'title' => 'CS 195 Portal - Login Code',
                 'body' => 'Pin: ' . $generated_pin,
             ]));
-        } else {
+        }
+
+        // Only for testing purposes
+        if (env('LOG_PIN_ON_CONSOLE', true)) {
             info('Pin: ' . $generated_pin);
+        }
+
+        // Only for testing purposes
+        if (env('DISPLAY_PIN_ON_PAGE', false)) {
+            return back()->with('message', $generated_pin);
         }
 
         return back();
