@@ -22,34 +22,36 @@
             {#if student_number && requirement_id && sub_status !== 'pending'}
                 <a
                     href="/file/student/{student_number}/{requirement_id}"
-                    class="mr-3 flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                    class="sm:mr-3 flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     >View</a
                 >
             {/if}
             {#if faculty === 1}
                 {#if sub_status === 'submitted'}
-                    <Link
-                        href="/dashboard/pre/students/{student_number}/{requirement_id}/reject"
-                        method="post"
-                        preserveScroll
-                        class="mr-3 flex w-20 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    >
-                        Reject
-                    </Link>
-                    <Link
-                        href="/dashboard/pre/students/{student_number}/{requirement_id}/validate"
-                        method="post"
-                        preserveScroll
-                        class="mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                    >
-                        Validate
-                    </Link>
+                    <div class="flex flex-row my-2">
+                        <Link
+                            href="/dashboard/pre/students/{student_number}/{requirement_id}/reject"
+                            method="post"
+                            preserveScroll
+                            class="mr-3 flex w-20 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        >
+                            Reject
+                        </Link>
+                        <Link
+                            href="/dashboard/pre/students/{student_number}/{requirement_id}/validate"
+                            method="post"
+                            preserveScroll
+                            class="sm:mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                        >
+                            Validate
+                        </Link>
+                    </div>
                 {:else if sub_status === 'validated'}
                     <Link
                         href="/dashboard/pre/students/{student_number}/{requirement_id}/invalidate"
                         method="post"
                         preserveScroll
-                        class="mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        class="sm:mr-3 flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     >
                         Invalidate
                     </Link>
