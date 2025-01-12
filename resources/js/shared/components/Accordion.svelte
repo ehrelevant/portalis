@@ -1,4 +1,6 @@
 <script>
+    import { slide } from 'svelte/transition';
+
     export let open = false;
 
     function toggleAccordion() {
@@ -8,7 +10,7 @@
 
 <div class="flex flex-col">
     <button
-        class="cursor-pointer bg-light-primary p-4 text-left dark:bg-dark-primary {open
+        class="cursor-pointer bg-light-primary p-4 text-left transition-all dark:bg-dark-primary {open
             ? 'rounded-t-xl'
             : 'rounded-xl'}"
         on:click={toggleAccordion}
@@ -18,7 +20,11 @@
     </button>
 
     {#if open}
-        <div class="rounded-b-xl bg-gray-50 p-4 dark:bg-gray-900">
+        <div
+            class="rounded-b-xl bg-gray-50 p-4 dark:bg-gray-900"
+            in:slide={{ axis: 'y', duration: 100, delay: 50 }}
+            out:slide={{ axis: 'y', duration: 100, delay: 50 }}
+        >
             <slot />
         </div>
     {/if}
