@@ -1,5 +1,5 @@
 <svg
-    class="text-gray-800 h-10 dark:text-white"
+    class="h-10 text-gray-800 dark:text-white"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     stroke="currentColor"
