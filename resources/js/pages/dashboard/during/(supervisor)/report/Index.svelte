@@ -1,6 +1,7 @@
 <script>
     import { useForm } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
+    import Accordion from '@shared/components/Accordion.svelte';
 
     export let students;
     export let week;
@@ -40,10 +41,11 @@
 
     <form on:submit|preventDefault={handleSubmit}>
         <div class="flex flex-col gap-4">
-            <div>
-                <h2 class="my-4 text-2xl">Non-Technical Criteria</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Non-Technical Criteria</h2>
+
                 <div
-                    class="grid grid-cols-[auto,repeat(4,1fr)] items-center justify-center gap-x-4 gap-y-2"
+                    class="grid grid-cols-[auto,repeat(4,1fr)] items-center justify-center gap-2"
                 >
                     <p class="col-start-2 text-center">Work Ethic (10)</p>
                     <p class="text-center">Attitude and Personality (10)</p>
@@ -53,7 +55,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -61,7 +63,7 @@
                             bind:value={$form.evaluations[i].ratings[1]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -69,7 +71,7 @@
                             bind:value={$form.evaluations[i].ratings[2]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -77,7 +79,7 @@
                             bind:value={$form.evaluations[i].ratings[3]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -86,10 +88,10 @@
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">Technical Criteria</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Technical Criteria</h2>
                 <div
                     class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                 >
@@ -98,7 +100,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="60"
                             min="0"
@@ -107,10 +109,10 @@
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">Number of Hours</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Number of Hours</h2>
                 <div
                     class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                 >
@@ -119,7 +121,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             min="0"
                             required
@@ -127,10 +129,10 @@
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">Comments or Concerns</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Comments or Concerns</h2>
                 <div
                     class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                 >
@@ -138,12 +140,12 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <textarea
-                            class="w-full border-2 p-2 text-light-primary-text"
+                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             bind:value={$form.evaluations[i]['open_ended'][1]}
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
             <div class="m-2 flex justify-center">
                 <input
