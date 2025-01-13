@@ -9,6 +9,7 @@
     }
 </script>
 
+<!-- Only works when parent containers are flexboxes -->
 <div class="flex flex-col">
     <button
         class="flex cursor-pointer flex-row bg-light-primary p-4 text-left transition-[border-radius] dark:bg-dark-primary {open
@@ -18,7 +19,7 @@
         type="button"
     >
         <div
-            class="h-full transition-transform aria-expanded:rotate-90"
+            class="aspect-square h-full transition-transform aria-expanded:rotate-90"
             aria-expanded={open}
         >
             <ArrowRight />

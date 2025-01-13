@@ -36,10 +36,10 @@
     }
 </script>
 
-<div class="main-screen p-4">
+<div class="main-screen flex flex-col p-4">
     <Header txt="During Internship: Form Response" />
 
-    <form on:submit|preventDefault={handleSubmit}>
+    <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
         <div class="flex flex-col gap-4">
             <Accordion>
                 <h2 slot="summary" class="text-2xl">Non-Technical Criteria</h2>
