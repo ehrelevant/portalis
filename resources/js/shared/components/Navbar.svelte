@@ -7,15 +7,12 @@
     import Toggle from './ThemeSwitch.svelte';
     import Menu from '@assets/menu_logo.svelte';
     import Close from '@assets/x.svelte';
+    import { slide } from 'svelte/transition';
 
     let isMenuOpen = false;
 
-    function openMenu() {
-        isMenuOpen = true;
-    }
-
-    function closeMenu() {
-        isMenuOpen = false;
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
     }
 </script>
 
@@ -45,57 +42,50 @@
 <nav
     class="
     min-w-screen sticky top-0
-    flex
-    h-24 flex-row
-    justify-between
+    flex flex-col
     bg-light-primary text-light-primary-text
     dark:bg-dark-primary dark:text-dark-primary-text
     sm:hidden
 "
 >
-    {#if isMenuOpen}
-        <div class="z-50 h-screen w-screen">
-            <div>
-                <div class="flex h-24 flex-row content-center justify-between">
-                    <div class="content-center p-4">
-                        <p class="font-bold italic">Portalis:</p>
-                        CS195 Portal
-                    </div>
-                    <button class="cursor-pointer p-4" on:click={closeMenu}>
-                        <Close />
-                    </button>
-                </div>
-
-                <div
-                    class="flex flex-col justify-between bg-light-primary/95 dark:bg-dark-primary/95"
-                >
-                    <ul
-                        class="flex w-full flex-col content-center justify-center text-center"
-                    >
-                        <NavBtn href="/" Icon={Home}>Home</NavBtn>
-                        <NavBtn href="/dashboard" Icon={Dashboard}
-                            >Dashboard</NavBtn
-                        >
-                        <NavBtn href="/privacy" Icon={Privacy}>Privacy</NavBtn>
-                        <NavBtn href="/account" Icon={Account}>Account</NavBtn>
-                    </ul>
-
-                    <div class="flex items-center justify-center py-8">
-                        <Toggle />
-                    </div>
-                </div>
-            </div>
-
-            <div class="h-auto"></div>
-        </div>
-    {:else}
+    <div class="flex flex-row items-center justify-between">
         <div class="content-center p-4">
             <p class="font-bold italic">Portalis:</p>
             CS195 Portal
         </div>
 
-        <button class="cursor-pointer p-4" on:click={openMenu}>
-            <Menu />
+        <button class="cursor-pointer p-4" on:click={toggleMenu}>
+            {#if isMenuOpen}
+                <Close />
+            {:else}
+                <Menu />
+            {/if}
         </button>
+    </div>
+    {#if isMenuOpen}
+        <div
+            class="z-50 w-screen"
+            transition:slide={{ axis: 'y', duration: 150 }}
+        >
+            <div
+                class="flex flex-col justify-between bg-light-primary/95 dark:bg-dark-primary/95"
+            >
+                <ul
+                    class="flex w-full flex-col content-center justify-center text-center"
+                >
+                    <NavBtn href="/" Icon={Home}>Home</NavBtn>
+                    <NavBtn href="/dashboard" Icon={Dashboard}>Dashboard</NavBtn
+                    >
+                    <NavBtn href="/privacy" Icon={Privacy}>Privacy</NavBtn>
+                    <NavBtn href="/account" Icon={Account}>Account</NavBtn>
+                </ul>
+
+                <div class="flex items-center justify-center py-8">
+                    <Toggle />
+                </div>
+            </div>
+        </div>
+
+        <div class="h-auto"></div>
     {/if}
 </nav>
