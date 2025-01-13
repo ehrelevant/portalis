@@ -37,7 +37,7 @@
 </script>
 
 <div class="main-screen flex flex-col p-4">
-    <Header txt="During Internship: Form Response" />
+    <Header txt="During Internship: Weekly Report Form" />
 
     <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
         <div class="flex flex-col gap-4">

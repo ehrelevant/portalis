@@ -1,6 +1,7 @@
 <script>
     import { useForm } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
+    import Accordion from '@shared/components/Accordion.svelte';
 
     export let students;
 
@@ -35,13 +36,13 @@
     }
 </script>
 
-<div class="main-screen p-4">
-    <Header txt="During Internship: Form Response" />
+<div class="main-screen flex flex-col p-4">
+    <Header txt="During Internship: Final Report Form" />
 
-    <form on:submit|preventDefault={handleSubmit}>
+    <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
         <div class="flex flex-col gap-4">
-            <div>
-                <h2 class="my-4 text-2xl">Non-Technical Criteria</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Non-Technical Criteria</h2>
                 <div
                     class="grid grid-cols-[auto,repeat(4,1fr)] items-center justify-center gap-x-4 gap-y-2"
                 >
@@ -53,7 +54,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -61,7 +62,7 @@
                             bind:value={$form.evaluations[i].ratings[1]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -69,7 +70,7 @@
                             bind:value={$form.evaluations[i].ratings[2]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -77,7 +78,7 @@
                             bind:value={$form.evaluations[i].ratings[3]}
                         />
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="10"
                             min="0"
@@ -86,10 +87,10 @@
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">Technical Criteria</h2>
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">Technical Criteria</h2>
                 <div
                     class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                 >
@@ -98,7 +99,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="border-2 p-2 text-light-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             type="number"
                             max="60"
                             min="0"
@@ -107,10 +108,10 @@
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">
                     What are the intern’s main strengths? In terms of technical
                     skills, work ethic, etc.?
                 </h2>
@@ -121,15 +122,15 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <textarea
-                            class="w-full border-2 p-2 text-light-primary-text"
+                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             bind:value={$form.evaluations[i]['open_ended'][2]}
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">
                     Are there areas (communication, technical, work ethic, etc.)
                     where the intern seems to be lacking?
                 </h2>
@@ -140,15 +141,15 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <textarea
-                            class="w-full border-2 p-2 text-light-primary-text"
+                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             bind:value={$form.evaluations[i]['open_ended'][3]}
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
-            <div>
-                <h2 class="my-4 text-2xl">
+            <Accordion>
+                <h2 slot="summary" class="text-2xl">
                     Would you consider the intern to be “industry-ready?“ Would
                     you consider hiring the intern after he/she graduates?
                 </h2>
@@ -159,12 +160,12 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <textarea
-                            class="w-full border-2 p-2 text-light-primary-text"
+                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                             bind:value={$form.evaluations[i]['open_ended'][4]}
                         />
                     {/each}
                 </div>
-            </div>
+            </Accordion>
 
             <div class="m-2 flex justify-center">
                 <input
