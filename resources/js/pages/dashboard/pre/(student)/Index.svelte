@@ -5,6 +5,7 @@
     import Submitted from '@assets/submitted_logo.svelte';
     import Validated from '@assets/validated_logo.svelte';
     import Submission from '@shared/components/SubmissionComponent.svelte';
+    import Accordion from '@/js/shared/components/Accordion.svelte';
 
     let date = 'mm/dd/yyyy';
 
@@ -13,7 +14,7 @@
     export let total_status;
 </script>
 
-<div class="main-screen w-full px-4 py-2">
+<div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Pre-Internship Phase" />
 
     {#if total_status == 'pending'}
@@ -71,8 +72,8 @@
     {/if}
 
     <!-- File Submission Statuses -->
-    <div>
-        <p class="pt-2 text-xl">Internship Documents</p>
+    <Accordion open>
+        <h2 slot="summary" class="text-2xl">Internship Documents</h2>
         <ul>
             {#each submissions.slice(0, 3) as submission}
                 {@const { requirement_id, requirement_name, status } =
@@ -85,8 +86,10 @@
                 />
             {/each}
         </ul>
+    </Accordion>
 
-        <p class="pt-2 text-xl">Government IDs</p>
+    <Accordion open>
+        <h2 slot="summary" class="text-2xl">Government IDs</h2>
         <ul>
             {#each submissions.slice(3) as submission}
                 {@const { requirement_id, requirement_name, status } =
@@ -99,7 +102,7 @@
                 />
             {/each}
         </ul>
-    </div>
+    </Accordion>
 
     <!-- Link to Submission Bin -->
     <div class="w-stretch flex justify-center p-4">

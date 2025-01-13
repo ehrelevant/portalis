@@ -24,7 +24,7 @@
     </div>
 
     <!-- File Submission Statuses -->
-    <Accordion>
+    <Accordion open>
         <h2 slot="summary" class="text-2xl">Internship Documents</h2>
         <ul>
             {#each submissions.slice(0, 3) as submission}
@@ -35,13 +35,13 @@
                     sub_status={status}
                     {student_number}
                     {requirement_id}
-                    faculty={1}
+                    faculty
                 />
             {/each}
         </ul>
     </Accordion>
 
-    <Accordion>
+    <Accordion open>
         <h2 slot="summary" class="text-2xl">Government IDs</h2>
         <ul>
             {#each submissions.slice(3) as submission}
@@ -52,7 +52,7 @@
                     sub_status={status}
                     {student_number}
                     {requirement_id}
-                    faculty={1}
+                    faculty
                 />
             {/each}
         </ul>
