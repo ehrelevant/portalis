@@ -240,7 +240,7 @@ class FacultyController extends Controller
                 'first_name' => $student_name->first_name,
                 'ratings' => $ratings,
                 'open_ended' => $open_ended,
-                'hours' => $hours
+                'hours' => $hours,
             ];
 
             array_push($students, $new_student);
