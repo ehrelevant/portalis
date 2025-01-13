@@ -6,7 +6,15 @@
     import Submission from '@shared/components/SubmissionComponent.svelte';
 
     export let student;
-    $: ({ student_number, first_name, middle_name, last_name } = student);
+    $: ({
+        student_number,
+        first_name,
+        middle_name,
+        last_name,
+        email,
+        wordpress_name,
+        wordpress_email,
+    } = student);
 
     export let submissions;
 </script>
@@ -17,10 +25,11 @@
     <div
         class="bg-light-secondary p-4 text-xl text-light-secondary-text dark:bg-dark-secondary dark:text-dark-secondary-text"
     >
-        Name: {first_name}
-        {middle_name}
-        {last_name} <br />
-        Student Number: {student_number}
+        <p>Name: {last_name}, {first_name} {middle_name}</p>
+        <p>Student Number: {student_number}</p>
+        <p>Email: {email}</p>
+        <p>Wordpress Name: {wordpress_name}</p>
+        <p>Wordpress Email: {wordpress_email}</p>
     </div>
 
     <!-- File Submission Statuses -->

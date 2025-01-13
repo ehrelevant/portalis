@@ -59,6 +59,9 @@ class FacultyController extends Controller
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
+                'users.email',
+                'students.wordpress_name',
+                'students.wordpress_email',
             )
             ->firstOrFail();
 
