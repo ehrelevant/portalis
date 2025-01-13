@@ -57,7 +57,7 @@
 
     <!-- Back to Student List -->
     <div class="w-stretch flex justify-center p-4">
-        <Link href="/dashboard/pre/students">
+        <Link href="/dashboard/faculty/students">
             <div
                 class="border-2 bg-light-secondary p-4 text-center text-3xl text-light-secondary-text hover:opacity-90"
             >

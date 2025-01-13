@@ -11,12 +11,12 @@
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/pre/students?search=${searchQuery}`);
+        router.get(`/dashboard/faculty/students?search=${searchQuery}`);
     }
 </script>
 
 <div class="main-screen w-full p-4">
-    <Header txt="Pre-Internship Phase" />
+    <Header txt="Student List" />
 
     <!-- Search Function -->
     <form
@@ -45,7 +45,7 @@
                     last_name,
                     total_status,
                 } = student}
-                <Link href="/dashboard/pre/students/{student_number}">
+                <Link href="/dashboard/faculty/students/{student_number}">
                     <!-- edit this later -->
                     <li>
                         <div

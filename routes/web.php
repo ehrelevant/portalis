@@ -51,14 +51,16 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
-        Route::get('/dashboard/pre/students', [FacultyController::class, 'showStudents']);
-        Route::get('/dashboard/pre/students/{student_number}', [FacultyController::class, 'showStudent']);
-        Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
-        Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
-        Route::post('/dashboard/pre/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
+        Route::get('/dashboard/faculty/students', [FacultyController::class, 'showStudents']);
+        Route::get('/dashboard/faculty/students/{student_number}', [FacultyController::class, 'showStudent']);
+        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
+        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
+        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
 
-        Route::get('/dashboard/pre/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::get('/dashboard/pre/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
+        Route::get('/dashboard/faculty/supervisors', [FacultyController::class, 'showSupervisors']);
+        Route::get('/dashboard/faculty/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
+        Route::get('/dashboard/faculty/supervisors/{supervisor_id}/report/{week}', [FacultyController::class, 'showWeeklyReport']);
+        Route::get('/dashboard/faculty/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
     });
 
     Route::get('/file/student/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);

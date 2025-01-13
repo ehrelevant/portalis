@@ -43,7 +43,7 @@ class FacultyController extends Controller
             )
             ->get();
 
-        return Inertia::render('dashboard/pre/(faculty)/students/Index', [
+        return Inertia::render('dashboard/(faculty)/students/Index', [
             'students' => $students_data,
         ]);
     }
@@ -72,7 +72,7 @@ class FacultyController extends Controller
             )
             ->get();
 
-        return Inertia::render('dashboard/pre/(faculty)/students/[student_number]/Index', [
+        return Inertia::render('dashboard/(faculty)/students/[student_number]/Index', [
             'student' => $student,
             'submissions' => $submission_statuses,
         ]);
@@ -128,7 +128,6 @@ class FacultyController extends Controller
     {
         $search_text = $request->query('search') ?? '';
 
-        // TODO: Add student number search
         $users_partial = DB::table('users')
             ->where('role', 'supervisor')
             ->where(function ($query) use ($search_text) {
@@ -146,7 +145,7 @@ class FacultyController extends Controller
             )
             ->get();
 
-        return Inertia::render('dashboard/pre/(faculty)/supervisors/Index', [
+        return Inertia::render('dashboard/(faculty)/supervisors/Index', [
             'supervisors' => $supervisors_data,
         ]);
     }
@@ -163,8 +162,146 @@ class FacultyController extends Controller
             )
             ->firstOrFail();
 
-        return Inertia::render('dashboard/pre/(faculty)/supervisors/[supervisor_id]/Index', [
+        $company_name = DB::table('supervisors')
+            ->where('supervisors.id', $supervisor_id)
+            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->select('companies.company_name')
+            ->firstOrFail()
+            ->company_name;
+
+        $weekly_report_statuses = DB::table('weekly_report_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->select(
+                'week',
+                'status'
+            )
+            ->distinct()
+            ->get();
+
+        /*
+        * This might have issues if for some reason two interns under the
+        * same supervisor do not have the same status, which should never happen.
+        */
+        $intern_evaluation_status = DB::table('intern_evaluation_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->select('status')
+            ->firstOrFail()
+            ->status;
+
+        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/Index', [
+            'supervisor_id' => $supervisor_id,
             'supervisor' => $supervisor,
+            'company_name' => $company_name,
+            'weekly_report_statuses' => $weekly_report_statuses,
+            'intern_evaluation_status' => $intern_evaluation_status,
+        ]);
+    }
+
+    public function showWeeklyReport(int $supervisor_id, int $week)
+    {
+        $weekly_reports = DB::table('weekly_report_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->where('week', $week)
+            ->join(
+                'weekly_reports',
+                'weekly_reports.weekly_report_status_id',
+                '=',
+                'weekly_report_statuses.id'
+            )
+            ->select('weekly_reports.id', 'weekly_reports.total_hours', 'weekly_report_statuses.student_number')
+            ->get();
+
+        $students = [];
+
+        foreach ($weekly_reports as $weekly_report) {
+            $report_id = $weekly_report->id;
+            $hours = $weekly_report->total_hours;
+            $student_number = $weekly_report->student_number;
+
+            $student_name = DB::table('users')
+                ->where('role', 'student')
+                ->where('role_id', $student_number)
+                ->select('first_name', 'last_name')
+                ->firstOrFail();
+
+            $ratings = DB::table('weekly_report_ratings')
+                ->where('weekly_report_id', $report_id)
+                ->pluck('score', 'rating_question_id')
+                ->toArray();
+
+            $open_ended = DB::table('weekly_report_answers')
+                ->where('weekly_report_id', $report_id)
+                ->pluck('answer', 'open_ended_question_id')
+                ->toArray();
+
+            $new_student = [
+                'student_number' => $student_number,
+                'last_name' => $student_name->last_name,
+                'first_name' => $student_name->first_name,
+                'ratings' => $ratings,
+                'open_ended' => $open_ended,
+                'hours' => $hours
+            ];
+
+            array_push($students, $new_student);
+        }
+
+        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/report/Index', [
+            'supervisor_id' => $supervisor_id,
+            'week' => $week,
+            'students' => $students,
+        ]);
+    }
+
+    public function showFinalReport(int $supervisor_id)
+    {
+        $intern_evaluations = DB::table('intern_evaluation_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->join(
+                'intern_evaluations',
+                'intern_evaluations.intern_evaluation_status_id',
+                '=',
+                'intern_evaluation_statuses.id'
+            )
+            ->select('intern_evaluations.id', 'intern_evaluation_statuses.student_number')
+            ->get();
+
+        $students = [];
+
+        foreach ($intern_evaluations as $intern_evaluation) {
+            $report_id = $intern_evaluation->id;
+            $student_number = $intern_evaluation->student_number;
+
+            $student_name = DB::table('users')
+                ->where('role', 'student')
+                ->where('role_id', $student_number)
+                ->select('first_name', 'last_name')
+                ->firstOrFail();
+
+            $ratings = DB::table('intern_evaluation_ratings')
+                ->where('intern_evaluation_id', $report_id)
+                ->pluck('score', 'rating_question_id')
+                ->toArray();
+
+            $open_ended = DB::table('intern_evaluation_answers')
+                ->where('intern_evaluation_id', $report_id)
+                ->pluck('answer', 'open_ended_question_id')
+                ->toArray();
+
+            $new_student = [
+                'student_number' => $student_number,
+                'last_name' => $student_name->last_name,
+                'first_name' => $student_name->first_name,
+                'ratings' => $ratings,
+                'open_ended' => $open_ended,
+            ];
+
+            array_push($students, $new_student);
+        }
+
+        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/final/Index', [
+            'supervisor_id' => $supervisor_id,
+            'students' => $students,
         ]);
     }
 }

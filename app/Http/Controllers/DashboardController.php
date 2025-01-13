@@ -32,7 +32,7 @@ class DashboardController extends Controller
             case User::ROLE_SUPERVISOR:
                 return $this->showSupervisor($phase);
             case User::ROLE_FACULTY:
-                return Inertia::render('dashboard/' . $phase . '/(faculty)/Index');
+                return Inertia::render('dashboard/(faculty)/Index');
             case User::ROLE_ADMIN:
                 return Inertia::render('dashboard/' . $phase . '/(admin)/Index');
         }

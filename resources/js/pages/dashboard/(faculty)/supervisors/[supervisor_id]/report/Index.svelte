@@ -1,0 +1,97 @@
+<script>
+    import Header from '@shared/components/InternshipHeader.svelte';
+    import Accordion from '@shared/components/Accordion.svelte';
+    import { Link } from '@inertiajs/svelte';
+
+    export let supervisor_id;
+    export let week;
+    export let students;
+</script>
+
+<div class="main-screen flex flex-col p-4">
+    <Header txt="Weekly Report - Week {week}" />
+
+    <div class="flex flex-col gap-4">
+        <Accordion>
+            <h2 slot="summary" class="text-2xl">Non-Technical Criteria</h2>
+
+            <div
+                class="grid grid-cols-[auto,repeat(4,1fr)] items-center justify-center gap-2"
+            >
+                <p class="col-start-2 text-center">Work Ethic (10)</p>
+                <p class="text-center">Attitude and Personality (10)</p>
+                <p class="text-center">Attendance and Punctuality (10)</p>
+                <p class="text-center">Respect for Authority (10)</p>
+                {#each students as student}
+                    {@const { last_name, first_name, ratings } = student}
+                    <p>{last_name}, {first_name}</p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {ratings[1]}
+                    </p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {ratings[2]}
+                    </p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {ratings[3]}
+                    </p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {ratings[4]}
+                    </p>
+                {/each}
+            </div>
+        </Accordion>
+        <Accordion>
+            <h2 slot="summary" class="text-2xl">Number of Hours</h2>
+
+            <div
+                class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
+            >
+                {#each students as student}
+                    {@const { last_name, first_name, ratings } = student}
+                    <p>{last_name}, {first_name}</p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {ratings[5]}
+                    </p>
+                {/each}
+            </div>
+        </Accordion>
+        <Accordion>
+            <h2 slot="summary" class="text-2xl">Comments or Concerns</h2>
+
+            <div
+                class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
+            >
+                {#each students as student}
+                    {@const { last_name, first_name, open_ended } = student}
+                    <p>{last_name}, {first_name}</p>
+                    <p
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    >
+                        {open_ended[1]}
+                    </p>
+                {/each}
+            </div>
+        </Accordion>
+    </div>
+
+    <!-- Back to Supervisor Details -->
+    <div class="w-stretch flex justify-center p-4">
+        <Link href="/dashboard/faculty/supervisors/{supervisor_id}">
+            <div
+                class="border-2 bg-light-secondary p-4 text-center text-3xl text-light-secondary-text hover:opacity-90"
+            >
+                Back to Supervisor Details
+            </div>
+        </Link>
+    </div>
+</div>

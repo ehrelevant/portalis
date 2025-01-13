@@ -10,12 +10,12 @@
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/pre/supervisors?search=${searchQuery}`);
+        router.get(`/dashboard/faculty/supervisors?search=${searchQuery}`);
     }
 </script>
 
 <div class="main-screen w-full p-4">
-    <Header txt="Pre-Internship Phase" />
+    <Header txt="Supervisor List" />
 
     <!-- Search Function -->
     <form
@@ -39,7 +39,7 @@
             {#each supervisors as supervisor}
                 {@const { supervisor_id, first_name, middle_name, last_name } =
                     supervisor}
-                <Link href="/dashboard/pre/supervisors/{supervisor_id}">
+                <Link href="/dashboard/faculty/supervisors/{supervisor_id}">
                     <!-- edit this later -->
                     <li>
                         <div
