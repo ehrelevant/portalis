@@ -1,4 +1,5 @@
 <script>
+    import Accordion from '@/js/shared/components/Accordion.svelte';
     import { Link } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
@@ -10,7 +11,7 @@
     export let submissions;
 </script>
 
-<div class="main-screen w-full p-4">
+<div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Pre-Internship: Student's View" />
 
     <div
@@ -23,8 +24,8 @@
     </div>
 
     <!-- File Submission Statuses -->
-    <div>
-        <p class="pt-2 text-xl">Internship Documents</p>
+    <Accordion>
+        <h2 slot="summary" class="text-2xl">Internship Documents</h2>
         <ul>
             {#each submissions.slice(0, 3) as submission}
                 {@const { requirement_id, requirement_name, status } =
@@ -38,8 +39,10 @@
                 />
             {/each}
         </ul>
+    </Accordion>
 
-        <p class="pt-2 text-xl">Government IDs</p>
+    <Accordion>
+        <h2 slot="summary" class="text-2xl">Government IDs</h2>
         <ul>
             {#each submissions.slice(3) as submission}
                 {@const { requirement_id, requirement_name, status } =
@@ -53,7 +56,7 @@
                 />
             {/each}
         </ul>
-    </div>
+    </Accordion>
 
     <!-- Back to Student List -->
     <div class="w-stretch flex justify-center p-4">
