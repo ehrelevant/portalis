@@ -20,6 +20,8 @@ class StudentSeeder extends Seeder
             'faculty_id' => 1,
             'grade' => 69.21,
             'phase' => 'pre',
+            'wordpress_name' => 'student',
+            'wordpress_email' => 'student@example.com',
         ]);
         User::factory()->create([
             'email' => 'student@example.com',
@@ -36,6 +38,8 @@ class StudentSeeder extends Seeder
             'faculty_id' => 1,
             'grade' => 69.21,
             'phase' => 'pre',
+            'wordpress_name' => 'ehren',
+            'wordpress_email' => 'eacastillo1@up.edu.ph',
         ]);
         User::factory()->create([
             'email' => 'eacastillo1@up.edu.ph',
@@ -52,6 +56,8 @@ class StudentSeeder extends Seeder
             'faculty_id' => 1,
             'grade' => 69.21,
             'phase' => 'pre',
+            'wordpress_name' => 'edzo',
+            'wordpress_email' => 'csacyatan1@up.edu.ph',
         ]);
         User::factory()->create([
             'email' => 'csacyatan1@up.edu.ph',
@@ -68,6 +74,8 @@ class StudentSeeder extends Seeder
             'faculty_id' => 1,
             'grade' => 69.21,
             'phase' => 'pre',
+            'wordpress_name' => 'yuwen',
+            'wordpress_email' => 'elsaavedra@up.edu.ph',
         ]);
         User::factory()->create([
             'email' => 'elsaavedra@up.edu.ph',
@@ -84,6 +92,8 @@ class StudentSeeder extends Seeder
             'faculty_id' => 1,
             'grade' => 69.21,
             'phase' => 'pre',
+            'wordpress_name' => 'lawrence',
+            'wordpress_email' => 'drbermudez1@up.edu.ph',
         ]);
         User::factory()->create([
             'email' => 'drbermudez1@up.edu.ph',

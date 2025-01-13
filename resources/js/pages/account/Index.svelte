@@ -12,6 +12,9 @@
     export let role;
     /** @type {string} */
     export let email;
+
+    export let wordpress_name;
+    export let wordpress_email;
 </script>
 
 <div
@@ -27,12 +30,16 @@
         >
             Currently logged in:
             <div class="flex flex-col text-2xl">
+                <p class="italic">({role})</p>
                 <p>
-                    {last_name}, {first_name}
+                    Name: {last_name}, {first_name}
                     {middle_name}
                 </p>
-                <p>{role}</p>
-                <p>{email}</p>
+                <p>Email: {email}</p>
+                {#if wordpress_name && wordpress_email}
+                    <p>Wordpress Name: {wordpress_name}</p>
+                    <p>Wordpress Email: {wordpress_email}</p>
+                {/if}
             </div>
 
             <div>

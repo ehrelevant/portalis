@@ -23,6 +23,8 @@ class StudentFactory extends Factory
             'faculty_id' => Faculty::factory(),
             'grade' => fake()->randomFloat(),
             'phase' => fake()->randomElement(['pre', 'during', 'post']),
+            'wordpress_name' => fake()->name(),
+            'wordpress_email' => fake()->unique()->safeEmail(),
         ];
     }
 }
