@@ -61,7 +61,7 @@ class LoginController extends Controller
         ]);
         $email = $credentials['email'];
 
-        $generated_pin = Str::random(6);
+        $generated_pin = str_pad(random_int(0, 999999), 6, 0, STR_PAD_LEFT);
 
         try {
             $user = User::where('email', $email)->firstOrFail();
