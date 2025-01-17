@@ -9,7 +9,7 @@
 
     <div class="flex w-full flex-col sm:flex-row">
         <Link
-            href="/dashboard/faculty/students"
+            href="/dashboard/students"
             class="m-2 flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
             <Account />
@@ -17,7 +17,7 @@
         </Link>
 
         <Link
-            href="/dashboard/faculty/supervisors"
+            href="/dashboard/supervisors"
             class="m-2 flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
             <Account />

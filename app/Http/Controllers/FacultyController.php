@@ -25,59 +25,54 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $students_data = $users_partial
+        $students_info = $users_partial
             ->join('students', 'users.role_id', '=', 'students.student_number')
-            ->join('submission_statuses', 'students.student_number', '=', 'submission_statuses.student_number')
             ->select(
                 'students.student_number',
                 'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                DB::raw("MIN(submission_statuses.status) AS total_status")
-            )
-            ->groupBy(
-                'students.student_number',
-                'users.first_name',
-                'users.middle_name',
                 'users.last_name',
             )
             ->get();
 
+        $students = [];
+
+        foreach ($students_info as $student_info) {
+            $student_statuses = DB::table('submission_statuses')
+                ->where('student_number', $student_info->student_number)
+                ->select(
+                    'submission_statuses.requirement_id',
+                    'submission_statuses.status',
+                )->get();
+
+            $new_student = [
+                'student_number' => $student_info->student_number,
+                'first_name' => $student_info->first_name,
+                'last_name' => $student_info->last_name,
+                'submissions' => $student_statuses,
+            ];
+
+            array_push($students, $new_student);
+        }
+
+        $requirement_names = DB::table('requirements')
+            ->pluck('requirement_name');
+
         return Inertia::render('dashboard/(faculty)/students/Index', [
-            'students' => $students_data,
+            'students' => $students,
+            'requirementNames' => $requirement_names,
         ]);
     }
 
-    public function showStudent(int $student_number): Response
-    {
-        $student = DB::table('students')
-            ->where('student_number', $student_number)
-            ->join('users', 'students.student_number', '=', 'users.role_id')
-            ->where('users.role', 'student')
-            ->select(
-                'students.student_number',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                'users.email',
-                'students.wordpress_name',
-                'students.wordpress_email',
-            )
-            ->firstOrFail();
+    public function showStudentSubmission(int $student_number, int $requirement_id) {
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail()
+            ->status;
 
-        $submission_statuses = DB::table('submission_statuses')
-            ->where('student_number', $student_number)
-            ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
-            ->select(
-                'requirements.id AS requirement_id',
-                'requirements.requirement_name',
-                'submission_statuses.status',
-            )
-            ->get();
-
-        return Inertia::render('dashboard/(faculty)/students/[student_number]/Index', [
-            'student' => $student,
-            'submissions' => $submission_statuses,
+        return Inertia::render('dashboard/(faculty)/students/submission/Index', [
+            'student_number' => $student_number,
+            'requirement_id' => $requirement_id,
+            'status' => $submission_status
         ]);
     }
 

@@ -1,13 +1,10 @@
 <script>
-    import { Link } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
-    import Pending from '@assets/pending_logo.svelte';
-    import Submitted from '@assets/submitted_logo.svelte';
-    import Validated from '@assets/validated_logo.svelte';
-    import Submission from '@shared/components/SubmissionComponent.svelte';
+    import Requirement from '@/js/shared/components/Requirement.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
-
-    let date = 'mm/dd/yyyy';
+    import Validated from '@/assets/validated_logo.svelte';
+    import Submitted from '@/assets/submitted_logo.svelte';
+    import Pending from '@/assets/pending_logo.svelte';
 
     export let student_number;
     export let submissions;
@@ -17,7 +14,7 @@
 <div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Pre-Internship Phase" />
 
-    {#if total_status == 'pending'}
+    {#if total_status === 'pending'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-brown-light text-floating-brown"
         >
@@ -27,16 +24,15 @@
                 <p class="text-4xl font-semibold">Pending Files</p>
                 <div class="flex flex-row">
                     <p class="text-2xl font-medium">
-                        Please update/upload ALL pending documents before <i
-                            >{date}</i
-                        >.
+                        Please update/upload ALL pending documents before their
+                        respective deadlines.
                     </p>
                 </div>
             </div>
         </div>
     {/if}
 
-    {#if total_status == 'submitted'}
+    {#if total_status === 'submitted'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-forest-light text-floating-forest"
         >
@@ -54,7 +50,7 @@
         </div>
     {/if}
 
-    {#if total_status == 'validated'}
+    {#if total_status === 'validated'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-blue-light text-floating-blue"
         >
@@ -76,14 +72,17 @@
         <h2 slot="summary" class="text-2xl">Internship Documents</h2>
         <ul>
             {#each submissions.slice(0, 3) as submission}
-                {@const { requirement_id, requirement_name, status } =
+                {@const { requirement_id, requirement_name, due_date, status } =
                     submission}
-                <Submission
-                    file_name={requirement_name}
-                    sub_status={status}
-                    {student_number}
-                    {requirement_id}
-                />
+                <li>
+                    <Requirement
+                        requirementId={requirement_id}
+                        requirementName={requirement_name}
+                        dueDate={due_date}
+                        submissionStatus={status}
+                        studentNumber={student_number}
+                    />
+                </li>
             {/each}
         </ul>
     </Accordion>
@@ -92,26 +91,18 @@
         <h2 slot="summary" class="text-2xl">Government IDs</h2>
         <ul>
             {#each submissions.slice(3) as submission}
-                {@const { requirement_id, requirement_name, status } =
+                {@const { requirement_id, requirement_name, due_date, status } =
                     submission}
-                <Submission
-                    file_name={requirement_name}
-                    sub_status={status}
-                    {student_number}
-                    {requirement_id}
-                />
+                <li>
+                    <Requirement
+                        requirementId={requirement_id}
+                        requirementName={requirement_name}
+                        dueDate={due_date}
+                        submissionStatus={status}
+                        studentNumber={student_number}
+                    />
+                </li>
             {/each}
         </ul>
     </Accordion>
-
-    <!-- Link to Submission Bin -->
-    <div class="w-stretch flex justify-center p-4">
-        <Link href="/dashboard/pre/upload">
-            <div
-                class="border-2 bg-light-secondary p-4 text-3xl text-light-secondary-text hover:opacity-90"
-            >
-                Submit Documents
-            </div>
-        </Link>
-    </div>
 </div>

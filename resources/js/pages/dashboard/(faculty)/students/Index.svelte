@@ -3,9 +3,10 @@
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
-    import Status from '@shared/components/Status.svelte';
+    import StatusCell from './StatusCell.svelte';
 
     export let students;
+    export let requirementNames;
 
     /** @type {string} */
     let searchQuery = '';
@@ -15,7 +16,7 @@
     }
 </script>
 
-<div class="main-screen w-full p-4">
+<div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Student List" />
 
     <!-- Search Function -->
@@ -35,36 +36,34 @@
     </form>
 
     <!-- List of Students -->
-    <div class="py-4">
-        <ul>
+    <div class="h-full w-full overflow-x-auto">
+        <table
+            class="w-full border-collapse overflow-x-scroll rounded-xl bg-black"
+        >
+            <tr class="border-b-2">
+                <th scope="col" class="p-2">SN</th>
+                <th scope="col" class="p-2">Name</th>
+                {#each requirementNames as requirementName}
+                    <th scope="col" class="p-2">{requirementName}</th>
+                {/each}
+            </tr>
             {#each students as student}
-                {@const {
-                    student_number,
-                    first_name,
-                    middle_name,
-                    last_name,
-                    total_status,
-                } = student}
-                <Link href="/dashboard/faculty/students/{student_number}">
-                    <!-- edit this later -->
-                    <li>
-                        <div
-                            class="my-2 flex justify-between rounded-xl bg-white p-4 hover:opacity-80 dark:bg-black"
-                        >
-                            <div class="flex flex-col justify-center">
-                                <div>
-                                    {last_name}, {first_name}
-                                    {middle_name}
-                                </div>
-                                <div>{student_number}</div>
-                            </div>
-                            <div class="flex items-center">
-                                <Status s_type={total_status} />
-                            </div>
-                        </div>
-                    </li>
-                </Link>
+                {@const { student_number, first_name, last_name, submissions } =
+                    student}
+                <tr class="border-t-2">
+                    <th scope="row" class="p-2">{student_number}</th>
+                    <td class="p-2">{last_name}, {first_name}</td>
+                    {#each submissions as submission}
+                        {@const { requirement_id, status } = submission}
+                        <td class="p-2 text-center"
+                            ><StatusCell
+                                {requirement_id}
+                                {student_number}
+                                {status}
+                            />
+                        </td>{/each}
+                </tr>
             {/each}
-        </ul>
+        </table>
     </div>
 </div>
