@@ -4,9 +4,9 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
-use App\Http\Controllers\InternEvaluationController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\WeeklyReportController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SupervisorController;
 use App\Http\Middleware\EnsureCorrectPhase;
 use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Support\Facades\Route;
@@ -30,40 +30,43 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'redirectPhase']);
-    Route::get('/dashboard/{phase}', [DashboardController::class, 'show'])->middleware(EnsureCorrectPhase::class);
-
     Route::get('/account', [AccountController::class, 'show']);
+    Route::get('/dashboard', [DashboardController::class, 'show']);
 
     Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/dashboard/pre/upload', function () {
-            return Inertia::render('dashboard/pre/(student)/upload/Index');
-        });
-        Route::post('/dashboard/pre/submit', [DashboardController::class, 'submitStudentDocument']);
+        Route::get('/dashboard/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
+        Route::post('/dashboard/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/during/report/{week}', [WeeklyReportController::class, 'show']);
-        Route::post('/dashboard/during/report/submit', [WeeklyReportController::class, 'submit']);
+        Route::get('/dashboard/report/midsem', [SupervisorController::class, 'showMidSemReport']);
+        Route::post('/dashboard/report/midsem/draft', [SupervisorController::class, 'draftMidSemReport']);
+        Route::post('/dashboard/report/midsem/submit', [SupervisorController::class, 'submitMidSemReport']);
 
-        Route::get('/dashboard/during/final', [InternEvaluationController::class, 'show']);
-        Route::post('/dashboard/during/final/submit', [InternEvaluationController::class, 'submit']);
+        Route::get('/dashboard/report/final', [SupervisorController::class, 'showFinalReport']);
+        Route::post('/dashboard/report/final/draft', [SupervisorController::class, 'draftFinalReport']);
+        Route::post('/dashboard/report/final/submit', [SupervisorController::class, 'submitFinalReport']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
-        Route::get('/dashboard/faculty/students', [FacultyController::class, 'showStudents']);
-        Route::get('/dashboard/faculty/students/{student_number}', [FacultyController::class, 'showStudent']);
-        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
-        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
-        Route::post('/dashboard/faculty/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
+        Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
+        Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
+        Route::get('/dashboard/students/{student_number}/{requirement_id}', [FacultyController::class, 'showStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/assign', [FacultyController::class, 'assignStudentSection']);
 
-        Route::get('/dashboard/faculty/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::get('/dashboard/faculty/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
-        Route::get('/dashboard/faculty/supervisors/{supervisor_id}/report/{week}', [FacultyController::class, 'showWeeklyReport']);
-        Route::get('/dashboard/faculty/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
+        Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
+        Route::get('/dashboard/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/report', [FacultyController::class, 'showMidsemReport']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
+
+        Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
+        Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
     });
 
-    Route::get('/file/student/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
+    Route::get('/file/submission/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });
