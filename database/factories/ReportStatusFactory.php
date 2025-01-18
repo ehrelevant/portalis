@@ -7,16 +7,15 @@ use App\Models\Supervisor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WeeklyReportStatus>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ReportStatus>
  */
-class WeeklyReportStatusFactory extends Factory
+class ReportStatusFactory extends Factory
 {
     public function definition(): array
     {
         return [
             'student_number' => Student::factory(),
             'supervisor_id' => Supervisor::factory(),
-            'week' => fake()->numberBetween(0, 6),
             'status' => fake()->randomElement(['rejected', 'unsubmitted', 'submitted', 'validated']),
         ];
     }
