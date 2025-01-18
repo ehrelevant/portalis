@@ -30,7 +30,7 @@
                 Mid-semester Performance Evaluations
             </h2>
             <div class="flex flex-col gap-2">
-                {#if report_status === 'pending'}
+                {#if report_status === 'unsubmitted'}
                     <!-- Removes link if answered already -->
                     <div
                         class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
@@ -53,7 +53,7 @@
         <Accordion>
             <h2 slot="summary" class="text-2xl">Final Report</h2>
 
-            {#if intern_evaluation_status === 'pending'}
+            {#if intern_evaluation_status === 'unsubmitted'}
                 <div
                     class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
                 >

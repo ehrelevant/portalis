@@ -39,9 +39,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/report/midsem', [SupervisorController::class, 'showMidSemReport']);
-        Route::post('/dashboard/report/midsem/draft', [SupervisorController::class, 'draftMidSemReport']);
-        Route::post('/dashboard/report/midsem/submit', [SupervisorController::class, 'submitMidSemReport']);
+        Route::get('/dashboard/report/midsem', [SupervisorController::class, 'showMidsemReport']);
+        Route::post('/dashboard/report/midsem/draft', [SupervisorController::class, 'draftMidsemReport']);
+        Route::post('/dashboard/report/midsem/submit', [SupervisorController::class, 'submitMidsemReport']);
 
         Route::get('/dashboard/report/final', [SupervisorController::class, 'showFinalReport']);
         Route::post('/dashboard/report/final/draft', [SupervisorController::class, 'draftFinalReport']);
