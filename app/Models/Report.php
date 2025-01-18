@@ -13,7 +13,7 @@ class Report extends Model
     /** @use HasFactory<\Database\Factories\ReportFactory> */
     use HasFactory;
 
-    public function weeklyReportStatus(): BelongsTo
+    public function reportStatus(): BelongsTo
     {
         return $this->belongsTo(ReportStatus::class);
     }

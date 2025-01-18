@@ -19,7 +19,7 @@ class ReportStatus extends Model
      */
     public $timestamps = false;
 
-    public function weeklyReport(): HasMany
+    public function report(): HasMany
     {
         return $this->hasMany(Report::class);
     }

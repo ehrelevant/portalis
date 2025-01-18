@@ -54,12 +54,12 @@ class Student extends Model
         return $this->hasManyThrough(Submission::class, SubmissionStatus::class);
     }
 
-    public function weeklyReportStatuses(): HasMany
+    public function reportStatuses(): HasMany
     {
         return $this->hasMany(ReportStatus::class);
     }
 
-    public function weeklyReports(): HasManyThrough
+    public function reports(): HasManyThrough
     {
         return $this->hasManyThrough(Report::class, ReportStatus::class);
     }
