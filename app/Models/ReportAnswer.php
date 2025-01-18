@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WeeklyReportAnswer extends Model
+class ReportAnswer extends Model
 {
-    /** @use HasFactory<\Database\Factories\WeeklyReportAnswerFactory> */
+    /** @use HasFactory<\Database\Factories\ReportAnswerFactory> */
     use HasFactory;
 
     /**
@@ -20,7 +20,7 @@ class WeeklyReportAnswer extends Model
 
     public function weeklyReport(): BelongsTo
     {
-        return $this->belongsTo(WeeklyReport::class);
+        return $this->belongsTo(Report::class);
     }
 
     public function question(): BelongsTo

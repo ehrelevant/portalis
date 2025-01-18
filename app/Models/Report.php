@@ -8,33 +8,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-class WeeklyReport extends Model
+class Report extends Model
 {
-    /** @use HasFactory<\Database\Factories\WeeklyReportFactory> */
+    /** @use HasFactory<\Database\Factories\ReportFactory> */
     use HasFactory;
 
     public function weeklyReportStatus(): BelongsTo
     {
-        return $this->belongsTo(WeeklyReportStatus::class);
+        return $this->belongsTo(ReportStatus::class);
     }
 
     public function supervisor(): HasOneThrough
     {
-        return $this->hasOneThrough(Supervisor::class, WeeklyReportStatus::class);
+        return $this->hasOneThrough(Supervisor::class, ReportStatus::class);
     }
 
     public function student(): HasOneThrough
     {
-        return $this->hasOneThrough(Student::class, WeeklyReportStatus::class);
+        return $this->hasOneThrough(Student::class, ReportStatus::class);
     }
 
     public function ratings(): HasMany
     {
-        return $this->hasMany(WeeklyReportRating::class);
+        return $this->hasMany(ReportRating::class);
     }
 
     public function answers(): HasMany
     {
-        return $this->hasMany(WeeklyReportAnswer::class);
+        return $this->hasMany(ReportAnswer::class);
     }
 }

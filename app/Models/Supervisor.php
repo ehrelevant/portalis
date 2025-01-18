@@ -32,12 +32,12 @@ class Supervisor extends Model
 
     public function weeklyReportStatuses(): HasMany
     {
-        return $this->hasMany(WeeklyReportStatus::class);
+        return $this->hasMany(ReportStatus::class);
     }
 
     public function weeklyReports(): HasManyThrough
     {
-        return $this->hasManyThrough(WeeklyReport::class, WeeklyReportStatus::class);
+        return $this->hasManyThrough(Report::class, ReportStatus::class);
     }
 
     public function internEvaluationStatuses(): HasMany

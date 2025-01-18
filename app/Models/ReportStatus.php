@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class WeeklyReportStatus extends Model
+class ReportStatus extends Model
 {
-    /** @use HasFactory<\Database\Factories\WeeklyReportStatusFactory> */
+    /** @use HasFactory<\Database\Factories\ReportStatusFactory> */
     use HasFactory;
 
     /**
@@ -21,7 +21,7 @@ class WeeklyReportStatus extends Model
 
     public function weeklyReport(): HasMany
     {
-        return $this->hasMany(WeeklyReport::class);
+        return $this->hasMany(Report::class);
     }
 
     public function student(): BelongsTo
