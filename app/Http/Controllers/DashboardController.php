@@ -86,10 +86,9 @@ class DashboardController extends Controller
                     ->firstOrFail()
                     ->company_name;
 
-                $weekly_report_statuses = DB::table('weekly_report_statuses')
+                $report_statuses = DB::table('report_statuses')
                     ->where('supervisor_id', $supervisor_id)
                     ->select(
-                        'week',
                         'status'
                     )
                     ->distinct()
@@ -107,7 +106,7 @@ class DashboardController extends Controller
 
                 $props = [
                     'company_name' => $company_name,
-                    'weekly_report_statuses' => $weekly_report_statuses,
+                    'report_statuses' => $report_statuses,
                     'intern_evaluation_status' => $intern_evaluation_status,
                 ];
         }

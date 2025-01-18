@@ -167,12 +167,9 @@ class FacultyController extends Controller
             ->firstOrFail()
             ->company_name;
 
-        $weekly_report_statuses = DB::table('weekly_report_statuses')
+        $report_statuses = DB::table('report_statuses')
             ->where('supervisor_id', $supervisor_id)
-            ->select(
-                'week',
-                'status'
-            )
+            ->select('status')
             ->distinct()
             ->get();
 
@@ -190,31 +187,30 @@ class FacultyController extends Controller
             'supervisor_id' => $supervisor_id,
             'supervisor' => $supervisor,
             'company_name' => $company_name,
-            'weekly_report_statuses' => $weekly_report_statuses,
+            'report_statuses' => $report_statuses,
             'intern_evaluation_status' => $intern_evaluation_status,
         ]);
     }
 
-    public function showWeeklyReport(int $supervisor_id, int $week)
+    public function showReport(int $supervisor_id)
     {
-        $weekly_reports = DB::table('weekly_report_statuses')
+        $reports = DB::table('report_statuses')
             ->where('supervisor_id', $supervisor_id)
-            ->where('week', $week)
             ->join(
-                'weekly_reports',
-                'weekly_reports.weekly_report_status_id',
+                'reports',
+                'reports.report_status_id',
                 '=',
-                'weekly_report_statuses.id'
+                'report_statuses.id'
             )
-            ->select('weekly_reports.id', 'weekly_reports.total_hours', 'weekly_report_statuses.student_number')
+            ->select('reports.id', 'reports.total_hours', 'report_statuses.student_number')
             ->get();
 
         $students = [];
 
-        foreach ($weekly_reports as $weekly_report) {
-            $report_id = $weekly_report->id;
-            $hours = $weekly_report->total_hours;
-            $student_number = $weekly_report->student_number;
+        foreach ($reports as $report) {
+            $report_id = $report->id;
+            $hours = $report->total_hours;
+            $student_number = $report->student_number;
 
             $student_name = DB::table('users')
                 ->where('role', 'student')
@@ -222,13 +218,13 @@ class FacultyController extends Controller
                 ->select('first_name', 'last_name')
                 ->firstOrFail();
 
-            $ratings = DB::table('weekly_report_ratings')
-                ->where('weekly_report_id', $report_id)
+            $ratings = DB::table('report_ratings')
+                ->where('report_id', $report_id)
                 ->pluck('score', 'rating_question_id')
                 ->toArray();
 
-            $open_ended = DB::table('weekly_report_answers')
-                ->where('weekly_report_id', $report_id)
+            $open_ended = DB::table('report_answers')
+                ->where('report_id', $report_id)
                 ->pluck('answer', 'open_ended_question_id')
                 ->toArray();
 
@@ -246,7 +242,6 @@ class FacultyController extends Controller
 
         return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/report/Index', [
             'supervisor_id' => $supervisor_id,
-            'week' => $week,
             'students' => $students,
         ]);
     }
