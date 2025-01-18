@@ -21,7 +21,7 @@ class CompanyEvaluationStatusFactory extends Factory
         return [
             'student_number' => Student::factory(),
             'company_id' => Company::factory(),
-            'status' => fake()->randomElement(['pending', 'submitted', 'validated']),
+            'status' => fake()->randomElement(['rejected', 'unsubmitted', 'submitted', 'validated']),
         ];
     }
 }

@@ -17,7 +17,7 @@ class WeeklyReportStatusFactory extends Factory
             'student_number' => Student::factory(),
             'supervisor_id' => Supervisor::factory(),
             'week' => fake()->numberBetween(0, 6),
-            'status' => fake()->randomElement(['pending', 'submitted', 'validated']),
+            'status' => fake()->randomElement(['rejected', 'unsubmitted', 'submitted', 'validated']),
         ];
     }
 }
