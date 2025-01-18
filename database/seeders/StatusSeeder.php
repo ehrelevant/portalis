@@ -7,10 +7,9 @@ use App\Models\InternEvaluationStatus;
 use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\SubmissionStatus;
-use App\Models\WeeklyReportStatus;
+use App\Models\ReportStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use PHPUnit\Metadata\Api\Requirements;
 
 class StatusSeeder extends Seeder
 {
@@ -24,29 +23,26 @@ class StatusSeeder extends Seeder
                 SubmissionStatus::factory()->create([
                     'student_number' => $student->student_number,
                     'requirement_id' => $requirement->id,
-                    'status' => 'pending',
+                    'status' => 'unsubmitted',
                 ]);
             }
 
-            for ($i = 1; $i <= 5; ++$i) {
-                WeeklyReportStatus::factory()->create([
-                    'student_number' => $student->student_number,
-                    'supervisor_id' => $student->supervisor_id,
-                    'week' => $i,
-                    'status' => 'pending',
-                ]);
-            }
+            ReportStatus::factory()->create([
+                'student_number' => $student->student_number,
+                'supervisor_id' => $student->supervisor_id,
+                'status' => 'unsubmitted',
+            ]);
 
             InternEvaluationStatus::factory()->create([
                 'student_number' => $student->student_number,
                 'supervisor_id' => $student->supervisor_id,
-                'status' => 'pending',
+                'status' => 'unsubmitted',
             ]);
 
             CompanyEvaluationStatus::factory()->create([
                 'student_number' => $student->student_number,
                 'company_id' => $student->supervisor()->company_id ?? 1,
-                'status' => 'pending',
+                'status' => 'unsubmitted',
             ]);
         }
     }
