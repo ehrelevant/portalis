@@ -167,11 +167,11 @@ class FacultyController extends Controller
             ->firstOrFail()
             ->company_name;
 
-        $report_statuses = DB::table('report_statuses')
+        $report_status = DB::table('report_statuses')
             ->where('supervisor_id', $supervisor_id)
             ->select('status')
-            ->distinct()
-            ->get();
+            ->firstOrFail()
+            ->status;
 
         /*
         * This might have issues if for some reason two interns under the
@@ -187,12 +187,12 @@ class FacultyController extends Controller
             'supervisor_id' => $supervisor_id,
             'supervisor' => $supervisor,
             'company_name' => $company_name,
-            'report_statuses' => $report_statuses,
+            'report_status' => $report_status,
             'intern_evaluation_status' => $intern_evaluation_status,
         ]);
     }
 
-    public function showReport(int $supervisor_id)
+    public function showMidsemReport(int $supervisor_id)
     {
         $reports = DB::table('report_statuses')
             ->where('supervisor_id', $supervisor_id)

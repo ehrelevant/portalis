@@ -12,7 +12,7 @@
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/faculty/students?search=${searchQuery}`);
+        router.get(`/dashboard/students?search=${searchQuery}`);
     }
 </script>
 

@@ -4,14 +4,12 @@
     import Accordion from '@shared/components/Accordion.svelte';
 
     export let students;
-    export let week;
 
     const evaluations = students.map((student) => {
         return {
             student_number: student.student_number,
             last_name: student.last_name,
             first_name: student.first_name,
-            week: week,
             ratings: {
                 1: null,
                 2: null,
@@ -27,7 +25,6 @@
     });
 
     let form = useForm({
-        week: week,
         evaluations: evaluations,
     });
 

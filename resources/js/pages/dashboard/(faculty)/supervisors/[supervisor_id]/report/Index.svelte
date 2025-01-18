@@ -4,12 +4,11 @@
     import { Link } from '@inertiajs/svelte';
 
     export let supervisor_id;
-    export let week;
     export let students;
 </script>
 
 <div class="main-screen flex flex-col p-4">
-    <Header txt="Weekly Report - Week {week}" />
+    <Header txt="Mid-semester Report" />
 
     <div class="flex flex-col gap-4">
         <Accordion>

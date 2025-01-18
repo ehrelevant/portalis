@@ -10,7 +10,7 @@
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/faculty/supervisors?search=${searchQuery}`);
+        router.get(`/dashboard/supervisors?search=${searchQuery}`);
     }
 </script>
 
@@ -39,7 +39,7 @@
             {#each supervisors as supervisor}
                 {@const { supervisor_id, first_name, middle_name, last_name } =
                     supervisor}
-                <Link href="/dashboard/faculty/supervisors/{supervisor_id}">
+                <Link href="/dashboard/supervisors/{supervisor_id}">
                     <!-- edit this later -->
                     <li>
                         <div

@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
         Route::get('/dashboard/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
-        Route::get('/dashboard/supervisors/{supervisor_id}/report', [FacultyController::class, 'showMidsemReport']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FacultyController::class, 'showMidsemReport']);
         Route::get('/dashboard/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);

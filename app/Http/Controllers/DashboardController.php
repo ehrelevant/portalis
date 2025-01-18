@@ -86,13 +86,11 @@ class DashboardController extends Controller
                     ->firstOrFail()
                     ->company_name;
 
-                $report_statuses = DB::table('report_statuses')
+                $report_status = DB::table('report_statuses')
                     ->where('supervisor_id', $supervisor_id)
-                    ->select(
-                        'status'
-                    )
-                    ->distinct()
-                    ->get();
+                    ->select('status')
+                    ->firstOrFail()
+                    ->status;
 
                 /*
                 * This might have issues if for some reason two interns under the
@@ -106,7 +104,7 @@ class DashboardController extends Controller
 
                 $props = [
                     'company_name' => $company_name,
-                    'report_statuses' => $report_statuses,
+                    'report_status' => $report_status,
                     'intern_evaluation_status' => $intern_evaluation_status,
                 ];
         }
