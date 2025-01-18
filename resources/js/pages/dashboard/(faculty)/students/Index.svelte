@@ -1,5 +1,5 @@
 <script>
-    import { router, Link } from '@inertiajs/svelte';
+    import { router } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';

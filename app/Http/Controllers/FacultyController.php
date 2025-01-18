@@ -63,7 +63,8 @@ class FacultyController extends Controller
         ]);
     }
 
-    public function showStudentSubmission(int $student_number, int $requirement_id) {
+    public function showStudentSubmission(int $student_number, int $requirement_id)
+    {
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail()
@@ -72,7 +73,7 @@ class FacultyController extends Controller
         return Inertia::render('dashboard/(faculty)/students/submission/Index', [
             'student_number' => $student_number,
             'requirement_id' => $requirement_id,
-            'status' => $submission_status
+            'status' => $submission_status,
         ]);
     }
 
