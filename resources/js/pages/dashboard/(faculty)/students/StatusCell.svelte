@@ -1,6 +1,4 @@
 <script>
-    import { Link } from '@inertiajs/svelte';
-
     export let student_number;
     export let requirement_id;
     export let status;
@@ -18,9 +16,10 @@
 <div class="flex items-center justify-center">
     <div class="w-fit justify-center rounded-lg px-2 {bgColor}">
         {#if status !== 'unsubmitted'}
-            <Link
+            <a
                 href="/dashboard/students/{student_number}/{requirement_id}"
-                class={bgColor}>{status}</Link
+                class={bgColor}
+                target="_blank">{status}</a
             >
         {:else}
             <p class="text-base">{status}</p>
