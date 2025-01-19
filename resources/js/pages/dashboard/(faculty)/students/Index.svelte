@@ -53,7 +53,7 @@
         />
     </form>
 
-    <Accordion open>
+    <Accordion>
         <h2 slot="summary" class="text-2xl">Requirement Deadlines</h2>
 
         <form
