@@ -51,7 +51,7 @@ class DashboardController extends Controller
                     ->select(
                         'requirements.id AS requirement_id',
                         'requirements.requirement_name',
-                        'requirements.due_date',
+                        'requirements.deadline',
                         'submission_statuses.status',
                     );
 

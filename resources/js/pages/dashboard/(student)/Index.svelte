@@ -72,13 +72,13 @@
         <h2 slot="summary" class="text-2xl">Internship Documents</h2>
         <ul>
             {#each submissions.slice(0, 3) as submission}
-                {@const { requirement_id, requirement_name, due_date, status } =
+                {@const { requirement_id, requirement_name, deadline, status } =
                     submission}
                 <li>
                     <Requirement
                         requirementId={requirement_id}
                         requirementName={requirement_name}
-                        dueDate={due_date}
+                        {deadline}
                         submissionStatus={status}
                         studentNumber={student_number}
                     />
@@ -91,13 +91,13 @@
         <h2 slot="summary" class="text-2xl">Government IDs</h2>
         <ul>
             {#each submissions.slice(3) as submission}
-                {@const { requirement_id, requirement_name, due_date, status } =
+                {@const { requirement_id, requirement_name, deadline, status } =
                     submission}
                 <li>
                     <Requirement
                         requirementId={requirement_id}
                         requirementName={requirement_name}
-                        dueDate={due_date}
+                        {deadline}
                         submissionStatus={status}
                         studentNumber={student_number}
                     />

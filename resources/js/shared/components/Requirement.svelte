@@ -4,7 +4,7 @@
 
     export let requirementId;
     export let requirementName;
-    export let dueDate;
+    export let deadline;
     export let submissionStatus;
     export let studentNumber;
 </script>
@@ -14,8 +14,19 @@
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
         <p class="text-md">{requirementName}</p>
-        {#if dueDate}
-            <p class="text-sm">(Due Date: {dueDate})</p>
+        {#if deadline}
+            {@const deadlineDateTime = new Date(deadline)}
+            <p class="text-xs">
+                (Deadline: {deadlineDateTime.toLocaleDateString(undefined, {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                })})
+            </p>
         {/if}
     </div>
     <div
