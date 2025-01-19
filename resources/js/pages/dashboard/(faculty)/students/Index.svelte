@@ -16,7 +16,7 @@
     }
 </script>
 
-<div class="main-screen flex w-full flex-col gap-4 p-4">
+<div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
     <!-- Search Function -->
@@ -36,26 +36,27 @@
     </form>
 
     <!-- List of Students -->
-    <div class="h-full w-full overflow-x-auto">
+    <div class="w-full overflow-x-auto rounded-xl">
         <table
             class="w-full border-collapse overflow-x-scroll rounded-xl bg-black"
         >
             <tr class="border-b-2">
-                <th scope="col" class="p-2">SN</th>
-                <th scope="col" class="p-2">Name</th>
+                <th scope="col" class="border-r-2 p-2">SN</th>
+                <th scope="col" class="border-r-2 p-2">Name</th>
                 {#each requirementNames as requirementName}
-                    <th scope="col" class="p-2">{requirementName}</th>
+                    <th scope="col" class="border-l-2 p-2">{requirementName}</th
+                    >
                 {/each}
             </tr>
             {#each students as student}
                 {@const { student_number, first_name, last_name, submissions } =
                     student}
                 <tr class="border-t-2">
-                    <th scope="row" class="p-2">{student_number}</th>
-                    <td class="p-2">{last_name}, {first_name}</td>
+                    <th scope="row" class="border-r-2 p-2">{student_number}</th>
+                    <td class="border-r-2 p-2">{last_name}, {first_name}</td>
                     {#each submissions as submission}
                         {@const { requirement_id, status } = submission}
-                        <td class="p-2 text-center"
+                        <td class="border-l-2 p-2 text-center"
                             ><StatusCell
                                 {requirement_id}
                                 {student_number}
