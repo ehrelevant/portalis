@@ -25,7 +25,7 @@ class Student extends Model
      *
      * @var string
      */
-    protected $primary_key = 'student_number';
+    protected $primaryKey = 'student_number';
 
     /**
      * Indicates if the model's ID is auto-incrementing.
