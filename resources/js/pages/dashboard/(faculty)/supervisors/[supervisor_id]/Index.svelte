@@ -15,7 +15,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 p-4">
-    <Header txt="Supervisor's View" />
+    <Header txt="Supervisor List" />
 
     <div
         class="bg-light-secondary p-4 text-xl text-light-secondary-text dark:bg-dark-secondary dark:text-dark-secondary-text"
@@ -25,32 +25,30 @@
     </div>
 
     <div class="flex flex-col gap-4">
-        <Accordion>
+        <Accordion open>
             <h2 slot="summary" class="text-2xl">
                 Mid-semester Performance Evaluations
             </h2>
-            <div class="flex flex-col gap-2">
-                {#if report_status === 'unsubmitted'}
-                    <!-- Removes link if answered already -->
-                    <div
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div class="flex items-center">Mid-semester Report</div>
-                        <Status type={report_status} />
-                    </div>
-                {:else}
-                    <Link
-                        href="/dashboard/supervisors/{supervisor_id}/midsem"
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div class="flex items-center">Mid-semester Report</div>
-                        <Status type={report_status} />
-                    </Link>
-                {/if}
-            </div>
+            {#if report_status === 'unsubmitted'}
+                <!-- Removes link if answered already -->
+                <div
+                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                >
+                    <div class="flex items-center">Mid-semester Report</div>
+                    <Status type={report_status} />
+                </div>
+            {:else}
+                <Link
+                    href="/dashboard/supervisors/{supervisor_id}/midsem"
+                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                >
+                    <div class="flex items-center">Mid-semester Report</div>
+                    <Status type={report_status} />
+                </Link>
+            {/if}
         </Accordion>
 
-        <Accordion>
+        <Accordion open>
             <h2 slot="summary" class="text-2xl">Final Report</h2>
 
             {#if intern_evaluation_status === 'unsubmitted'}
