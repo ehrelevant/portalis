@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\SubmissionStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,12 +28,18 @@ class FacultyController extends Controller
 
         $students_info = $users_partial
             ->join('students', 'users.role_id', '=', 'students.student_number')
+            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
                 'students.student_number',
                 'users.first_name',
                 'users.last_name',
+                'faculties.section',
+                'students.has_dropped',
             )
             ->get();
+
+        $sections = DB::table('faculties')
+            ->pluck('section');
 
         $students = [];
 
@@ -48,8 +55,11 @@ class FacultyController extends Controller
                 'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
+                'section' => $student_info->section,
+                'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
             ];
+
 
             array_push($students, $new_student);
         }
@@ -60,6 +70,7 @@ class FacultyController extends Controller
         return Inertia::render('dashboard/(faculty)/students/Index', [
             'students' => $students,
             'requirementNames' => $requirement_names,
+            'sections' => $sections
         ]);
     }
 
@@ -118,6 +129,40 @@ class FacultyController extends Controller
         }
 
         $submission_status->save();
+
+        return back();
+    }
+
+    public function assignStudentSection(int $student_number, string $new_section = '') {
+        $faculty_sections = DB::table('faculties')
+            ->pluck('id', 'section')
+            ->toArray();
+
+        if ($new_section === '') {
+            // If section is set to nothing, set section to null
+            $target_student = Student::find($student_number);
+            $target_student->faculty_id = null;
+            $target_student->has_dropped = false;
+            $target_student->save();
+        } else if ($new_section === 'DRP') {
+            // If section is set to DRP, flag student as DRP and set section to NULL in database
+            $target_student = Student::find($student_number);
+            $target_student->faculty_id = null;
+            $target_student->has_dropped = true;
+            $target_student->save();
+        } else {
+            $new_faculty_id = $faculty_sections[$new_section] ?? null;
+
+            if ($new_faculty_id) {
+                // If new section exists, save change in database
+                $target_student = Student::find($student_number);
+                $target_student->faculty_id = $new_faculty_id;
+                $target_student->has_dropped = false;
+                $target_student->save();
+            }
+            // Otherwise, do not update database
+            // This case only matters if an irregular section is passed
+        }
 
         return back();
     }

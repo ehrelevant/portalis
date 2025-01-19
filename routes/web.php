@@ -55,7 +55,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dashboard/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
         Route::post('/dashboard/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
         Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
-        Route::post('/dashboard/students/{student_number}/assign', [FacultyController::class, 'assignStudentSection']);
+        Route::put('/dashboard/students/{student_number}/assign/section', [FacultyController::class, 'assignStudentSection']);
+        Route::put('/dashboard/students/{student_number}/assign/section/{new_section}', [FacultyController::class, 'assignStudentSection']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
         Route::get('/dashboard/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
