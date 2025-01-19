@@ -33,7 +33,8 @@ class DashboardController extends Controller
                 abort(404);
         }
 
-        abort(404);
+        // Error 401 since the user does not have an existing role
+        abort(401);
     }
 
     private function showStudentDashboard(Request $request, string $phase): Response
@@ -67,9 +68,11 @@ class DashboardController extends Controller
                     'submissions' => $submission_statuses,
                     'total_status' => $total_status,
                 ];
-        }
 
-        return Inertia::render('dashboard/(student)/Index', $props);
+                return Inertia::render('dashboard/(student)/Index', $props);
+            default:
+                return Inertia::render('dashboard/WaitingPage');
+        }
     }
 
     private function showSupervisorDashboard(Request $request, string $phase): Response
@@ -107,9 +110,12 @@ class DashboardController extends Controller
                     'report_status' => $report_status,
                     'intern_evaluation_status' => $intern_evaluation_status,
                 ];
+
+                return Inertia::render('dashboard/(supervisor)/Index', $props);
+            default:
+                return Inertia::render('dashboard/WaitingPage');
         }
 
-        return Inertia::render('dashboard/(supervisor)/Index', $props);
     }
 
     private function showFacultyDashboard(Request $request, string $phase): Response
