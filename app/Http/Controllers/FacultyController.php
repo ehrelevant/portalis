@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\SubmissionStatus;
 use Illuminate\Http\RedirectResponse;
@@ -38,21 +39,18 @@ class FacultyController extends Controller
             )
             ->get();
 
-        $sections = DB::table('faculties')
-            ->pluck('section');
+            $students = [];
 
-        $students = [];
-
-        foreach ($students_info as $student_info) {
-            $student_statuses = DB::table('submission_statuses')
+            foreach ($students_info as $student_info) {
+                $student_statuses = DB::table('submission_statuses')
                 ->where('student_number', $student_info->student_number)
                 ->select(
                     'submission_statuses.requirement_id',
                     'submission_statuses.status',
-                )->get();
+                    )->get();
 
-            $new_student = [
-                'student_number' => $student_info->student_number,
+                    $new_student = [
+                        'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
@@ -60,16 +58,18 @@ class FacultyController extends Controller
                 'submissions' => $student_statuses,
             ];
 
-
             array_push($students, $new_student);
         }
 
-        $requirement_names = DB::table('requirements')
-            ->pluck('requirement_name');
+        $requirements = DB::table('requirements')
+            ->get();
+
+        $sections = DB::table('faculties')
+            ->pluck('section');
 
         return Inertia::render('dashboard/(faculty)/students/Index', [
             'students' => $students,
-            'requirementNames' => $requirement_names,
+            'requirements' => $requirements,
             'sections' => $sections,
         ]);
     }
@@ -168,6 +168,21 @@ class FacultyController extends Controller
         return back();
     }
 
+    public function updateRequirementDeadlines(Request $request) {
+        $form_values = $request->validate([
+            'requirements.*.id' => ['int'],
+            'requirements.*.deadline' => ['date', 'nullable'],
+        ]);
+
+        $new_requirements = $form_values['requirements'];
+
+        foreach ($new_requirements as $new_requirement) {
+            ['id' => $id, 'deadline' => $deadline] = $new_requirement;
+            $requirement = Requirement::find($id);
+            $requirement->deadline = $deadline;
+            $requirement->save();
+        }
+    }
 
     public function showSupervisors(Request $request): Response
     {

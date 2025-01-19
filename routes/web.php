@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
         Route::put('/dashboard/students/{student_number}/assign/section', [FacultyController::class, 'assignStudentSection']);
         Route::put('/dashboard/students/{student_number}/assign/section/{new_section}', [FacultyController::class, 'assignStudentSection']);
+        Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
         Route::get('/dashboard/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);

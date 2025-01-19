@@ -1,12 +1,13 @@
 <script>
-    import { router } from '@inertiajs/svelte';
+    import { router, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
     import StatusCell from './StatusCell.svelte';
+    import Accordion from '@/js/shared/components/Accordion.svelte';
 
     export let students;
-    export let requirementNames;
+    export let requirements;
     export let sections;
 
     /** @type {string} */
@@ -22,6 +23,14 @@
         router.put(
             `/dashboard/students/${studentNumber}/assign/section/${sectionName}`,
         );
+    }
+
+    let deadlinesForm = useForm({
+        requirements: [...requirements],
+    });
+
+    function saveDeadlines() {
+        $deadlinesForm.put('/dashboard/students/update-deadlines');
     }
 </script>
 
@@ -44,67 +53,109 @@
         />
     </form>
 
-    <!-- List of Students -->
-    <div class="w-full overflow-x-auto rounded-xl">
-        <table
-            class="w-full border-collapse overflow-x-scroll rounded-xl bg-black"
+    <Accordion open>
+        <h2 slot="summary" class="text-2xl">Requirement Deadlines</h2>
+
+        <form
+            class="flex flex-col gap-4"
+            on:submit|preventDefault={saveDeadlines}
         >
-            <tr class="border-b-2">
-                <th scope="col" class="border-r-2 p-2">SN</th>
-                <th scope="col" class="border-r-2 p-2">Name</th>
-                <th scope="col" class="border-r-2 p-2">Section</th>
-                {#each requirementNames as requirementName}
-                    <th scope="col" class="border-l-2 p-2">{requirementName}</th
-                    >
+            <div class="grid grid-cols-[auto,1fr] items-center gap-2">
+                {#each requirements as requirement, i}
+                    {@const { requirement_name, deadline } = requirement}
+                    <label for="{requirement_name} deadline">
+                        {requirement_name}
+                    </label>
+                    <input
+                        name="{requirement_name} deadline"
+                        type="datetime-local"
+                        step="1"
+                        bind:value={$deadlinesForm.requirements[i].deadline}
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    />
                 {/each}
-            </tr>
-            {#each students as student}
-                {@const {
-                    student_number,
-                    first_name,
-                    last_name,
-                    section: student_section,
-                    has_dropped,
-                    submissions,
-                } = student}
-                <tr class="border-t-2">
-                    <th scope="row" class="border-r-2 p-2">{student_number}</th>
-                    <td class="border-r-2 p-2">{last_name}, {first_name}</td>
-                    <td class="border-r-2 p-2">
-                        <div class="flex items-center justify-center">
-                            <select
-                                class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
-                                on:change={(evt) =>
-                                    setSection(evt, student_number)}
-                            >
-                                <option
-                                    selected={!has_dropped && student_section}
-                                    value
-                                />
-                                {#each sections as section}
+            </div>
+            <div class="flex justify-end">
+                <input
+                    type="submit"
+                    value="Save"
+                    class="w-28 cursor-pointer rounded-full bg-floating-forest-light p-2 hover:opacity-90 dark:bg-floating-forest"
+                />
+            </div>
+        </form>
+    </Accordion>
+
+    <!-- List of Students -->
+    <Accordion open>
+        <h2 slot="summary" class="text-2xl">Student Submissions</h2>
+
+        <div class="w-full overflow-x-auto rounded-xl">
+            <table
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-black"
+            >
+                <tr class="border-b-2">
+                    <th scope="col" class="border-r-2 p-2">SN</th>
+                    <th scope="col" class="border-r-2 p-2">Name</th>
+                    <th scope="col" class="border-r-2 p-2">Section</th>
+                    {#each requirements as requirement}
+                        {@const { requirement_name } = requirement}
+                        <th scope="col" class="border-l-2 p-2"
+                            >{requirement_name}</th
+                        >
+                    {/each}
+                </tr>
+                {#each students as student}
+                    {@const {
+                        student_number,
+                        first_name,
+                        last_name,
+                        section: student_section,
+                        has_dropped,
+                        submissions,
+                    } = student}
+                    <tr class="border-t-2">
+                        <th scope="row" class="border-r-2 p-2"
+                            >{student_number}</th
+                        >
+                        <td class="border-r-2 p-2">{last_name}, {first_name}</td
+                        >
+                        <td class="border-r-2 p-2">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setSection(evt, student_number)}
+                                >
                                     <option
                                         selected={!has_dropped &&
-                                            student_section === section}
-                                        value={section}>{section}</option
+                                            student_section}
+                                        value
+                                    />
+                                    {#each sections as section}
+                                        <option
+                                            selected={!has_dropped &&
+                                                student_section === section}
+                                            value={section}>{section}</option
+                                        >
+                                    {/each}
+                                    <option selected={has_dropped} value="DRP"
+                                        >DRP</option
                                     >
-                                {/each}
-                                <option selected={has_dropped} value="DRP"
-                                    >DRP</option
-                                >
-                            </select>
-                        </div>
-                    </td>
-                    {#each submissions as submission}
-                        {@const { requirement_id, status } = submission}
-                        <td class="border-l-2 p-2 text-center"
-                            ><StatusCell
-                                {requirement_id}
-                                {student_number}
-                                {status}
-                            />
-                        </td>{/each}
-                </tr>
-            {/each}
-        </table>
-    </div>
+                                </select>
+                            </div>
+                        </td>
+                        {#each submissions as submission}
+                            {@const { requirement_id, status } = submission}
+                            <td class="border-l-2 p-2 text-center"
+                                ><StatusCell
+                                    {requirement_id}
+                                    {student_number}
+                                    {status}
+                                />
+                            </td>{/each}
+                    </tr>
+                {/each}
+            </table>
+        </div>
+    </Accordion>
 </div>
