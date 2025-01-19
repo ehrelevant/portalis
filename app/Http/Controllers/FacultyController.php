@@ -70,7 +70,7 @@ class FacultyController extends Controller
         return Inertia::render('dashboard/(faculty)/students/Index', [
             'students' => $students,
             'requirementNames' => $requirement_names,
-            'sections' => $sections
+            'sections' => $sections,
         ]);
     }
 
@@ -133,7 +133,8 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function assignStudentSection(int $student_number, string $new_section = '') {
+    public function assignStudentSection(int $student_number, string $new_section = '')
+    {
         $faculty_sections = DB::table('faculties')
             ->pluck('id', 'section')
             ->toArray();
@@ -144,7 +145,7 @@ class FacultyController extends Controller
             $target_student->faculty_id = null;
             $target_student->has_dropped = false;
             $target_student->save();
-        } else if ($new_section === 'DRP') {
+        } elseif ($new_section === 'DRP') {
             // If section is set to DRP, flag student as DRP and set section to NULL in database
             $target_student = Student::find($student_number);
             $target_student->faculty_id = null;
