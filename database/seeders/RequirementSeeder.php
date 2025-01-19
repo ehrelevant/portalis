@@ -15,12 +15,15 @@ class RequirementSeeder extends Seeder
     {
         Requirement::factory()->create([
             'requirement_name' => 'Internship Agreement',
+            'deadline' => null,
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Medical Certificate',
+            'deadline' => null,
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Signed Work Plan',
+            'deadline' => null,
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Student\'s ID',
