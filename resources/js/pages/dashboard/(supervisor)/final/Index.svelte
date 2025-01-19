@@ -32,12 +32,12 @@
     $: console.log($form);
 
     function handleSubmit() {
-        $form.post('/dashboard/during/final/submit');
+        $form.post('/dashboard/report/final/submit');
     }
 </script>
 
 <div class="main-screen flex flex-col p-4">
-    <Header txt="During Internship: Final Report Form" />
+    <Header txt="Final Report Form" />
 
     <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
         <div class="flex flex-col gap-4">

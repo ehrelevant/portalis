@@ -15,33 +15,34 @@
 
     <div class="flex flex-col gap-4">
         <h2 class="text-2xl">Company: {company_name}</h2>
-        <Accordion>
+        <Accordion open>
             <h2 slot="summary" class="text-2xl">
-                Weekly Performance Evaluation
+                Mid-semester Performance Evaluation
             </h2>
-            <div class="flex flex-col gap-2">
-                {#if report_status != 'unsubmitted'}
-                    <!-- Removes link if answered already -->
-                    <div
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div class="flex items-center">Mid-semester Report</div>
-                        <Status type={report_status} />
-                    </div>
-                {:else}
-                    <Link
-                        href="/dashboard/report/midsem"
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div class="flex items-center">Mid-semester Report</div>
-                        <Status type={report_status} />
-                    </Link>
-                {/if}
-            </div>
+
+            {#if report_status != 'unsubmitted'}
+                <!-- Removes link if answered already -->
+                <div
+                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                >
+                    <div class="flex items-center">Mid-semester Report</div>
+                    <Status type={report_status} />
+                </div>
+            {:else}
+                <Link
+                    href="/dashboard/report/midsem"
+                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                >
+                    <div class="flex items-center">Mid-semester Report</div>
+                    <Status type={report_status} />
+                </Link>
+            {/if}
         </Accordion>
 
-        <Accordion>
-            <h2 slot="summary" class="text-2xl">Final Report</h2>
+        <Accordion open>
+            <h2 slot="summary" class="text-2xl">
+                Final Performance Evaluation
+            </h2>
 
             {#if intern_evaluation_status != 'unsubmitted'}
                 <div

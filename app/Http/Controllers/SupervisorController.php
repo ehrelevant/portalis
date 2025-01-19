@@ -30,7 +30,7 @@ class SupervisorController extends Controller
             ->select('students.student_number', 'users.first_name', 'users.last_name')
             ->get();
 
-        return Inertia::render('dashboard/during/(supervisor)/report/Index', [
+        return Inertia::render('dashboard/(supervisor)/midsem/Index', [
             'students' => $supervised_students,
         ]);
     }
@@ -91,7 +91,7 @@ class SupervisorController extends Controller
             ->select('students.student_number', 'users.first_name', 'users.last_name')
             ->get();
 
-        return Inertia::render('dashboard/during/(supervisor)/final/Index', [
+        return Inertia::render('dashboard/(supervisor)/final/Index', [
             'students' => $supervised_students,
         ]);
     }

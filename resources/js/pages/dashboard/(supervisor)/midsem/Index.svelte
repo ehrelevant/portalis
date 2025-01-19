@@ -29,12 +29,12 @@
     });
 
     function handleSubmit() {
-        $form.post('/dashboard/during/report/submit');
+        $form.post('/dashboard/report/midsem/submit');
     }
 </script>
 
 <div class="main-screen flex flex-col p-4">
-    <Header txt="During Internship: Weekly Report Form" />
+    <Header txt="Mid-semester Report Form" />
 
     <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
         <div class="flex flex-col gap-4">
