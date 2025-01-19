@@ -61,8 +61,8 @@
             on:submit|preventDefault={saveDeadlines}
         >
             <div class="grid grid-cols-[auto,1fr] items-center gap-2">
-                {#each requirements as requirement, i}
-                    {@const { requirement_name, deadline } = requirement}
+                {#each $deadlinesForm.requirements as requirement, i}
+                    {@const { requirement_name } = requirement}
                     <label for="{requirement_name} deadline">
                         {requirement_name}
                     </label>

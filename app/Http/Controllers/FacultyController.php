@@ -39,18 +39,18 @@ class FacultyController extends Controller
             )
             ->get();
 
-            $students = [];
+        $students = [];
 
-            foreach ($students_info as $student_info) {
-                $student_statuses = DB::table('submission_statuses')
-                ->where('student_number', $student_info->student_number)
-                ->select(
-                    'submission_statuses.requirement_id',
-                    'submission_statuses.status',
-                    )->get();
+        foreach ($students_info as $student_info) {
+            $student_statuses = DB::table('submission_statuses')
+            ->where('student_number', $student_info->student_number)
+            ->select(
+                'submission_statuses.requirement_id',
+                'submission_statuses.status',
+            )->get();
 
-                    $new_student = [
-                        'student_number' => $student_info->student_number,
+            $new_student = [
+                'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
@@ -168,7 +168,8 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function updateRequirementDeadlines(Request $request) {
+    public function updateRequirementDeadlines(Request $request)
+    {
         $form_values = $request->validate([
             'requirements.*.id' => ['int'],
             'requirements.*.deadline' => ['date', 'nullable'],
