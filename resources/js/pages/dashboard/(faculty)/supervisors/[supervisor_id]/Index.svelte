@@ -72,7 +72,7 @@
 
     <!-- Back to Supervisor List -->
     <div class="w-stretch flex justify-center p-4">
-        <Link href="/dashboard/faculty/supervisors">
+        <Link href="/dashboard/supervisors">
             <div
                 class="hover:opacit y-90 border-2 bg-light-secondary p-4 text-center text-3xl text-light-secondary-text"
             >
