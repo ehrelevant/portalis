@@ -35,6 +35,7 @@
         {#if submissionStatus !== 'unsubmitted'}
             <a
                 href="/file/submission/{studentNumber}/{requirementId}"
+                target="_blank"
                 class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                 >View</a
             >
