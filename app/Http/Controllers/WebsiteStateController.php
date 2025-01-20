@@ -11,7 +11,7 @@ class WebsiteStateController extends Controller
     public function updateWebsiteState(Request $request)
     {
         $form_values = $request->validate([
-            'phase' => ['required', Rule::in(['pre','during','post'])]
+            'phase' => ['required', Rule::in(['pre','during','post'])],
         ]);
 
         $website_state = WebsiteState::findOrFail(1);
