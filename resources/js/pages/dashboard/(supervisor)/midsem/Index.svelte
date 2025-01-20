@@ -28,8 +28,13 @@
         evaluations: evaluations,
     });
 
-    function handleSubmit() {
-        $form.post('/dashboard/report/midsem/submit');
+    function draftForm() {
+        console.log($form);
+        $form.put('/dashboard/report/midsem/draft');
+    }
+
+    function submitForm() {
+        $form.put('/dashboard/report/midsem/submit');
     }
 </script>
 
