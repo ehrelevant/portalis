@@ -181,10 +181,8 @@ class SupervisorController extends Controller
 
         $this->updateMidsemReport($form_values);
 
-        return redirect('/dashboard');
-
         $supervisor_user = Auth::user();
-        $supervisor_id = $supervisor_user->id;
+        $supervisor_id = $supervisor_user->role_id;
 
         // Update status for all reports under the supervisor
         ReportStatus::where('supervisor_id', $supervisor_id)
