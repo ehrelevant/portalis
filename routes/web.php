@@ -7,6 +7,7 @@ use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\WebsiteStateController;
 use App\Http\Middleware\EnsureCorrectPhase;
 use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +67,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
+
+        Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     });
 
     Route::get('/file/submission/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);

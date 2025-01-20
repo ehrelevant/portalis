@@ -120,6 +120,8 @@ class DashboardController extends Controller
 
     private function showFacultyDashboard(Request $request, string $phase): Response
     {
-        return Inertia::render('dashboard/(faculty)/Index');
+        return Inertia::render('dashboard/(faculty)/Index', [
+            'currentPhase' => $phase,
+        ]);
     }
 }
