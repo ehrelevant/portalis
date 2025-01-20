@@ -19,6 +19,13 @@ class InternEvaluationStatus extends Model
      */
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ['status'];
+
     public function internEvaluation(): HasMany
     {
         return $this->hasMany(InternEvaluation::class);

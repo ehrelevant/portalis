@@ -19,6 +19,13 @@ class CompanyEvaluationStatus extends Model
      */
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ['status'];
+
     public function companyEvaluations(): HasMany
     {
         return $this->hasMany(CompanyEvaluation::class);

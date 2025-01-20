@@ -19,6 +19,13 @@ class ReportStatus extends Model
      */
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ['status'];
+
     public function report(): HasMany
     {
         return $this->hasMany(Report::class);
