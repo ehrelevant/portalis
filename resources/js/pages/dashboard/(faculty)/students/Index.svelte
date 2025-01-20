@@ -32,6 +32,9 @@
     function saveDeadlines() {
         $deadlinesForm.put('/dashboard/students/update-deadlines');
     }
+
+    /** @type {string} */
+    let borderColor = "border-black dark:border-white"
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -79,7 +82,7 @@
                 <input
                     type="submit"
                     value="Save"
-                    class="w-28 cursor-pointer rounded-full bg-floating-forest-light p-2 hover:opacity-90 dark:bg-floating-forest"
+                    class="w-28 cursor-pointer rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                 />
             </div>
         </form>
@@ -91,15 +94,15 @@
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-black"
+                class="w-full border-collapse  overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
-                <tr class="border-b-2">
-                    <th scope="col" class="border-r-2 p-2">SN</th>
-                    <th scope="col" class="border-r-2 p-2">Name</th>
-                    <th scope="col" class="border-r-2 p-2">Section</th>
+                <tr class="border-b-2 {borderColor}">
+                    <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
+                    <th scope="col" class="border-r-2 p-2 {borderColor}">Name</th>
+                    <th scope="col" class="border-r-2 p-2 {borderColor}">Section</th>
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
-                        <th scope="col" class="border-l-2 p-2"
+                        <th scope="col" class="border-l-2 p-2 {borderColor}"
                             >{requirement_name}</th
                         >
                     {/each}
@@ -113,13 +116,13 @@
                         has_dropped,
                         submissions,
                     } = student}
-                    <tr class="border-t-2">
-                        <th scope="row" class="border-r-2 p-2"
+                    <tr class="border-t-2 {borderColor}">
+                        <th scope="row" class="border-r-2 p-2 {borderColor}"
                             >{student_number}</th
                         >
-                        <td class="border-r-2 p-2">{last_name}, {first_name}</td
+                        <td class="border-r-2 p-2 {borderColor}">{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2">
+                        <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">
                                 <select
                                     class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
@@ -146,7 +149,7 @@
                         </td>
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
-                            <td class="border-l-2 p-2 text-center"
+                            <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     {requirement_id}
                                     {student_number}

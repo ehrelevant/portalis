@@ -17,7 +17,7 @@
         >
             This browser does not support PDFs.
         </iframe>
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-row gap-2 justify-center">
             <Status type={status} />
             {#if status === 'validated'}
                 <Link
