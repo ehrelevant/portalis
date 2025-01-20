@@ -1,5 +1,5 @@
 <script>
-    import { router, useForm } from '@inertiajs/svelte';
+    import { router, useForm, Link } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
@@ -94,7 +94,7 @@
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
-                class="w-full border-collapse  overflow-x-scroll rounded-xl bg-white dark:bg-black"
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
                     <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
@@ -161,4 +161,12 @@
             </table>
         </div>
     </Accordion>
+
+    <div class="flex w-full justify-end">
+        <Link
+            href="/dashboard"
+            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Back to Dashboard</Link
+        >
+    </div>
 </div>
