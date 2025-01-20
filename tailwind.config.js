@@ -62,6 +62,10 @@ export default {
                     light: '#dcafb2',
                     DEFAULT: '#bf2a30',
                 },
+                gray: {
+                    light: '#DEDEDE',
+                    DEFAULT: '#6E6E6E',
+                }
             },
         },
         extend: {},

@@ -8,7 +8,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 p-4">
-    <Header txt="Student List" />
+    <Header txt="Student Requirement - {requirement_id}" />
     <div class="flex h-full w-full flex-col gap-4">
         <iframe
             src="/file/submission/{student_number}/{requirement_id}"

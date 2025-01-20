@@ -14,6 +14,7 @@
 <div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Pre-Internship Phase" />
 
+    <!-- Total Status Deletion TBD -->
     {#if total_status === 'pending'}
         <div
             class="w-stretch flex max-h-fit min-h-24 flex-row content-center bg-floating-brown-light text-floating-brown"
