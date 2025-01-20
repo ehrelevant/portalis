@@ -32,7 +32,7 @@
     <div
         class="flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
     >
-        {#if submissionStatus !== 'pending'}
+        {#if submissionStatus !== 'unsubmitted'}
             <a
                 href="/file/submission/{studentNumber}/{requirementId}"
                 class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
