@@ -3,26 +3,12 @@
     import Header from '@shared/components/InternshipHeader.svelte';
     import Accordion from '@shared/components/Accordion.svelte';
 
+    export let errors = {};
+    $: console.log(errors);
+
     export let students;
 
-    const evaluations = students.map((student) => {
-        return {
-            student_number: student.student_number,
-            last_name: student.last_name,
-            first_name: student.first_name,
-            ratings: {
-                1: null,
-                2: null,
-                3: null,
-                4: null,
-                5: null,
-            },
-            open_ended: {
-                1: null,
-            },
-            hours: null,
-        };
-    });
+    const evaluations = [...students];
 
     let form = useForm({
         evaluations: evaluations,
@@ -41,7 +27,7 @@
 <div class="main-screen flex flex-col p-4">
     <Header txt="Mid-semester Report Form" />
 
-    <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
+    <form class="flex flex-col">
         <div class="flex flex-col gap-4">
             <Accordion>
                 <h2 slot="summary" class="text-2xl">Non-Technical Criteria</h2>
@@ -149,11 +135,20 @@
                 </div>
             </Accordion>
 
-            <div class="m-2 flex justify-center">
+            <div class="m-2 flex justify-center gap-4">
                 <input
-                    type="submit"
+                    name="draft"
+                    type="button"
+                    value="Draft Response"
+                    class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    on:click={draftForm}
+                />
+                <input
+                    name="submit"
+                    type="button"
                     value="Submit Response"
                     class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    on:click={submitForm}
                 />
             </div>
         </div>
