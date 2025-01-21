@@ -17,7 +17,7 @@ class StudentSeeder extends Seeder
         Student::factory()->create([
             'student_number' => 202200000,
             'supervisor_id' => 1,
-            'faculty_id' => 1,
+            'faculty_id' => null,
             'grade' => 69.21,
             'phase' => 'pre',
             'wordpress_name' => 'student',
@@ -35,13 +35,13 @@ class StudentSeeder extends Seeder
 
         Student::factory()->create([
             'student_number' => 202200001,
-            'supervisor_id' => 1,
-            'faculty_id' => 1,
+            'supervisor_id' => 2,
+            'faculty_id' => null,
             'grade' => 69.21,
             'phase' => 'pre',
             'wordpress_name' => 'ehren',
             'wordpress_email' => 'eacastillo1@up.edu.ph',
-            'has_dropped' => true,
+            'has_dropped' => false,
         ]);
         User::factory()->create([
             'email' => 'eacastillo1@up.edu.ph',
@@ -54,8 +54,8 @@ class StudentSeeder extends Seeder
 
         Student::factory()->create([
             'student_number' => 202200002,
-            'supervisor_id' => 1,
-            'faculty_id' => 1,
+            'supervisor_id' => 2,
+            'faculty_id' => null,
             'grade' => 69.21,
             'phase' => 'pre',
             'wordpress_name' => 'edzo',
@@ -73,8 +73,8 @@ class StudentSeeder extends Seeder
 
         Student::factory()->create([
             'student_number' => 202200003,
-            'supervisor_id' => 1,
-            'faculty_id' => 1,
+            'supervisor_id' => 2,
+            'faculty_id' => null,
             'grade' => 69.21,
             'phase' => 'pre',
             'wordpress_name' => 'yuwen',
@@ -93,7 +93,7 @@ class StudentSeeder extends Seeder
         Student::factory()->create([
             'student_number' => 202200004,
             'supervisor_id' => 1,
-            'faculty_id' => 1,
+            'faculty_id' => null,
             'grade' => 69.21,
             'phase' => 'pre',
             'wordpress_name' => 'lawrence',

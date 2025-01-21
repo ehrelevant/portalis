@@ -15,7 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Company::factory()->create([
-            'company_name' => 'Company Name',
+            'company_name' => 'Company 1',
+        ]);
+        Company::factory()->create([
+            'company_name' => 'Company 2',
         ]);
 
         $this->call([
