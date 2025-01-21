@@ -34,7 +34,7 @@
     }
 
     /** @type {string} */
-    let borderColor = "border-black dark:border-white"
+    let borderColor = 'border-black dark:border-white';
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -98,8 +98,12 @@
             >
                 <tr class="border-b-2 {borderColor}">
                     <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
-                    <th scope="col" class="border-r-2 p-2 {borderColor}">Name</th>
-                    <th scope="col" class="border-r-2 p-2 {borderColor}">Section</th>
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Section</th
+                    >
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -120,7 +124,8 @@
                         <th scope="row" class="border-r-2 p-2 {borderColor}"
                             >{student_number}</th
                         >
-                        <td class="border-r-2 p-2 {borderColor}">{last_name}, {first_name}</td
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{last_name}, {first_name}</td
                         >
                         <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">

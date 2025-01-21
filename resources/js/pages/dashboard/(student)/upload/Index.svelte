@@ -1,7 +1,7 @@
 <script>
     import { useForm, Link } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
-    import CloseButton from '@assets/x.svelte'
+    import CloseButton from '@assets/x.svelte';
 
     export let errors = {};
 
@@ -19,17 +19,19 @@
 
 <div class="main-screen flex w-full flex-col justify-center p-4">
     <Header txt="{requirementName} — Submission Bin" />
-    <div class="flex flex-col grow items-center justify-center">
+    <div class="flex grow flex-col items-center justify-center">
         <form
             on:submit|preventDefault={handleSubmit}
             id="student_upload"
             class="flex flex-col"
         >
-            <div class="flex flex-row justify-between w-full">
-                <div class="text-xl"> Upload <strong>.pdf</strong> file below: </div>
+            <div class="flex w-full flex-row justify-between">
+                <div class="text-xl">
+                    Upload <strong>.pdf</strong> file below:
+                </div>
 
                 <Link href="/dashboard">
-                    <CloseButton class="hover:cursor-pointer"/>
+                    <CloseButton class="hover:cursor-pointer" />
                 </Link>
             </div>
 

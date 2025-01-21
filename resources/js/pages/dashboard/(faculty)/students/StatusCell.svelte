@@ -12,18 +12,18 @@
                 ? 'bg-floating-red-light'
                 : 'bg-floating-gray-light';
 
-    const textColor = 
+    const textColor =
         status === 'validated'
             ? 'text-floating-forest'
             : status === 'submitted'
-            ? 'text-floating-brown'
-            : status === 'rejected'
+              ? 'text-floating-brown'
+              : status === 'rejected'
                 ? 'text-floating-red'
                 : 'text-floating-gray';
 </script>
 
 <div class="flex items-center justify-center">
-    <div class="w-fit justify-center rounded-xl py-1 px-2 {bgColor}">
+    <div class="w-fit justify-center rounded-xl px-2 py-1 {bgColor}">
         {#if status !== 'unsubmitted'}
             <a
                 href="/dashboard/students/{student_number}/{requirement_id}"
