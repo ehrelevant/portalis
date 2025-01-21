@@ -29,13 +29,15 @@
             <p>Student List</p>
         </Link>
 
-        <Link
-            href="/dashboard/supervisors"
-            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
-        >
-            <Account />
-            <p>Supervisor List</p>
-        </Link>
+        {#if currentPhase === 'during' || currentPhase === 'post'}
+            <Link
+                href="/dashboard/supervisors"
+                class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
+            >
+                <Account />
+                <p>Supervisor List</p>
+            </Link>
+        {/if}
     </div>
 
     <Accordion>
