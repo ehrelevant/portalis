@@ -125,7 +125,7 @@ class FacultyController extends Controller
             ->firstOrFail();
 
         if ($submission_status->status === 'submitted') {
-            $submission_status->status = 'pending';
+            $submission_status->status = 'rejected';
         }
 
         $submission_status->save();
