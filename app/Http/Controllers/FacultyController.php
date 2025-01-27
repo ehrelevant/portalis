@@ -197,17 +197,31 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $supervisors_data = $users_partial
+        $supervisors = $users_partial
+            ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
+            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->join('report_statuses', 'supervisors.id', '=', 'report_statuses.supervisor_id')
+            ->join('intern_evaluation_statuses', 'supervisors.id', '=', 'intern_evaluation_statuses.supervisor_id')
             ->select(
-                'role_id AS supervisor_id',
+                'supervisors.id AS supervisor_id',
+                'users.first_name',
+                'users.last_name',
+                'companies.company_name',
+                'report_statuses.status AS midsem_status',
+                'intern_evaluation_statuses.status AS final_status'
+            )
+            ->groupBy(
+                'supervisor_id',
                 'first_name',
-                'middle_name',
                 'last_name',
+                'company_name',
+                'midsem_status',
+                'final_status'
             )
             ->get();
 
         return Inertia::render('dashboard/(faculty)/supervisors/Index', [
-            'supervisors' => $supervisors_data,
+            'supervisors' => $supervisors,
         ]);
     }
 

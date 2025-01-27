@@ -3,6 +3,8 @@
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
+    import Accordion from '@/js/shared/components/Accordion.svelte';
+    import StatusCell from './StatusCell.svelte';
 
     export let supervisors;
 
@@ -12,9 +14,12 @@
     function search() {
         router.get(`/dashboard/supervisors?search=${searchQuery}`);
     }
+
+    /** @type {string} */
+    let borderColor = 'border-black dark:border-white';
 </script>
 
-<div class="main-screen w-full p-4">
+<div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Supervisor List" />
 
     <!-- Search Function -->
@@ -33,30 +38,61 @@
         />
     </form>
 
-    <!-- List of Supervisorss -->
-    <div class="py-4">
-        <ul>
-            {#each supervisors as supervisor}
-                {@const { supervisor_id, first_name, middle_name, last_name } =
-                    supervisor}
-                <Link href="/dashboard/supervisors/{supervisor_id}">
-                    <!-- edit this later -->
-                    <li>
-                        <div
-                            class="my-2 flex justify-between rounded-xl bg-white p-4 hover:opacity-80 dark:bg-black"
+    <!-- List of Supervisors -->
+    <Accordion open>
+        <h2 slot="summary" class="text-2xl">Supervisor Submissions</h2>
+
+        <div class="w-full overflow-x-auto rounded-xl">
+            <table
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
+            >
+                <tr class="border-b-2 {borderColor}">
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Company</th
+                    >
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Mid-semester Report</th
+                    >
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Final Report</th
+                    >
+                </tr>
+                {#each supervisors as supervisor}
+                    {@const {
+                        supervisor_id,
+                        first_name,
+                        last_name,
+                        company_name,
+                        midsem_status,
+                        final_status,
+                    } = supervisor}
+                    <tr class="border-t-2 {borderColor}">
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{last_name}, {first_name}</td
                         >
-                            <div class="flex flex-col justify-center">
-                                <div>
-                                    {last_name}, {first_name}
-                                    {middle_name}
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </Link>
-            {/each}
-        </ul>
-    </div>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{company_name}</td
+                        >
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><StatusCell
+                                status={midsem_status}
+                                href="/dashboard/supervisors/{supervisor_id}/midsem"
+                            />
+                        </td>
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><StatusCell
+                                status={final_status}
+                                href="/dashboard/supervisors/{supervisor_id}/final"
+                            />
+                        </td>
+                    </tr>
+                {/each}
+            </table>
+        </div>
+    </Accordion>
 
     <div class="flex w-full justify-end">
         <Link
