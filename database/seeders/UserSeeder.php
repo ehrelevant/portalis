@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
         ]);
 
         Faculty::factory()->create([
-            'section' => 'U1'
+            'section' => 'U1',
         ]);
         User::factory()->create([
             'email' => 'faculty@example.com',
@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
         ]);
 
         Faculty::factory()->create([
-            'section' => 'U2'
+            'section' => 'U2',
         ]);
         User::factory()->create([
             'email' => 'faculty2@example.com',
