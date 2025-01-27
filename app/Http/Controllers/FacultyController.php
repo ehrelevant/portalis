@@ -374,7 +374,7 @@ class FacultyController extends Controller
             array_push($students, $new_student);
         }
 
-        $status = DB::table('report_statuses')
+        $status = DB::table('intern_evaluation_statuses')
             ->where('supervisor_id', $supervisor_id)
             ->select('status')
             ->firstOrFail()
