@@ -77,7 +77,7 @@
                     <p>{last_name}, {first_name}</p>
                     <textarea
                         disabled
-                        class="w-full resize-none bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="min-h-24 w-full resize-none bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                         value={open_ended[1]}
                     />
                 {/each}
@@ -94,7 +94,7 @@
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                 method="post">Invalidate</Link
             >
-        {:else}
+        {:else if status !== 'rejected'}
             <Link
                 href="/dashboard/supervisors/{supervisor_id}/midsem/validate"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

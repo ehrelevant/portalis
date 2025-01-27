@@ -25,7 +25,7 @@
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
-            {:else}
+            {:else if status !== 'rejected'}
                 <Link
                     href="/dashboard/students/{student_number}/{requirement_id}/validate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

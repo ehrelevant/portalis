@@ -20,7 +20,7 @@
                 Mid-semester Performance Evaluation
             </h2>
 
-            {#if report_status != 'unsubmitted'}
+            {#if report_status !== 'unsubmitted' && report_status !== 'rejected'}
                 <!-- Removes link if answered already -->
                 <div
                     class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
@@ -44,7 +44,7 @@
                 Final Performance Evaluation
             </h2>
 
-            {#if intern_evaluation_status != 'unsubmitted'}
+            {#if intern_evaluation_status !== 'unsubmitted' && intern_evaluation_status !== 'rejected'}
                 <div
                     class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
                 >
