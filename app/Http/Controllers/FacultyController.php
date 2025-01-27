@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InternEvaluation;
+use App\Models\InternEvaluationStatus;
+use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\SubmissionStatus;
@@ -225,50 +228,6 @@ class FacultyController extends Controller
         ]);
     }
 
-    public function showSupervisor(int $supervisor_id): Response
-    {
-        $supervisor = DB::table('users')
-            ->where('role', 'supervisor')
-            ->where('role_id', $supervisor_id)
-            ->select(
-                'first_name',
-                'middle_name',
-                'last_name',
-            )
-            ->firstOrFail();
-
-        $company_name = DB::table('supervisors')
-            ->where('supervisors.id', $supervisor_id)
-            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
-            ->select('companies.company_name')
-            ->firstOrFail()
-            ->company_name;
-
-        $report_status = DB::table('report_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->select('status')
-            ->firstOrFail()
-            ->status;
-
-        /*
-        * This might have issues if for some reason two interns under the
-        * same supervisor do not have the same status, which should never happen.
-        */
-        $intern_evaluation_status = DB::table('intern_evaluation_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->select('status')
-            ->firstOrFail()
-            ->status;
-
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/Index', [
-            'supervisor_id' => $supervisor_id,
-            'supervisor' => $supervisor,
-            'company_name' => $company_name,
-            'report_status' => $report_status,
-            'intern_evaluation_status' => $intern_evaluation_status,
-        ]);
-    }
-
     public function showMidsemReport(int $supervisor_id)
     {
         $reports = DB::table('report_statuses')
@@ -317,10 +276,56 @@ class FacultyController extends Controller
             array_push($students, $new_student);
         }
 
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/report/Index', [
+        $status = DB::table('report_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->select('status')
+            ->firstOrFail()
+            ->status;
+
+        return Inertia::render('dashboard/(faculty)/supervisors/midsem/Index', [
             'supervisor_id' => $supervisor_id,
             'students' => $students,
+            'status' => $status,
         ]);
+    }
+
+    public function validateMidsemReport(int $supervisor_id): RedirectResponse
+    {
+        $report_status = ReportStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_status->status === 'submitted') {
+            ReportStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'validated']);
+        }
+
+        return back();
+    }
+
+    public function invalidateMidsemReport(int $supervisor_id): RedirectResponse
+    {
+        $report_statuses = ReportStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_statuses->status === 'validated') {
+            ReportStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'submitted']);
+        }
+
+        return back();
+    }
+
+    public function rejectMidsemReport(int $supervisor_id): RedirectResponse
+    {
+        $report_status = ReportStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_status->status === 'submitted') {
+            ReportStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'rejected']);
+        }
+
+        return back();
     }
 
     public function showFinalReport(int $supervisor_id)
@@ -369,9 +374,55 @@ class FacultyController extends Controller
             array_push($students, $new_student);
         }
 
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/final/Index', [
+        $status = DB::table('report_statuses')
+            ->where('supervisor_id', $supervisor_id)
+            ->select('status')
+            ->firstOrFail()
+            ->status;
+
+        return Inertia::render('dashboard/(faculty)/supervisors/final/Index', [
             'supervisor_id' => $supervisor_id,
             'students' => $students,
+            'status' => $status,
         ]);
+    }
+
+    public function validateFinalReport(int $supervisor_id): RedirectResponse
+    {
+        $report_status = InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_status->status === 'submitted') {
+            InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'validated']);
+        }
+
+        return back();
+    }
+
+    public function invalidateFinalReport(int $supervisor_id): RedirectResponse
+    {
+        $report_status = InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_status->status === 'validated') {
+            InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'submitted']);
+        }
+
+        return back();
+    }
+
+    public function rejectFinalReport(int $supervisor_id): RedirectResponse
+    {
+        $report_status = InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+            ->firstOrFail();
+
+        if ($report_status->status === 'submitted') {
+            InternEvaluationStatus::where('supervisor_id', $supervisor_id)
+                ->update(['status' => 'rejected']);
+        }
+
+        return back();
     }
 }

@@ -61,9 +61,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::get('/dashboard/supervisors/{supervisor_id}', [FacultyController::class, 'showSupervisor']);
         Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FacultyController::class, 'showMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FacultyController::class, 'validateMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FacultyController::class, 'invalidateMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FacultyController::class, 'rejectMidsemReport']);
         Route::get('/dashboard/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FacultyController::class, 'validateFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FacultyController::class, 'invalidateFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/reject', [FacultyController::class, 'rejectFinalReport']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
