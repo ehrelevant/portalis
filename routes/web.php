@@ -51,6 +51,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
+        Route::post('/dashboard/students/import', [FacultyController::class, 'importStudents']);
+        Route::get('/dashboard/students/export/sections', [FacultyController::class, 'exportStudentSections']);
+        Route::get('/dashboard/students/export/company-evaluation', [FacultyController::class, 'exportCompanyEvaluations']);
+        Route::get('/dashboard/students/export/student-assessment', [FacultyController::class, 'exportStudentAssessments']);
+
         Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
         Route::get('/dashboard/students/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);
         Route::post('/dashboard/students/{student_number}/{requirement_id}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
@@ -61,10 +66,13 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
+        Route::post('/dashboard/supervisors/import', [FacultyController::class, 'importSupervisors']);
+
         Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FormController::class, 'showMidsemReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FormController::class, 'validateMidsemReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FormController::class, 'invalidateMidsemReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FormController::class, 'rejectMidsemReport']);
+
         Route::get('/dashboard/supervisors/{supervisor_id}/final', [FormController::class, 'showFinalReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FormController::class, 'validateFinalReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FormController::class, 'invalidateFinalReport']);
