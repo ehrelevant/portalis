@@ -51,10 +51,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
-        Route::post('/dashboard/students/import', [FacultyController::class, 'importStudents']);
-        Route::get('/dashboard/students/export/sections', [FacultyController::class, 'exportStudentSections']);
-        Route::get('/dashboard/students/export/company-evaluation', [FacultyController::class, 'exportCompanyEvaluations']);
-        Route::get('/dashboard/students/export/student-assessment', [FacultyController::class, 'exportStudentAssessments']);
 
         Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
         Route::get('/dashboard/students/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);
@@ -66,7 +62,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::post('/dashboard/supervisors/import', [FacultyController::class, 'importSupervisors']);
 
         Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FormController::class, 'showMidsemReport']);
         Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FormController::class, 'validateMidsemReport']);
@@ -80,6 +75,18 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
+
+        Route::post('/dashboard/import/students', [FacultyController::class, 'importStudents']);
+        Route::post('/dashboard/import/supervisors', [FacultyController::class, 'importSupervisors']);
+
+        Route::get('/dashboard/export/students/sections', [FacultyController::class, 'exportStudentSections']);
+        Route::get('/dashboard/export/students/midsem-reports', [FacultyController::class, 'exportMidsemReportStudents']);
+        Route::get('/dashboard/export/students/final-reports', [FacultyController::class, 'exportFinalReportStudents']);
+        Route::get('/dashboard/export/students/company-evaluations', [FacultyController::class, 'exportCompanyEvaluations']);
+        Route::get('/dashboard/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
+        Route::get('/dashboard/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
+        Route::get('/dashboard/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
+
 
         Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     });
