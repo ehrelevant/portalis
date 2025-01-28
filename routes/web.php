@@ -52,23 +52,23 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
         Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
-        Route::get('/dashboard/students/{student_number}/{requirement_id}', [FacultyController::class, 'showStudentSubmission']);
-        Route::post('/dashboard/students/{student_number}/{requirement_id}/validate', [FacultyController::class, 'validateStudentSubmission']);
-        Route::post('/dashboard/students/{student_number}/{requirement_id}/invalidate', [FacultyController::class, 'invalidateStudentSubmission']);
-        Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FacultyController::class, 'rejectStudentSubmission']);
+        Route::get('/dashboard/students/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
+        Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
         Route::put('/dashboard/students/{student_number}/assign/section', [FacultyController::class, 'assignStudentSection']);
         Route::put('/dashboard/students/{student_number}/assign/section/{new_section}', [FacultyController::class, 'assignStudentSection']);
         Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FacultyController::class, 'showMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FacultyController::class, 'validateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FacultyController::class, 'invalidateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FacultyController::class, 'rejectMidsemReport']);
-        Route::get('/dashboard/supervisors/{supervisor_id}/final', [FacultyController::class, 'showFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FacultyController::class, 'validateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FacultyController::class, 'invalidateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/reject', [FacultyController::class, 'rejectFinalReport']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FormController::class, 'showMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FormController::class, 'validateMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FormController::class, 'invalidateMidsemReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FormController::class, 'rejectMidsemReport']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/final', [FormController::class, 'showFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FormController::class, 'validateFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FormController::class, 'invalidateFinalReport']);
+        Route::post('/dashboard/supervisors/{supervisor_id}/final/reject', [FormController::class, 'rejectFinalReport']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
