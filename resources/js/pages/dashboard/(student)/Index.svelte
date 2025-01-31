@@ -2,9 +2,6 @@
     import Header from '@shared/components/InternshipHeader.svelte';
     import Requirement from '@/js/shared/components/Requirement.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
-    import Validated from '@/assets/validated_logo.svelte';
-    import Submitted from '@/assets/submitted_logo.svelte';
-    import Pending from '@/assets/pending_logo.svelte';
 
     export let student_number;
     export let submissions;

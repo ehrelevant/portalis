@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\SubmissionStatus;
@@ -74,65 +75,6 @@ class FacultyController extends Controller
         ]);
     }
 
-    public function showStudentSubmission(int $student_number, int $requirement_id)
-    {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail()
-            ->status;
-
-        return Inertia::render('dashboard/(faculty)/students/submission/Index', [
-            'student_number' => $student_number,
-            'requirement_id' => $requirement_id,
-            'status' => $submission_status,
-        ]);
-    }
-
-    public function validateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
-    {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
-
-        if ($submission_status->status === 'submitted') {
-            $submission_status->status = 'validated';
-        }
-
-        $submission_status->save();
-
-        return back();
-    }
-
-    public function invalidateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
-    {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
-
-        if ($submission_status->status === 'validated') {
-            $submission_status->status = 'submitted';
-        }
-
-        $submission_status->save();
-
-        return back();
-    }
-
-    public function rejectStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
-    {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
-
-        if ($submission_status->status === 'submitted') {
-            $submission_status->status = 'rejected';
-        }
-
-        $submission_status->save();
-
-        return back();
-    }
-
     public function assignStudentSection(int $student_number, string $new_section = '')
     {
         $faculty_sections = DB::table('faculties')
@@ -197,167 +139,31 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $supervisors_data = $users_partial
+        $supervisors = $users_partial
+            ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
+            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->join('report_statuses', 'supervisors.id', '=', 'report_statuses.supervisor_id')
+            ->join('intern_evaluation_statuses', 'supervisors.id', '=', 'intern_evaluation_statuses.supervisor_id')
             ->select(
-                'role_id AS supervisor_id',
+                'supervisors.id AS supervisor_id',
+                'users.first_name',
+                'users.last_name',
+                'companies.company_name',
+                'report_statuses.status AS midsem_status',
+                'intern_evaluation_statuses.status AS final_status'
+            )
+            ->groupBy(
+                'supervisor_id',
                 'first_name',
-                'middle_name',
                 'last_name',
+                'company_name',
+                'midsem_status',
+                'final_status'
             )
             ->get();
 
         return Inertia::render('dashboard/(faculty)/supervisors/Index', [
-            'supervisors' => $supervisors_data,
-        ]);
-    }
-
-    public function showSupervisor(int $supervisor_id): Response
-    {
-        $supervisor = DB::table('users')
-            ->where('role', 'supervisor')
-            ->where('role_id', $supervisor_id)
-            ->select(
-                'first_name',
-                'middle_name',
-                'last_name',
-            )
-            ->firstOrFail();
-
-        $company_name = DB::table('supervisors')
-            ->where('supervisors.id', $supervisor_id)
-            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
-            ->select('companies.company_name')
-            ->firstOrFail()
-            ->company_name;
-
-        $report_status = DB::table('report_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->select('status')
-            ->firstOrFail()
-            ->status;
-
-        /*
-        * This might have issues if for some reason two interns under the
-        * same supervisor do not have the same status, which should never happen.
-        */
-        $intern_evaluation_status = DB::table('intern_evaluation_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->select('status')
-            ->firstOrFail()
-            ->status;
-
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/Index', [
-            'supervisor_id' => $supervisor_id,
-            'supervisor' => $supervisor,
-            'company_name' => $company_name,
-            'report_status' => $report_status,
-            'intern_evaluation_status' => $intern_evaluation_status,
-        ]);
-    }
-
-    public function showMidsemReport(int $supervisor_id)
-    {
-        $reports = DB::table('report_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->join(
-                'reports',
-                'reports.report_status_id',
-                '=',
-                'report_statuses.id'
-            )
-            ->select('reports.id', 'reports.total_hours', 'report_statuses.student_number')
-            ->get();
-
-        $students = [];
-
-        foreach ($reports as $report) {
-            $report_id = $report->id;
-            $hours = $report->total_hours;
-            $student_number = $report->student_number;
-
-            $student_name = DB::table('users')
-                ->where('role', 'student')
-                ->where('role_id', $student_number)
-                ->select('first_name', 'last_name')
-                ->firstOrFail();
-
-            $ratings = DB::table('report_ratings')
-                ->where('report_id', $report_id)
-                ->pluck('score', 'rating_question_id')
-                ->toArray();
-
-            $open_ended = DB::table('report_answers')
-                ->where('report_id', $report_id)
-                ->pluck('answer', 'open_ended_question_id')
-                ->toArray();
-
-            $new_student = [
-                'student_number' => $student_number,
-                'last_name' => $student_name->last_name,
-                'first_name' => $student_name->first_name,
-                'ratings' => $ratings,
-                'open_ended' => $open_ended,
-                'hours' => $hours,
-            ];
-
-            array_push($students, $new_student);
-        }
-
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/report/Index', [
-            'supervisor_id' => $supervisor_id,
-            'students' => $students,
-        ]);
-    }
-
-    public function showFinalReport(int $supervisor_id)
-    {
-        $intern_evaluations = DB::table('intern_evaluation_statuses')
-            ->where('supervisor_id', $supervisor_id)
-            ->join(
-                'intern_evaluations',
-                'intern_evaluations.intern_evaluation_status_id',
-                '=',
-                'intern_evaluation_statuses.id'
-            )
-            ->select('intern_evaluations.id', 'intern_evaluation_statuses.student_number')
-            ->get();
-
-        $students = [];
-
-        foreach ($intern_evaluations as $intern_evaluation) {
-            $report_id = $intern_evaluation->id;
-            $student_number = $intern_evaluation->student_number;
-
-            $student_name = DB::table('users')
-                ->where('role', 'student')
-                ->where('role_id', $student_number)
-                ->select('first_name', 'last_name')
-                ->firstOrFail();
-
-            $ratings = DB::table('intern_evaluation_ratings')
-                ->where('intern_evaluation_id', $report_id)
-                ->pluck('score', 'rating_question_id')
-                ->toArray();
-
-            $open_ended = DB::table('intern_evaluation_answers')
-                ->where('intern_evaluation_id', $report_id)
-                ->pluck('answer', 'open_ended_question_id')
-                ->toArray();
-
-            $new_student = [
-                'student_number' => $student_number,
-                'last_name' => $student_name->last_name,
-                'first_name' => $student_name->first_name,
-                'ratings' => $ratings,
-                'open_ended' => $open_ended,
-            ];
-
-            array_push($students, $new_student);
-        }
-
-        return Inertia::render('dashboard/(faculty)/supervisors/[supervisor_id]/final/Index', [
-            'supervisor_id' => $supervisor_id,
-            'students' => $students,
+            'supervisors' => $supervisors,
         ]);
     }
 }
