@@ -139,7 +139,7 @@
                 <input
                     name="draft"
                     type="button"
-                    value="Draft Response"
+                    value="Save Draft"
                     class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
                     on:click={draftForm}
                 />
