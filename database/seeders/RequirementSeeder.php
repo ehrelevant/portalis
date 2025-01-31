@@ -29,9 +29,6 @@ class RequirementSeeder extends Seeder
             'requirement_name' => 'Student\'s ID',
         ]);
         Requirement::factory()->create([
-            'requirement_name' => 'Faculty Adviser\'s ID',
-        ]);
-        Requirement::factory()->create([
             'requirement_name' => 'Supervisor\'s ID',
         ]);
         Requirement::factory()->create([
