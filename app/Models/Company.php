@@ -23,14 +23,4 @@ class Company extends Model
     {
         return $this->hasMany(Supervisor::class);
     }
-
-    public function companyEvaluationStatuses(): HasMany
-    {
-        return $this->hasMany(CompanyEvaluationStatus::class);
-    }
-
-    public function companyEvaluations(): HasManyThrough
-    {
-        return $this->hasManyThrough(CompanyEvaluation::class, CompanyEvaluationStatus::class);
-    }
 }
