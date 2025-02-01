@@ -14,10 +14,11 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
 {
-    public function showStudentDocument(int $student_number, int $requirement_id): Response
+    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
     {
         $role = Auth::user()->role;
         $role_id = intval(Auth::user()->role_id);
