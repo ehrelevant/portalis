@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RatingCategory extends Model
+class OpenAnswer extends Model
 {
-    /** @use HasFactory<\Database\Factories\RatingCategoryFactory> */
+    /** @use HasFactory<\Database\Factories\OpenAnswerFactory> */
     use HasFactory;
 
     /**
