@@ -22,19 +22,24 @@ class FormSeeder extends Seeder
     {
         // Form setup
         Form::factory()->create([
-            'form_name' => 'Midsem Report'
+            'form_name' => 'Midsem Report',
+            'short_name' => 'midsem',
         ]);
         Form::factory()->create([
-            'form_name' => 'Final Report'
+            'form_name' => 'Final Report',
+            'short_name' => 'final',
         ]);
         Form::factory()->create([
-            'form_name' => 'Company Evaluation'
+            'form_name' => 'Company Evaluation',
+            'short_name' => 'company',
         ]);
         Form::factory()->create([
-            'form_name' => 'Self Assessment'
+            'form_name' => 'Self Assessment',
+            'short_name' => 'self',
         ]);
         Form::factory()->create([
-            'form_name' => 'Intern Assessment'
+            'form_name' => 'Intern Assessment',
+            'short_name' => 'intern',
         ]);
 
         // Open-ended Question Setup
