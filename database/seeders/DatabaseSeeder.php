@@ -27,12 +27,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RequirementSeeder::class,
-            StatusSeeder::class,
         ]);
 
         $this->call([
-            RatingQuestionSeeder::class,
-            OpenEndedQuestionSeeder::class,
+            FormSeeder::class,
         ]);
 
         WebsiteState::factory()->create([
