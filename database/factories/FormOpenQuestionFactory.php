@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Form;
+use App\Models\OpenQuestion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,8 @@ class FormOpenQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'form_id' => Form::factory(),
+            'open_question_id' => OpenQuestion::factory(),
         ];
     }
 }

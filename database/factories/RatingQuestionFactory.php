@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\RatingCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class RatingQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'rating_category_id' => RatingCategory::factory(),
+            'criterion' => fake()->text(20),
+            'max_score' => rand(10, 60),
         ];
     }
 }

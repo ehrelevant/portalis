@@ -17,7 +17,7 @@ class OpenQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question' => fake()->text(100),
         ];
     }
 }

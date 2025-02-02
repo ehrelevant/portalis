@@ -2,14 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Form;
+use App\Models\FormStatus;
 use App\Models\RatingQuestion;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FormRatingQuestion>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RatingScore>
  */
-class FormRatingQuestionFactory extends Factory
+class RatingScoreFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,8 +20,10 @@ class FormRatingQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'form_id' => Form::factory(),
+            'form_status_id' => FormStatus::factory(),
             'rating_question_id' => RatingQuestion::factory(),
+            'user_id' => User::factory(),
+            'score' => null
         ];
     }
 }
