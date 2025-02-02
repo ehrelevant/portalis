@@ -53,7 +53,7 @@ return new class extends Migration
             $table->foreignId('rating_category_id')->constrained();
 
             $table->text('criterion');
-            $table->text('max_score');
+            $table->integer('max_score')->nullable();
         });
 
         Schema::create('form_open_questions', function (Blueprint $table) {
