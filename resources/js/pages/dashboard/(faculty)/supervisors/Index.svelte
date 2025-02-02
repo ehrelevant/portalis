@@ -7,6 +7,7 @@
     import StatusCell from './StatusCell.svelte';
 
     export let supervisors;
+    export let form_infos;
 
     /** @type {string} */
     let searchQuery = '';
@@ -53,12 +54,12 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company</th
                     >
-                    <th scope="col" class="border-l-2 p-2 {borderColor}"
-                        >Mid-semester Report</th
-                    >
-                    <th scope="col" class="border-l-2 p-2 {borderColor}"
-                        >Final Report</th
-                    >
+                    {#each Object.entries(form_infos) as [_, form_info]}
+                        {@const { form_name } = form_info}
+                        <th scope="col" class="border-l-2 p-2 {borderColor}"
+                            >{form_name}</th
+                        >
+                    {/each}
                 </tr>
                 {#each supervisors as supervisor}
                     {@const {
@@ -66,8 +67,7 @@
                         first_name,
                         last_name,
                         company_name,
-                        midsem_status,
-                        final_status,
+                        form_statuses,
                     } = supervisor}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
@@ -76,18 +76,16 @@
                         <td class="border-r-2 p-2 {borderColor}"
                             >{company_name}</td
                         >
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><StatusCell
-                                status={midsem_status}
-                                href="/dashboard/supervisors/{supervisor_id}/midsem"
-                            />
-                        </td>
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><StatusCell
-                                status={final_status}
-                                href="/dashboard/supervisors/{supervisor_id}/final"
-                            />
-                        </td>
+                        {#each Object.entries(form_statuses) as [form_id, form_status]}
+                            <td class="border-l-2 p-2 text-center {borderColor}"
+                                ><StatusCell
+                                    status={form_status}
+                                    href="/dashboard/supervisors/{supervisor_id}/{form_infos[
+                                        form_id
+                                    ].short_name}"
+                                />
+                            </td>
+                        {/each}
                     </tr>
                 {/each}
             </table>

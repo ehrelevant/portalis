@@ -6,8 +6,7 @@
     import Status from '@shared/components/Status.svelte';
 
     export let company_name;
-    export let report_status;
-    export let intern_evaluation_status;
+    export let form_statuses;
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">
@@ -15,51 +14,31 @@
 
     <div class="flex flex-col gap-4">
         <h2 class="text-2xl">Company: {company_name}</h2>
-        <Accordion open>
-            <h2 slot="summary" class="text-2xl">
-                Mid-semester Performance Evaluation
-            </h2>
+        {#each form_statuses as form_status}
+            {@const { form_name, short_name, status } = form_status}
+            <Accordion open>
+                <h2 slot="summary" class="text-2xl">
+                    {form_name}
+                </h2>
 
-            {#if report_status !== 'unsubmitted' && report_status !== 'rejected'}
-                <!-- Removes link if answered already -->
-                <div
-                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                >
-                    <div class="flex items-center">Mid-semester Report</div>
-                    <Status type={report_status} />
-                </div>
-            {:else}
-                <Link
-                    href="/dashboard/report/midsem"
-                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                >
-                    <div class="flex items-center">Mid-semester Report</div>
-                    <Status type={report_status} />
-                </Link>
-            {/if}
-        </Accordion>
-
-        <Accordion open>
-            <h2 slot="summary" class="text-2xl">
-                Final Performance Evaluation
-            </h2>
-
-            {#if intern_evaluation_status !== 'unsubmitted' && intern_evaluation_status !== 'rejected'}
-                <div
-                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                >
-                    <div class="flex items-center">Final Report</div>
-                    <Status type={intern_evaluation_status} />
-                </div>
-            {:else}
-                <Link
-                    href="/dashboard/report/final"
-                    class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                >
-                    <div class="flex items-center">Final Report</div>
-                    <Status type={intern_evaluation_status} />
-                </Link>
-            {/if}
-        </Accordion>
+                {#if status !== 'unsubmitted' && status !== 'rejected'}
+                    <!-- Removes link if answered already -->
+                    <div
+                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                    >
+                        <div class="flex items-center">{form_name} Form</div>
+                        <Status type={status} />
+                    </div>
+                {:else}
+                    <Link
+                        href="/dashboard/report/{short_name}"
+                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
+                    >
+                        <div class="flex items-center">{form_name} Form</div>
+                        <Status type={status} />
+                    </Link>
+                {/if}
+            </Accordion>
+        {/each}
     </div>
 </section>

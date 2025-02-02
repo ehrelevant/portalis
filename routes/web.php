@@ -41,13 +41,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/report/midsem', [SupervisorController::class, 'showMidsemReport']);
-        Route::put('/dashboard/report/midsem/draft', [SupervisorController::class, 'draftMidsemReport']);
-        Route::put('/dashboard/report/midsem/submit', [SupervisorController::class, 'submitMidsemReport']);
-
-        Route::get('/dashboard/report/final', [SupervisorController::class, 'showFinalReport']);
-        Route::post('/dashboard/report/final/draft', [SupervisorController::class, 'draftFinalReport']);
-        Route::post('/dashboard/report/final/submit', [SupervisorController::class, 'submitFinalReport']);
+        Route::get('/dashboard/report/{short_name}', [FormController::class, 'showWriteableSupervisorForm']);
+        Route::post('/dashboard/report/{short_name}/draft', [FormController::class, 'draftSupervisorForm']);
+        Route::post('/dashboard/report/{short_name}/submit', [FormController::class, 'submitSupervisorForm']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
@@ -64,15 +60,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
 
-        Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FormController::class, 'showMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FormController::class, 'validateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FormController::class, 'invalidateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FormController::class, 'rejectMidsemReport']);
-
-        Route::get('/dashboard/supervisors/{supervisor_id}/final', [FormController::class, 'showFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FormController::class, 'validateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FormController::class, 'invalidateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/reject', [FormController::class, 'rejectFinalReport']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/{short_name}', [FormController::class, 'showReadOnlySupervisorForm']);
+        Route::post('/dashboard/supervisors/{user_id}/{short_name}/validate', [FormController::class, 'validateForm']);
+        Route::post('/dashboard/supervisors/{user_id}/{short_name}/invalidate', [FormController::class, 'invalidateForm']);
+        Route::post('/dashboard/supervisors/{user_id}/{short_name}/reject', [FormController::class, 'rejectForm']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
@@ -87,7 +78,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
         Route::get('/dashboard/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
         Route::get('/dashboard/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
-
 
         Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     });

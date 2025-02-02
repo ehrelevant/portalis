@@ -81,7 +81,10 @@ class DashboardController extends Controller
 
         switch ($phase) {
             case 'during':
-                $supervisor_id = Auth::user()->role_id;
+                $supervisor = Auth::user();
+                $supervisor_user_id = $supervisor->id;
+                $supervisor_id = $supervisor->role_id;
+
                 $company_name = DB::table('supervisors')
                     ->where('supervisors.id', $supervisor_id)
                     ->join('companies', 'supervisors.company_id', '=', 'companies.id')
@@ -89,26 +92,20 @@ class DashboardController extends Controller
                     ->firstOrFail()
                     ->company_name;
 
-                $report_status = DB::table('report_statuses')
-                    ->where('supervisor_id', $supervisor_id)
-                    ->select('status')
-                    ->firstOrFail()
-                    ->status;
-
-                /*
-                * This might have issues if for some reason two interns under the
-                * same supervisor do not have the same status, which should never happen.
-                */
-                $intern_evaluation_status = DB::table('intern_evaluation_statuses')
-                    ->where('supervisor_id', $supervisor_id)
-                    ->select('status')
-                    ->firstOrFail()
-                    ->status;
+                $form_statuses = DB::table('form_statuses')
+                    ->where('user_id', $supervisor_user_id)
+                    ->join(
+                        'forms',
+                        'forms.id',
+                        '=',
+                        'form_statuses.form_id'
+                    )
+                    ->select('form_name', 'short_name', 'status')
+                    ->get();
 
                 $props = [
                     'company_name' => $company_name,
-                    'report_status' => $report_status,
-                    'intern_evaluation_status' => $intern_evaluation_status,
+                    'form_statuses' => $form_statuses,
                 ];
 
                 return Inertia::render('dashboard/(supervisor)/Index', $props);

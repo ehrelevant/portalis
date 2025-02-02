@@ -139,31 +139,45 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $supervisors = $users_partial
+        $supervisors_info = $users_partial
             ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
             ->join('companies', 'supervisors.company_id', '=', 'companies.id')
-            ->join('report_statuses', 'supervisors.id', '=', 'report_statuses.supervisor_id')
-            ->join('intern_evaluation_statuses', 'supervisors.id', '=', 'intern_evaluation_statuses.supervisor_id')
             ->select(
+                'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
                 'users.last_name',
                 'companies.company_name',
-                'report_statuses.status AS midsem_status',
-                'intern_evaluation_statuses.status AS final_status'
-            )
-            ->groupBy(
-                'supervisor_id',
-                'first_name',
-                'last_name',
-                'company_name',
-                'midsem_status',
-                'final_status'
             )
             ->get();
 
+        $supervisors = [];
+        foreach ($supervisors_info as $supervisor_info) {
+            $form_statuses = DB::table('form_statuses')
+                ->where('user_id', $supervisor_info->user_id)
+                ->pluck('status', 'form_id');
+
+            array_push($supervisors, [
+                'supervisor_id' => $supervisor_info->supervisor_id,
+                'first_name' => $supervisor_info->first_name,
+                'last_name' => $supervisor_info->last_name,
+                'company_name' => $supervisor_info->company_name,
+                'form_statuses' => $form_statuses,
+            ]);
+        }
+
+        $form_infos = DB::table('users')
+            ->where('role', 'supervisor')
+            ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->select('forms.id', 'forms.form_name', 'forms.short_name')
+            ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
+            ->get()
+            ->keyBy('id');
+
         return Inertia::render('dashboard/(faculty)/supervisors/Index', [
             'supervisors' => $supervisors,
+            'form_infos' => $form_infos,
         ]);
     }
 }
