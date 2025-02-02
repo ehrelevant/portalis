@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\FormStatus;
+use App\Models\FormAnswer;
 use App\Models\OpenQuestion;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +19,8 @@ class OpenAnswerFactory extends Factory
     public function definition(): array
     {
         return [
-            'form_status_id' => FormStatus::factory(),
+            'form_answer_id' => FormAnswer::factory(),
             'open_question_id' => OpenQuestion::factory(),
-            'user_id' => User::factory(),
             'answer' => null
         ];
     }

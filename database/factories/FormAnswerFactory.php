@@ -2,13 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\FormStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Form>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class FormFactory extends Factory
+class FormAnswerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +19,8 @@ class FormFactory extends Factory
     public function definition(): array
     {
         return [
-            'form_name' => Str::random(30),
-            'short_name' => Str::random(10),
+            'form_status_id' => FormStatus::factory(),
+            'evaluated_user_id' => User::factory(),
         ];
     }
 }
