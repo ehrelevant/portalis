@@ -33,6 +33,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('form_name');
+            $table->string('short_name');
         });
 
         Schema::create('rating_categories', function (Blueprint $table) {
@@ -79,12 +80,18 @@ return new class extends Migration
             $table->enum('status', ['rejected', 'unsubmitted', 'submitted', 'validated'])->default('unsubmitted');
         });
 
-        Schema::create('open_answers', function (Blueprint $table) {
+        Schema::create('form_answers', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('form_status_id')->constrained();
+            $table->foreignId('evaluated_user_id')->references('id')->on('users');
+        });
+
+        Schema::create('open_answers', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('form_answer_id')->constrained();
             $table->foreignId('open_question_id')->constrained();
-            $table->foreignId('user_id')->constrained();    // Associates to user being described
 
             $table->text('answer')->nullable();
         });
@@ -92,13 +99,11 @@ return new class extends Migration
         Schema::create('rating_scores', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('form_status_id')->constrained();
+            $table->foreignId('form_answer_id')->constrained();
             $table->foreignId('rating_question_id')->constrained();
-            $table->foreignId('user_id')->constrained();    // Associates to user being rated
 
             $table->integer('score')->nullable();
         });
-
     }
 
     /**
