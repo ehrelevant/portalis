@@ -66,10 +66,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
 
-        Route::get('/dashboard/supervisors/{supervisor_id}/{short_name}', [FormController::class, 'showReadOnlySupervisorForm']);
-        Route::post('/dashboard/supervisors/{user_id}/{short_name}/validate', [FormController::class, 'validateForm']);
-        Route::post('/dashboard/supervisors/{user_id}/{short_name}/invalidate', [FormController::class, 'invalidateForm']);
-        Route::post('/dashboard/supervisors/{user_id}/{short_name}/reject', [FormController::class, 'rejectForm']);
+        Route::get('/dashboard/supervisors/{supervisor_id}/form/{short_name}', [FormController::class, 'showReadOnlySupervisorForm']);
+        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/validate', [FormController::class, 'validateForm']);
+        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/invalidate', [FormController::class, 'invalidateForm']);
+        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/reject', [FormController::class, 'rejectForm']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);

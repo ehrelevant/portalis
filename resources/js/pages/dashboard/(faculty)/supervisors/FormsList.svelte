@@ -80,7 +80,7 @@
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     status={form_status}
-                                    href="/dashboard/supervisors/{supervisor_id}/{form_infos[
+                                    href="/dashboard/supervisors/{supervisor_id}/form/{form_infos[
                                         form_id
                                     ].short_name}"
                                 />
