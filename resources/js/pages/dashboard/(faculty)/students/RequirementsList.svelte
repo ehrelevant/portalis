@@ -25,14 +25,6 @@
         );
     }
 
-    let deadlinesForm = useForm({
-        requirements: [...requirements],
-    });
-
-    function saveDeadlines() {
-        $deadlinesForm.put('/dashboard/students/update-deadlines');
-    }
-
     /** @type {string} */
     let borderColor = 'border-black dark:border-white';
 </script>
@@ -55,38 +47,6 @@
             bind:value={searchQuery}
         />
     </form>
-
-    <Accordion>
-        <h2 slot="summary" class="text-2xl">Requirement Deadlines</h2>
-
-        <form
-            class="flex flex-col gap-4"
-            on:submit|preventDefault={saveDeadlines}
-        >
-            <div class="grid grid-cols-[auto,1fr] items-center gap-2">
-                {#each $deadlinesForm.requirements as requirement, i}
-                    {@const { requirement_name } = requirement}
-                    <label for="{requirement_name} deadline">
-                        {requirement_name}
-                    </label>
-                    <input
-                        name="{requirement_name} deadline"
-                        type="datetime-local"
-                        step="1"
-                        bind:value={$deadlinesForm.requirements[i].deadline}
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    />
-                {/each}
-            </div>
-            <div class="flex justify-end">
-                <input
-                    type="submit"
-                    value="Save"
-                    class="w-28 cursor-pointer rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                />
-            </div>
-        </form>
-    </Accordion>
 
     <!-- List of Students -->
     <Accordion open>
