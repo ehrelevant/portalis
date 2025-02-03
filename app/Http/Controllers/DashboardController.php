@@ -57,21 +57,35 @@ class DashboardController extends Controller
 
                 $submission_statuses = $submission_statuses_partial->get();
 
-                $total_status = $submission_statuses_partial
-                    ->select(DB::raw("MIN(submission_statuses.status) AS total_status"))
-                    ->groupBy('submission_statuses.status')
-                    ->firstOrFail()
-                    ->total_status;
-
                 $props = [
                     'student_number' => $student_number,
                     'submissions' => $submission_statuses,
-                    'total_status' => $total_status,
                 ];
 
                 return Inertia::render('dashboard/(student)/RequirementsDashboard', $props);
             case 'during':
             case 'post':
+                $student = Auth::user();
+                $student_user_id = $student->id;
+                $student_number = $student->role_id;
+
+                $form_statuses = DB::table('form_statuses')
+                    ->where('user_id', $student_user_id)
+                    ->join(
+                        'forms',
+                        'forms.id',
+                        '=',
+                        'form_statuses.form_id'
+                    )
+                    ->where('forms.phase', $phase)
+                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
+                    ->get();
+
+                $props = [
+                    'student_number' => $student_number,
+                    'form_statuses' => $form_statuses,
+                ];
+
                 return Inertia::render('dashboard/(student)/FormsDashboard', $props);
             default:
                 return Inertia::render('dashboard/WaitingPage');
@@ -117,7 +131,6 @@ class DashboardController extends Controller
             default:
                 return Inertia::render('dashboard/WaitingPage');
         }
-
     }
 
     private function showFacultyDashboard(Request $request, string $phase): Response
