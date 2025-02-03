@@ -34,6 +34,8 @@ return new class extends Migration
 
             $table->string('form_name');
             $table->string('short_name');
+            $table->enum('phase', ['pre', 'during', 'post'])->default('pre');
+            $table->dateTime('deadline')->nullable();
         });
 
         Schema::create('rating_categories', function (Blueprint $table) {
@@ -111,6 +113,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        // TODO: Migration Rollbacks
     }
 };
