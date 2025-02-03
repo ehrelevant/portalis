@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
@@ -68,7 +69,7 @@ class FacultyController extends Controller
         $sections = DB::table('faculties')
             ->pluck('section');
 
-        return Inertia::render('dashboard/(faculty)/students/Index', [
+        return Inertia::render('dashboard/(faculty)/students/RequirementsList', [
             'students' => $students,
             'requirements' => $requirements,
             'sections' => $sections,
@@ -110,14 +111,17 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function updateRequirementDeadlines(Request $request)
+    public function updateDeadlines(Request $request)
     {
         $form_values = $request->validate([
             'requirements.*.id' => ['int'],
             'requirements.*.deadline' => ['date', 'nullable'],
+            'forms.*.id' => ['int'],
+            'forms.*.deadline' => ['date', 'nullable']
         ]);
 
         $new_requirements = $form_values['requirements'];
+        $new_forms = $form_values['forms'];
 
         foreach ($new_requirements as $new_requirement) {
             ['id' => $id, 'deadline' => $deadline] = $new_requirement;
@@ -125,10 +129,18 @@ class FacultyController extends Controller
             $requirement->deadline = $deadline;
             $requirement->save();
         }
+        foreach ($new_forms as $new_form) {
+            ['id' => $id, 'deadline' => $deadline] = $new_form;
+            $form = Form::find($id);
+            $form->deadline = $deadline;
+            $form->save();
+        }
     }
 
     public function showSupervisors(Request $request): Response
     {
+        $phase = DB::table('website_states')->firstOrFail()->phase;
+
         $search_text = $request->query('search') ?? '';
 
         $users_partial = DB::table('users')
@@ -154,6 +166,8 @@ class FacultyController extends Controller
         $supervisors = [];
         foreach ($supervisors_info as $supervisor_info) {
             $form_statuses = DB::table('form_statuses')
+                ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                ->where('forms.phase', $phase)
                 ->where('user_id', $supervisor_info->user_id)
                 ->pluck('status', 'form_id');
 
@@ -170,12 +184,13 @@ class FacultyController extends Controller
             ->where('role', 'supervisor')
             ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('forms.phase', $phase)
             ->select('forms.id', 'forms.form_name', 'forms.short_name')
             ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
             ->get()
             ->keyBy('id');
 
-        return Inertia::render('dashboard/(faculty)/supervisors/Index', [
+        return Inertia::render('dashboard/(faculty)/supervisors/FormsList', [
             'supervisors' => $supervisors,
             'form_infos' => $form_infos,
         ]);

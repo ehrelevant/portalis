@@ -69,7 +69,10 @@ class DashboardController extends Controller
                     'total_status' => $total_status,
                 ];
 
-                return Inertia::render('dashboard/(student)/Index', $props);
+                return Inertia::render('dashboard/(student)/RequirementsDashboard', $props);
+            case 'during':
+            case 'post':
+                return Inertia::render('dashboard/(student)/FormsDashboard', $props);
             default:
                 return Inertia::render('dashboard/WaitingPage');
         }
@@ -81,6 +84,7 @@ class DashboardController extends Controller
 
         switch ($phase) {
             case 'during':
+            case 'post':
                 $supervisor = Auth::user();
                 $supervisor_user_id = $supervisor->id;
                 $supervisor_id = $supervisor->role_id;
@@ -100,7 +104,8 @@ class DashboardController extends Controller
                         '=',
                         'form_statuses.form_id'
                     )
-                    ->select('form_name', 'short_name', 'status')
+                    ->where('forms.phase', $phase)
+                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
                 $props = [
@@ -108,7 +113,7 @@ class DashboardController extends Controller
                     'form_statuses' => $form_statuses,
                 ];
 
-                return Inertia::render('dashboard/(supervisor)/Index', $props);
+                return Inertia::render('dashboard/(supervisor)/FormsDashboard', $props);
             default:
                 return Inertia::render('dashboard/WaitingPage');
         }
@@ -117,8 +122,13 @@ class DashboardController extends Controller
 
     private function showFacultyDashboard(Request $request, string $phase): Response
     {
+        $requirements = DB::table('requirements')->get();
+        $forms = DB::table('forms')->get();
+
         return Inertia::render('dashboard/(faculty)/Index', [
             'currentPhase' => $phase,
+            'requirements' => $requirements,
+            'forms' => $forms,
         ]);
     }
 }
