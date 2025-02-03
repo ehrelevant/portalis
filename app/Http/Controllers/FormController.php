@@ -250,6 +250,10 @@ class FormController extends Controller
                 ->id;
 
             $form_answer = FormAnswer::where('form_status_id', $form_status_id)
+                ->join('users', 'users.id', '=', 'form_answers.evaluated_user_id')
+                ->where('role', 'student')
+                ->where('role_id', $evaluation['student_number'])
+                ->select('form_answers.id')
                 ->firstOrFail();
 
             foreach ($evaluation['categorized_ratings'] as $ratings) {
@@ -588,6 +592,10 @@ class FormController extends Controller
                 ->id;
 
             $form_answer = FormAnswer::where('form_status_id', $form_status_id)
+                ->join('users', 'users.id', '=', 'form_answers.evaluated_user_id')
+                ->where('role', 'student')
+                ->where('role_id', $evaluation['supervisor_id'])
+                ->select('form_answers.id')
                 ->firstOrFail();
 
             foreach ($evaluation['categorized_ratings'] as $ratings) {
