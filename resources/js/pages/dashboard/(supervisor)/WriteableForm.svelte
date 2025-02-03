@@ -12,11 +12,6 @@
     export let open_questions;
     export let form_info;
 
-    $: console.log(students);
-    $: console.log(rating_categories);
-    $: console.log(categorized_rating_questions[1][1]);
-    $: console.log(open_questions);
-
     const answers = { ...students };
 
     let formElement;
