@@ -20,6 +20,8 @@ class FormFactory extends Factory
         return [
             'form_name' => Str::random(30),
             'short_name' => Str::random(10),
+            'phase' => fake()->randomElement(['pre', 'during', 'post']),
+            'deadline' => fake()->dateTime(),
         ];
     }
 }

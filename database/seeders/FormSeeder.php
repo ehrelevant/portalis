@@ -24,22 +24,32 @@ class FormSeeder extends Seeder
         Form::factory()->create([
             'form_name' => 'Midsem Report',
             'short_name' => 'midsem',
+            'phase' => 'during',
+            'deadline' => null,
         ]);
         Form::factory()->create([
             'form_name' => 'Final Report',
             'short_name' => 'final',
+            'phase' => 'during',
+            'deadline' => null,
         ]);
         Form::factory()->create([
             'form_name' => 'Company Evaluation',
             'short_name' => 'company',
+            'phase' => 'during',
+            'deadline' => null,
         ]);
         Form::factory()->create([
             'form_name' => 'Self Assessment',
-            'short_name' => 'self',
+            'short_name' => 'self-assessment',
+            'phase' => 'post',
+            'deadline' => null,
         ]);
         Form::factory()->create([
             'form_name' => 'Intern Assessment',
-            'short_name' => 'intern',
+            'short_name' => 'intern-assessment',
+            'phase' => 'post',
+            'deadline' => null,
         ]);
 
         // Open-ended Question Setup
@@ -62,6 +72,9 @@ class FormSeeder extends Seeder
         ]);
         RatingCategory::factory()->create([
             'category_name' => 'Technical Criteria'
+        ]);
+        RatingCategory::factory()->create([
+            'category_name' => 'Total Hours'
         ]);
 
         // Rating Question Setup
@@ -125,6 +138,24 @@ class FormSeeder extends Seeder
                 ]);
                 FormStatus::factory()->create([
                     'form_id' => 2,
+                    'user_id' => $user->id,
+                    'status' => 'unsubmitted',
+                ]);
+                FormStatus::factory()->create([
+                    'form_id' => 5,
+                    'user_id' => $user->id,
+                    'status' => 'unsubmitted',
+                ]);
+            }
+
+            if ($user->role === 'student') {
+                FormStatus::factory()->create([
+                    'form_id' => 3,
+                    'user_id' => $user->id,
+                    'status' => 'unsubmitted',
+                ]);
+                FormStatus::factory()->create([
+                    'form_id' => 4,
                     'user_id' => $user->id,
                     'status' => 'unsubmitted',
                 ]);
