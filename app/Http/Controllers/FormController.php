@@ -36,7 +36,7 @@ class FormController extends Controller
         return DB::table('forms')
             ->where('forms.id', $form_id)
             ->join('form_rating_questions', 'form_rating_questions.form_id', '=', 'forms.id')
-            ->join('rating_questions', 'rating_questions.id', '=', 'form_rating_questions.form_id')
+            ->join('rating_questions', 'rating_questions.id', '=', 'form_rating_questions.rating_question_id')
             ->join('rating_categories', 'rating_categories.id', '=', 'rating_questions.rating_category_id')
             ->select('rating_categories.id', 'rating_categories.category_name')
             ->groupBy('rating_categories.id', 'rating_categories.category_name')
