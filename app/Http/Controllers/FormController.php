@@ -18,7 +18,8 @@ use Inertia\Response;
 
 class FormController extends Controller
 {
-    private function getOpenQuestions(int $form_id) {
+    private function getOpenQuestions(int $form_id)
+    {
         return DB::table('form_open_questions')
             ->where('form_id', $form_id)
             ->join(
@@ -30,11 +31,13 @@ class FormController extends Controller
             ->pluck('open_questions.question', 'open_questions.id');
     }
 
-    private function getRatingCategories() {
+    private function getRatingCategories()
+    {
         return DB::table('rating_categories')->get();
     }
 
-    private function getCategorizedRatingQuestions(int $form_id, $rating_categories) {
+    private function getCategorizedRatingQuestions(int $form_id, $rating_categories)
+    {
         $categorized_rating_questions = [];
 
         foreach ($rating_categories as $category) {
@@ -65,7 +68,8 @@ class FormController extends Controller
         return $categorized_rating_questions;
     }
 
-    private function getFormInfo(int $form_id) {
+    private function getFormInfo(int $form_id)
+    {
         return DB::table('forms')
             ->where('id', $form_id)
             ->select('form_name', 'short_name')
@@ -97,7 +101,8 @@ class FormController extends Controller
                 '=',
                 'form_statuses.id'
             )
-            ->select('form_statuses.form_id',
+            ->select(
+                'form_statuses.form_id',
                 'form_statuses.id AS form_status_id',
                 'form_answers.id AS form_answer_id',
                 'form_answers.evaluated_user_id'
@@ -166,7 +171,8 @@ class FormController extends Controller
                     '=',
                     'form_statuses.id'
                 )
-                ->select('form_statuses.form_id',
+                ->select(
+                    'form_statuses.form_id',
                     'form_statuses.id AS form_status_id',
                     'form_answers.id AS form_answer_id',
                     'form_answers.evaluated_user_id'
@@ -340,7 +346,8 @@ class FormController extends Controller
                 '=',
                 'form_statuses.id'
             )
-            ->select('form_statuses.form_id',
+            ->select(
+                'form_statuses.form_id',
                 'form_statuses.id AS form_status_id',
                 'form_answers.id AS form_answer_id',
                 'form_answers.evaluated_user_id'

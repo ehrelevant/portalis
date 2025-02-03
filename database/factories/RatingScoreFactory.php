@@ -21,7 +21,7 @@ class RatingScoreFactory extends Factory
         return [
             'form_answer_id' => FormAnswer::factory(),
             'rating_question_id' => RatingQuestion::factory(),
-            'score' => null
+            'score' => null,
         ];
     }
 }

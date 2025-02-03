@@ -21,7 +21,7 @@ class OpenAnswerFactory extends Factory
         return [
             'form_answer_id' => FormAnswer::factory(),
             'open_question_id' => OpenQuestion::factory(),
-            'answer' => null
+            'answer' => null,
         ];
     }
 }

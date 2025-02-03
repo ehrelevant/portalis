@@ -68,13 +68,13 @@ class FormSeeder extends Seeder
 
         // Rating Category Setup
         RatingCategory::factory()->create([
-            'category_name' => 'Non-Technical Criteria'
+            'category_name' => 'Non-Technical Criteria',
         ]);
         RatingCategory::factory()->create([
-            'category_name' => 'Technical Criteria'
+            'category_name' => 'Technical Criteria',
         ]);
         RatingCategory::factory()->create([
-            'category_name' => 'Total Hours'
+            'category_name' => 'Total Hours',
         ]);
 
         // Rating Question Setup
@@ -107,12 +107,12 @@ class FormSeeder extends Seeder
         // Connecting Forms to Open-ended Questions
         FormOpenQuestion::factory()->create([
             'form_id' => 1,
-            'open_question_id' => 1
+            'open_question_id' => 1,
         ]);
         for ($i = 2; $i <= 4; $i++) {
             FormOpenQuestion::factory()->create([
                 'form_id' => 2,
-                'open_question_id' => $i
+                'open_question_id' => $i,
             ]);
         }
 

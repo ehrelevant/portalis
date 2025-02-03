@@ -117,7 +117,7 @@ class FacultyController extends Controller
             'requirements.*.id' => ['int'],
             'requirements.*.deadline' => ['date', 'nullable'],
             'forms.*.id' => ['int'],
-            'forms.*.deadline' => ['date', 'nullable']
+            'forms.*.deadline' => ['date', 'nullable'],
         ]);
 
         $new_requirements = $form_values['requirements'];
