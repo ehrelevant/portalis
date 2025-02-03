@@ -18,6 +18,8 @@ class FacultyController extends Controller
 {
     public function showStudents(Request $request): Response
     {
+        $phase = DB::table('website_states')->firstOrFail()->phase;
+
         $search_text = $request->query('search') ?? '';
 
         // TODO: Add student number search
@@ -29,51 +31,101 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $students_info = $users_partial
-            ->join('students', 'users.role_id', '=', 'students.student_number')
-            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
-            ->select(
-                'students.student_number',
-                'users.first_name',
-                'users.last_name',
-                'faculties.section',
-                'students.has_dropped',
-            )
-            ->get();
-
         $students = [];
 
-        foreach ($students_info as $student_info) {
-            $student_statuses = DB::table('submission_statuses')
-            ->where('student_number', $student_info->student_number)
-            ->select(
-                'submission_statuses.requirement_id',
-                'submission_statuses.status',
-            )->get();
+        switch ($phase) {
+            case 'pre':
+                $students_info = $users_partial
+                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+                    ->select(
+                        'users.id AS user_id',
+                        'students.student_number',
+                        'users.first_name',
+                        'users.last_name',
+                        'faculties.section',
+                        'students.has_dropped',
+                    )
+                    ->get();
 
-            $new_student = [
-                'student_number' => $student_info->student_number,
-                'first_name' => $student_info->first_name,
-                'last_name' => $student_info->last_name,
-                'section' => $student_info->section,
-                'has_dropped' => $student_info->has_dropped,
-                'submissions' => $student_statuses,
-            ];
+                foreach ($students_info as $student_info) {
+                    $student_statuses = DB::table('submission_statuses')
+                    ->where('student_number', $student_info->student_number)
+                    ->select(
+                        'submission_statuses.requirement_id',
+                        'submission_statuses.status',
+                    )->get();
 
-            array_push($students, $new_student);
+                    $new_student = [
+                        'student_number' => $student_info->student_number,
+                        'first_name' => $student_info->first_name,
+                        'last_name' => $student_info->last_name,
+                        'section' => $student_info->section,
+                        'has_dropped' => $student_info->has_dropped,
+                        'submissions' => $student_statuses,
+                    ];
+
+                    array_push($students, $new_student);
+                }
+
+                $requirements = DB::table('requirements')
+                    ->get();
+
+                $sections = DB::table('faculties')
+                    ->pluck('section');
+
+                return Inertia::render('dashboard/(faculty)/students/RequirementsList', [
+                    'students' => $students,
+                    'requirements' => $requirements,
+                    'sections' => $sections,
+                ]);
+            case 'during':
+            case 'post':
+                $students_info = $users_partial
+                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->whereNotNull('section')
+                    ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+                    ->select(
+                        'users.id AS user_id',
+                        'students.student_number',
+                        'users.first_name',
+                        'users.last_name',
+                        'faculties.section',
+                    )
+                    ->get();
+
+                foreach ($students_info as $student_info) {
+                    $form_statuses = DB::table('form_statuses')
+                        ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                        ->where('forms.phase', $phase)
+                        ->where('user_id', $student_info->user_id)
+                        ->pluck('status', 'form_id');
+
+                    array_push($students, [
+                        'student_number' => $student_info->student_number,
+                        'first_name' => $student_info->first_name,
+                        'last_name' => $student_info->last_name,
+                        'section' => $student_info->section,
+                        'form_statuses' => $form_statuses,
+                    ]);
+                }
+
+                $form_infos = DB::table('users')
+                    ->where('role', 'student')
+                    ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
+                    ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                    ->where('forms.phase', $phase)
+                    ->select('forms.id', 'forms.form_name', 'forms.short_name')
+                    ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
+                    ->get()
+                    ->keyBy('id');
+
+                return Inertia::render('dashboard/(faculty)/students/FormsList', [
+                    'students' => $students,
+                    'form_infos' => $form_infos,
+                ]);
+
         }
-
-        $requirements = DB::table('requirements')
-            ->get();
-
-        $sections = DB::table('faculties')
-            ->pluck('section');
-
-        return Inertia::render('dashboard/(faculty)/students/RequirementsList', [
-            'students' => $students,
-            'requirements' => $requirements,
-            'sections' => $sections,
-        ]);
     }
 
     public function assignStudentSection(int $student_number, string $new_section = '')
