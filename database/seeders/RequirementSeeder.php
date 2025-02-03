@@ -29,12 +29,15 @@ class RequirementSeeder extends Seeder
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Student\'s ID',
+            'deadline' => null,
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Supervisor\'s ID',
+            'deadline' => null,
         ]);
         Requirement::factory()->create([
             'requirement_name' => 'Parent/Guardian\'s ID',
+            'deadline' => null,
         ]);
 
         foreach (Student::all() as $student) {
