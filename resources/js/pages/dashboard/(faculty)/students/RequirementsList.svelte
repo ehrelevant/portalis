@@ -22,6 +22,10 @@
 
         router.put(
             `/dashboard/students/${studentNumber}/assign/section/${sectionName}`,
+            {},
+            {
+                preserveScroll: true,
+            },
         );
     }
 
