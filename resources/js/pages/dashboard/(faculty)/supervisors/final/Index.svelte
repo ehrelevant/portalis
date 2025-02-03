@@ -28,27 +28,27 @@
                     {@const { last_name, first_name, ratings } = student}
                     <p>{last_name}, {first_name}</p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[1]}
                     </p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[2]}
                     </p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[3]}
                     </p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[4]}
                     </p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[1] + ratings[2] + ratings[3] + ratings[4]}
                     </p>
@@ -65,7 +65,7 @@
                     {@const { last_name, first_name, ratings } = student}
                     <p>{last_name}, {first_name}</p>
                     <p
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                     >
                         {ratings[5]}
                     </p>

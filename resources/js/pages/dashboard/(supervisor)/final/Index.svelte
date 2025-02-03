@@ -54,7 +54,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                             type="number"
                             max="10"
                             min="0"
@@ -62,7 +62,7 @@
                             bind:value={$form.evaluations[i].ratings[1]}
                         />
                         <input
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                             type="number"
                             max="10"
                             min="0"
@@ -70,7 +70,7 @@
                             bind:value={$form.evaluations[i].ratings[2]}
                         />
                         <input
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                             type="number"
                             max="10"
                             min="0"
@@ -78,7 +78,7 @@
                             bind:value={$form.evaluations[i].ratings[3]}
                         />
                         <input
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                             type="number"
                             max="10"
                             min="0"
@@ -99,7 +99,7 @@
                         {@const { last_name, first_name } = student}
                         <p>{last_name}, {first_name}</p>
                         <input
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text text-center"
                             type="number"
                             max="60"
                             min="0"
