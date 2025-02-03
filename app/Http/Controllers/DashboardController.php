@@ -45,7 +45,7 @@ class DashboardController extends Controller
             case 'pre':
                 $student_number = Auth::user()->role_id;
 
-                $submission_statuses_partial = DB::table('submission_statuses')
+                $submission_statuses = DB::table('submission_statuses')
                     ->where('student_number', $student_number)
                     ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
                     ->select(
@@ -53,9 +53,8 @@ class DashboardController extends Controller
                         'requirements.requirement_name',
                         'requirements.deadline',
                         'submission_statuses.status',
-                    );
-
-                $submission_statuses = $submission_statuses_partial->get();
+                    )
+                    ->get();
 
                 $props = [
                     'student_number' => $student_number,

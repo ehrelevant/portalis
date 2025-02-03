@@ -88,7 +88,7 @@ class FormController extends Controller
         $supervisor_user = Auth::user();
         $supervisor_id = $supervisor_user->role_id;
 
-        $form_statuses_partial = DB::table('form_statuses')
+        $form_status = DB::table('form_statuses')
             ->where('form_statuses.user_id', $supervisor_user->id)
             ->join(
                 'forms',
@@ -97,11 +97,18 @@ class FormController extends Controller
                 'form_statuses.form_id'
             )
             ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
+            ->firstOrFail();
 
-        $form_status = $form_statuses_partial->firstOrFail();
-
-        $form_answers = $form_statuses_partial
+        $form_answers_query = DB::table('form_statuses')
+            ->where('form_statuses.user_id', $supervisor_user->id)
+            ->join(
+                'forms',
+                'forms.id',
+                '=',
+                'form_statuses.form_id'
+            )
+            ->where('short_name', $short_name)
             ->join(
                 'form_answers',
                 'form_answers.form_status_id',
@@ -113,8 +120,8 @@ class FormController extends Controller
                 'form_statuses.id AS form_status_id',
                 'form_answers.id AS form_answer_id',
                 'form_answers.evaluated_user_id'
-            )
-            ->get();
+            );
+        $form_answers = $form_answers_query->get();
 
         if ($form_answers->isEmpty()) {
             // Hard-coded question ids for the "report" form
@@ -171,7 +178,7 @@ class FormController extends Controller
                 }
             }
 
-            $form_answers = $form_statuses_partial->get();
+            $form_answers = $form_answers_query->get();
         }
 
         $students = [];
@@ -320,8 +327,8 @@ class FormController extends Controller
             ->firstOrFail()
             ->id;
 
-        $form_statuses_partial = DB::table('form_statuses')
-            ->where('user_id', $user_id)
+        $form_status = DB::table('form_statuses')
+            ->where('form_statuses.user_id', $user_id)
             ->join(
                 'forms',
                 'forms.id',
@@ -329,11 +336,18 @@ class FormController extends Controller
                 'form_statuses.form_id'
             )
             ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
+            ->firstOrFail();
 
-        $form_status = $form_statuses_partial->firstOrFail();
-
-        $form_answers = $form_statuses_partial
+        $form_answers = DB::table('form_statuses')
+            ->where('form_statuses.user_id', $user_id)
+            ->join(
+                'forms',
+                'forms.id',
+                '=',
+                'form_statuses.form_id'
+            )
+            ->where('short_name', $short_name)
             ->join(
                 'form_answers',
                 'form_answers.form_status_id',
@@ -421,7 +435,7 @@ class FormController extends Controller
             ->firstOrFail()
             ->supervisor_id;
 
-        $form_statuses_partial = DB::table('form_statuses')
+        $form_status = DB::table('form_statuses')
             ->where('user_id', $student_user->id)
             ->join(
                 'forms',
@@ -430,11 +444,18 @@ class FormController extends Controller
                 'form_statuses.form_id'
             )
             ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
+            ->firstOrFail();
 
-        $form_status = $form_statuses_partial->firstOrFail();
-
-        $form_answer = $form_statuses_partial
+        $form_answer_query = DB::table('form_statuses')
+            ->where('user_id', $student_user->id)
+            ->join(
+                'forms',
+                'forms.id',
+                '=',
+                'form_statuses.form_id'
+            )
+            ->where('short_name', $short_name)
             ->join(
                 'form_answers',
                 'form_answers.form_status_id',
@@ -446,8 +467,9 @@ class FormController extends Controller
                 'form_statuses.id AS form_status_id',
                 'form_answers.id AS form_answer_id',
                 'form_answers.evaluated_user_id'
-            )
-            ->first();
+            );
+
+        $form_answer = $form_answer_query->first();
 
         if (!$form_answer) {
             // Hard-coded question ids for the "report" form
@@ -497,7 +519,7 @@ class FormController extends Controller
                 $open_answer->save();
             }
 
-            $form_answer = $form_statuses_partial->first();
+            $form_answer = $form_answer_query->first();
         }
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);
@@ -643,7 +665,7 @@ class FormController extends Controller
             ->firstOrFail()
             ->id;
 
-        $form_statuses_partial = DB::table('form_statuses')
+        $form_status = DB::table('form_statuses')
             ->where('user_id', $user_id)
             ->join(
                 'forms',
@@ -652,11 +674,19 @@ class FormController extends Controller
                 'form_statuses.form_id'
             )
             ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
+            ->firstOrFail();
 
-        $form_status = $form_statuses_partial->firstOrFail();
-
-        $form_answers = $form_statuses_partial
+        $form_answers = DB::table('form_statuses')
+            ->where('user_id', $user_id)
+            ->join(
+                'forms',
+                'forms.id',
+                '=',
+                'form_statuses.form_id'
+            )
+            ->where('short_name', $short_name)
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
             ->join(
                 'form_answers',
                 'form_answers.form_status_id',
