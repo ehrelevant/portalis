@@ -5,7 +5,6 @@
 
     import Status from '@shared/components/Status.svelte';
 
-    export let company_name;
     export let form_statuses;
 </script>
 
@@ -13,8 +12,6 @@
     <Header txt="During Internship Phase" />
 
     <div class="flex flex-col gap-4">
-        <h2 class="text-2xl">Company: {company_name}</h2>
-
         {#each form_statuses as form_status}
             {@const { form_name, short_name, status, deadline } = form_status}
             <Accordion open>
@@ -53,7 +50,7 @@
                     </div>
                 {:else}
                     <Link
-                        href="/dashboard/supervisor/report/{short_name}"
+                        href="/dashboard/student/report/{short_name}"
                         class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
                     >
                         <div

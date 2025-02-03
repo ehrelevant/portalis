@@ -6,13 +6,15 @@
     export let errors = {};
     $: console.log(errors);
 
-    export let students;
+    export let supervisor;
+    $: ({ categorized_ratings } = supervisor);
+
     export let rating_categories;
     export let categorized_rating_questions;
     export let open_questions;
     export let form_info;
 
-    const answers = { ...students };
+    const answers = { ...supervisor };
 
     let formElement;
 
@@ -21,9 +23,7 @@
     });
 
     function draftForm() {
-        $form.post(
-            `/dashboard/supervisor/report/${form_info.short_name}/draft`,
-        );
+        $form.post(`/dashboard/student/report/${form_info.short_name}/draft`);
     }
 
     function submitForm() {
@@ -31,9 +31,7 @@
             formElement.reportValidity();
             return;
         }
-        $form.post(
-            `/dashboard/supervisor/report/${form_info.short_name}/submit`,
-        );
+        $form.post(`/dashboard/student/report/${form_info.short_name}/submit`);
     }
 </script>
 
@@ -59,28 +57,19 @@
                             {@const { criterion, max_score } = rating_question}
                             <p class="text-center">{criterion} ({max_score})</p>
                         {/each}
-                        {#each Object.entries(students) as [student_number, student]}
-                            {@const {
-                                last_name,
-                                first_name,
-                                categorized_ratings,
-                            } = student}
-                            <p>{last_name}, {first_name}</p>
-                            {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
-                                <input
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                    type="number"
-                                    max={categorized_rating_questions[
-                                        category_id
-                                    ][rating_id].max_score}
-                                    min="0"
-                                    required
-                                    bind:value={$form.answers[student_number]
-                                        .categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
-                                />
-                            {/each}
+                        {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
+                            <input
+                                class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                type="number"
+                                max={categorized_rating_questions[category_id][
+                                    rating_id
+                                ].max_score}
+                                min="0"
+                                required
+                                bind:value={$form.answers.categorized_ratings[
+                                    category_id
+                                ][rating_id]}
+                            />
                         {/each}
                     </div>
                 </Accordion>
@@ -90,18 +79,12 @@
                 <Accordion>
                     <h2 slot="summary" class="text-2xl">{open_question}</h2>
                     <div
-                        class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
+                        class="grid grid-cols-[1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        {#each Object.entries(students) as [student_number, student]}
-                            {@const { last_name, first_name } = student}
-                            <p>{last_name}, {first_name}</p>
-                            <textarea
-                                class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                bind:value={$form.answers[student_number].opens[
-                                    open_id
-                                ]}
-                            />
-                        {/each}
+                        <textarea
+                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            bind:value={$form.answers.opens[open_id]}
+                        />
                     </div>
                 </Accordion>
             {/each}

@@ -40,10 +40,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dashboard/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
     });
 
+    Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
+        Route::get('/dashboard/student/report/{short_name}', [FormController::class, 'showWriteableStudentForm']);
+        Route::post('/dashboard/student/report/{short_name}/draft', [FormController::class, 'draftStudentForm']);
+        Route::post('/dashboard/student/report/{short_name}/submit', [FormController::class, 'submitStudentForm']);
+    });
+
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/report/{short_name}', [FormController::class, 'showWriteableSupervisorForm']);
-        Route::post('/dashboard/report/{short_name}/draft', [FormController::class, 'draftSupervisorForm']);
-        Route::post('/dashboard/report/{short_name}/submit', [FormController::class, 'submitSupervisorForm']);
+        Route::get('/dashboard/supervisor/report/{short_name}', [FormController::class, 'showWriteableSupervisorForm']);
+        Route::post('/dashboard/supervisor/report/{short_name}/draft', [FormController::class, 'draftSupervisorForm']);
+        Route::post('/dashboard/supervisor/report/{short_name}/submit', [FormController::class, 'submitSupervisorForm']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
