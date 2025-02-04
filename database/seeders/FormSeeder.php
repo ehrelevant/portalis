@@ -74,7 +74,13 @@ class FormSeeder extends Seeder
             'category_name' => 'Technical Criteria',
         ]);
         RatingCategory::factory()->create([
-            'category_name' => 'Total Hours',
+            'category_name' => 'Company Ratings',
+        ]);
+        RatingCategory::factory()->create([
+            'category_name' => 'Supervisor Ratings',
+        ]);
+        RatingCategory::factory()->create([
+            'category_name' => 'Overall Ratings',
         ]);
 
         // Rating Question Setup
@@ -109,6 +115,55 @@ class FormSeeder extends Seeder
             'max_score' => 60,
         ]);
 
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 3,
+            'criterion' => 'How would you rate your learning experience with your company? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 3,
+            'criterion' => 'How would you rate the usefulness of your learnings from your company? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 3,
+            'criterion' => 'How would you rate your overall experience at your company? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 4,
+            'criterion' => 'How would you rate the helpfulness of your company supervisor? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 4,
+            'criterion' => 'How would you rate the involvement of your company supervisor in your learning experience? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 4,
+            'criterion' => 'How would you rate your experience with your company supervisor? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 5,
+            'criterion' => 'How much would you recommend working at your company to other students? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 5,
+            'criterion' => 'How much would you recommend working under your company supervisor? (1-6)',
+            'min_score' => 1,
+            'max_score' => 6,
+        ]);
+
         // Connecting Forms to Open-ended Questions
         FormOpenQuestion::factory()->create([
             'form_id' => 1,
@@ -120,6 +175,10 @@ class FormSeeder extends Seeder
                 'open_question_id' => $i,
             ]);
         }
+        FormRatingQuestion::factory()->create([
+            'form_id' => 3,
+            'rating_question_id' => 1,
+        ]);
 
         // Connecting Forms to Rating Questions
         for ($i = 1; $i <= 5; $i++) {
@@ -129,6 +188,12 @@ class FormSeeder extends Seeder
             ]);
             FormRatingQuestion::factory()->create([
                 'form_id' => 2,
+                'rating_question_id' => $i,
+            ]);
+        }
+        for ($i = 6; $i <= 13; $i++) {
+            FormRatingQuestion::factory()->create([
+                'form_id' => 3,
                 'rating_question_id' => $i,
             ]);
         }
