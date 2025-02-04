@@ -80,27 +80,27 @@ class FormSeeder extends Seeder
         // Rating Question Setup
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
-            'criterion' => 'Work Ethic',
+            'criterion' => 'Work Ethic (10)',
             'max_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
-            'criterion' => 'Attitude and Personality',
+            'criterion' => 'Attitude and Personality (10)',
             'max_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
-            'criterion' => 'Attendance and Punctuality',
+            'criterion' => 'Attendance and Punctuality (10)',
             'max_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
-            'criterion' => 'Respect for Authority',
+            'criterion' => 'Respect for Authority (10)',
             'max_score' => 10,
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 2,
-            'criterion' => 'Technical Output',
+            'criterion' => 'Technical Output (60)',
             'max_score' => 60,
         ]);
 

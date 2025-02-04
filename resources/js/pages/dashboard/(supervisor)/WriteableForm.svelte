@@ -56,8 +56,8 @@
                     >
                         <p />
                         {#each Object.entries(categorized_rating_questions[category_id]) as [_, rating_question]}
-                            {@const { criterion, max_score } = rating_question}
-                            <p class="text-center">{criterion} ({max_score})</p>
+                            {@const { criterion } = rating_question}
+                            <p class="text-center">{criterion}</p>
                         {/each}
                         {#each Object.entries(students) as [student_number, student]}
                             {@const {
