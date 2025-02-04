@@ -20,7 +20,8 @@ class RatingQuestionFactory extends Factory
         return [
             'rating_category_id' => RatingCategory::factory(),
             'criterion' => fake()->text(20),
-            'max_score' => rand(10, 60),
+            'max_score' => null,
+            'max_score' => null,
         ];
     }
 }

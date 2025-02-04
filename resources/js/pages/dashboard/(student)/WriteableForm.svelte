@@ -64,7 +64,9 @@
                                 max={categorized_rating_questions[category_id][
                                     rating_id
                                 ].max_score}
-                                min="0"
+                                min={categorized_rating_questions[category_id][
+                                    rating_id
+                                ].min_score}
                                 required
                                 bind:value={$form.answers.categorized_ratings[
                                     category_id

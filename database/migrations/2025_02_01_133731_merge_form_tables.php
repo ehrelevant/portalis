@@ -56,6 +56,7 @@ return new class extends Migration {
 
             $table->text('criterion');
             $table->integer('max_score')->nullable();
+            $table->integer('min_score')->nullable();
         });
 
         Schema::create('form_open_questions', function (Blueprint $table) {

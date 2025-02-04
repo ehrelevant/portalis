@@ -59,6 +59,7 @@ class FormController extends Controller
                 ->where('rating_questions.rating_category_id', $category->id)
                 ->select(
                     'rating_questions.id AS rating_question_id',
+                    'rating_questions.min_score',
                     'rating_questions.max_score',
                     'rating_questions.criterion'
                 )
@@ -68,6 +69,7 @@ class FormController extends Controller
                 $categorized_rating_questions[$category->id][$rating_question->rating_question_id] =
                     [
                         'criterion' => $rating_question->criterion,
+                        'min_score' =>  $rating_question->min_score,
                         'max_score' =>  $rating_question->max_score,
                     ];
             }
