@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    /** @use HasFactory<\Database\Factories\FormStatusFactory> */
+    /** @use HasFactory<\Database\Factories\FormFactory> */
     use HasFactory;
 
     /**
