@@ -572,7 +572,7 @@ class FormController extends Controller
         $open_questions = $this->getOpenQuestions($form_status->form_id);
         $form_info = $this->getFormInfo($form_status->form_id);
 
-        return Inertia::render('dashboard/(student)/WriteableForm', [
+        return Inertia::render('dashboard/(student)/CompanyEvaluationForm', [
             'supervisor' => $supervisor,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,

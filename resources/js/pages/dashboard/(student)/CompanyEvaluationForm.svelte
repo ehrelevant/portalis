@@ -14,6 +14,8 @@
     export let open_questions;
     export let form_info;
 
+    $: console.log(categorized_rating_questions);
+
     const answers = { ...supervisor };
 
     let formElement;
@@ -47,31 +49,31 @@
                     <h2 slot="summary" class="text-2xl">{category_name}</h2>
 
                     <div
-                        style="grid-template-columns: auto repeat({Object.keys(
-                            categorized_rating_questions[category_id],
-                        ).length},1fr);"
-                        class="grid grid-cols-[auto,repeat(3,1fr)] items-center justify-center gap-2"
+                        class="grid grid-cols-1 items-center justify-center gap-4"
                     >
-                        <p />
-                        {#each Object.entries(categorized_rating_questions[category_id]) as [_, rating_question]}
-                            {@const { criterion } = rating_question}
-                            <p class="text-center">{criterion}</p>
-                        {/each}
                         {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
-                            <input
-                                class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                type="number"
-                                max={categorized_rating_questions[category_id][
-                                    rating_id
-                                ].max_score}
-                                min={categorized_rating_questions[category_id][
-                                    rating_id
-                                ].min_score}
-                                required
-                                bind:value={$form.answers.categorized_ratings[
-                                    category_id
-                                ][rating_id]}
-                            />
+                            <div class="flex flex-col gap-2">
+                                <p class="text-pretty text-lg">
+                                    {categorized_rating_questions[category_id][
+                                        rating_id
+                                    ].criterion}
+                                </p>
+                                <input
+                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                    type="number"
+                                    max={categorized_rating_questions[
+                                        category_id
+                                    ][rating_id].max_score}
+                                    min={categorized_rating_questions[
+                                        category_id
+                                    ][rating_id].min_score}
+                                    required
+                                    bind:value={$form.answers
+                                        .categorized_ratings[category_id][
+                                        rating_id
+                                    ]}
+                                />
+                            </div>
                         {/each}
                     </div>
                 </Accordion>

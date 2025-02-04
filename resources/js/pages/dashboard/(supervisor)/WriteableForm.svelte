@@ -52,7 +52,7 @@
                         style="grid-template-columns: auto repeat({Object.keys(
                             categorized_rating_questions[category_id],
                         ).length},1fr);"
-                        class="grid grid-cols-[auto,repeat(3,1fr)] items-center justify-center gap-2"
+                        class="grid items-center justify-center gap-2"
                     >
                         <p />
                         {#each Object.entries(categorized_rating_questions[category_id]) as [_, rating_question]}
