@@ -54,6 +54,9 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Section</th
                     >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Company Interned</th
+                    >
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -67,6 +70,7 @@
                         first_name,
                         last_name,
                         section,
+                        company,
                         form_statuses,
                     } = student}
                     <tr class="border-t-2 {borderColor}">
@@ -75,6 +79,9 @@
                         >
                         <td class="border-r-2 p-2 text-center {borderColor}"
                             >{section}</td
+                        >
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{company}</td
                         >
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"

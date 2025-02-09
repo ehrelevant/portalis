@@ -83,6 +83,8 @@ class FacultyController extends Controller
             case 'post':
                 $students_info = $users_partial
                     ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->join('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+                    ->join('companies', 'companies.id', '=', 'supervisors.company_id')
                     ->whereNotNull('section')
                     ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
                     ->select(
@@ -91,6 +93,7 @@ class FacultyController extends Controller
                         'users.first_name',
                         'users.last_name',
                         'faculties.section',
+                        'companies.company_name'
                     )
                     ->get();
 
@@ -106,6 +109,7 @@ class FacultyController extends Controller
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
                         'section' => $student_info->section,
+                        'company' => $student_info->company_name,
                         'form_statuses' => $form_statuses,
                     ]);
                 }
