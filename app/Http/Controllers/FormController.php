@@ -295,7 +295,6 @@ class FormController extends Controller
 
     public function draftReportForm(Request $request, string $short_name)
     {
-
         $form_values = $request->validate([
             'answers' => ['array'],
             'answers.*.student_number' => ['integer', 'numeric'],
@@ -504,23 +503,191 @@ class FormController extends Controller
         return redirect('/dashboard');
     }
 
+    // Self Evaluation Forms
+    private function getSavedSelfEvaluationValues($form_answer, $rating_categories)
+    {
+        $form_answer_id = $form_answer->form_answer_id;
+
+        $categorized_ratings = [];
+        foreach ($rating_categories as $category) {
+            $ratings = DB::table('rating_scores')
+                ->where('form_answer_id', $form_answer_id)
+                ->join('rating_questions', 'rating_questions.id', '=', 'rating_scores.rating_question_id')
+                ->where('rating_questions.rating_category_id', $category->id)
+                ->pluck('rating_scores.score', 'rating_scores.rating_question_id')
+                ->toArray();
+
+            $categorized_ratings[$category->id] = $ratings;
+        }
+
+        $opens = DB::table('open_answers')
+            ->where('form_answer_id', $form_answer_id)
+            ->pluck('answer', 'open_question_id')
+            ->toArray();
+
+        return [
+            'categorized_ratings' => $categorized_ratings,
+            'opens' => $opens,
+        ];
+    }
+
+    public function answerSelfEvaluationForm()
+    {
+        $short_name = 'self-evaluation';
+        $student_user = Auth::user();
+
+        $form_status = $this->queryFormStatus($student_user->id, $short_name)->firstOrFail();
+        $form_answer = $this->queryFormAnswers($student_user->id, $short_name)->first();
+
+        if (!$form_answer) {
+            $this->createForm($form_status, [null]);
+            $form_answer = $this->queryFormAnswers($student_user->id, $short_name)->first();
+        }
+
+        $rating_categories = $this->getRatingCategories($form_status->form_id);
+        $values = $this->getSavedSelfEvaluationValues($form_answer, $rating_categories);
+        $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
+        $open_questions = $this->getOpenQuestions($form_status->form_id);
+        $form_info = $this->getFormInfo($form_status->form_id);
+
+        return Inertia::render('form/self-evaluation/Answer', [
+            'values' => $values,
+            'rating_categories' => $rating_categories,
+            'categorized_rating_questions' => $categorized_rating_questions,
+            'open_questions' => $open_questions,
+            'form_info' => $form_info,
+        ]);
+    }
+
+    public function viewSelfEvaluationForm(int $student_number)
+    {
+        $short_name = 'self-evaluation';
+
+        $user_id = DB::table('users')
+            ->where('role', 'student')
+            ->where('role_id', $student_number)
+            ->firstOrFail()
+            ->id;
+
+        $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
+        $form_answer = $this->queryFormAnswers($user_id, $short_name)->firstOrFail();
+
+        $rating_categories = $this->getRatingCategories($form_status->form_id);
+        $values = $this->getSavedSelfEvaluationValues($form_answer, $rating_categories);
+        $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
+        $open_questions = $this->getOpenQuestions($form_status->form_id);
+        $form_info = $this->getFormInfo($form_status->form_id);
+
+        $status = DB::table('form_statuses')
+            ->where('user_id', $user_id)
+            ->where('form_id', $form_status->form_id)
+            ->firstOrFail()
+            ->status;
+
+        return Inertia::render('form/self-evaluation/View', [
+            'evaluator_user_id' => $user_id,
+            'values' => $values,
+            'rating_categories' => $rating_categories,
+            'categorized_rating_questions' => $categorized_rating_questions,
+            'open_questions' => $open_questions,
+            'form_info' => $form_info,
+            'status' => $status,
+        ]);
+    }
+
+    public function updateSelfEvaluationForm($evaluation, $short_name)
+    {
+        $student_user = Auth::user();
+
+        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+
+        $form_status_id = FormStatus::where('user_id', $student_user->id)
+            ->where('form_id', $form_id)
+            ->firstOrFail()
+            ->id;
+
+        $form_answer = FormAnswer::where('form_status_id', $form_status_id)
+            ->select('form_answers.id')
+            ->firstOrFail();
+
+        foreach ($evaluation['categorized_ratings'] as $ratings) {
+            foreach ($ratings as $rating_question_id => $score) {
+                $form_rating_score = RatingScore::where('form_answer_id', $form_answer->id)
+                    ->where('rating_question_id', $rating_question_id)
+                    ->firstOrFail();
+                $form_rating_score->score = $score;
+                $form_rating_score->save();
+            }
+        }
+
+        foreach ($evaluation['opens'] as $open_question_id => $answer) {
+            $form_open_answer = OpenAnswer::where('form_answer_id', $form_answer->id)
+                ->where('open_question_id', $open_question_id)
+                ->firstOrFail();
+            $form_open_answer->answer = $answer;
+            $form_open_answer->save();
+        }
+    }
+
+    public function draftSelfEvaluationForm(Request $request)
+    {
+        $short_name = 'self-evaluation';
+
+        $form_values = $request->validate([
+            'categorized_ratings' => ['array'],
+            'categorized_ratings.*' => ['array'],
+            'categorized_ratings.*.*' => ['nullable'],
+            'opens' => ['array'],
+            'opens.*' => ['nullable'],
+        ]);
+
+        $this->updateCompanyEvaluationForm($form_values, $short_name);
+
+        return redirect('/dashboard');
+    }
+
+    public function submitSelfEvaluationForm(Request $request)
+    {
+        $short_name = 'self-evaluation';
+
+        $form_values = $request->validate([
+            'categorized_ratings' => ['array'],
+            'categorized_ratings.*' => ['array'],
+            'categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
+            'opens' => ['array'],
+            'opens.*' => ['nullable', 'string'],
+        ]);
+
+        $this->updateCompanyEvaluationForm($form_values, $short_name);
+
+        $user = Auth::user();
+
+        // Update status for all reports under the supervisor
+        FormStatus::where('user_id', $user->id)
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('forms.short_name', $short_name)
+            ->update(['status' => 'submitted']);
+
+        return redirect('/dashboard');
+    }
+
     // Intern Evaluation Forms
     private function getSavedInternEvaluationValues($form_answers, $rating_categories)
     {
 
     }
 
-    public function answerInternEvaluationForm(Request $request)
+    public function answerInternEvaluationForm()
     {
 
     }
 
-    public function viewInternEvaluationForm(Request $request)
+    public function viewInternEvaluationForm(int $student_number)
     {
 
     }
 
-    public function updateInternEvaluationForm($form_values)
+    public function updateInternEvaluationForm($form_values, $short_name)
     {
 
     }
@@ -531,37 +698,6 @@ class FormController extends Controller
     }
 
     public function submitInternEvaluationForm(Request $request)
-    {
-
-    }
-
-    // Intern Evaluation Forms
-    private function getSavedSelfEvaluationValues($form_answers, $rating_categories)
-    {
-
-    }
-
-    public function answerSelfEvaluationForm(Request $request)
-    {
-
-    }
-
-    public function viewSelfEvaluationForm(Request $request)
-    {
-
-    }
-
-    public function updateSelfEvaluationForm($form_values)
-    {
-
-    }
-
-    public function draftSelfEvaluationForm(Request $request)
-    {
-
-    }
-
-    public function submitSelfEvaluationForm(Request $request)
     {
 
     }
