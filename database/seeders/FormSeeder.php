@@ -175,9 +175,9 @@ class FormSeeder extends Seeder
                 'open_question_id' => $i,
             ]);
         }
-        FormRatingQuestion::factory()->create([
+        FormOpenQuestion::factory()->create([
             'form_id' => 3,
-            'rating_question_id' => 1,
+            'open_question_id' => 1,
         ]);
 
         // Connecting Forms to Rating Questions
