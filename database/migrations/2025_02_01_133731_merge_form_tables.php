@@ -86,7 +86,7 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('form_status_id')->constrained();
-            $table->foreignId('evaluated_user_id')->references('id')->on('users');
+            $table->foreignId('evaluated_user_id')->nullable()->references('id')->on('users');
         });
 
         Schema::create('open_answers', function (Blueprint $table) {
