@@ -12,12 +12,10 @@
     export let open_questions;
     export let form_info;
 
-    const answers = { ...students };
-
     let formElement;
 
     let form = useForm({
-        answers: answers,
+        answers: { ...students },
     });
 
     function draftForm() {
