@@ -40,13 +40,13 @@ class FormSeeder extends Seeder
             'deadline' => null,
         ]);
         Form::factory()->create([
-            'form_name' => 'Self Evaluation',
+            'form_name' => 'Intern Self Evaluation',
             'short_name' => 'self-evaluation',
             'phase' => 'post',
             'deadline' => null,
         ]);
         Form::factory()->create([
-            'form_name' => 'Intern Evaluation',
+            'form_name' => 'Company Intern Evaluation',
             'short_name' => 'intern-evaluation',
             'phase' => 'post',
             'deadline' => null,
@@ -54,7 +54,7 @@ class FormSeeder extends Seeder
 
         // Open-ended Question Setup
         OpenQuestion::factory()->create([
-            'question' => 'Any comments or concerns?',
+            'question' => 'If you have any comments or observations about this intern, please write them below:',
         ]);
         OpenQuestion::factory()->create([
             'question' => 'What are the intern’s main strengths? In terms of technical skills, work ethic, etc.?',
@@ -64,6 +64,9 @@ class FormSeeder extends Seeder
         ]);
         OpenQuestion::factory()->create([
             'question' => 'Would you consider the intern to be “industry-ready?“ Would you consider hiring the intern after he/she graduates?',
+        ]);
+        OpenQuestion::factory()->create([
+            'question' => 'Any comments or concerns?',
         ]);
 
         // Rating Category Setup
@@ -81,6 +84,9 @@ class FormSeeder extends Seeder
         ]);
         RatingCategory::factory()->create([
             'category_name' => 'Overall Ratings',
+        ]);
+        RatingCategory::factory()->create([
+            'category_name' => 'Total Hours',
         ]);
 
         // Rating Question Setup
@@ -163,6 +169,12 @@ class FormSeeder extends Seeder
             'min_score' => 1,
             'max_score' => 6,
         ]);
+        RatingQuestion::factory()->create([
+            'rating_category_id' => 6,
+            'criterion' => 'Total number of hours worked over internship period',
+            'min_score' => 0,
+            'max_score' => null,
+        ]);
 
         // Connecting Forms to Open-ended Questions
         FormOpenQuestion::factory()->create([
@@ -177,7 +189,15 @@ class FormSeeder extends Seeder
         }
         FormOpenQuestion::factory()->create([
             'form_id' => 3,
-            'open_question_id' => 1,
+            'open_question_id' => 4,
+        ]);
+        FormOpenQuestion::factory()->create([
+            'form_id' => 4,
+            'open_question_id' => 4,
+        ]);
+        FormOpenQuestion::factory()->create([
+            'form_id' => 5,
+            'open_question_id' => 4,
         ]);
 
         // Connecting Forms to Rating Questions
@@ -197,6 +217,10 @@ class FormSeeder extends Seeder
                 'rating_question_id' => $i,
             ]);
         }
+        FormRatingQuestion::factory()->create([
+            'form_id' => 4,
+            'rating_question_id' => 14
+        ]);
 
         // Form Status Setup
         foreach (User::all() as $user) {
