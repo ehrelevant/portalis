@@ -35,19 +35,19 @@ class FormSeeder extends Seeder
         ]);
         Form::factory()->create([
             'form_name' => 'Company Evaluation',
-            'short_name' => 'company',
+            'short_name' => 'company-evaluation',
             'phase' => 'during',
             'deadline' => null,
         ]);
         Form::factory()->create([
-            'form_name' => 'Self Assessment',
-            'short_name' => 'self-assessment',
+            'form_name' => 'Self Evaluation',
+            'short_name' => 'self-evaluation',
             'phase' => 'post',
             'deadline' => null,
         ]);
         Form::factory()->create([
-            'form_name' => 'Intern Assessment',
-            'short_name' => 'intern-assessment',
+            'form_name' => 'Intern Evaluation',
+            'short_name' => 'intern-evaluation',
             'phase' => 'post',
             'deadline' => null,
         ]);
