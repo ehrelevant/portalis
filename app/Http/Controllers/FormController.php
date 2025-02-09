@@ -85,106 +85,69 @@ class FormController extends Controller
             ->firstOrFail();
     }
 
-    public function showWriteableSupervisorForm(string $short_name): Response
+    private function queryFormStatus(int $user_id, string $form_short_name)
     {
-        $supervisor_user = Auth::user();
-        $supervisor_id = $supervisor_user->role_id;
+        return DB::table('form_statuses')
+            ->where('user_id', $user_id)
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('short_name', $form_short_name)
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+    }
 
-        $form_status = DB::table('form_statuses')
-            ->where('form_statuses.user_id', $supervisor_user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
-            ->firstOrFail();
-
-        $form_answers_query = DB::table('form_statuses')
-            ->where('form_statuses.user_id', $supervisor_user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->join(
-                'form_answers',
-                'form_answers.form_status_id',
-                '=',
-                'form_statuses.id'
-            )
+    private function queryFormAnswers(int $user_id, string $form_short_name)
+    {
+        return DB::table('form_statuses')
+            ->where('form_statuses.user_id', $user_id)
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('short_name', $form_short_name)
+            ->join('form_answers', 'form_answers.form_status_id', '=', 'form_statuses.id')
             ->select(
                 'form_statuses.form_id',
                 'form_statuses.id AS form_status_id',
                 'form_answers.id AS form_answer_id',
                 'form_answers.evaluated_user_id'
             );
-        $form_answers = $form_answers_query->get();
+    }
 
-        if ($form_answers->isEmpty()) {
-            // Hard-coded question ids for the "report" form
-            $form_rating_question_ids = DB::table('form_rating_questions')
-                ->where('form_id', $form_status->form_id)
-                ->join(
-                    'rating_questions',
-                    'rating_questions.id',
-                    '=',
-                    'form_rating_questions.rating_question_id'
-                )
-                ->pluck('form_rating_questions.rating_question_id');
+    private function createForm($form_status, $user_ids)
+    {
+        $form_rating_question_ids = DB::table('form_rating_questions')
+            ->where('form_id', $form_status->form_id)
+            ->join('rating_questions', 'rating_questions.id', '=', 'form_rating_questions.rating_question_id')
+            ->pluck('form_rating_questions.rating_question_id');
 
-            $form_open_question_ids = DB::table('form_open_questions')
-                ->where('form_id', $form_status->form_id)
-                ->join(
-                    'open_questions',
-                    'open_questions.id',
-                    '=',
-                    'form_open_questions.open_question_id'
-                )
-                ->pluck('form_open_questions.open_question_id');
+        $form_open_question_ids = DB::table('form_open_questions')
+            ->where('form_id', $form_status->form_id)
+            ->join('open_questions', 'open_questions.id', '=', 'form_open_questions.open_question_id')
+            ->pluck('form_open_questions.open_question_id');
 
-            $supervised_student_user_ids = DB::table('users')
-                ->where('role', 'student')
-                ->join(
-                    'students',
-                    'students.student_number',
-                    '=',
-                    'users.role_id'
-                )
-                ->where('supervisor_id', $supervisor_id)
-                ->pluck('users.id');
+        // Generate form items if it doesn't already exist
+        foreach ($user_ids as $user_id) {
+            $new_form_answer = new FormAnswer();
+            $new_form_answer->form_status_id = $form_status->form_status_id;
+            $new_form_answer->evaluated_user_id = $user_id;
+            $new_form_answer->save();
 
-            // Generate form items if it doesn't already exist
-            foreach ($supervised_student_user_ids as $user_id) {
-                $new_form_answer = new FormAnswer();
-                $new_form_answer->form_status_id = $form_status->form_status_id;
-                $new_form_answer->evaluated_user_id = $user_id;
-                $new_form_answer->save();
-
-                foreach ($form_rating_question_ids as $form_rating_question_id) {
-                    $rating_score = new RatingScore();
-                    $rating_score->form_answer_id = $new_form_answer->id;
-                    $rating_score->rating_question_id = $form_rating_question_id;
-                    $rating_score->save();
-                }
-
-                foreach ($form_open_question_ids as $form_open_question_id) {
-                    $open_answer = new OpenAnswer();
-                    $open_answer->form_answer_id = $new_form_answer->id;
-                    $open_answer->open_question_id = $form_open_question_id;
-                    $open_answer->save();
-                }
+            foreach ($form_rating_question_ids as $form_rating_question_id) {
+                $rating_score = new RatingScore();
+                $rating_score->form_answer_id = $new_form_answer->id;
+                $rating_score->rating_question_id = $form_rating_question_id;
+                $rating_score->save();
             }
 
-            $form_answers = $form_answers_query->get();
+            foreach ($form_open_question_ids as $form_open_question_id) {
+                $open_answer = new OpenAnswer();
+                $open_answer->form_answer_id = $new_form_answer->id;
+                $open_answer->open_question_id = $form_open_question_id;
+                $open_answer->save();
+            }
         }
+    }
 
+    // Report Form Functions
+    public function getSavedReportValues($form_answers, $rating_categories)
+    {
         $students = [];
-        $rating_categories = $this->getRatingCategories($form_status->form_id);
 
         foreach ($form_answers as $form_answer) {
             $form_answer_id = $form_answer->form_answer_id;
@@ -199,12 +162,7 @@ class FormController extends Controller
             foreach ($rating_categories as $category) {
                 $ratings = DB::table('rating_scores')
                     ->where('form_answer_id', $form_answer_id)
-                    ->join(
-                        'rating_questions',
-                        'rating_questions.id',
-                        '=',
-                        'rating_scores.rating_question_id'
-                    )
+                    ->join('rating_questions', 'rating_questions.id', '=', 'rating_scores.rating_question_id')
                     ->where('rating_questions.rating_category_id', $category->id)
                     ->pluck('rating_scores.score', 'rating_scores.rating_question_id')
                     ->toArray();
@@ -226,11 +184,34 @@ class FormController extends Controller
             ];
         }
 
+        return $students;
+    }
+
+    public function answerReportForm(string $short_name)
+    {
+        $supervisor_user = Auth::user();
+
+        $form_status = $this->queryFormStatus($supervisor_user->id, $short_name)->firstOrFail();
+        $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
+
+        if ($form_answers->isEmpty()) {
+            $supervised_student_user_ids = DB::table('users')
+                ->where('role', 'student')
+                ->join('students', 'students.student_number', '=', 'users.role_id')
+                ->where('supervisor_id', $supervisor_user->role_id)
+                ->pluck('users.id');
+
+            $this->createForm($form_status, $supervised_student_user_ids);
+            $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();;
+        }
+
+        $rating_categories = $this->getRatingCategories($form_status->form_id);
+        $students = $this->getSavedReportValues($form_answers, $rating_categories);
         $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
         $open_questions = $this->getOpenQuestions($form_status->form_id);
         $form_info = $this->getFormInfo($form_status->form_id);
 
-        return Inertia::render('dashboard/(supervisor)/WriteableForm', [
+        return Inertia::render('form/report/Answer', [
             'students' => $students,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,
@@ -239,7 +220,41 @@ class FormController extends Controller
         ]);
     }
 
-    private function updateSupervisorForm($form_values, string $short_name)
+    public function viewReportForm(string $short_name, int $supervisor_id)
+    {
+        $user_id = DB::table('users')
+            ->where('role', 'supervisor')
+            ->where('role_id', $supervisor_id)
+            ->firstOrFail()
+            ->id;
+
+        $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
+        $form_answers = $this->queryFormAnswers($user_id, $short_name)->get();
+
+        $rating_categories = $this->getRatingCategories($form_status->form_id);
+        $students = $this->getSavedReportValues($form_answers, $rating_categories);
+        $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
+        $open_questions = $this->getOpenQuestions($form_status->form_id);
+        $form_info = $this->getFormInfo($form_status->form_id);
+
+        $status = DB::table('form_statuses')
+            ->where('user_id', $user_id)
+            ->where('form_id', $form_status->form_id)
+            ->firstOrFail()
+            ->status;
+
+        return Inertia::render('form/report/View', [
+            'evaluator_user_id' => $user_id,
+            'students' => $students,
+            'rating_categories' => $rating_categories,
+            'categorized_rating_questions' => $categorized_rating_questions,
+            'open_questions' => $open_questions,
+            'form_info' => $form_info,
+            'status' => $status,
+        ]);
+    }
+
+    public function updateReportForm($form_values, string $short_name)
     {
         $supervisor_user = Auth::user();
 
@@ -278,8 +293,9 @@ class FormController extends Controller
         }
     }
 
-    public function draftSupervisorForm(Request $request, string $short_name): RedirectResponse
+    public function draftReportForm(Request $request, string $short_name)
     {
+
         $form_values = $request->validate([
             'answers' => ['array'],
             'answers.*.student_number' => ['integer', 'numeric'],
@@ -290,12 +306,12 @@ class FormController extends Controller
             'answers.*.opens.*' => ['nullable'],
         ]);
 
-        $this->updateSupervisorForm($form_values, $short_name);
+        $this->updateReportForm($form_values, $short_name);
 
         return redirect('/dashboard');
     }
 
-    public function submitSupervisorForm(Request $request, string $short_name): RedirectResponse
+    public function submitReportForm(Request $request, string $short_name)
     {
         $form_values = $request->validate([
             'answers' => ['array'],
@@ -307,247 +323,29 @@ class FormController extends Controller
             'answers.*.opens.*' => ['nullable', 'string'],
         ]);
 
-        $this->updateSupervisorForm($form_values, $short_name);
+        $this->updateReportForm($form_values, $short_name);
 
         $user = Auth::user();
 
         // Update status for all reports under the supervisor
         FormStatus::where('user_id', $user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('forms.short_name', $short_name)
             ->update(['status' => 'submitted']);
 
         return redirect('/dashboard');
     }
 
-    public function showReadOnlySupervisorForm(int $supervisor_id, string $short_name)
+    // Company Evaluation Forms
+    private function getSavedCompanyEvaluationValues($form_answer, $rating_categories)
     {
-        $user_id = DB::table('users')
-            ->where('role', 'supervisor')
-            ->where('role_id', $supervisor_id)
-            ->firstOrFail()
-            ->id;
-
-        $form_status = DB::table('form_statuses')
-            ->where('form_statuses.user_id', $user_id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
-            ->firstOrFail();
-
-        $form_answers = DB::table('form_statuses')
-            ->where('form_statuses.user_id', $user_id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->join(
-                'form_answers',
-                'form_answers.form_status_id',
-                '=',
-                'form_statuses.id'
-            )
-            ->select(
-                'form_statuses.form_id',
-                'form_statuses.id AS form_status_id',
-                'form_answers.id AS form_answer_id',
-                'form_answers.evaluated_user_id'
-            )
-            ->get();
-
-        $students = [];
-        $rating_categories = $this->getRatingCategories($form_status->form_id);
-
-        foreach ($form_answers as $form_answer) {
-            $form_answer_id = $form_answer->form_answer_id;
-            $student_user_id = $form_answer->evaluated_user_id;
-
-            $student_info = DB::table('users')
-                ->where('id', $student_user_id)
-                ->select('first_name', 'last_name', 'role_id AS student_number')
-                ->firstOrFail();
-
-            $categorized_ratings = [];
-            foreach ($rating_categories as $category) {
-                $ratings = DB::table('rating_scores')
-                    ->where('form_answer_id', $form_answer_id)
-                    ->join(
-                        'rating_questions',
-                        'rating_questions.id',
-                        '=',
-                        'rating_scores.rating_question_id'
-                    )
-                    ->where('rating_questions.rating_category_id', $category->id)
-                    ->pluck('rating_scores.score', 'rating_scores.rating_question_id')
-                    ->toArray();
-
-                $categorized_ratings[$category->id] = $ratings;
-            }
-
-            $opens = DB::table('open_answers')
-                ->where('form_answer_id', $form_answer_id)
-                ->pluck('answer', 'open_question_id')
-                ->toArray();
-
-            $students[$student_info->student_number] = [
-                'student_number' => $student_info->student_number,
-                'last_name' => $student_info->last_name,
-                'first_name' => $student_info->first_name,
-                'categorized_ratings' => $categorized_ratings,
-                'opens' => $opens,
-            ];
-        }
-
-        $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
-        $open_questions = $this->getOpenQuestions($form_status->form_id);
-        $form_info = $this->getFormInfo($form_status->form_id);
-
-        $status = DB::table('form_statuses')
-            ->where('user_id', $user_id)
-            ->where('form_id', $form_status->form_id)
-            ->firstOrFail()
-            ->status;
-
-        return Inertia::render('dashboard/(faculty)/supervisors/ReadOnlyForm', [
-            'supervisor_id' => $supervisor_id,
-            'students' => $students,
-            'rating_categories' => $rating_categories,
-            'categorized_rating_questions' => $categorized_rating_questions,
-            'open_questions' => $open_questions,
-            'form_info' => $form_info,
-            'status' => $status,
-        ]);
-    }
-
-    public function showWriteableStudentForm(string $short_name): Response
-    {
-        $student_user = Auth::user();
-        $student_number = $student_user->role_id;
-        $supervisor_id = DB::table('students')
-            ->where('student_number', $student_number)
-            ->firstOrFail()
-            ->supervisor_id;
-
-        $form_status = DB::table('form_statuses')
-            ->where('user_id', $student_user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
-            ->firstOrFail();
-
-        $form_answer_query = DB::table('form_statuses')
-            ->where('user_id', $student_user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->join(
-                'form_answers',
-                'form_answers.form_status_id',
-                '=',
-                'form_statuses.id'
-            )
-            ->select(
-                'form_statuses.form_id',
-                'form_statuses.id AS form_status_id',
-                'form_answers.id AS form_answer_id',
-                'form_answers.evaluated_user_id'
-            );
-
-        $form_answer = $form_answer_query->first();
-
-        if (!$form_answer) {
-            // Hard-coded question ids for the "report" form
-            $form_rating_question_ids = DB::table('form_rating_questions')
-                ->where('form_id', $form_status->form_id)
-                ->join(
-                    'rating_questions',
-                    'rating_questions.id',
-                    '=',
-                    'form_rating_questions.rating_question_id'
-                )
-                ->pluck('form_rating_questions.rating_question_id');
-
-            $form_open_question_ids = DB::table('form_open_questions')
-                ->where('form_id', $form_status->form_id)
-                ->join(
-                    'open_questions',
-                    'open_questions.id',
-                    '=',
-                    'form_open_questions.open_question_id'
-                )
-                ->pluck('form_open_questions.open_question_id');
-
-            $supervisor_user_id = DB::table('users')
-                ->where('role', 'supervisor')
-                ->where('role_id', $supervisor_id)
-                ->firstOrFail()
-                ->id;
-
-            // Generate form items if it doesn't already exist
-            $new_form_answer = new FormAnswer();
-            $new_form_answer->form_status_id = $form_status->form_status_id;
-            $new_form_answer->evaluated_user_id = $supervisor_user_id;
-            $new_form_answer->save();
-
-            foreach ($form_rating_question_ids as $form_rating_question_id) {
-                $rating_score = new RatingScore();
-                $rating_score->form_answer_id = $new_form_answer->id;
-                $rating_score->rating_question_id = $form_rating_question_id;
-                $rating_score->save();
-            }
-
-            foreach ($form_open_question_ids as $form_open_question_id) {
-                $open_answer = new OpenAnswer();
-                $open_answer->form_answer_id = $new_form_answer->id;
-                $open_answer->open_question_id = $form_open_question_id;
-                $open_answer->save();
-            }
-
-            $form_answer = $form_answer_query->first();
-        }
-
-        $rating_categories = $this->getRatingCategories($form_status->form_id);
-
         $form_answer_id = $form_answer->form_answer_id;
-        $supervisor_user_id = $form_answer->evaluated_user_id;
-
-        $supervisor_info = DB::table('users')
-            ->where('id', $supervisor_user_id)
-            ->select('first_name', 'last_name', 'role_id AS supervisor_id')
-            ->firstOrFail();
 
         $categorized_ratings = [];
         foreach ($rating_categories as $category) {
             $ratings = DB::table('rating_scores')
                 ->where('form_answer_id', $form_answer_id)
-                ->join(
-                    'rating_questions',
-                    'rating_questions.id',
-                    '=',
-                    'rating_scores.rating_question_id'
-                )
+                ->join('rating_questions', 'rating_questions.id', '=', 'rating_scores.rating_question_id')
                 ->where('rating_questions.rating_category_id', $category->id)
                 ->pluck('rating_scores.score', 'rating_scores.rating_question_id')
                 ->toArray();
@@ -560,20 +358,33 @@ class FormController extends Controller
             ->pluck('answer', 'open_question_id')
             ->toArray();
 
-        $supervisor = [
-            'supervisor_id' => $supervisor_info->supervisor_id,
-            'last_name' => $supervisor_info->last_name,
-            'first_name' => $supervisor_info->first_name,
+        return [
             'categorized_ratings' => $categorized_ratings,
             'opens' => $opens,
         ];
+    }
 
+    public function answerCompanyEvaluationForm()
+    {
+        $short_name = 'company-evaluation';
+        $student_user = Auth::user();
+
+        $form_status = $this->queryFormStatus($student_user->id, $short_name)->firstOrFail();
+        $form_answer = $this->queryFormAnswers($student_user->id, $short_name)->first();
+
+        if (!$form_answer) {
+            $this->createForm($form_status, [null]);
+            $form_answer = $this->queryFormAnswers($student_user->id, $short_name)->first();
+        }
+
+        $rating_categories = $this->getRatingCategories($form_status->form_id);
+        $values = $this->getSavedCompanyEvaluationValues($form_answer, $rating_categories);
         $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
         $open_questions = $this->getOpenQuestions($form_status->form_id);
         $form_info = $this->getFormInfo($form_status->form_id);
 
-        return Inertia::render('dashboard/(student)/CompanyEvaluationForm', [
-            'supervisor' => $supervisor,
+        return Inertia::render('form/company-evaluation/Answer', [
+            'values' => $values,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,
             'open_questions' => $open_questions,
@@ -581,179 +392,21 @@ class FormController extends Controller
         ]);
     }
 
-    private function updateStudentForm($form_values, string $short_name)
+    public function viewCompanyEvaluationForm(int $student_number)
     {
-        $student_user = Auth::user();
+        $short_name = 'company-evaluation';
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
-
-        foreach ($form_values['answers'] as $evaluation) {
-            $form_status_id = FormStatus::where('user_id', $student_user->id)
-                ->where('form_id', $form_id)
-                ->firstOrFail()
-                ->id;
-
-            $form_answer = FormAnswer::where('form_status_id', $form_status_id)
-                ->join('users', 'users.id', '=', 'form_answers.evaluated_user_id')
-                ->where('role', 'student')
-                ->where('role_id', $evaluation['supervisor_id'])
-                ->select('form_answers.id')
-                ->firstOrFail();
-
-            foreach ($evaluation['categorized_ratings'] as $ratings) {
-                foreach ($ratings as $rating_question_id => $score) {
-                    $form_rating_score = RatingScore::where('form_answer_id', $form_answer->id)
-                        ->where('rating_question_id', $rating_question_id)
-                        ->firstOrFail();
-                    $form_rating_score->score = $score;
-                    $form_rating_score->save();
-                }
-            }
-
-            foreach ($evaluation['opens'] as $open_question_id => $answer) {
-                $form_open_answer = OpenAnswer::where('form_answer_id', $form_answer->id)
-                    ->where('open_question_id', $open_question_id)
-                    ->firstOrFail();
-                $form_open_answer->answer = $answer;
-                $form_open_answer->save();
-            }
-        }
-    }
-
-    public function draftStudentForm(Request $request, string $short_name): RedirectResponse
-    {
-        $form_values = $request->validate([
-            'answers' => ['array'],
-            'answers.*.supervisor_id' => ['integer', 'numeric'],
-            'answers.*.categorized_ratings' => ['array'],
-            'answers.*.categorized_ratings.*' => ['array'],
-            'answers.*.categorized_ratings.*.*' => ['nullable'],
-            'answers.*.opens' => ['array'],
-            'answers.*.opens.*' => ['nullable'],
-        ]);
-
-        $this->updateStudentForm($form_values, $short_name);
-
-        return redirect('/dashboard');
-    }
-
-    public function submitStudentForm(Request $request, string $short_name): RedirectResponse
-    {
-        $form_values = $request->validate([
-            'answers' => ['array'],
-            'answers.*.supervisor_id' => ['integer', 'numeric'],
-            'answers.*.categorized_ratings' => ['array'],
-            'answers.*.categorized_ratings.*' => ['array'],
-            'answers.*.categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
-            'answers.*.opens' => ['array'],
-            'answers.*.opens.*' => ['nullable', 'string'],
-        ]);
-
-        $this->updateStudentForm($form_values, $short_name);
-
-        $user = Auth::user();
-
-        // Update status for all reports under the supervisor
-        FormStatus::where('user_id', $user->id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('forms.short_name', $short_name)
-            ->update(['status' => 'submitted']);
-
-        return redirect('/dashboard');
-    }
-
-    public function showReadOnlyStudentForm(int $supervisor_id, string $short_name)
-    {
         $user_id = DB::table('users')
-            ->where('role', 'supervisor')
-            ->where('role_id', $supervisor_id)
+            ->where('role', 'student')
+            ->where('role_id', $student_number)
             ->firstOrFail()
             ->id;
 
-        $form_status = DB::table('form_statuses')
-            ->where('user_id', $user_id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
-            ->firstOrFail();
+        $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
+        $form_answer = $this->queryFormAnswers($user_id, $short_name)->firstOrFail();
 
-        $form_answers = DB::table('form_statuses')
-            ->where('user_id', $user_id)
-            ->join(
-                'forms',
-                'forms.id',
-                '=',
-                'form_statuses.form_id'
-            )
-            ->where('short_name', $short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id')
-            ->join(
-                'form_answers',
-                'form_answers.form_status_id',
-                '=',
-                'form_statuses.id'
-            )
-            ->select(
-                'form_statuses.form_id',
-                'form_statuses.id AS form_status_id',
-                'form_answers.id AS form_answer_id',
-                'form_answers.evaluated_user_id'
-            )
-            ->get();
-
-        $students = [];
         $rating_categories = $this->getRatingCategories($form_status->form_id);
-
-        foreach ($form_answers as $form_answer) {
-            $form_answer_id = $form_answer->form_answer_id;
-            $student_user_id = $form_answer->evaluated_user_id;
-
-            $student_info = DB::table('users')
-                ->where('id', $student_user_id)
-                ->select('first_name', 'last_name', 'role_id AS student_number')
-                ->firstOrFail();
-
-            $categorized_ratings = [];
-            foreach ($rating_categories as $category) {
-                $ratings = DB::table('rating_scores')
-                    ->where('form_answer_id', $form_answer_id)
-                    ->join(
-                        'rating_questions',
-                        'rating_questions.id',
-                        '=',
-                        'rating_scores.rating_question_id'
-                    )
-                    ->where('rating_questions.rating_category_id', $category->id)
-                    ->pluck('rating_scores.score', 'rating_scores.rating_question_id')
-                    ->toArray();
-
-                $categorized_ratings[$category->id] = $ratings;
-            }
-
-            $opens = DB::table('open_answers')
-                ->where('form_answer_id', $form_answer_id)
-                ->pluck('answer', 'open_question_id')
-                ->toArray();
-
-            $students[$student_info->student_number] = [
-                'student_number' => $student_info->student_number,
-                'last_name' => $student_info->last_name,
-                'first_name' => $student_info->first_name,
-                'categorized_ratings' => $categorized_ratings,
-                'opens' => $opens,
-            ];
-        }
-
+        $values = $this->getSavedCompanyEvaluationValues($form_answer, $rating_categories);
         $categorized_rating_questions = $this->getCategorizedRatingQuestions($form_status->form_id, $rating_categories);
         $open_questions = $this->getOpenQuestions($form_status->form_id);
         $form_info = $this->getFormInfo($form_status->form_id);
@@ -764,9 +417,9 @@ class FormController extends Controller
             ->firstOrFail()
             ->status;
 
-        return Inertia::render('dashboard/(faculty)/supervisors/ReadOnlyForm', [
-            'supervisor_id' => $supervisor_id,
-            'students' => $students,
+        return Inertia::render('form/company-evaluation/View', [
+            'evaluator_user_id' => $user_id,
+            'values' => $values,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,
             'open_questions' => $open_questions,
@@ -775,16 +428,145 @@ class FormController extends Controller
         ]);
     }
 
+    public function updateCompanyEvaluationForm($evaluation, string $short_name)
+    {
+        $student_user = Auth::user();
 
+        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
+        $form_status_id = FormStatus::where('user_id', $student_user->id)
+            ->where('form_id', $form_id)
+            ->firstOrFail()
+            ->id;
 
+        $form_answer = FormAnswer::where('form_status_id', $form_status_id)
+            ->select('form_answers.id')
+            ->firstOrFail();
 
+        foreach ($evaluation['categorized_ratings'] as $ratings) {
+            foreach ($ratings as $rating_question_id => $score) {
+                $form_rating_score = RatingScore::where('form_answer_id', $form_answer->id)
+                    ->where('rating_question_id', $rating_question_id)
+                    ->firstOrFail();
+                $form_rating_score->score = $score;
+                $form_rating_score->save();
+            }
+        }
 
+        foreach ($evaluation['opens'] as $open_question_id => $answer) {
+            $form_open_answer = OpenAnswer::where('form_answer_id', $form_answer->id)
+                ->where('open_question_id', $open_question_id)
+                ->firstOrFail();
+            $form_open_answer->answer = $answer;
+            $form_open_answer->save();
+        }
+    }
 
+    public function draftCompanyEvaluationForm(Request $request)
+    {
+        $short_name = 'company-evaluation';
 
+        $form_values = $request->validate([
+            'categorized_ratings' => ['array'],
+            'categorized_ratings.*' => ['array'],
+            'categorized_ratings.*.*' => ['nullable'],
+            'opens' => ['array'],
+            'opens.*' => ['nullable'],
+        ]);
 
+        $this->updateCompanyEvaluationForm($form_values, $short_name);
 
-    public function validateForm(int $user_id, $short_name): RedirectResponse
+        return redirect('/dashboard');
+    }
+
+    public function submitCompanyEvaluationForm(Request $request)
+    {
+        $short_name = 'company-evaluation';
+
+        $form_values = $request->validate([
+            'categorized_ratings' => ['array'],
+            'categorized_ratings.*' => ['array'],
+            'categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
+            'opens' => ['array'],
+            'opens.*' => ['nullable', 'string'],
+        ]);
+
+        $this->updateCompanyEvaluationForm($form_values, $short_name);
+
+        $user = Auth::user();
+
+        // Update status for all reports under the supervisor
+        FormStatus::where('user_id', $user->id)
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('forms.short_name', $short_name)
+            ->update(['status' => 'submitted']);
+
+        return redirect('/dashboard');
+    }
+
+    // Intern Evaluation Forms
+    private function getSavedInternEvaluationValues($form_answers, $rating_categories)
+    {
+
+    }
+
+    public function answerInternEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function viewInternEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function updateInternEvaluationForm($form_values)
+    {
+
+    }
+
+    public function draftInternEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function submitInternEvaluationForm(Request $request)
+    {
+
+    }
+
+    // Intern Evaluation Forms
+    private function getSavedSelfEvaluationValues($form_answers, $rating_categories)
+    {
+
+    }
+
+    public function answerSelfEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function viewSelfEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function updateSelfEvaluationForm($form_values)
+    {
+
+    }
+
+    public function draftSelfEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function submitSelfEvaluationForm(Request $request)
+    {
+
+    }
+
+    public function validateForm(string $short_name, int $user_id): RedirectResponse
     {
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
@@ -801,7 +583,7 @@ class FormController extends Controller
         return back();
     }
 
-    public function invalidateForm(int $user_id, $short_name): RedirectResponse
+    public function invalidateForm(string $short_name, int $user_id): RedirectResponse
     {
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
@@ -818,7 +600,7 @@ class FormController extends Controller
         return back();
     }
 
-    public function rejectForm(int $user_id, $short_name): RedirectResponse
+    public function rejectForm(string $short_name, int $user_id): RedirectResponse
     {
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
