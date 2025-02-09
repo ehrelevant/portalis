@@ -41,7 +41,7 @@
             >
         {/if}
         <Link
-            href="/dashboard/requirement/{requirementId}/upload"
+            href="/requirement/{requirementId}/upload"
             class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             >Submit</Link
         >

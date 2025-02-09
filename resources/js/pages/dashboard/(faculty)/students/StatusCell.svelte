@@ -1,6 +1,5 @@
 <script>
-    export let student_number;
-    export let requirement_id;
+    export let href;
     export let status;
 
     const bgColor =
@@ -25,11 +24,7 @@
 <div class="flex items-center justify-center">
     <div class="w-fit justify-center rounded-xl px-2 py-1 {bgColor}">
         {#if status !== 'unsubmitted'}
-            <a
-                href="/dashboard/students/{student_number}/{requirement_id}"
-                class="{bgColor} {textColor}"
-                target="_blank">{status}</a
-            >
+            <a {href} class="{bgColor} {textColor}" target="_blank">{status}</a>
         {:else}
             <p class="text-floating-gray">{status}</p>
         {/if}

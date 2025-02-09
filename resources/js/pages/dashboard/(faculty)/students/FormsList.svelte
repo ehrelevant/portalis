@@ -73,14 +73,15 @@
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2 {borderColor}">{section}</td>
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{section}</td
+                        >
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     status={form_status}
-                                    href="/dashboard/students/{student_number}/form/{form_infos[
-                                        form_id
-                                    ].short_name}"
+                                    href="/form/{form_infos[form_id]
+                                        .short_name}/view/{student_number}"
                                 />
                             </td>
                         {/each}

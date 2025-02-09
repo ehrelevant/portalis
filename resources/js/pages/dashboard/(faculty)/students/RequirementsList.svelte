@@ -120,8 +120,7 @@
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
-                                    {requirement_id}
-                                    {student_number}
+                                    href="/dashboard/students/{student_number}/{requirement_id}"
                                     {status}
                                 />
                             </td>{/each}

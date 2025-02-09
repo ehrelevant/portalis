@@ -36,21 +36,41 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'show']);
 
     Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/dashboard/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
-        Route::post('/dashboard/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
+        Route::get('/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
+        Route::post('/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
     });
 
+    // Form Answering
     Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/dashboard/student/report/{short_name}', [FormController::class, 'showWriteableStudentForm']);
-        Route::post('/dashboard/student/report/{short_name}/draft', [FormController::class, 'draftStudentForm']);
-        Route::post('/dashboard/student/report/{short_name}/submit', [FormController::class, 'submitStudentForm']);
+        Route::get('/form/company-evaluation/answer', [FormController::class, 'answerCompanyEvaluationForm']);
+        Route::post('/form/company-evaluation/draft', [FormController::class, 'draftCompanyEvaluationForm']);
+        Route::post('/form/company-evaluation/submit', [FormController::class, 'submitCompanyEvaluationForm']);
+
+        Route::get('/form/self-evaluation/answer', [FormController::class, 'answerSelfEvaluationForm']);
+        Route::post('/form/self-evaluation/draft', [FormController::class, 'draftSelfEvaluationForm']);
+        Route::post('/form/self-evaluation/submit', [FormController::class, 'submitSelfEvaluationForm']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/supervisor/report/{short_name}', [FormController::class, 'showWriteableSupervisorForm']);
-        Route::post('/dashboard/supervisor/report/{short_name}/draft', [FormController::class, 'draftSupervisorForm']);
-        Route::post('/dashboard/supervisor/report/{short_name}/submit', [FormController::class, 'submitSupervisorForm']);
+        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm']);
+        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm']);
+        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm']);
+
+        Route::get('/form/intern-evaluation/answer', [FormController::class, 'answerInternEvaluationForm']);
+        Route::post('/form/intern-evaluation/draft', [FormController::class, 'draftInternEvaluationForm']);
+        Route::post('/form/intern-evaluation/submit', [FormController::class, 'submitInternEvaluationForm']);
     });
+
+    // Form Viewing
+    Route::get('/form/{short_name}/view/{supervisor_id}', [FormController::class, 'viewReportForm'])->whereIn('short_name', ['midsem', 'final']);
+    Route::get('/form/company-evaluation/view/{student_number}', [FormController::class, 'viewCompanyEvaluationForm']);
+    Route::get('/form/intern-evaluation/view/{supervisor_id}', [FormController::class, 'viewInternEvaluationForm']);
+    Route::get('/form/self-evaluation/view/{student_number}', [FormController::class, 'viewSelfEvaluationForm']);
+
+    // Form Validation
+    Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
+    Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
+    Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
@@ -65,11 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/dashboard/update-deadlines', [FacultyController::class, 'updateDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-
-        Route::get('/dashboard/supervisors/{supervisor_id}/form/{short_name}', [FormController::class, 'showReadOnlySupervisorForm']);
-        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/validate', [FormController::class, 'validateForm']);
-        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/invalidate', [FormController::class, 'invalidateForm']);
-        Route::post('/dashboard/supervisors/{user_id}/form/{short_name}/reject', [FormController::class, 'rejectForm']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);

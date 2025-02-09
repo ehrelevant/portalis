@@ -50,7 +50,7 @@
                     </div>
                 {:else}
                     <Link
-                        href="/dashboard/student/report/{short_name}"
+                        href="/form/{short_name}/answer"
                         class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
                     >
                         <div
