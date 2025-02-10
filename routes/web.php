@@ -52,9 +52,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm']);
-        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm']);
-        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm']);
+        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm'])->whereIn('short_name', ['midsem', 'final']);;
+        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm'])->whereIn('short_name', ['midsem', 'final']);;
+        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm'])->whereIn('short_name', ['midsem', 'final']);;
 
         Route::get('/form/intern-evaluation/answer', [FormController::class, 'answerInternEvaluationForm']);
         Route::post('/form/intern-evaluation/draft', [FormController::class, 'draftInternEvaluationForm']);
