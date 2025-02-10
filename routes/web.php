@@ -52,19 +52,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm'])->whereIn('short_name', ['midsem', 'final']);;
-        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm'])->whereIn('short_name', ['midsem', 'final']);;
-        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm'])->whereIn('short_name', ['midsem', 'final']);;
-
-        Route::get('/form/intern-evaluation/answer', [FormController::class, 'answerInternEvaluationForm']);
-        Route::post('/form/intern-evaluation/draft', [FormController::class, 'draftInternEvaluationForm']);
-        Route::post('/form/intern-evaluation/submit', [FormController::class, 'submitInternEvaluationForm']);
+        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
+        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
+        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
     });
 
     // Form Viewing
-    Route::get('/form/{short_name}/view/{supervisor_id}', [FormController::class, 'viewReportForm'])->whereIn('short_name', ['midsem', 'final']);
+    Route::get('/form/{short_name}/view/{supervisor_id}', [FormController::class, 'viewReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);
     Route::get('/form/company-evaluation/view/{student_number}', [FormController::class, 'viewCompanyEvaluationForm']);
-    Route::get('/form/intern-evaluation/view/{supervisor_id}', [FormController::class, 'viewInternEvaluationForm']);
     Route::get('/form/self-evaluation/view/{student_number}', [FormController::class, 'viewSelfEvaluationForm']);
 
     // Form Validation
