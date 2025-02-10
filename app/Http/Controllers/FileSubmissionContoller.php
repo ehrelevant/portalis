@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
 {
-    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
+    public function showStudentDocument(int $requirement_id, int $student_number): StreamedResponse
     {
         $role = Auth::user()->role;
         $role_id = intval(Auth::user()->role_id);
@@ -52,7 +52,7 @@ class FileSubmissionContoller extends Controller
         abort(401);
     }
 
-    public function showStudentSubmission(int $student_number, int $requirement_id)
+    public function showStudentSubmission(int $requirement_id, int $student_number)
     {
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
@@ -66,7 +66,7 @@ class FileSubmissionContoller extends Controller
         ]);
     }
 
-    public function validateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    public function validateStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
     {
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
@@ -81,7 +81,7 @@ class FileSubmissionContoller extends Controller
         return back();
     }
 
-    public function invalidateStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    public function invalidateStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
     {
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
@@ -96,7 +96,7 @@ class FileSubmissionContoller extends Controller
         return back();
     }
 
-    public function rejectStudentSubmission(int $student_number, int $requirement_id): RedirectResponse
+    public function rejectStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
     {
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
