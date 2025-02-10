@@ -36,19 +36,36 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'show']);
 
     Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/dashboard/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
-        Route::post('/dashboard/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
+        Route::get('/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
+        Route::post('/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
+    });
+
+    // Form Answering
+    Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
+        Route::get('/form/company-evaluation/answer', [FormController::class, 'answerCompanyEvaluationForm']);
+        Route::post('/form/company-evaluation/draft', [FormController::class, 'draftCompanyEvaluationForm']);
+        Route::post('/form/company-evaluation/submit', [FormController::class, 'submitCompanyEvaluationForm']);
+
+        Route::get('/form/self-evaluation/answer', [FormController::class, 'answerSelfEvaluationForm']);
+        Route::post('/form/self-evaluation/draft', [FormController::class, 'draftSelfEvaluationForm']);
+        Route::post('/form/self-evaluation/submit', [FormController::class, 'submitSelfEvaluationForm']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/dashboard/report/midsem', [SupervisorController::class, 'showMidsemReport']);
-        Route::put('/dashboard/report/midsem/draft', [SupervisorController::class, 'draftMidsemReport']);
-        Route::put('/dashboard/report/midsem/submit', [SupervisorController::class, 'submitMidsemReport']);
-
-        Route::get('/dashboard/report/final', [SupervisorController::class, 'showFinalReport']);
-        Route::post('/dashboard/report/final/draft', [SupervisorController::class, 'draftFinalReport']);
-        Route::post('/dashboard/report/final/submit', [SupervisorController::class, 'submitFinalReport']);
+        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
+        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
+        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
     });
+
+    // Form Viewing
+    Route::get('/form/{short_name}/view/{supervisor_id}', [FormController::class, 'viewReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);
+    Route::get('/form/company-evaluation/view/{student_number}', [FormController::class, 'viewCompanyEvaluationForm']);
+    Route::get('/form/self-evaluation/view/{student_number}', [FormController::class, 'viewSelfEvaluationForm']);
+
+    // Form Validation
+    Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
+    Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
+    Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
@@ -60,19 +77,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dashboard/students/{student_number}/{requirement_id}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
         Route::put('/dashboard/students/{student_number}/assign/section', [FacultyController::class, 'assignStudentSection']);
         Route::put('/dashboard/students/{student_number}/assign/section/{new_section}', [FacultyController::class, 'assignStudentSection']);
-        Route::put('/dashboard/students/update-deadlines', [FacultyController::class, 'updateRequirementDeadlines']);
+        Route::put('/dashboard/update-deadlines', [FacultyController::class, 'updateDeadlines']);
 
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-
-        Route::get('/dashboard/supervisors/{supervisor_id}/midsem', [FormController::class, 'showMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/validate', [FormController::class, 'validateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/invalidate', [FormController::class, 'invalidateMidsemReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/midsem/reject', [FormController::class, 'rejectMidsemReport']);
-
-        Route::get('/dashboard/supervisors/{supervisor_id}/final', [FormController::class, 'showFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/validate', [FormController::class, 'validateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/invalidate', [FormController::class, 'invalidateFinalReport']);
-        Route::post('/dashboard/supervisors/{supervisor_id}/final/reject', [FormController::class, 'rejectFinalReport']);
 
         Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
         Route::get('/dashboard/companies/{company_id}', [FacultyController::class, 'showCompanies']);
@@ -87,7 +94,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
         Route::get('/dashboard/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
         Route::get('/dashboard/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
-
 
         Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     });

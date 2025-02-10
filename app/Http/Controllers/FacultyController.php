@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
@@ -17,6 +18,8 @@ class FacultyController extends Controller
 {
     public function showStudents(Request $request): Response
     {
+        $phase = DB::table('website_states')->firstOrFail()->phase;
+
         $search_text = $request->query('search') ?? '';
 
         // TODO: Add student number search
@@ -28,51 +31,105 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $students_info = $users_partial
-            ->join('students', 'users.role_id', '=', 'students.student_number')
-            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
-            ->select(
-                'students.student_number',
-                'users.first_name',
-                'users.last_name',
-                'faculties.section',
-                'students.has_dropped',
-            )
-            ->get();
-
         $students = [];
 
-        foreach ($students_info as $student_info) {
-            $student_statuses = DB::table('submission_statuses')
-            ->where('student_number', $student_info->student_number)
-            ->select(
-                'submission_statuses.requirement_id',
-                'submission_statuses.status',
-            )->get();
+        switch ($phase) {
+            case 'pre':
+                $students_info = $users_partial
+                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+                    ->select(
+                        'users.id AS user_id',
+                        'students.student_number',
+                        'users.first_name',
+                        'users.last_name',
+                        'faculties.section',
+                        'students.has_dropped',
+                    )
+                    ->get();
 
-            $new_student = [
-                'student_number' => $student_info->student_number,
-                'first_name' => $student_info->first_name,
-                'last_name' => $student_info->last_name,
-                'section' => $student_info->section,
-                'has_dropped' => $student_info->has_dropped,
-                'submissions' => $student_statuses,
-            ];
+                foreach ($students_info as $student_info) {
+                    $student_statuses = DB::table('submission_statuses')
+                    ->where('student_number', $student_info->student_number)
+                    ->select(
+                        'submission_statuses.requirement_id',
+                        'submission_statuses.status',
+                    )->get();
 
-            array_push($students, $new_student);
+                    $new_student = [
+                        'student_number' => $student_info->student_number,
+                        'first_name' => $student_info->first_name,
+                        'last_name' => $student_info->last_name,
+                        'section' => $student_info->section,
+                        'has_dropped' => $student_info->has_dropped,
+                        'submissions' => $student_statuses,
+                    ];
+
+                    array_push($students, $new_student);
+                }
+
+                $requirements = DB::table('requirements')
+                    ->get();
+
+                $sections = DB::table('faculties')
+                    ->pluck('section');
+
+                return Inertia::render('dashboard/(faculty)/students/RequirementsList', [
+                    'students' => $students,
+                    'requirements' => $requirements,
+                    'sections' => $sections,
+                ]);
+            case 'during':
+            case 'post':
+                $students_info = $users_partial
+                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->join('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+                    ->join('companies', 'companies.id', '=', 'supervisors.company_id')
+                    ->whereNotNull('section')
+                    ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+                    ->select(
+                        'users.id AS user_id',
+                        'students.student_number',
+                        'users.first_name',
+                        'users.last_name',
+                        'faculties.section',
+                        'companies.company_name'
+                    )
+                    ->get();
+
+                foreach ($students_info as $student_info) {
+                    $form_statuses = DB::table('form_statuses')
+                        ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                        ->where('forms.phase', $phase)
+                        ->where('user_id', $student_info->user_id)
+                        ->pluck('status', 'form_id');
+
+                    array_push($students, [
+                        'student_number' => $student_info->student_number,
+                        'first_name' => $student_info->first_name,
+                        'last_name' => $student_info->last_name,
+                        'section' => $student_info->section,
+                        'company' => $student_info->company_name,
+                        'form_statuses' => $form_statuses,
+                    ]);
+                }
+
+                $form_infos = DB::table('users')
+                    ->where('role', 'student')
+                    ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
+                    ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                    ->where('forms.phase', $phase)
+                    ->select('forms.id', 'forms.form_name', 'forms.short_name')
+                    ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
+                    ->get()
+                    ->keyBy('id');
+
+                return Inertia::render('dashboard/(faculty)/students/FormsList', [
+                    'students' => $students,
+                    'form_infos' => $form_infos,
+                ]);
+
         }
-
-        $requirements = DB::table('requirements')
-            ->get();
-
-        $sections = DB::table('faculties')
-            ->pluck('section');
-
-        return Inertia::render('dashboard/(faculty)/students/Index', [
-            'students' => $students,
-            'requirements' => $requirements,
-            'sections' => $sections,
-        ]);
     }
 
     public function assignStudentSection(int $student_number, string $new_section = '')
@@ -110,14 +167,17 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function updateRequirementDeadlines(Request $request)
+    public function updateDeadlines(Request $request)
     {
         $form_values = $request->validate([
             'requirements.*.id' => ['int'],
             'requirements.*.deadline' => ['date', 'nullable'],
+            'forms.*.id' => ['int'],
+            'forms.*.deadline' => ['date', 'nullable'],
         ]);
 
         $new_requirements = $form_values['requirements'];
+        $new_forms = $form_values['forms'];
 
         foreach ($new_requirements as $new_requirement) {
             ['id' => $id, 'deadline' => $deadline] = $new_requirement;
@@ -125,10 +185,18 @@ class FacultyController extends Controller
             $requirement->deadline = $deadline;
             $requirement->save();
         }
+        foreach ($new_forms as $new_form) {
+            ['id' => $id, 'deadline' => $deadline] = $new_form;
+            $form = Form::find($id);
+            $form->deadline = $deadline;
+            $form->save();
+        }
     }
 
     public function showSupervisors(Request $request): Response
     {
+        $phase = DB::table('website_states')->firstOrFail()->phase;
+
         $search_text = $request->query('search') ?? '';
 
         $users_partial = DB::table('users')
@@ -139,31 +207,48 @@ class FacultyController extends Controller
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
-        $supervisors = $users_partial
+        $supervisors_info = $users_partial
             ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
             ->join('companies', 'supervisors.company_id', '=', 'companies.id')
-            ->join('report_statuses', 'supervisors.id', '=', 'report_statuses.supervisor_id')
-            ->join('intern_evaluation_statuses', 'supervisors.id', '=', 'intern_evaluation_statuses.supervisor_id')
             ->select(
+                'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
                 'users.last_name',
                 'companies.company_name',
-                'report_statuses.status AS midsem_status',
-                'intern_evaluation_statuses.status AS final_status'
-            )
-            ->groupBy(
-                'supervisor_id',
-                'first_name',
-                'last_name',
-                'company_name',
-                'midsem_status',
-                'final_status'
             )
             ->get();
 
-        return Inertia::render('dashboard/(faculty)/supervisors/Index', [
+        $supervisors = [];
+        foreach ($supervisors_info as $supervisor_info) {
+            $form_statuses = DB::table('form_statuses')
+                ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                ->where('forms.phase', $phase)
+                ->where('user_id', $supervisor_info->user_id)
+                ->pluck('status', 'form_id');
+
+            array_push($supervisors, [
+                'supervisor_id' => $supervisor_info->supervisor_id,
+                'first_name' => $supervisor_info->first_name,
+                'last_name' => $supervisor_info->last_name,
+                'company_name' => $supervisor_info->company_name,
+                'form_statuses' => $form_statuses,
+            ]);
+        }
+
+        $form_infos = DB::table('users')
+            ->where('role', 'supervisor')
+            ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
+            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+            ->where('forms.phase', $phase)
+            ->select('forms.id', 'forms.form_name', 'forms.short_name')
+            ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
+            ->get()
+            ->keyBy('id');
+
+        return Inertia::render('dashboard/(faculty)/supervisors/FormsList', [
             'supervisors' => $supervisors,
+            'form_infos' => $form_infos,
         ]);
     }
 }

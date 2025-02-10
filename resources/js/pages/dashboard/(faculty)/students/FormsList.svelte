@@ -6,13 +6,14 @@
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import StatusCell from './StatusCell.svelte';
 
-    export let supervisors;
+    export let students;
+    export let form_infos;
 
     /** @type {string} */
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/supervisors?search=${searchQuery}`);
+        router.get(`/dashboard/students?search=${searchQuery}`);
     }
 
     /** @type {string} */
@@ -20,7 +21,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Supervisor List" />
+    <Header txt="Student List" />
 
     <!-- Search Function -->
     <form
@@ -40,7 +41,7 @@
 
     <!-- List of Supervisors -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Supervisor Submissions</h2>
+        <h2 slot="summary" class="text-2xl">Student Submissions</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -51,43 +52,46 @@
                         >Name</th
                     >
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Company</th
+                        >Section</th
                     >
-                    <th scope="col" class="border-l-2 p-2 {borderColor}"
-                        >Mid-semester Report</th
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Company Interned</th
                     >
-                    <th scope="col" class="border-l-2 p-2 {borderColor}"
-                        >Final Report</th
-                    >
+                    {#each Object.entries(form_infos) as [_, form_info]}
+                        {@const { form_name } = form_info}
+                        <th scope="col" class="border-l-2 p-2 {borderColor}"
+                            >{form_name}</th
+                        >
+                    {/each}
                 </tr>
-                {#each supervisors as supervisor}
+                {#each students as student}
                     {@const {
-                        supervisor_id,
+                        student_number,
                         first_name,
                         last_name,
-                        company_name,
-                        midsem_status,
-                        final_status,
-                    } = supervisor}
+                        section,
+                        company,
+                        form_statuses,
+                    } = student}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{company_name}</td
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{section}</td
                         >
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><StatusCell
-                                status={midsem_status}
-                                href="/dashboard/supervisors/{supervisor_id}/midsem"
-                            />
-                        </td>
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><StatusCell
-                                status={final_status}
-                                href="/dashboard/supervisors/{supervisor_id}/final"
-                            />
-                        </td>
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{company}</td
+                        >
+                        {#each Object.entries(form_statuses) as [form_id, form_status]}
+                            <td class="border-l-2 p-2 text-center {borderColor}"
+                                ><StatusCell
+                                    status={form_status}
+                                    href="/form/{form_infos[form_id]
+                                        .short_name}/view/{student_number}"
+                                />
+                            </td>
+                        {/each}
                     </tr>
                 {/each}
             </table>

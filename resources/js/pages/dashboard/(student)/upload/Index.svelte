@@ -13,7 +13,7 @@
     });
 
     function handleSubmit() {
-        $form.post(`/dashboard/requirement/${requirementId}/submit`);
+        $form.post(`/requirement/${requirementId}/submit`);
     }
 </script>
 
