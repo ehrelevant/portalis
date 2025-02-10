@@ -6,14 +6,14 @@
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
 
-    export let students;
+    export let supervisors;
     export let form_infos;
 
     /** @type {string} */
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/students?search=${searchQuery}`);
+        router.get(`/dashboard/admin/supervisors?search=${searchQuery}`);
     }
 
     /** @type {string} */
@@ -21,7 +21,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Student List" />
+    <Header txt="Supervisor List" />
 
     <!-- Search Function -->
     <form
@@ -41,7 +41,7 @@
 
     <!-- List of Supervisors -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Student Submissions</h2>
+        <h2 slot="summary" class="text-2xl">Supervisor Submissions</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -52,10 +52,7 @@
                         >Name</th
                     >
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Section</th
-                    >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Company Interned</th
+                        >Company</th
                     >
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
@@ -64,31 +61,27 @@
                         >
                     {/each}
                 </tr>
-                {#each students as student}
+                {#each supervisors as supervisor}
                     {@const {
-                        student_number,
+                        supervisor_id,
                         first_name,
                         last_name,
-                        section,
-                        company,
+                        company_name,
                         form_statuses,
-                    } = student}
+                    } = supervisor}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
                         <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{section}</td
-                        >
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company}</td
+                            >{company_name}</td
                         >
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/view/{student_number}"
+                                        .short_name}/view/{supervisor_id}"
                                 />
                             </td>
                         {/each}

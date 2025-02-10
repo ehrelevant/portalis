@@ -33,7 +33,7 @@ class DashboardController extends Controller
             case User::ROLE_FACULTY:
                 return $this->showFacultyDashboard($request, $phase);
             case User::ROLE_ADMIN:
-                abort(404);
+                return $this->showAdminDashboard($request, $phase);
         }
 
         // Error 401 since the user does not have an existing role
@@ -260,6 +260,18 @@ class DashboardController extends Controller
         $forms = DB::table('forms')->get();
 
         return Inertia::render('dashboard/(faculty)/Index', [
+            'currentPhase' => $phase,
+            'requirements' => $requirements,
+            'forms' => $forms,
+        ]);
+    }
+
+    private function showAdminDashboard(Request $request, string $phase): Response
+    {
+        $requirements = DB::table('requirements')->get();
+        $forms = DB::table('forms')->get();
+
+        return Inertia::render('dashboard/(admin)/Index', [
             'currentPhase' => $phase,
             'requirements' => $requirements,
             'forms' => $forms,
