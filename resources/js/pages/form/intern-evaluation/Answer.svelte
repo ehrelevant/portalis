@@ -13,6 +13,8 @@
     export let open_questions;
     export let form_info;
 
+    $: console.log(students);
+
     let formElement;
 
     let form = useForm({
@@ -54,13 +56,13 @@
                             last_name,
                             first_name,
                             total_hours,
-                            status,
+                            self_assessment_status: status,
                         } = student}
                         <p>{last_name}, {first_name}</p>
                         <p
-                            class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            class="bg-white p-2 text-center text-xl text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                         >
-                            {total_hours ?? ''}
+                            {total_hours ?? '1'}
                         </p>
                         <div class="flex flex-row justify-center gap-2">
                             <Status type={status} />
