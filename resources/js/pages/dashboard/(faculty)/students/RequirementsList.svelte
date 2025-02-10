@@ -3,7 +3,7 @@
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
-    import StatusCell from './StatusCell.svelte';
+    import StatusCell from '@/js/shared/components/StatusCell.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
 
     export let students;
@@ -120,7 +120,7 @@
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
-                                    href="/dashboard/students/{student_number}/{requirement_id}"
+                                    href="/requirement/{requirement_id}/view/{student_number}"
                                     {status}
                                 />
                             </td>{/each}
