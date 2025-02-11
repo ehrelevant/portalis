@@ -94,8 +94,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
         Route::get('/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
         Route::get('/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
-
-        Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
@@ -103,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/admin/supervisors', [AdminController::class, 'showSupervisors']);
     });
 
+    Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
     Route::get('/file/submission/{student_number}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
