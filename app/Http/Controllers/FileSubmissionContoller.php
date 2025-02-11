@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
 {
-    public function showStudentDocument(int $requirement_id, int $student_number): StreamedResponse
+    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
     {
         $role = Auth::user()->role;
         $role_id = intval(Auth::user()->role_id);
