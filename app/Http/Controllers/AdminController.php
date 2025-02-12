@@ -41,6 +41,7 @@ class AdminController extends Controller
                 'students.has_dropped',
                 'companies.company_name'
             )
+            ->orderBy('students.student_number')
             ->get();
 
         foreach ($students_info as $student_info) {
@@ -148,6 +149,7 @@ class AdminController extends Controller
                 'users.last_name',
                 'companies.company_name',
             )
+            ->orderBy('users.last_name', 'users.first_name')
             ->get();
 
         $supervisors = [];
