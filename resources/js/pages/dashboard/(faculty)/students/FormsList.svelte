@@ -48,6 +48,7 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
+                    <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Name</th
                     >
@@ -74,6 +75,9 @@
                         form_statuses,
                     } = student}
                     <tr class="border-t-2 {borderColor}">
+                        <th scope="row" class="border-r-2 p-2 {borderColor}"
+                            >{student_number}</th
+                        >
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >

@@ -62,6 +62,7 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
+                    <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Name</th
                     >
@@ -96,6 +97,9 @@
                         submissions,
                     } = student}
                     <tr class="border-t-2 {borderColor}">
+                        <th class="border-r-2 p-2 {borderColor}"
+                            >{student_number}</th
+                        >
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
@@ -131,6 +135,7 @@
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
+                                    isAdmin
                                     href="/requirement/{requirement_id}/view/{student_number}"
                                     {status}
                                 />
@@ -139,6 +144,7 @@
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
+                                    isAdmin
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
                                         .short_name}/view/{student_number}"
