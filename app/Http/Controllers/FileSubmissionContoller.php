@@ -94,7 +94,7 @@ class FileSubmissionContoller extends Controller
         $submission->save();
 
         if ($user->role === User::ROLE_ADMIN) {
-            return redirect('/dashboard/admin/students');
+            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number );
         } else {
             return redirect('/dashboard');
         }
