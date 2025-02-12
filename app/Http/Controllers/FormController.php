@@ -9,6 +9,7 @@ use App\Models\InternEvaluation;
 use App\Models\InternEvaluationStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -91,7 +92,7 @@ class FormController extends Controller
             ->where('user_id', $user_id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('short_name', $form_short_name)
-            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id');
+            ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id', 'form_statuses.status');
     }
 
     private function queryFormAnswers(int $user_id, string $form_short_name)
@@ -146,40 +147,130 @@ class FormController extends Controller
 
     // Form Redirects
     public function answerForm(string $short_name, ?int $role_id = null) {
+        $user = Auth::user();
+
         switch ($short_name) {
             case 'midsem':
             case 'final':
             case 'intern-evaluation':
-                return $this->answerSupervisorForm($short_name);
+                if ($user->role === User::ROLE_SUPERVISOR) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->answerSupervisorForm($short_name, $role_id);
             case 'company-evaluation':
             case 'self-evaluation':
-                return $this->answerStudentForm($short_name);
+                if ($user->role === User::ROLE_STUDENT) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->answerStudentForm($short_name, $role_id);
             default:
                 abort(404);
         }
     }
     public function draftForm(Request $request, string $short_name, ?int $role_id = null) {
+        $user = Auth::user();
+
         switch ($short_name) {
             case 'midsem':
             case 'final':
             case 'intern-evaluation':
-                return $this->draftSupervisorForm($request, $short_name);
+                if ($user->role === User::ROLE_SUPERVISOR) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->draftSupervisorForm($request, $short_name, $role_id);
             case 'company-evaluation':
             case 'self-evaluation':
-                return $this->draftStudentForm($request, $short_name);
+                if ($user->role === User::ROLE_STUDENT) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->draftStudentForm($request, $short_name, $role_id);
             default:
                 abort(404);
         }
     }
     public function submitForm(Request $request, string $short_name, ?int $role_id = null) {
+        $user = Auth::user();
+
         switch ($short_name) {
             case 'midsem':
             case 'final':
             case 'intern-evaluation':
-                return $this->submitSupervisorForm($request, $short_name);
+                if ($user->role === User::ROLE_SUPERVISOR) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->submitSupervisorForm($request, $short_name, $role_id);
             case 'company-evaluation':
             case 'self-evaluation':
-                return $this->submitStudentForm($request, $short_name);
+                if ($user->role === User::ROLE_STUDENT) {
+                    if ($role_id && $role_id !== $user->role_id) {
+                        abort(401);
+                    } else if (!$role_id) {
+                        $role_id = $user->role_id;
+                    }
+                } else if ($user->role === User::ROLE_ADMIN) {
+                    if (!$role_id) {
+                        abort(404);
+                    }
+                } else {
+                    abort(401);
+                }
+
+                return $this->submitStudentForm($request, $short_name, $role_id);
             default:
                 abort(404);
         }
@@ -241,9 +332,15 @@ class FormController extends Controller
         return $students;
     }
 
-    public function answerSupervisorForm(string $short_name)
+    public function answerSupervisorForm(string $short_name, ?int $supervisor_id)
     {
         $supervisor_user = Auth::user();
+        if ($supervisor_user->role === User::ROLE_ADMIN) {
+            $supervisor_user = DB::table('users')
+                ->where('role', 'supervisor')
+                ->where('role_id', $supervisor_id)
+                ->firstOrFail();
+        }
 
         $form_status = $this->queryFormStatus($supervisor_user->id, $short_name)->firstOrFail();
         $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
@@ -271,6 +368,11 @@ class FormController extends Controller
             'categorized_rating_questions' => $categorized_rating_questions,
             'open_questions' => $open_questions,
             'form_info' => $form_info,
+
+            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN),
+            'evaluatorUserId' => $supervisor_user->id,
+            'evaluatorRoleId' => $supervisor_user->role_id,
+            'status' => $form_status->status,
         ]);
     }
 
@@ -308,10 +410,8 @@ class FormController extends Controller
         ]);
     }
 
-    public function updateSupervisorForm($form_values, string $short_name)
+    public function updateSupervisorForm($form_values, string $short_name, $supervisor_user)
     {
-        $supervisor_user = Auth::user();
-
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
         foreach ($form_values['answers'] as $evaluation) {
@@ -347,8 +447,16 @@ class FormController extends Controller
         }
     }
 
-    public function draftSupervisorForm(Request $request, string $short_name)
+    public function draftSupervisorForm(Request $request, string $short_name, ?int $supervisor_id)
     {
+        $supervisor_user = Auth::user();
+        if ($supervisor_user->role === User::ROLE_ADMIN) {
+            $supervisor_user = DB::table('users')
+                ->where('role', 'supervisor')
+                ->where('role_id', $supervisor_id)
+                ->firstOrFail();
+        }
+
         $form_values = $request->validate([
             'answers' => ['array'],
             'answers.*.student_number' => ['integer', 'numeric'],
@@ -359,13 +467,25 @@ class FormController extends Controller
             'answers.*.opens.*' => ['nullable'],
         ]);
 
-        $this->updateSupervisorForm($form_values, $short_name);
+        $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
 
-        return redirect('/dashboard');
+        if (Auth::user()->role === User::ROLE_ADMIN) {
+            return back();
+        } else {
+            return redirect('/dashboard');
+        }
     }
 
-    public function submitSupervisorForm(Request $request, string $short_name)
+    public function submitSupervisorForm(Request $request, string $short_name, ?int $supervisor_id)
     {
+        $supervisor_user = Auth::user();
+        if ($supervisor_user->role === User::ROLE_ADMIN) {
+            $supervisor_user = DB::table('users')
+                ->where('role', 'supervisor')
+                ->where('role_id', $supervisor_id)
+                ->firstOrFail();
+        }
+
         $form_values = $request->validate([
             'answers' => ['array'],
             'answers.*.student_number' => ['integer', 'numeric'],
@@ -376,17 +496,19 @@ class FormController extends Controller
             'answers.*.opens.*' => ['nullable', 'string'],
         ]);
 
-        $this->updateSupervisorForm($form_values, $short_name);
-
-        $user = Auth::user();
+        $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
 
         // Update status for all reports under the supervisor
-        FormStatus::where('user_id', $user->id)
+        FormStatus::where('user_id', $supervisor_user->id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('forms.short_name', $short_name)
             ->update(['status' => 'submitted']);
 
-        return redirect('/dashboard');
+        if (Auth::user()->role === User::ROLE_ADMIN) {
+            return back();
+        } else {
+            return redirect('/dashboard');
+        }
     }
 
     // Company Evaluation Forms
@@ -417,9 +539,15 @@ class FormController extends Controller
         ];
     }
 
-    public function answerStudentForm(string $short_name)
+    public function answerStudentForm(string $short_name, ?int $student_number)
     {
         $student_user = Auth::user();
+        if ($student_user->role === User::ROLE_ADMIN) {
+            $student_user = DB::table('users')
+                ->where('role', 'student')
+                ->where('role_id', $student_number)
+                ->firstOrFail();
+        }
 
         $form_status = $this->queryFormStatus($student_user->id, $short_name)->firstOrFail();
         $form_answer = $this->queryFormAnswers($student_user->id, $short_name)->first();
@@ -441,6 +569,11 @@ class FormController extends Controller
             'categorized_rating_questions' => $categorized_rating_questions,
             'open_questions' => $open_questions,
             'form_info' => $form_info,
+
+            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN),
+            'evaluatorUserId' => $student_user->id,
+            'evaluatorRoleId' => $student_user->role_id,
+            'status' => $form_status->status,
         ]);
     }
 
@@ -478,10 +611,8 @@ class FormController extends Controller
         ]);
     }
 
-    public function updateStudentForm($evaluation, string $short_name)
+    public function updateStudentForm($evaluation, string $short_name, $student_user)
     {
-        $student_user = Auth::user();
-
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
         $form_status_id = FormStatus::where('user_id', $student_user->id)
@@ -512,9 +643,15 @@ class FormController extends Controller
         }
     }
 
-    public function draftStudentForm(Request $request, string $short_name)
+    public function draftStudentForm(Request $request, string $short_name, ?int $student_number)
     {
-        $short_name = 'company-evaluation';
+        $student_user = Auth::user();
+        if ($student_user->role === User::ROLE_ADMIN) {
+            $student_user = DB::table('users')
+                ->where('role', 'student')
+                ->where('role_id', $student_number)
+                ->firstOrFail();
+        }
 
         $form_values = $request->validate([
             'categorized_ratings' => ['array'],
@@ -524,13 +661,25 @@ class FormController extends Controller
             'opens.*' => ['nullable'],
         ]);
 
-        $this->updateStudentForm($form_values, $short_name);
+        $this->updateStudentForm($form_values, $short_name, $student_user);
 
-        return redirect('/dashboard');
+        if (Auth::user()->role === User::ROLE_ADMIN) {
+            return back();
+        } else {
+            return redirect('/dashboard');
+        }
     }
 
-    public function submitStudentForm(Request $request, string $short_name)
+    public function submitStudentForm(Request $request, string $short_name, ?int $student_number)
     {
+        $student_user = Auth::user();
+        if ($student_user->role === User::ROLE_ADMIN) {
+            $student_user = DB::table('users')
+                ->where('role', 'student')
+                ->where('role_id', $student_number)
+                ->firstOrFail();
+        }
+
         $form_values = $request->validate([
             'categorized_ratings' => ['array'],
             'categorized_ratings.*' => ['array'],
@@ -539,17 +688,19 @@ class FormController extends Controller
             'opens.*' => ['nullable', 'string'],
         ]);
 
-        $this->updateStudentForm($form_values, $short_name);
-
-        $user = Auth::user();
+        $this->updateStudentForm($form_values, $short_name, $student_user);
 
         // Update status for all reports under the supervisor
-        FormStatus::where('user_id', $user->id)
+        FormStatus::where('user_id', $student_user->id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('forms.short_name', $short_name)
             ->update(['status' => 'submitted']);
 
-        return redirect('/dashboard');
+        if (Auth::user()->role === User::ROLE_ADMIN) {
+            return back();
+        } else {
+            return redirect('/dashboard');
+        }
     }
 
     public function validateForm(string $short_name, int $user_id): RedirectResponse

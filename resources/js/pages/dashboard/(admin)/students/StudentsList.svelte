@@ -147,7 +147,7 @@
                                     isAdmin
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/view/{student_number}"
+                                        .short_name}/answer/{student_number}"
                                 />
                             </td>
                         {/each}

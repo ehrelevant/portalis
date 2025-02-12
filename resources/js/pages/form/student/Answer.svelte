@@ -1,7 +1,8 @@
 <script>
-    import { useForm } from '@inertiajs/svelte';
+    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
     import Accordion from '@shared/components/Accordion.svelte';
+    import Status from '@/js/shared/components/Status.svelte';
 
     export let errors = {};
     $: console.log(errors);
@@ -12,6 +13,11 @@
     export let open_questions;
     export let form_info;
 
+    export let isAdmin;
+    export let evaluatorUserId;
+    export let evaluatorRoleId;
+    export let status;
+
     let formElement;
 
     let form = useForm({
@@ -19,7 +25,7 @@
     });
 
     function draftForm() {
-        $form.post(`/form/${form_info.short_name}/draft`);
+        $form.post(`/form/${form_info.short_name}/draft/${evaluatorRoleId}`);
     }
 
     function submitForm() {
@@ -27,11 +33,11 @@
             formElement.reportValidity();
             return;
         }
-        $form.post(`/form/${form_info.short_name}/submit`);
+        $form.post(`/form/${form_info.short_name}/submit/${evaluatorRoleId}`);
     }
 </script>
 
-<div class="main-screen flex flex-col p-4">
+<div class="main-screen flex flex-col gap-4 p-4">
     <Header txt="{form_info.form_name} Form" />
 
     <form bind:this={formElement} class="flex flex-col">
@@ -86,22 +92,48 @@
                 </Accordion>
             {/each}
 
-            <div class="m-2 flex justify-center gap-4">
-                <input
-                    name="draft"
-                    type="button"
-                    value="Save Draft"
-                    class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
-                    on:click={draftForm}
-                />
-                <input
-                    name="submit"
-                    type="button"
-                    value="Submit Response"
-                    class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
-                    on:click={submitForm}
-                />
-            </div>
+            {#if ['rejected', 'unsubmitted'].includes(status)}
+                <div class="m-2 flex justify-center gap-4">
+                    <input
+                        name="draft"
+                        type="button"
+                        value="Save Draft"
+                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        on:click={draftForm}
+                    />
+                    <input
+                        name="submit"
+                        type="button"
+                        value="Submit Response"
+                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        on:click={submitForm}
+                    />
+                </div>
+            {/if}
         </div>
     </form>
+
+    {#if isAdmin}
+        <div class="flex flex-row justify-center gap-2">
+            <Status type={status} />
+            {#if ['validated'].includes(status)}
+                <Link
+                    href="/form/{form_info.short_name}/invalidate/{evaluatorUserId}"
+                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                    method="post">Invalidate</Link
+                >
+            {:else if ['submitted'].includes(status)}
+                <Link
+                    href="/form/{form_info.short_name}/validate/{evaluatorUserId}"
+                    class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                    method="post">Validate</Link
+                >
+                <Link
+                    href="/form/{form_info.short_name}/reject/{evaluatorUserId}"
+                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                    method="post">Reject</Link
+                >
+            {/if}
+        </div>
+    {/if}
 </div>

@@ -79,9 +79,10 @@
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
+                                    isAdmin
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/view/{supervisor_id}"
+                                        .short_name}/answer/{supervisor_id}"
                                 />
                             </td>
                         {/each}

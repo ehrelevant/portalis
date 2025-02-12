@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/form/{short_name}/answer/{role_id?}', [FormController::class, 'answerForm']);
     Route::post('/form/{short_name}/draft/{role_id?}', [FormController::class, 'draftForm']);
     Route::post('/form/{short_name}/submit/{role_id?}', [FormController::class, 'submitForm']);
-    Route::get('/form/{short_name}/view/{role_id}', [FormController::class, 'viewForm']);
+    Route::get('/form/{short_name}/view/{role_id}', [FormController::class, 'viewForm'])->middleware([EnsureUserHasRole::class . ':faculty,admin']);
 
     // Form Validation
     Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
