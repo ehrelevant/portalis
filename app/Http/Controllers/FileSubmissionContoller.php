@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
+use App\Models\Submission;
 use App\Models\SubmissionStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,87 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
 {
+    public function showUploadForm(int $requirement_id, ?int $student_number = null): Response
+    {
+        $user = Auth::user();
+        if ($user->role === User::ROLE_STUDENT) {
+            if ($student_number && $student_number !== $user->role_id) {
+                abort(401);
+            } else if (!$student_number) {
+                $student_number = $user->role_id;
+            }
+        } else if ($user->role === User::ROLE_ADMIN) {
+            if (!$student_number) {
+                abort(404);
+            }
+        } else {
+            abort(401);
+        }
+
+        $student_name = DB::table('users')
+            ->where('role', 'student')
+            ->where('role_id', $student_number)
+            ->select('first_name', 'last_name')
+            ->firstOrFail();
+
+        // Fetch thw id, name, and due date of a requirement for displaying
+        $requirement = DB::table('requirements')
+            ->find($requirement_id);
+
+        return Inertia::render('requirement/Upload', [
+            'studentNumber' => $student_number,
+            'studentName' => $student_name,
+            'requirementId' => $requirement->id,
+            'requirementName' => $requirement->requirement_name,
+        ]);
+    }
+
+    public function submitDocument(Request $request, int $requirement_id, ?int $student_number): RedirectResponse
+    {
+        $user = Auth::user();
+        if ($user->role === User::ROLE_STUDENT) {
+            if ($student_number && $student_number !== $user->role_id) {
+                abort(401);
+            } else if (!$student_number) {
+                $student_number = $user->role_id;
+            }
+        } else if ($user->role === User::ROLE_ADMIN) {
+            if (!$student_number) {
+                abort(404);
+            }
+        } else {
+            abort(401);
+        }
+
+        $request->validate([
+            'file' => ['required', 'mimes:pdf', 'max:2048'],
+        ]);
+
+        $submission_status = SubmissionStatus::where('student_number', $student_number)
+            ->where('requirement_id', $requirement_id)
+            ->firstOrFail();
+        $submission_status->status = 'submitted';
+        $submission_status->save();
+
+        $submission = new Submission();
+        $submission->submission_status_id = $submission_status->id;
+
+        // TODO: Add proper revision and submission numbering
+        $submission->revision_number = 1;
+        $submission->submission_number = 1;
+
+        $filepath = $request->file('file')->store('student/documents');
+        $submission->filepath = $filepath;
+
+        $submission->save();
+
+        if ($user->role === User::ROLE_ADMIN) {
+            return redirect('/dashboard/admin/students');
+        } else {
+            return redirect('/dashboard');
+        }
+    }
+
     public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
     {
         $role = Auth::user()->role;
@@ -59,10 +141,24 @@ class FileSubmissionContoller extends Controller
             ->firstOrFail()
             ->status;
 
-        return Inertia::render('dashboard/(faculty)/students/submission/Index', [
-            'student_number' => $student_number,
-            'requirement_id' => $requirement_id,
+        $requirement_name = DB::table('requirements')
+            ->where('id', $requirement_id)
+            ->firstOrFail()
+            ->requirement_name;
+
+        $student_name = DB::table('users')
+            ->where('role', 'student')
+            ->where('role_id', $student_number)
+            ->select('first_name', 'last_name')
+            ->firstOrFail();
+
+        return Inertia::render('requirement/View', [
+            'studentNumber' => $student_number,
+            'studentName' => $student_name,
+            'requirementId' => $requirement_id,
+            'requirementName' => $requirement_name,
             'status' => $submission_status,
+            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN)
         ]);
     }
 

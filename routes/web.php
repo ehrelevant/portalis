@@ -36,11 +36,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/account', [AccountController::class, 'show']);
     Route::get('/dashboard', [DashboardController::class, 'show']);
 
-    Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/requirement/{requirement_id}/upload', [StudentController::class, 'showUploadDocument']);
-        Route::post('/requirement/{requirement_id}/submit', [StudentController::class, 'submitDocument']);
-    });
-
+    Route::get('/requirement/{requirement_id}/upload/{student_number?}', [FileSubmissionContoller::class, 'showUploadForm']);
+    Route::post('/requirement/{requirement_id}/submit/{student_number?}', [FileSubmissionContoller::class, 'submitDocument']);
     Route::get('/requirement/{requirement_id}/view/{student_number}', [FileSubmissionContoller::class, 'showStudentSubmission']);
     Route::post('/requirement/{requirement_id}/view/{student_number}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
     Route::post('/requirement/{requirement_id}/view/{student_number}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
