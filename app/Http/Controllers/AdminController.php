@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+use App\Models\Faculty;
 use App\Models\Form;
+use App\Models\FormStatus;
 use App\Models\Requirement;
 use App\Models\Student;
+use App\Models\SubmissionStatus;
+use App\Models\Supervisor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -232,5 +238,143 @@ class AdminController extends Controller
         return Inertia::render('dashboard/(admin)/companies/CompaniesList', [
             'companies' => $companies,
         ]);
+    }
+
+    public function addStudent(Request $request)
+    {
+        $values = $request->validate([
+            'student_number' => ['required', 'numeric', 'integer'],
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['nullable', 'string'],
+            'wordpress_name' => ['required', 'string'],
+            'wordpress_email' => ['required', 'email:rfc'],
+        ]);
+
+        $new_student = new Student();
+        $new_student->student_number = $values['student_number'];
+        $new_student->supervisor_id = 1; // !PLACEHOLDER
+        if ($values['section']) {
+            $new_student->faculty_id = DB::table('faculties')
+                ->where('section', $values['section'])
+                ->firstOrFail()
+                ->id;
+        } else {
+            $new_student->faculty_id = null;
+        }
+        $new_student->wordpress_name = $values['wordpress_name'];
+        $new_student->wordpress_email = $values['wordpress_email'];
+        $new_student->save();
+
+        $new_user = new User();
+        $new_user->role = User::ROLE_STUDENT;
+        $new_user->role_id = $new_student->student_number;
+        $new_user->first_name = $values['first_name'];
+        $new_user->middle_name = $values['middle_name'];
+        $new_user->last_name = $values['last_name'];
+        $new_user->email = $values['email'];
+        $new_user->save();
+
+        $requirements = DB::table('requirements')->get();
+        foreach ($requirements as $requirement) {
+            $new_submission_status = new SubmissionStatus();
+            $new_submission_status->student_number = $new_student->student_number;
+            $new_submission_status->requirement_id = $requirement->id;
+            $new_submission_status->status = 'unsubmitted';
+            $new_submission_status->save();
+        }
+
+        $forms = DB::table('forms')
+            ->where('short_name', 'company-evaluation')
+            ->orWhere('short_name', 'self-evaluation')
+            ->get();
+        foreach ($forms as $form) {
+            $new_form_status = new FormStatus();
+            $new_form_status->user_id = $new_user->id;
+            $new_form_status->form_id = $form->id;
+            $new_form_status->status = 'unsubmitted';
+            $new_form_status->save();
+        }
+
+        return back();
+    }
+
+    public function addSupervisor(Request $request)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+        ]);
+
+        $new_supervisor = new Supervisor();
+        $new_supervisor->company_id = 1; // !PLACEHOLDER
+        $new_supervisor->save();
+
+        $new_user = new User();
+        $new_user->role = User::ROLE_SUPERVISOR;
+        $new_user->role_id = $new_supervisor->id;
+        $new_user->first_name = $values['first_name'];
+        $new_user->middle_name = $values['middle_name'];
+        $new_user->last_name = $values['last_name'];
+        $new_user->email = $values['email'];
+        $new_user->save();
+
+        $forms = DB::table('forms')
+            ->where('short_name', 'midsem')
+            ->orWhere('short_name', 'final')
+            ->orWhere('short_name', 'intern-evaluation')
+            ->get();
+        foreach ($forms as $form) {
+            $new_form_status = new FormStatus();
+            $new_form_status->user_id = $new_user->id;
+            $new_form_status->form_id = $form->id;
+            $new_form_status->status = 'unsubmitted';
+            $new_form_status->save();
+        }
+
+        return back();
+    }
+
+    public function addFaculty(Request $request)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['required', 'string'],
+        ]);
+
+        $new_faculty = new Faculty();
+        $new_faculty->section = $values['section'];
+        $new_faculty->save();
+
+        $new_user = new User();
+        $new_user->role = User::ROLE_FACULTY;
+        $new_user->role_id = $new_faculty->id;
+        $new_user->first_name = $values['first_name'];
+        $new_user->middle_name = $values['middle_name'];
+        $new_user->last_name = $values['last_name'];
+        $new_user->email = $values['email'];
+        $new_user->save();
+
+        return back();
+    }
+
+    public function addCompany(Request $request)
+    {
+        $values = $request->validate([
+            'company_name' => ['required', 'string'],
+        ]);
+
+        $new_company = new Company();
+        $new_company->company_name = $values['company_name'];
+        $new_company->save();
+
+        return back();
     }
 }

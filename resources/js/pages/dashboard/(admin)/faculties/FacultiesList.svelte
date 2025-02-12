@@ -1,9 +1,11 @@
 <script>
-    import { router, Link } from '@inertiajs/svelte';
+    import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
+    import Modal from '@/js/shared/components/Modal.svelte';
+    import Required from '@/js/shared/components/Required.svelte';
 
     export let faculties;
 
@@ -14,12 +16,36 @@
         router.get(`/dashboard/admin/faculties?search=${searchQuery}`);
     }
 
+    let addFormElement;
+    let isModalOpen;
+
+    function openModal() {
+        isModalOpen = true;
+    }
+
+    let addUserForm = useForm({
+        first_name: null,
+        middle_name: null,
+        last_name: null,
+        email: null,
+        section: null,
+    });
+
+    function addUser() {
+        if (!addFormElement.checkValidity()) {
+            addFormElement.reportValidity();
+            return;
+        }
+        $addUserForm.post('/dashboard/admin/faculties/add');
+        isModalOpen = false;
+    }
+
     /** @type {string} */
     let borderColor = 'border-black dark:border-white';
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Student List" />
+    <Header txt="Faculties List" />
 
     <!-- Search Function -->
     <form
@@ -39,7 +65,7 @@
 
     <!-- List of Faculties -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Student Submissions</h2>
+        <h2 slot="summary" class="text-2xl">Faculties</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -66,7 +92,11 @@
         </div>
     </Accordion>
 
-    <div class="flex w-full justify-end">
+    <div class="flex w-full justify-between">
+        <button
+            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            on:click={openModal}>Add Faculty</button
+        >
         <Link
             href="/dashboard"
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
@@ -74,3 +104,64 @@
         >
     </div>
 </div>
+
+<Modal bind:isOpen={isModalOpen}>
+    <form
+        bind:this={addFormElement}
+        class="flex flex-col gap-4"
+        on:submit|preventDefault={addUser}
+    >
+        <div class="grid grid-cols-[auto,1fr] items-center gap-4">
+            <label for="first name"><Required />First Name</label>
+            <input
+                name="first name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.first_name}
+                required
+            />
+
+            <label for="middle name"><Required />Middle Name</label>
+            <input
+                name="middle name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.middle_name}
+                required
+            />
+
+            <label for="last name"><Required />Last Name</label>
+            <input
+                name="last name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.last_name}
+                required
+            />
+
+            <label for="email"><Required />Email</label>
+            <input
+                name="emai"
+                type="email"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.email}
+                required
+            />
+
+            <label for="section"><Required />Section</label>
+            <input
+                name="section"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.section}
+                required
+            />
+
+            <input
+                class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
+                type="submit"
+                value="Add Faculty"
+            />
+        </div>
+    </form>
+</Modal>
