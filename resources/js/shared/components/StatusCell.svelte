@@ -1,6 +1,7 @@
 <script>
     export let href;
     export let status;
+    export let isAdmin = false;
 
     const bgColor =
         status === 'validated'
@@ -23,7 +24,7 @@
 
 <div class="flex items-center justify-center">
     <div class="w-fit justify-center rounded-xl px-2 py-1 {bgColor}">
-        {#if status !== 'unsubmitted'}
+        {#if status !== 'unsubmitted' || isAdmin}
             <a {href} class="{bgColor} {textColor}" target="_blank">{status}</a>
         {:else}
             <p class="text-floating-gray">{status}</p>
