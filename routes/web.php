@@ -83,15 +83,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/admin/companies', [AdminController::class, 'showCompanies']);
         Route::get('/dashboard/admin/faculties', [AdminController::class, 'showFaculties']);
 
-        Route::post('/add/student', [AdminController::class, 'addStudent']);
-        Route::post('/add/supervisor', [AdminController::class, 'addSupervisor']);
-        Route::post('/add/company', [AdminController::class, 'addCompany']);
-        Route::post('/add/faculty', [AdminController::class, 'addFaculty']);
+        Route::post('/dashboard/admin/students/add', [AdminController::class, 'addStudent']);
+        Route::post('/dashboard/admin/supervisors/add', [AdminController::class, 'addSupervisor']);
+        Route::post('/dashboard/admin/companies/add', [AdminController::class, 'addCompany']);
+        Route::post('/dashboard/admin/faculties/add', [AdminController::class, 'addFaculty']);
 
-        Route::delete('/delete/student', [AdminController::class, 'deleteStudent']);
-        Route::delete('/delete/supervisor', [AdminController::class, 'deleteSupervisor']);
-        Route::delete('/delete/company', [AdminController::class, 'deleteCompany']);
-        Route::delete('/delete/faculty', [AdminController::class, 'deleteFaculty']);
+        Route::delete('/dashboard/admin/students/delete/{student_number}', [AdminController::class, 'deleteStudent']);
+        Route::delete('/dashboard/admin/supervisors/delete/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
+        Route::delete('/dashboard/admin/companies/delete/{company_id}', [AdminController::class, 'deleteCompany']);
+        Route::delete('/dashboard/admin/faculties/delete/{faculty_id}', [AdminController::class, 'deleteFaculty']);
     });
 
     Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
