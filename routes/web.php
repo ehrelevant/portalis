@@ -43,27 +43,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/requirement/{requirement_id}/view/{student_number}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
     Route::post('/requirement/{requirement_id}/view/{student_number}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
 
-    // Form Answering
-    Route::middleware([EnsureUserHasRole::class . ':student'])->group(function () {
-        Route::get('/form/company-evaluation/answer', [FormController::class, 'answerCompanyEvaluationForm']);
-        Route::post('/form/company-evaluation/draft', [FormController::class, 'draftCompanyEvaluationForm']);
-        Route::post('/form/company-evaluation/submit', [FormController::class, 'submitCompanyEvaluationForm']);
-
-        Route::get('/form/self-evaluation/answer', [FormController::class, 'answerSelfEvaluationForm']);
-        Route::post('/form/self-evaluation/draft', [FormController::class, 'draftSelfEvaluationForm']);
-        Route::post('/form/self-evaluation/submit', [FormController::class, 'submitSelfEvaluationForm']);
-    });
-
-    Route::middleware([EnsureUserHasRole::class . ':supervisor'])->group(function () {
-        Route::get('/form/{short_name}/answer', [FormController::class, 'answerReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
-        Route::post('/form/{short_name}/draft', [FormController::class, 'draftReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
-        Route::post('/form/{short_name}/submit', [FormController::class, 'submitReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);;
-    });
-
-    // Form Viewing
-    Route::get('/form/{short_name}/view/{supervisor_id}', [FormController::class, 'viewReportForm'])->whereIn('short_name', ['midsem', 'final', 'intern-evaluation']);
-    Route::get('/form/company-evaluation/view/{student_number}', [FormController::class, 'viewCompanyEvaluationForm']);
-    Route::get('/form/self-evaluation/view/{student_number}', [FormController::class, 'viewSelfEvaluationForm']);
+    // Form Answering/Viewing
+    Route::get('/form/{short_name}/answer/{role_id?}', [FormController::class, 'answerForm']);
+    Route::post('/form/{short_name}/draft/{role_id?}', [FormController::class, 'draftForm']);
+    Route::post('/form/{short_name}/submit/{role_id?}', [FormController::class, 'submitForm']);
+    Route::get('/form/{short_name}/view/{role_id}', [FormController::class, 'viewForm']);
 
     // Form Validation
     Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
