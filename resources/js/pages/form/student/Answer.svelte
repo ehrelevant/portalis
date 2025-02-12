@@ -7,6 +7,7 @@
     export let errors = {};
     $: console.log(errors);
 
+    export let student;
     export let values;
     export let rating_categories;
     export let categorized_rating_questions;
@@ -38,7 +39,9 @@
 </script>
 
 <div class="main-screen flex flex-col gap-4 p-4">
-    <Header txt="{form_info.form_name} Form" />
+    <Header
+        txt="{student.last_name}, {student.first_name} — {form_info.form_name} Form"
+    />
 
     <form bind:this={formElement} class="flex flex-col">
         <div class="flex flex-col gap-4">

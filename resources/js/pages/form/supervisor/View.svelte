@@ -4,6 +4,7 @@
     import Accordion from '@shared/components/Accordion.svelte';
     import Status from '@shared/components/Status.svelte';
 
+    export let supervisor;
     export let evaluator_user_id;
     export let students;
     export let rating_categories;
@@ -14,7 +15,9 @@
 </script>
 
 <div class="main-screen flex flex-col gap-4 p-4">
-    <Header txt="{form_info.form_name} Form" />
+    <Header
+        txt="{supervisor.last_name}, {supervisor.first_name} — {form_info.form_name} Form"
+    />
 
     <div class="flex flex-col">
         <div class="flex flex-col gap-4">

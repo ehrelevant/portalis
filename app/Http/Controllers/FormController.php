@@ -363,6 +363,7 @@ class FormController extends Controller
         $form_info = $this->getFormInfo($form_status->form_id);
 
         return Inertia::render('form/supervisor/Answer', [
+            'supervisor' => $supervisor_user,
             'students' => $students,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,
@@ -378,11 +379,12 @@ class FormController extends Controller
 
     public function viewSupervisorForm(string $short_name, int $supervisor_id)
     {
-        $user_id = DB::table('users')
+        $supervisor_user = DB::table('users')
             ->where('role', 'supervisor')
             ->where('role_id', $supervisor_id)
-            ->firstOrFail()
-            ->id;
+            ->firstOrFail();
+
+        $user_id = $supervisor_user->id;
 
         $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
         $form_answers = $this->queryFormAnswers($user_id, $short_name)->get();
@@ -400,6 +402,7 @@ class FormController extends Controller
             ->status;
 
         return Inertia::render('form/supervisor/View', [
+            'supervisor' => $supervisor_user,
             'evaluator_user_id' => $user_id,
             'students' => $students,
             'rating_categories' => $rating_categories,
@@ -564,6 +567,7 @@ class FormController extends Controller
         $form_info = $this->getFormInfo($form_status->form_id);
 
         return Inertia::render('form/student/Answer', [
+            'student' => $student_user,
             'values' => $values,
             'rating_categories' => $rating_categories,
             'categorized_rating_questions' => $categorized_rating_questions,
@@ -579,11 +583,12 @@ class FormController extends Controller
 
     public function viewStudentForm(string $short_name, int $student_number)
     {
-        $user_id = DB::table('users')
+        $student_user = DB::table('users')
             ->where('role', 'student')
             ->where('role_id', $student_number)
-            ->firstOrFail()
-            ->id;
+            ->firstOrFail();
+
+        $user_id = $student_user->id;
 
         $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
         $form_answer = $this->queryFormAnswers($user_id, $short_name)->firstOrFail();
@@ -601,6 +606,7 @@ class FormController extends Controller
             ->status;
 
         return Inertia::render('form/student/View', [
+            'student' => $student_user,
             'evaluator_user_id' => $user_id,
             'values' => $values,
             'rating_categories' => $rating_categories,
