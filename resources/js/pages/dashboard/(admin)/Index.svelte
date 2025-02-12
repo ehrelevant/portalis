@@ -48,6 +48,22 @@
             <Account />
             <p>Supervisor List</p>
         </Link>
+
+        <Link
+            href="/dashboard/admin/faculties"
+            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
+        >
+            <Account />
+            <p>Faculty List</p>
+        </Link>
+
+        <Link
+            href="/dashboard/admin/companies"
+            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
+        >
+            <Account />
+            <p>Company List</p>
+        </Link>
     </div>
 
     <Accordion>

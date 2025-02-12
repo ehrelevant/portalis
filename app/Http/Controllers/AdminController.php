@@ -183,4 +183,54 @@ class AdminController extends Controller
             'form_infos' => $form_infos,
         ]);
     }
+
+    public function showFaculties(Request $request): Response
+    {
+        $search_text = $request->query('search') ?? '';
+
+        $users_partial = DB::table('users')
+            ->where('role', 'faculty')
+            ->where(function ($query) use ($search_text) {
+                $query->where('first_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
+            });
+
+        $faculties = $users_partial
+            ->join('faculties', 'users.role_id', '=', 'faculties.id')
+            ->select(
+                'users.id AS user_id',
+                'users.first_name',
+                'users.last_name',
+                'faculties.section',
+            )
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->get();
+
+        return Inertia::render('dashboard/(admin)/faculties/FacultiesList', [
+            'faculties' => $faculties,
+        ]);
+    }
+
+    public function showCompanies(Request $request): Response
+    {
+        $search_text = $request->query('search') ?? '';
+
+        $companies_partial = DB::table('companies')
+            ->where(function ($query) use ($search_text) {
+                $query->where('company_name', 'LIKE', '%' . $search_text . '%');
+            });
+
+        $companies = $companies_partial
+            ->select(
+                'companies.company_name'
+            )
+            ->orderBy('companies.company_name')
+            ->get();
+
+        return Inertia::render('dashboard/(admin)/companies/CompaniesList', [
+            'companies' => $companies,
+        ]);
+    }
 }

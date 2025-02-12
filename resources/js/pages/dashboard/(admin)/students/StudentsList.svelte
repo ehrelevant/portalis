@@ -53,7 +53,7 @@
         />
     </form>
 
-    <!-- List of Supervisors -->
+    <!-- List of Students -->
     <Accordion open>
         <h2 slot="summary" class="text-2xl">Student Submissions</h2>
 
