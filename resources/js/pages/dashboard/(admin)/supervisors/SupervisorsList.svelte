@@ -85,6 +85,9 @@
                             >{form_name}</th
                         >
                     {/each}
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Actions</th
+                    >
                 </tr>
                 {#each supervisors as supervisor}
                     {@const {
@@ -111,6 +114,13 @@
                                 />
                             </td>
                         {/each}
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><Link
+                                href="/dashboard/admin/supervisors/delete/{supervisor_id}"
+                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                method="delete">Delete</Link
+                            >
+                        </td>
                     </tr>
                 {/each}
             </table>

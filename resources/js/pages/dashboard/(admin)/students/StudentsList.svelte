@@ -113,6 +113,9 @@
                             >{form_name}</th
                         >
                     {/each}
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Actions</th
+                    >
                 </tr>
                 {#each students as student}
                     {@const {
@@ -157,9 +160,7 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company}</td
-                        >
+                        <td class="border-r-2 p-2 {borderColor}">{company}</td>
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
@@ -180,6 +181,13 @@
                                 />
                             </td>
                         {/each}
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><Link
+                                href="/dashboard/admin/students/delete/{student_number}"
+                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                method="delete">Delete</Link
+                            >
+                        </td>
                     </tr>
                 {/each}
             </table>
@@ -282,7 +290,7 @@
         </div>
 
         <input
-            class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
+            class="cursor-pointer rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
             value="Add Student"
         />

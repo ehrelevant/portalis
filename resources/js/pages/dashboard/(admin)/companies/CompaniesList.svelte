@@ -69,11 +69,21 @@
             >
                 <tr class="border-b-2 {borderColor}">
                     <th scope="col" class="p-2 {borderColor}">Company Name</th>
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Actions</th
+                    >
                 </tr>
                 {#each companies as company}
-                    {@const { company_name } = company}
+                    {@const { company_id, company_name } = company}
                     <tr class="border-t-2 {borderColor}">
                         <td class="p-2 {borderColor}">{company_name}</td>
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><Link
+                                href="/dashboard/admin/companies/delete/{company_id}"
+                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                method="delete">Delete</Link
+                            >
+                        </td>
                     </tr>
                 {/each}
             </table>

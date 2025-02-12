@@ -78,14 +78,25 @@
                     <th scope="col" class="border-l-2 p-2 {borderColor}"
                         >Section</th
                     >
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Actions</th
+                    >
                 </tr>
                 {#each faculties as faculty}
-                    {@const { first_name, last_name, section } = faculty}
+                    {@const { faculty_id, first_name, last_name, section } =
+                        faculty}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
                         <td class="border-l-2 p-2 {borderColor}">{section}</td>
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><Link
+                                href="/dashboard/admin/faculties/delete/{faculty_id}"
+                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                method="delete">Delete</Link
+                            >
+                        </td>
                     </tr>
                 {/each}
             </table>

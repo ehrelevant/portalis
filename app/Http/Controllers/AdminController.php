@@ -35,8 +35,8 @@ class AdminController extends Controller
 
         $students_info = $users_partial
             ->join('students', 'users.role_id', '=', 'students.student_number')
-            ->join('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
-            ->join('companies', 'companies.id', '=', 'supervisors.company_id')
+            ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+            ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
                 'users.id AS user_id',
@@ -68,7 +68,7 @@ class AdminController extends Controller
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
-                'company' => $student_info->company_name,
+                'company' => $student_info->company_name ?? '',
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
@@ -147,7 +147,7 @@ class AdminController extends Controller
 
         $supervisors_info = $users_partial
             ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
-            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
             ->select(
                 'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
@@ -170,7 +170,7 @@ class AdminController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
-                'company_name' => $supervisor_info->company_name,
+                'company_name' => $supervisor_info->company_name ?? '',
                 'form_statuses' => $form_statuses,
             ]);
         }
@@ -206,6 +206,7 @@ class AdminController extends Controller
             ->join('faculties', 'users.role_id', '=', 'faculties.id')
             ->select(
                 'users.id AS user_id',
+                'faculties.id AS faculty_id',
                 'users.first_name',
                 'users.last_name',
                 'faculties.section',
@@ -230,6 +231,7 @@ class AdminController extends Controller
 
         $companies = $companies_partial
             ->select(
+                'companies.id AS company_id',
                 'companies.company_name'
             )
             ->orderBy('companies.company_name')
@@ -376,5 +378,42 @@ class AdminController extends Controller
         $new_company->save();
 
         return back();
+    }
+
+    public function deleteStudent(int $student_number) {
+        User::where('role', User::ROLE_STUDENT)
+            ->where('role_id', $student_number)
+            ->firstOrFail()
+            ->delete();
+
+        Student::find($student_number)->delete();
+    }
+
+    public function deleteSupervisor(int $supervisor_id) {
+        User::where('role', User::ROLE_SUPERVISOR)
+            ->where('role_id', $supervisor_id)
+            ->firstOrFail()
+            ->delete();
+
+        Supervisor::find($supervisor_id)->delete();
+    }
+
+    public function deleteFaculty(int $faculty_id) {
+        Student::where('faculty_id', $faculty_id)
+            ->update(['faculty_id' => null]);
+
+        User::where('role', User::ROLE_FACULTY)
+            ->where('role_id', $faculty_id)
+            ->firstOrFail()
+            ->delete();
+
+        Faculty::find($faculty_id)->delete();
+    }
+
+    public function deleteCompany(int $company_id) {
+        Supervisor::where('company_id', $company_id)
+            ->update(['company_id' => null]);
+
+        Company::find($company_id)->delete();
     }
 }
