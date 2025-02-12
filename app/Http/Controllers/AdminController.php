@@ -149,7 +149,8 @@ class AdminController extends Controller
                 'users.last_name',
                 'companies.company_name',
             )
-            ->orderBy('users.last_name', 'users.first_name')
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
             ->get();
 
         $supervisors = [];
