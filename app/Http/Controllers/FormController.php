@@ -157,7 +157,7 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;
@@ -174,7 +174,7 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;
@@ -201,7 +201,7 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;
@@ -218,7 +218,7 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;
@@ -245,7 +245,7 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;
@@ -262,7 +262,7 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
                     } elseif (!$role_id) {
                         $role_id = $user->role_id;

@@ -54,11 +54,11 @@ class FileSubmissionContoller extends Controller
         ]);
     }
 
-    public function submitDocument(Request $request, int $requirement_id, ?int $student_number): RedirectResponse
+    public function submitDocument(Request $request, int $requirement_id, ?int $student_number = null): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role === User::ROLE_STUDENT) {
-            if ($student_number && $student_number !== $user->role_id) {
+            if ($student_number && $student_number != $user->role_id) {
                 abort(401);
             } elseif (!$student_number) {
                 $student_number = $user->role_id;
