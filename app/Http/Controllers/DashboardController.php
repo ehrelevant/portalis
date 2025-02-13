@@ -66,9 +66,17 @@ class DashboardController extends Controller
                 return Inertia::render('dashboard/(student)/RequirementsDashboard', $props);
             case 'during':
             case 'post':
-                $student = Auth::user();
-                $student_user_id = $student->id;
-                $student_number = $student->role_id;
+                $student_user = Auth::user();
+                $student_user_id = $student_user->id;
+                $student_number = $student_user->role_id;
+
+                $student = DB::table('students')
+                    ->where('student_number', $student_number)
+                    ->firstOrFail();
+
+                if (!$student->faculty_id) {
+                    return Inertia::render('dashboard/(student)/Unenrolled');
+                }
 
                 $form_statuses = DB::table('form_statuses')
                     ->where('user_id', $student_user_id)
