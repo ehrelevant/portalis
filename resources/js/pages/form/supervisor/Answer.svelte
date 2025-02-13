@@ -84,6 +84,9 @@
                                         .categorized_ratings[category_id][
                                         rating_id
                                     ]}
+                                    title={categorized_rating_questions[
+                                        category_id
+                                    ][rating_id].tooltip}
                                 />
                             {/each}
                         {/each}

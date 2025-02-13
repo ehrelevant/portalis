@@ -62,7 +62,8 @@ class FormController extends Controller
                     'rating_questions.id AS rating_question_id',
                     'rating_questions.min_score',
                     'rating_questions.max_score',
-                    'rating_questions.criterion'
+                    'rating_questions.criterion',
+                    'rating_questions.tooltip'
                 )
                 ->get();
 
@@ -72,6 +73,7 @@ class FormController extends Controller
                         'criterion' => $rating_question->criterion,
                         'min_score' =>  $rating_question->min_score,
                         'max_score' =>  $rating_question->max_score,
+                        'tooltip' => $rating_question->tooltip
                     ];
             }
         }

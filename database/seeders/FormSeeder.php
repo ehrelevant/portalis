@@ -95,30 +95,51 @@ class FormSeeder extends Seeder
             'criterion' => 'Work Ethic (10)',
             'min_score' => 0,
             'max_score' => 10,
+            'tooltip' => "[0-3] Performs very little of the assigned work; Some of the assigned work never gets completed and reflects very little effort; Often needs reminding; Failed to demonstrate integrity in speech or action at all times.
+[4-6] Performs most of the assigned work though sometimes needs reminding; Work reflects some effort, and is sometimes accomplished late.
+[7-10] Performs all of the assigned work without any need of reminders; Work reflects best effort, and is ready on time or sometimes ahead of time; Demonstrates integrity in speech and action at all times.
+
+",
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
             'criterion' => 'Attitude and Personality (10)',
             'min_score' => 0,
             'max_score' => 10,
+            'tooltip' => "[0-3] Displays negative attitude towards the tasks; Does not get along well with most people; Often publicly critical of others; Does not dress appropriately most of the time.
+[4-6] Displays a positive attitude towards the assigned tasks most of the time but encounters difficulty in getting along with some people; Sometimes publicly critical of others; Wears inappropriate attire in one or two absences.
+[7-10] Displays a positive attitude towards the assigned tasks; Never publicly critical of others; Wears appropriate attire
+",
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
             'criterion' => 'Attendance and Punctuality (10)',
             'min_score' => 0,
             'max_score' => 10,
+            'tooltip' => "[0-3] The intern is often tardy or has incurred more than three unexcused absences.
+[4-6] The intern has incurred no more than three tardiness and/or unexcused absences.
+[7-10] Generally, the intern reports in time with no more than one unexcused absence and/or tardiness.
+",
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 1,
             'criterion' => 'Respect for Authority (10)',
             'min_score' => 0,
             'max_score' => 10,
+            'tooltip' => "[0-3] Often rude or impolite; Rarely listens to and supports the efforts of others; Often disregards rules and regulations.
+[4-6] Courteous and respectful to superiors and colleagues most of the time; Often listens to and supports the efforts of others; Obeys rules and regulations most of the time.
+[7-10] Courteous and respectful to superiors and colleagues at all times; Listens and supports the efforts of others; Obeys rules and regulations at all times.
+",
         ]);
         RatingQuestion::factory()->create([
             'rating_category_id' => 2,
             'criterion' => 'Technical Output (60)',
             'min_score' => 0,
             'max_score' => 60,
+            'tooltip' => "[0-10] No technical output, or extremely poor technical output.
+[11-20] Some technical output, but of low quality.
+[21-60] Good technical output that meets specifications.
+",
         ]);
 
         RatingQuestion::factory()->create([
