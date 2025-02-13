@@ -8,6 +8,7 @@
 
     export let students;
     export let form_infos;
+    export let supervisors;
 
     /** @type {string} */
     let searchQuery = '';
@@ -56,7 +57,19 @@
                         >Section</th
                     >
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Supervisor Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company Interned</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Email</th
                     >
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
@@ -73,6 +86,10 @@
                         section,
                         company,
                         form_statuses,
+                        supervisor_id,
+                        email,
+                        wordpress_name,
+                        wordpress_email,
                     } = student}
                     <tr class="border-t-2 {borderColor}">
                         <th scope="row" class="border-r-2 p-2 {borderColor}"
@@ -84,8 +101,20 @@
                         <td class="border-r-2 p-2 text-center {borderColor}"
                             >{section}</td
                         >
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{supervisors[supervisor_id].last_name}, {supervisors[
+                                supervisor_id
+                            ].first_name}</td
+                        >
                         <td class="border-r-2 p-2 text-center {borderColor}"
                             >{company}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_name}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_email}</td
                         >
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"

@@ -45,6 +45,9 @@ class FacultyController extends Controller
                         'users.first_name',
                         'users.last_name',
                         'faculties.section',
+                        'users.email',
+                        'students.wordpress_name',
+                        'students.wordpress_email',
                         'students.has_dropped',
                     )
                     ->orderBy('students.student_number')
@@ -63,6 +66,9 @@ class FacultyController extends Controller
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
                         'section' => $student_info->section,
+                        'email' => $student_info->email,
+                        'wordpress_name' => $student_info->wordpress_name,
+                        'wordpress_email' => $student_info->wordpress_email,
                         'has_dropped' => $student_info->has_dropped,
                         'submissions' => $student_statuses,
                     ];
@@ -95,7 +101,11 @@ class FacultyController extends Controller
                         'users.first_name',
                         'users.last_name',
                         'faculties.section',
-                        'companies.company_name'
+                        'companies.company_name',
+                        'students.supervisor_id',
+                        'users.email',
+                        'students.wordpress_name',
+                        'students.wordpress_email',
                     )
                     ->orderBy('students.student_number')
                     ->get();
@@ -114,6 +124,10 @@ class FacultyController extends Controller
                         'section' => $student_info->section,
                         'company' => $student_info->company_name ?? '',
                         'form_statuses' => $form_statuses,
+                        'supervisor_id' => $student_info->supervisor_id,
+                        'email' => $student_info->email,
+                        'wordpress_name' => $student_info->wordpress_name,
+                        'wordpress_email' => $student_info->wordpress_email,
                     ]);
                 }
 
@@ -127,9 +141,22 @@ class FacultyController extends Controller
                     ->get()
                     ->keyBy('id');
 
+                $supervisors = DB::table('users')
+                    ->where('role', 'supervisor')
+                    ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+                    ->select(
+                        'supervisors.id',
+                        'users.first_name',
+                        'users.last_name',
+                    )
+                    ->get()
+                    ->keyBy('id')
+                    ->toArray();
+
                 return Inertia::render('dashboard/(faculty)/students/FormsList', [
                     'students' => $students,
                     'form_infos' => $form_infos,
+                    'supervisors' => $supervisors,
                 ]);
         }
     }

@@ -50,7 +50,10 @@ class AdminController extends Controller
                 'faculties.section',
                 'students.has_dropped',
                 'supervisors.id AS supervisor_id',
-                'companies.company_name'
+                'companies.company_name',
+                'users.email',
+                'students.wordpress_name',
+                'students.wordpress_email',
             )
             ->orderBy('students.student_number')
             ->get();
@@ -75,6 +78,9 @@ class AdminController extends Controller
                 'section' => $student_info->section,
                 'supervisor_id' => $student_info->supervisor_id,
                 'company' => $student_info->company_name,
+                'email' => $student_info->email,
+                'wordpress_name' => $student_info->wordpress_name,
+                'wordpress_email' => $student_info->wordpress_email,
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
@@ -186,6 +192,7 @@ class AdminController extends Controller
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
                 'users.last_name',
+                'users.email',
                 'companies.id AS company_id',
             )
             ->orderBy('users.last_name')
@@ -203,6 +210,7 @@ class AdminController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
+                'email' => $supervisor_info->email,
                 'company_id' => $supervisor_info->company_id,
                 'form_statuses' => $form_statuses,
             ]);
@@ -245,6 +253,7 @@ class AdminController extends Controller
                 'faculties.id AS faculty_id',
                 'users.first_name',
                 'users.last_name',
+                'users.email',
                 'faculties.section',
             )
             ->orderBy('users.last_name')

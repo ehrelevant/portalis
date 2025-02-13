@@ -14,7 +14,6 @@
     export let form_infos;
     export let companies;
     export let companySupervisors;
-    $: console.log(companySupervisors);
 
     /** @type {string} */
     let searchQuery = '';
@@ -120,6 +119,15 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company Interned</th
                     >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Email</th
+                    >
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -144,6 +152,9 @@
                         section: student_section,
                         supervisor_id,
                         company,
+                        email,
+                        wordpress_name,
+                        wordpress_email,
                         form_statuses,
                         has_dropped,
                         submissions,
@@ -226,8 +237,15 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="border-r-2 p-2 {borderColor}"
+                        <td class="border-r-2 p-2 text-center {borderColor}"
                             >{company ?? ''}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_name}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_email}</td
                         >
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
@@ -356,6 +374,14 @@
                         {/each}
                     </optgroup>
                 {/each}
+                <optgroup label="No Company">
+                    {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                        {@const { first_name, last_name } = companySupervisor}
+                        <option value={companySupervisorId}
+                            >{last_name}, {first_name}</option
+                        >
+                    {/each}
+                </optgroup>
             </select>
 
             <label for="wordpress name"><Required />Wordpress Username</label>

@@ -93,6 +93,9 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company</th
                     >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -108,6 +111,7 @@
                         supervisor_id,
                         first_name,
                         last_name,
+                        email,
                         company_id: supervisor_company_id,
                         form_statuses,
                     } = supervisor}
@@ -118,7 +122,7 @@
                         <td class="border-r-2 p-2 text-center {borderColor}">
                             <div class="flex items-center justify-center">
                                 <select
-                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
                                         setCompany(evt, supervisor_id)}
                                 >
@@ -137,6 +141,7 @@
                                 </select>
                             </div>
                         </td>
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
