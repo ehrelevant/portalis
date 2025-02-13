@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Faculty;
 use App\Models\Form;
+use App\Models\FormAnswer;
 use App\Models\FormStatus;
+use App\Models\OpenAnswer;
+use App\Models\RatingScore;
 use App\Models\Requirement;
 use App\Models\Student;
+use App\Models\Submission;
 use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
@@ -400,20 +404,56 @@ class AdminController extends Controller
 
     public function deleteStudent(int $student_number)
     {
-        User::where('role', User::ROLE_STUDENT)
+        $user = User::where('role', User::ROLE_STUDENT)
             ->where('role_id', $student_number)
-            ->firstOrFail()
-            ->delete();
+            ->firstOrFail();
+
+        $submission_statuses = SubmissionStatus::where('student_number', $student_number)->get();
+        foreach ($submission_statuses as $submission_status) {
+            Submission::where('submission_status_id', $submission_status->id)->delete();
+            $submission_status->delete();
+        }
+
+        $form_statuses = FormStatus::where('user_id', $user->id)->get();
+        foreach ($form_statuses as $form_status) {
+            $form_answers = FormAnswer::where('form_status_id', $form_status->id)->get();
+
+            foreach ($form_answers as $form_answer) {
+                RatingScore::where('form_answer_id', $form_answer->id)->delete();
+                OpenAnswer::where('form_answer_id', $form_answer->id)->delete();
+
+                $form_answer->delete();
+            }
+            $form_status->delete();
+        }
 
         Student::find($student_number)->delete();
     }
 
     public function deleteSupervisor(int $supervisor_id)
     {
-        User::where('role', User::ROLE_SUPERVISOR)
+        $user = User::where('role', User::ROLE_SUPERVISOR)
             ->where('role_id', $supervisor_id)
-            ->firstOrFail()
-            ->delete();
+            ->firstOrFail();
+
+        FormAnswer::where('form_status_id', $user->id)->delete();
+        $form_statuses = FormStatus::where('user_id', $user->id)->get();
+        foreach ($form_statuses as $form_status) {
+            $form_answers = FormAnswer::where('form_status_id', $form_status->id)->get();
+
+            foreach ($form_answers as $form_answer) {
+                RatingScore::where('form_answer_id', $form_answer->id)->delete();
+                OpenAnswer::where('form_answer_id', $form_answer->id)->delete();
+
+                $form_answer->delete();
+            }
+            $form_status->delete();
+        }
+
+        Student::where('supervisor_id', $supervisor_id)
+            ->update(['supervisor_id' => null]);
+
+        $user->delete();
 
         Supervisor::find($supervisor_id)->delete();
     }
