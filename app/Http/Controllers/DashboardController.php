@@ -8,6 +8,7 @@ use App\Models\RatingScore;
 use App\Models\User;
 use App\Models\WebsiteState;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -45,6 +46,10 @@ class DashboardController extends Controller
                 $submission_statuses = DB::table('submission_statuses')
                     ->where('student_number', $student_number)
                     ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
+                    ->where(function ($query) {
+                        $query->whereRaw("requirements.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('requirements.deadline');
+                    })
                     ->select(
                         'requirements.id AS requirement_id',
                         'requirements.requirement_name',
@@ -74,6 +79,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
@@ -115,6 +124,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
@@ -147,6 +160,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
