@@ -10,6 +10,7 @@
 
     export let supervisors;
     export let form_infos;
+    export let companies;
 
     /** @type {string} */
     let searchQuery = '';
@@ -30,6 +31,7 @@
         middle_name: null,
         last_name: null,
         email: null,
+        company_id: null,
     });
 
     function addUser() {
@@ -182,6 +184,18 @@
                 bind:value={$addUserForm.email}
                 required
             />
+
+            <label for="section">Company</label>
+            <select
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.company_id}
+            >
+                <option selected value />
+                {#each companies as company}
+                    {@const { id, company_name } = company}
+                    <option value={id}>{company_name}</option>
+                {/each}
+            </select>
 
             <input
                 class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"

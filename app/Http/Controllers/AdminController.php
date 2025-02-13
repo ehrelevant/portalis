@@ -205,9 +205,12 @@ class AdminController extends Controller
             ->get()
             ->keyBy('id');
 
+        $companies = DB::table('companies')->get();
+
         return Inertia::render('dashboard/(admin)/supervisors/SupervisorsList', [
             'supervisors' => $supervisors,
             'form_infos' => $form_infos,
+            'companies' => $companies,
         ]);
     }
 
@@ -332,10 +335,11 @@ class AdminController extends Controller
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
+            'company_id' => ['nullable', 'numeric', 'integer'],
         ]);
 
         $new_supervisor = new Supervisor();
-        $new_supervisor->company_id = 1; // !PLACEHOLDER
+        $new_supervisor->company_id = $values['company_id'];
         $new_supervisor->save();
 
         $new_user = new User();
