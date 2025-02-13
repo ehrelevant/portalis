@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
             if (env('SEND_PIN_TO_EMAIL', false)) {
                 return [
                     Limit::perHour(10)->by($request->ip()),
-                    Limit::perMinute(1)->by($request->ip())
+                    Limit::perMinute(1)->by($request->ip()),
                 ];
             } else {
                 return Limit::none();

@@ -240,7 +240,7 @@ class FormSeeder extends Seeder
         }
         FormRatingQuestion::factory()->create([
             'form_id' => 4,
-            'rating_question_id' => 14
+            'rating_question_id' => 14,
         ]);
 
         // Form Status Setup

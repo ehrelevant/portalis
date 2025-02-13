@@ -25,10 +25,10 @@ class FileSubmissionContoller extends Controller
         if ($user->role === User::ROLE_STUDENT) {
             if ($student_number && $student_number !== $user->role_id) {
                 abort(401);
-            } else if (!$student_number) {
+            } elseif (!$student_number) {
                 $student_number = $user->role_id;
             }
-        } else if ($user->role === User::ROLE_ADMIN) {
+        } elseif ($user->role === User::ROLE_ADMIN) {
             if (!$student_number) {
                 abort(404);
             }
@@ -60,10 +60,10 @@ class FileSubmissionContoller extends Controller
         if ($user->role === User::ROLE_STUDENT) {
             if ($student_number && $student_number !== $user->role_id) {
                 abort(401);
-            } else if (!$student_number) {
+            } elseif (!$student_number) {
                 $student_number = $user->role_id;
             }
-        } else if ($user->role === User::ROLE_ADMIN) {
+        } elseif ($user->role === User::ROLE_ADMIN) {
             if (!$student_number) {
                 abort(404);
             }
@@ -94,7 +94,7 @@ class FileSubmissionContoller extends Controller
         $submission->save();
 
         if ($user->role === User::ROLE_ADMIN) {
-            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number );
+            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number);
         } else {
             return redirect('/dashboard');
         }
@@ -158,7 +158,7 @@ class FileSubmissionContoller extends Controller
             'requirementId' => $requirement_id,
             'requirementName' => $requirement_name,
             'status' => $submission_status,
-            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN)
+            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN),
         ]);
     }
 
