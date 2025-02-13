@@ -137,41 +137,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function assignStudentSection(int $student_number, string $new_section = '')
-    {
-        $faculty_sections = DB::table('faculties')
-            ->pluck('id', 'section')
-            ->toArray();
-
-        if ($new_section === '') {
-            // If section is set to nothing, set section to null
-            $target_student = Student::find($student_number);
-            $target_student->faculty_id = null;
-            $target_student->has_dropped = false;
-            $target_student->save();
-        } elseif ($new_section === 'DRP') {
-            // If section is set to DRP, flag student as DRP and set section to NULL in database
-            $target_student = Student::find($student_number);
-            $target_student->faculty_id = null;
-            $target_student->has_dropped = true;
-            $target_student->save();
-        } else {
-            $new_faculty_id = $faculty_sections[$new_section] ?? null;
-
-            if ($new_faculty_id) {
-                // If new section exists, save change in database
-                $target_student = Student::find($student_number);
-                $target_student->faculty_id = $new_faculty_id;
-                $target_student->has_dropped = false;
-                $target_student->save();
-            }
-            // Otherwise, do not update database
-            // This case only matters if an irregular section is passed
-        }
-
-        return back();
-    }
-
     public function showSupervisors(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
