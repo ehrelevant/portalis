@@ -29,7 +29,10 @@ Route::middleware(['guest'])->group(function () {
     });
 
     Route::post('/login', [LoginController::class, 'authenticate']);
-    Route::post('/login/send_pin', [LoginController::class, 'sendPin']);
+
+    Route::middleware(['throttle:pin_email'])->group(function () {
+        Route::post('/login/send-pin', [LoginController::class, 'sendPin']);
+    });
 });
 
 Route::middleware(['auth'])->group(function () {

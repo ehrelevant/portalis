@@ -8,10 +8,22 @@
         pin: null,
     };
 
+    let rateLimitTimer = 0;
+    $: isRateLimited = rateLimitTimer > 0;
+
     function handleSubmit(evt) {
         switch (evt.submitter.name) {
             case 'send_pin':
-                router.post('/login/send_pin', { email: values.email });
+                router.post('/login/send-pin', { email: values.email });
+
+                rateLimitTimer = 60;
+                const countdown = setInterval(() => {
+                    rateLimitTimer -= 1;
+                    if (rateLimitTimer <= 0) {
+                        rateLimitTimer = 0;
+                        clearInterval(countdown);
+                    }
+                }, 1000);
                 break;
             case 'login':
                 router.post('/login', values);
@@ -54,10 +66,11 @@
                             />
                         </label>
                         <input
-                            class="ml-2 w-1/2 cursor-pointer rounded-2xl border-4 p-1 text-xl transition-all ease-in hover:bg-light-secondary-text dark:hover:bg-dark-secondary-text"
+                            class="ml-2 w-32 rounded-2xl border-4 p-1 text-xl transition-all ease-in enabled:cursor-pointer enabled:hover:bg-light-secondary-text dark:enabled:hover:bg-dark-secondary-text"
                             type="submit"
                             name="send_pin"
-                            value="Send PIN"
+                            value={isRateLimited ? rateLimitTimer : 'Send PIN'}
+                            disabled={isRateLimited}
                         />
                     </div>
                     {#if errors.pin}
