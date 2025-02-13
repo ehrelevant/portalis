@@ -1,15 +1,19 @@
 <script>
-    import { router, Link } from '@inertiajs/svelte';
+    import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
+    import Required from '@/js/shared/components/Required.svelte';
+    import Modal from '@/js/shared/components/Modal.svelte';
 
     export let students;
     export let requirements;
     export let sections;
     export let form_infos;
+    export let companies;
+    export let companySupervisors;
 
     /** @type {string} */
     let searchQuery = '';
@@ -28,6 +32,34 @@
                 preserveScroll: true,
             },
         );
+    }
+
+    let addFormElement;
+    let isModalOpen;
+
+    function openModal() {
+        isModalOpen = true;
+    }
+
+    let addUserForm = useForm({
+        student_number: null,
+        first_name: null,
+        middle_name: null,
+        last_name: null,
+        email: null,
+        section: null,
+        supervisor_id: null,
+        wordpress_name: null,
+        wordpress_email: null,
+    });
+
+    function addUser() {
+        if (!addFormElement.checkValidity()) {
+            addFormElement.reportValidity();
+            return;
+        }
+        $addUserForm.post('/dashboard/admin/students/add');
+        isModalOpen = false;
     }
 
     /** @type {string} */
@@ -53,9 +85,9 @@
         />
     </form>
 
-    <!-- List of Supervisors -->
+    <!-- List of Students -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Student Submissions</h2>
+        <h2 slot="summary" class="text-2xl">Students</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -84,6 +116,9 @@
                             >{form_name}</th
                         >
                     {/each}
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Actions</th
+                    >
                 </tr>
                 {#each students as student}
                     {@const {
@@ -128,9 +163,7 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company}</td
-                        >
+                        <td class="border-r-2 p-2 {borderColor}">{company}</td>
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
@@ -151,13 +184,24 @@
                                 />
                             </td>
                         {/each}
+                        <td class="border-l-2 p-2 text-center {borderColor}"
+                            ><Link
+                                href="/dashboard/admin/students/delete/{student_number}"
+                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                method="delete">Delete</Link
+                            >
+                        </td>
                     </tr>
                 {/each}
             </table>
         </div>
     </Accordion>
 
-    <div class="flex w-full justify-end">
+    <div class="flex w-full justify-between">
+        <button
+            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            on:click={openModal}>Add Student</button
+        >
         <Link
             href="/dashboard"
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
@@ -165,3 +209,113 @@
         >
     </div>
 </div>
+
+<Modal bind:isOpen={isModalOpen}>
+    <form
+        bind:this={addFormElement}
+        class="flex flex-col gap-4"
+        on:submit|preventDefault={addUser}
+    >
+        <div class="grid grid-cols-[auto,1fr] items-center gap-4">
+            <label for="student number"><Required />Student Number</label>
+            <input
+                name="student number"
+                type="number"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.student_number}
+                required
+            />
+
+            <label for="first name"><Required />First Name</label>
+            <input
+                name="first name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.first_name}
+                required
+            />
+
+            <label for="middle name"><Required />Middle Name</label>
+            <input
+                name="middle name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.middle_name}
+                required
+            />
+
+            <label for="last name"><Required />Last Name</label>
+            <input
+                name="last name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.last_name}
+                required
+            />
+
+            <label for="email"><Required />Email</label>
+            <input
+                name="emai"
+                type="email"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.email}
+                required
+            />
+
+            <label for="section">Section</label>
+            <select
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.section}
+            >
+                <option selected value />
+                {#each sections as section}
+                    <option value={section}>{section}</option>
+                {/each}
+            </select>
+
+            <label for="supervisor">Supervisor</label>
+            <select
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.supervisor_id}
+            >
+                <option selected value />
+                {#each companies as company}
+                    {@const { id: company_id, company_name } = company}
+                    <optgroup label={company_name}>
+                        {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                            {@const { first_name, last_name } =
+                                companySupervisor}
+                            <option value={companySupervisorId}
+                                >{last_name}, {first_name}</option
+                            >
+                        {/each}
+                    </optgroup>
+                {/each}
+            </select>
+
+            <label for="wordpress name"><Required />Wordpress Username</label>
+            <input
+                name="wordpress name"
+                type="text"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.wordpress_name}
+                required
+            />
+
+            <label for="wordpress email"><Required />Wordpress Email</label>
+            <input
+                name="wordpress email"
+                type="email"
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.wordpress_email}
+                required
+            />
+        </div>
+
+        <input
+            class="cursor-pointer rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
+            type="submit"
+            value="Add Student"
+        />
+    </form>
+</Modal>

@@ -80,6 +80,18 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
         Route::get('/dashboard/admin/students', [AdminController::class, 'showStudents']);
         Route::get('/dashboard/admin/supervisors', [AdminController::class, 'showSupervisors']);
+        Route::get('/dashboard/admin/companies', [AdminController::class, 'showCompanies']);
+        Route::get('/dashboard/admin/faculties', [AdminController::class, 'showFaculties']);
+
+        Route::post('/dashboard/admin/students/add', [AdminController::class, 'addStudent']);
+        Route::post('/dashboard/admin/supervisors/add', [AdminController::class, 'addSupervisor']);
+        Route::post('/dashboard/admin/companies/add', [AdminController::class, 'addCompany']);
+        Route::post('/dashboard/admin/faculties/add', [AdminController::class, 'addFaculty']);
+
+        Route::delete('/dashboard/admin/students/delete/{student_number}', [AdminController::class, 'deleteStudent']);
+        Route::delete('/dashboard/admin/supervisors/delete/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
+        Route::delete('/dashboard/admin/companies/delete/{company_id}', [AdminController::class, 'deleteCompany']);
+        Route::delete('/dashboard/admin/faculties/delete/{faculty_id}', [AdminController::class, 'deleteFaculty']);
     });
 
     Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);

@@ -4,19 +4,16 @@
     import Header from '@shared/components/InternshipHeader.svelte';
     import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
-    import StatusCell from '@/js/shared/components/StatusCell.svelte';
     import Modal from '@/js/shared/components/Modal.svelte';
     import Required from '@/js/shared/components/Required.svelte';
 
-    export let supervisors;
-    export let form_infos;
-    export let companies;
+    export let faculties;
 
     /** @type {string} */
     let searchQuery = '';
 
     function search() {
-        router.get(`/dashboard/admin/supervisors?search=${searchQuery}`);
+        router.get(`/dashboard/admin/faculties?search=${searchQuery}`);
     }
 
     let addFormElement;
@@ -31,7 +28,7 @@
         middle_name: null,
         last_name: null,
         email: null,
-        company_id: null,
+        section: null,
     });
 
     function addUser() {
@@ -39,7 +36,7 @@
             addFormElement.reportValidity();
             return;
         }
-        $addUserForm.post('/dashboard/admin/supervisors/add');
+        $addUserForm.post('/dashboard/admin/faculties/add');
         isModalOpen = false;
     }
 
@@ -48,7 +45,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Supervisor List" />
+    <Header txt="Faculties List" />
 
     <!-- Search Function -->
     <form
@@ -66,9 +63,9 @@
         />
     </form>
 
-    <!-- List of Supervisors -->
+    <!-- List of Faculties -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Supervisors</h2>
+        <h2 slot="summary" class="text-2xl">Faculties</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -78,47 +75,24 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Name</th
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Company</th
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Section</th
                     >
-                    {#each Object.entries(form_infos) as [_, form_info]}
-                        {@const { form_name } = form_info}
-                        <th scope="col" class="border-l-2 p-2 {borderColor}"
-                            >{form_name}</th
-                        >
-                    {/each}
                     <th scope="col" class="border-l-2 p-2 {borderColor}"
                         >Actions</th
                     >
                 </tr>
-                {#each supervisors as supervisor}
-                    {@const {
-                        supervisor_id,
-                        first_name,
-                        last_name,
-                        company_name,
-                        form_statuses,
-                    } = supervisor}
+                {#each faculties as faculty}
+                    {@const { faculty_id, first_name, last_name, section } =
+                        faculty}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company_name}</td
-                        >
-                        {#each Object.entries(form_statuses) as [form_id, form_status]}
-                            <td class="border-l-2 p-2 text-center {borderColor}"
-                                ><StatusCell
-                                    isAdmin
-                                    status={form_status}
-                                    href="/form/{form_infos[form_id]
-                                        .short_name}/answer/{supervisor_id}"
-                                />
-                            </td>
-                        {/each}
+                        <td class="border-l-2 p-2 {borderColor}">{section}</td>
                         <td class="border-l-2 p-2 text-center {borderColor}"
                             ><Link
-                                href="/dashboard/admin/supervisors/delete/{supervisor_id}"
+                                href="/dashboard/admin/faculties/delete/{faculty_id}"
                                 class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                 method="delete">Delete</Link
                             >
@@ -132,7 +106,7 @@
     <div class="flex w-full justify-between">
         <button
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            on:click={openModal}>Add Supervisor</button
+            on:click={openModal}>Add Faculty</button
         >
         <Link
             href="/dashboard"
@@ -185,22 +159,19 @@
                 required
             />
 
-            <label for="section">Company</label>
-            <select
+            <label for="section"><Required />Section</label>
+            <input
+                name="section"
+                type="text"
                 class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.company_id}
-            >
-                <option selected value />
-                {#each companies as company}
-                    {@const { id, company_name } = company}
-                    <option value={id}>{company_name}</option>
-                {/each}
-            </select>
+                bind:value={$addUserForm.section}
+                required
+            />
 
             <input
                 class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
                 type="submit"
-                value="Add Supervisor"
+                value="Add Faculty"
             />
         </div>
     </form>

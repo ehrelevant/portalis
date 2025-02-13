@@ -84,8 +84,8 @@ class FacultyController extends Controller
             case 'post':
                 $students_info = $users_partial
                     ->join('students', 'users.role_id', '=', 'students.student_number')
-                    ->join('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
-                    ->join('companies', 'companies.id', '=', 'supervisors.company_id')
+                    ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+                    ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
                     ->whereNotNull('section')
                     ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
                     ->select(
@@ -111,7 +111,7 @@ class FacultyController extends Controller
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
                         'section' => $student_info->section,
-                        'company' => $student_info->company_name,
+                        'company' => $student_info->company_name ?? '',
                         'form_statuses' => $form_statuses,
                     ]);
                 }
@@ -211,7 +211,7 @@ class FacultyController extends Controller
 
         $supervisors_info = $users_partial
             ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
-            ->join('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
             ->select(
                 'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
@@ -235,7 +235,7 @@ class FacultyController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
-                'company_name' => $supervisor_info->company_name,
+                'company_name' => $supervisor_info->company_name ?? '',
                 'form_statuses' => $form_statuses,
             ]);
         }
