@@ -19,6 +19,18 @@
         router.get(`/dashboard/admin/supervisors?search=${searchQuery}`);
     }
 
+    function setCompany(evt, supervisorId) {
+        const companyId = evt.target.value;
+
+        router.put(
+            `/supervisors/${supervisorId}/assign/company/${companyId}`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
     let addFormElement;
     let isModalOpen;
 
@@ -96,16 +108,35 @@
                         supervisor_id,
                         first_name,
                         last_name,
-                        company_name,
+                        company_id: supervisor_company_id,
                         form_statuses,
                     } = supervisor}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company_name}</td
-                        >
+                        <td class="border-r-2 p-2 text-center {borderColor}">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setCompany(evt, supervisor_id)}
+                                >
+                                    <option
+                                        selected={!supervisor_company_id}
+                                        value
+                                    />
+                                    {#each companies as company}
+                                        {@const { id, company_name } = company}
+                                        <option
+                                            selected={id ===
+                                                supervisor_company_id}
+                                            value={id}>{company_name}</option
+                                        >
+                                    {/each}
+                                </select>
+                            </div>
+                        </td>
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell

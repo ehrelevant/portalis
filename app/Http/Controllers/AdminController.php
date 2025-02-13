@@ -72,7 +72,7 @@ class AdminController extends Controller
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
-                'company' => $student_info->company_name ?? '',
+                'company' => $student_info->company_name,
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
@@ -174,7 +174,7 @@ class AdminController extends Controller
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
                 'users.last_name',
-                'companies.company_name',
+                'companies.id AS company_id',
             )
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
@@ -191,7 +191,7 @@ class AdminController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
-                'company_name' => $supervisor_info->company_name ?? '',
+                'company_id' => $supervisor_info->company_id,
                 'form_statuses' => $form_statuses,
             ]);
         }

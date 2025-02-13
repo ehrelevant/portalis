@@ -54,8 +54,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
     Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
 
-    Route::put('/dashboard/students/{student_number}/assign/section', [FacultyController::class, 'assignStudentSection']);
-    Route::put('/dashboard/students/{student_number}/assign/section/{new_section}', [FacultyController::class, 'assignStudentSection']);
+    Route::put('/students/{student_number}/assign/section/{new_section?}', [FacultyController::class, 'assignStudentSection']);
+    Route::put('/students/{student_number}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
+    Route::put('/supervisors/{supervisor_id}/assign/company/{company_id?}', [FacultyController::class, 'assignSupervisorCompany']);
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);

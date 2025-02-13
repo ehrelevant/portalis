@@ -7,6 +7,7 @@ use App\Models\ReportStatus;
 use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\SubmissionStatus;
+use App\Models\Supervisor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,11 +52,11 @@ class FacultyController extends Controller
 
                 foreach ($students_info as $student_info) {
                     $student_statuses = DB::table('submission_statuses')
-                    ->where('student_number', $student_info->student_number)
-                    ->select(
-                        'submission_statuses.requirement_id',
-                        'submission_statuses.status',
-                    )->get();
+                        ->where('student_number', $student_info->student_number)
+                        ->select(
+                            'submission_statuses.requirement_id',
+                            'submission_statuses.status',
+                        )->get();
 
                     $new_student = [
                         'student_number' => $student_info->student_number,
@@ -130,11 +131,10 @@ class FacultyController extends Controller
                     'students' => $students,
                     'form_infos' => $form_infos,
                 ]);
-
         }
     }
 
-    public function assignStudentSection(int $student_number, string $new_section = '')
+    public function assignStudentSection(int $student_number, ?string $new_section = null)
     {
         $faculty_sections = DB::table('faculties')
             ->pluck('id', 'section')
@@ -162,9 +162,25 @@ class FacultyController extends Controller
                 $target_student->has_dropped = false;
                 $target_student->save();
             }
-            // Otherwise, do not update database
-            // This case only matters if an irregular section is passed
         }
+
+        return back();
+    }
+
+    public function assignSupervisorCompany(int $supervisor_id, int $company_id)
+    {
+        $supervisor = Supervisor::find($supervisor_id);
+        $supervisor->company_id = $company_id;
+        $supervisor->save();
+
+        return back();
+    }
+
+    public function assignStudentSupervisor(int $student_id, int $supervisor_id)
+    {
+        $student = Student::find($student_id);
+        $student->supervisor_id = $supervisor_id;
+        $student->save();
 
         return back();
     }

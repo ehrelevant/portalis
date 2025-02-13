@@ -26,7 +26,7 @@
         const sectionName = evt.target.value;
 
         router.put(
-            `/dashboard/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentNumber}/assign/section/${sectionName}`,
             {},
             {
                 preserveScroll: true,
