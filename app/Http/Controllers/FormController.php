@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\FormAnswer;
 use App\Models\FormStatus;
-use App\Models\InternEvaluation;
-use App\Models\InternEvaluationStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
 use App\Models\User;
@@ -15,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class FormController extends Controller
 {

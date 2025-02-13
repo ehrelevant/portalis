@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\ReportStatus;
-use App\Models\Requirement;
-use App\Models\Student;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
 use Illuminate\Http\RedirectResponse;
