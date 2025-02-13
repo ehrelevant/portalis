@@ -167,7 +167,7 @@ class FacultyController extends Controller
             ->pluck('id', 'section')
             ->toArray();
 
-        if ($new_section === '') {
+        if (!$new_section) {
             // If section is set to nothing, set section to null
             $target_student = Student::find($student_number);
             $target_student->faculty_id = null;
