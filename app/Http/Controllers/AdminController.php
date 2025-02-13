@@ -49,6 +49,7 @@ class AdminController extends Controller
                 'users.last_name',
                 'faculties.section',
                 'students.has_dropped',
+                'supervisors.id AS supervisor_id',
                 'companies.company_name'
             )
             ->orderBy('students.student_number')
@@ -72,6 +73,7 @@ class AdminController extends Controller
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
+                'supervisor_id' => $student_info->supervisor_id,
                 'company' => $student_info->company_name,
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
@@ -96,6 +98,16 @@ class AdminController extends Controller
 
         $companies = DB::table('companies')->get();
         $company_supervisors = [];
+
+        $company_supervisors['0'] = DB::table('users')
+            ->where('role', 'supervisor')
+            ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+            ->whereNull('company_id')
+            ->select('supervisors.id', 'users.first_name', 'users.last_name')
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
         foreach ($companies as $company) {
             $company_supervisors_info = DB::table('users')
                 ->where('role', 'supervisor')

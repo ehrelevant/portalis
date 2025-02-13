@@ -167,7 +167,7 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function assignSupervisorCompany(int $supervisor_id, int $company_id)
+    public function assignSupervisorCompany(int $supervisor_id, ?int $company_id = null)
     {
         $supervisor = Supervisor::find($supervisor_id);
         $supervisor->company_id = $company_id;
@@ -176,7 +176,7 @@ class FacultyController extends Controller
         return back();
     }
 
-    public function assignStudentSupervisor(int $student_id, int $supervisor_id)
+    public function assignStudentSupervisor(int $student_id, ?int $supervisor_id = null)
     {
         $student = Student::find($student_id);
         $student->supervisor_id = $supervisor_id;

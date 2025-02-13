@@ -14,6 +14,7 @@
     export let form_infos;
     export let companies;
     export let companySupervisors;
+    $: console.log(companySupervisors);
 
     /** @type {string} */
     let searchQuery = '';
@@ -27,6 +28,18 @@
 
         router.put(
             `/students/${studentNumber}/assign/section/${sectionName}`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function setSupervisor(evt, studentNumber) {
+        const supervisorId = evt.target.value;
+
+        router.put(
+            `/students/${studentNumber}/assign/supervisor/${supervisorId}`,
             {},
             {
                 preserveScroll: true,
@@ -102,6 +115,9 @@
                         >Section</th
                     >
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Supervisor Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company Interned</th
                     >
                     {#each requirements as requirement}
@@ -126,6 +142,7 @@
                         first_name,
                         last_name,
                         section: student_section,
+                        supervisor_id,
                         company,
                         form_statuses,
                         has_dropped,
@@ -141,7 +158,7 @@
                         <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">
                                 <select
-                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
                                         setSection(evt, student_number)}
                                 >
@@ -163,7 +180,55 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="border-r-2 p-2 {borderColor}">{company}</td>
+                        <td class="border-r-2 p-2 {borderColor}">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setSupervisor(evt, student_number)}
+                                >
+                                    <option selected={!supervisor_id} value />
+                                    {#each companies as company}
+                                        {@const {
+                                            id: company_id,
+                                            company_name,
+                                        } = company}
+                                        <optgroup label={company_name}>
+                                            {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                                {@const {
+                                                    id,
+                                                    first_name,
+                                                    last_name,
+                                                } = companySupervisor}
+                                                <option
+                                                    value={companySupervisorId}
+                                                    selected={id ===
+                                                        supervisor_id}
+                                                    >{last_name}, {first_name}</option
+                                                >
+                                            {/each}
+                                        </optgroup>
+                                    {/each}
+                                    <optgroup label="No Company">
+                                        {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                                            {@const {
+                                                id,
+                                                first_name,
+                                                last_name,
+                                            } = companySupervisor}
+                                            <option
+                                                value={companySupervisorId}
+                                                selected={id === supervisor_id}
+                                                >{last_name}, {first_name}</option
+                                            >
+                                        {/each}
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{company ?? ''}</td
+                        >
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
