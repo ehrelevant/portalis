@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/form/{short_name}/submit/{role_id?}', [FormController::class, 'submitForm']);
     Route::get('/form/{short_name}/view/{role_id}', [FormController::class, 'viewForm'])->middleware([EnsureUserHasRole::class . ':faculty,admin']);
 
-    Route::middleware([EnsureUserHasRole::class . ':faculty,admin'])->group(function() {
+    Route::middleware([EnsureUserHasRole::class . ':faculty,admin'])->group(function () {
         Route::put('/students/{student_number}/assign/section/{new_section?}', [FacultyController::class, 'assignStudentSection']);
         Route::put('/students/{student_number}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
         Route::put('/supervisors/{supervisor_id}/assign/company/{company_id?}', [FacultyController::class, 'assignSupervisorCompany']);
