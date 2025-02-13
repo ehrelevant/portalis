@@ -22,12 +22,12 @@
                 : 'text-floating-gray';
 </script>
 
-<div class="flex items-center justify-center">
-    <div class="w-fit justify-center rounded-xl px-2 py-1 {bgColor}">
-        {#if status !== 'unsubmitted' || isAdmin}
-            <a {href} class="{bgColor} {textColor}" target="_blank">{status}</a>
-        {:else}
-            <p class="text-floating-gray">{status}</p>
-        {/if}
-    </div>
-</div>
+{#if status !== 'unsubmitted' || isAdmin}
+    <a class="flex items-center justify-center" {href} target="_blank">
+        <div
+            class="w-fit justify-center rounded-xl px-2 py-1 {bgColor} {textColor}"
+        >
+            {status}
+        </div>
+    </a>
+{/if}
