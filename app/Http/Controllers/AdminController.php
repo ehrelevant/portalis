@@ -452,6 +452,8 @@ class AdminController extends Controller
             $form_status->delete();
         }
 
+        $user->delete();
+
         Student::find($student_number)->delete();
     }
 
