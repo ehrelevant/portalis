@@ -90,11 +90,28 @@ class AdminController extends Controller
             ->get()
             ->keyBy('id');
 
+        $companies = DB::table('companies')->get();
+        $company_supervisors = [];
+        foreach ($companies as $company) {
+            $company_supervisors_info = DB::table('users')
+                ->where('role', 'supervisor')
+                ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+                ->where('company_id', $company->id)
+                ->select('supervisors.id', 'users.first_name', 'users.last_name')
+                ->get()
+                ->keyBy('id')
+                ->toArray();
+
+            $company_supervisors[$company->id] = $company_supervisors_info;
+        }
+
         return Inertia::render('dashboard/(admin)/students/StudentsList', [
             'students' => $students,
             'requirements' => $requirements,
             'sections' => $sections,
             'form_infos' => $form_infos,
+            'companies' => $companies,
+            'companySupervisors' => $company_supervisors,
         ]);
     }
 
@@ -251,13 +268,14 @@ class AdminController extends Controller
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'section' => ['nullable', 'string'],
+            'supervisor_id' => ['nullable', 'numeric', 'integer'],
             'wordpress_name' => ['required', 'string'],
             'wordpress_email' => ['required', 'email:rfc'],
         ]);
 
         $new_student = new Student();
         $new_student->student_number = $values['student_number'];
-        $new_student->supervisor_id = 1; // !PLACEHOLDER
+        $new_student->supervisor_id = $values['supervisor_id'];
         if ($values['section']) {
             $new_student->faculty_id = DB::table('faculties')
                 ->where('section', $values['section'])
@@ -380,7 +398,8 @@ class AdminController extends Controller
         return back();
     }
 
-    public function deleteStudent(int $student_number) {
+    public function deleteStudent(int $student_number)
+    {
         User::where('role', User::ROLE_STUDENT)
             ->where('role_id', $student_number)
             ->firstOrFail()
@@ -389,7 +408,8 @@ class AdminController extends Controller
         Student::find($student_number)->delete();
     }
 
-    public function deleteSupervisor(int $supervisor_id) {
+    public function deleteSupervisor(int $supervisor_id)
+    {
         User::where('role', User::ROLE_SUPERVISOR)
             ->where('role_id', $supervisor_id)
             ->firstOrFail()
@@ -398,7 +418,8 @@ class AdminController extends Controller
         Supervisor::find($supervisor_id)->delete();
     }
 
-    public function deleteFaculty(int $faculty_id) {
+    public function deleteFaculty(int $faculty_id)
+    {
         Student::where('faculty_id', $faculty_id)
             ->update(['faculty_id' => null]);
 
@@ -410,7 +431,8 @@ class AdminController extends Controller
         Faculty::find($faculty_id)->delete();
     }
 
-    public function deleteCompany(int $company_id) {
+    public function deleteCompany(int $company_id)
+    {
         Supervisor::where('company_id', $company_id)
             ->update(['company_id' => null]);
 

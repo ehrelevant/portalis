@@ -12,6 +12,8 @@
     export let requirements;
     export let sections;
     export let form_infos;
+    export let companies;
+    export let companySupervisors;
 
     /** @type {string} */
     let searchQuery = '';
@@ -46,6 +48,7 @@
         last_name: null,
         email: null,
         section: null,
+        supervisor_id: null,
         wordpress_name: null,
         wordpress_email: null,
     });
@@ -267,6 +270,26 @@
                 <option selected value />
                 {#each sections as section}
                     <option value={section}>{section}</option>
+                {/each}
+            </select>
+
+            <label for="supervisor">Supervisor</label>
+            <select
+                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                bind:value={$addUserForm.supervisor_id}
+            >
+                <option selected value />
+                {#each companies as company}
+                    {@const { id: company_id, company_name } = company}
+                    <optgroup label={company_name}>
+                        {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                            {@const { first_name, last_name } =
+                                companySupervisor}
+                            <option value={companySupervisorId}
+                                >{last_name}, {first_name}</option
+                            >
+                        {/each}
+                    </optgroup>
                 {/each}
             </select>
 
