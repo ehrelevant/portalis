@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\FormController;
@@ -57,36 +58,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/import/students', [FacultyController::class, 'importStudents']);
         Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
 
-        Route::get('/export/students/sections', [FacultyController::class, 'exportStudentSections']);
-        Route::get('/export/students/midsem-reports', [FacultyController::class, 'exportMidsemReportStudents']);
-        Route::get('/export/students/final-reports', [FacultyController::class, 'exportFinalReportStudents']);
-        Route::get('/export/students/company-evaluations', [FacultyController::class, 'exportCompanyEvaluations']);
-        Route::get('/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
-        Route::get('/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
-        Route::get('/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
-
-        // Requirement Viewing
-        Route::get('/requirement/{requirement_id}/view/{student_number}', [FileSubmissionContoller::class, 'showStudentSubmission']);
-
-        // Requirement Validation
-        Route::post('/requirement/{requirement_id}/view/{student_number}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
-        Route::post('/requirement/{requirement_id}/view/{student_number}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
-        Route::post('/requirement/{requirement_id}/view/{student_number}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
-
-        // Form Validation
-        Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
-        Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
-        Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
-
-        // Update Settings
-        Route::put('/globals/update-deadlines', [WebsiteStateController::class, 'updateDeadlines']);
-        Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
-    });
-
-    Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
-        Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
-        Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
-        Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
+        Route::get('/export/students/sections', [ExportsController::class, 'exportStudentSections']);
+        Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReportStudents']);
+        Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
+        Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
+        Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
+        Route::get('/export/supervisors/midsem-reports', [ExportsController::class, 'exportMidsemReportSupervisors']);
+        Route::get('/export/supervisors/final-reports', [ExportsController::class, 'exportFinalReportSupervisors']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
