@@ -26,7 +26,19 @@
         const sectionName = evt.target.value;
 
         router.put(
-            `/dashboard/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentNumber}/assign/section/${sectionName}`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function setSupervisor(evt, studentNumber) {
+        const supervisorId = evt.target.value;
+
+        router.put(
+            `/students/${studentNumber}/assign/supervisor/${supervisorId}`,
             {},
             {
                 preserveScroll: true,
@@ -102,7 +114,19 @@
                         >Section</th
                     >
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Supervisor Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company Interned</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Email</th
                     >
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
@@ -126,7 +150,11 @@
                         first_name,
                         last_name,
                         section: student_section,
+                        supervisor_id,
                         company,
+                        email,
+                        wordpress_name,
+                        wordpress_email,
                         form_statuses,
                         has_dropped,
                         submissions,
@@ -141,7 +169,7 @@
                         <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">
                                 <select
-                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
                                         setSection(evt, student_number)}
                                 >
@@ -163,7 +191,62 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="border-r-2 p-2 {borderColor}">{company}</td>
+                        <td class="border-r-2 p-2 {borderColor}">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setSupervisor(evt, student_number)}
+                                >
+                                    <option selected={!supervisor_id} value />
+                                    {#each companies as company}
+                                        {@const {
+                                            id: company_id,
+                                            company_name,
+                                        } = company}
+                                        <optgroup label={company_name}>
+                                            {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                                {@const {
+                                                    id,
+                                                    first_name,
+                                                    last_name,
+                                                } = companySupervisor}
+                                                <option
+                                                    value={companySupervisorId}
+                                                    selected={id ===
+                                                        supervisor_id}
+                                                    >{last_name}, {first_name}</option
+                                                >
+                                            {/each}
+                                        </optgroup>
+                                    {/each}
+                                    <optgroup label="No Company">
+                                        {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                                            {@const {
+                                                id,
+                                                first_name,
+                                                last_name,
+                                            } = companySupervisor}
+                                            <option
+                                                value={companySupervisorId}
+                                                selected={id === supervisor_id}
+                                                >{last_name}, {first_name}</option
+                                            >
+                                        {/each}
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{company ?? ''}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_name}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_email}</td
+                        >
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
@@ -291,6 +374,14 @@
                         {/each}
                     </optgroup>
                 {/each}
+                <optgroup label="No Company">
+                    {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                        {@const { first_name, last_name } = companySupervisor}
+                        <option value={companySupervisorId}
+                            >{last_name}, {first_name}</option
+                        >
+                    {/each}
+                </optgroup>
             </select>
 
             <label for="wordpress name"><Required />Wordpress Username</label>

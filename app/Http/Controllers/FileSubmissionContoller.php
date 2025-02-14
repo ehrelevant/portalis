@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\ReportStatus;
-use App\Models\Requirement;
-use App\Models\Student;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
 use Illuminate\Http\RedirectResponse;
@@ -25,10 +22,10 @@ class FileSubmissionContoller extends Controller
         if ($user->role === User::ROLE_STUDENT) {
             if ($student_number && $student_number !== $user->role_id) {
                 abort(401);
-            } else if (!$student_number) {
+            } elseif (!$student_number) {
                 $student_number = $user->role_id;
             }
-        } else if ($user->role === User::ROLE_ADMIN) {
+        } elseif ($user->role === User::ROLE_ADMIN) {
             if (!$student_number) {
                 abort(404);
             }
@@ -54,16 +51,16 @@ class FileSubmissionContoller extends Controller
         ]);
     }
 
-    public function submitDocument(Request $request, int $requirement_id, ?int $student_number): RedirectResponse
+    public function submitDocument(Request $request, int $requirement_id, ?int $student_number = null): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role === User::ROLE_STUDENT) {
-            if ($student_number && $student_number !== $user->role_id) {
+            if ($student_number && $student_number != $user->role_id) {
                 abort(401);
-            } else if (!$student_number) {
+            } elseif (!$student_number) {
                 $student_number = $user->role_id;
             }
-        } else if ($user->role === User::ROLE_ADMIN) {
+        } elseif ($user->role === User::ROLE_ADMIN) {
             if (!$student_number) {
                 abort(404);
             }
@@ -94,7 +91,7 @@ class FileSubmissionContoller extends Controller
         $submission->save();
 
         if ($user->role === User::ROLE_ADMIN) {
-            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number );
+            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number);
         } else {
             return redirect('/dashboard');
         }
@@ -158,7 +155,7 @@ class FileSubmissionContoller extends Controller
             'requirementId' => $requirement_id,
             'requirementName' => $requirement_name,
             'status' => $submission_status,
-            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN)
+            'isAdmin' => (Auth::user()->role === User::ROLE_ADMIN),
         ]);
     }
 

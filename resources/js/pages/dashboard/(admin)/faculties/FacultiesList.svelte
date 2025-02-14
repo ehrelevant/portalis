@@ -76,6 +76,9 @@
                         >Name</th
                     >
                     <th scope="col" class="border-l-2 p-2 {borderColor}"
+                        >Email</th
+                    >
+                    <th scope="col" class="border-l-2 p-2 {borderColor}"
                         >Section</th
                     >
                     <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -83,12 +86,18 @@
                     >
                 </tr>
                 {#each faculties as faculty}
-                    {@const { faculty_id, first_name, last_name, section } =
-                        faculty}
+                    {@const {
+                        faculty_id,
+                        first_name,
+                        last_name,
+                        email,
+                        section,
+                    } = faculty}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
+                        <td class="border-l-2 p-2 {borderColor}">{email}</td>
                         <td class="border-l-2 p-2 {borderColor}">{section}</td>
                         <td class="border-l-2 p-2 text-center {borderColor}"
                             ><Link

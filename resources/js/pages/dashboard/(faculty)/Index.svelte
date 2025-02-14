@@ -25,7 +25,7 @@
     });
 
     function saveDeadlines() {
-        $deadlinesForm.put('/dashboard/update-deadlines');
+        $deadlinesForm.put('/globals/update-deadlines');
     }
 </script>
 

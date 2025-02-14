@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Faculty;
-use App\Models\Form;
 use App\Models\FormAnswer;
 use App\Models\FormStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
-use App\Models\Requirement;
 use App\Models\Student;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
@@ -49,7 +47,11 @@ class AdminController extends Controller
                 'users.last_name',
                 'faculties.section',
                 'students.has_dropped',
-                'companies.company_name'
+                'supervisors.id AS supervisor_id',
+                'companies.company_name',
+                'users.email',
+                'students.wordpress_name',
+                'students.wordpress_email',
             )
             ->orderBy('students.student_number')
             ->get();
@@ -72,7 +74,11 @@ class AdminController extends Controller
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
-                'company' => $student_info->company_name ?? '',
+                'supervisor_id' => $student_info->supervisor_id,
+                'company' => $student_info->company_name,
+                'email' => $student_info->email,
+                'wordpress_name' => $student_info->wordpress_name,
+                'wordpress_email' => $student_info->wordpress_email,
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
@@ -96,6 +102,16 @@ class AdminController extends Controller
 
         $companies = DB::table('companies')->get();
         $company_supervisors = [];
+
+        $company_supervisors['0'] = DB::table('users')
+            ->where('role', 'supervisor')
+            ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+            ->whereNull('company_id')
+            ->select('supervisors.id', 'users.first_name', 'users.last_name')
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
         foreach ($companies as $company) {
             $company_supervisors_info = DB::table('users')
                 ->where('role', 'supervisor')
@@ -119,41 +135,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function assignStudentSection(int $student_number, string $new_section = '')
-    {
-        $faculty_sections = DB::table('faculties')
-            ->pluck('id', 'section')
-            ->toArray();
-
-        if ($new_section === '') {
-            // If section is set to nothing, set section to null
-            $target_student = Student::find($student_number);
-            $target_student->faculty_id = null;
-            $target_student->has_dropped = false;
-            $target_student->save();
-        } elseif ($new_section === 'DRP') {
-            // If section is set to DRP, flag student as DRP and set section to NULL in database
-            $target_student = Student::find($student_number);
-            $target_student->faculty_id = null;
-            $target_student->has_dropped = true;
-            $target_student->save();
-        } else {
-            $new_faculty_id = $faculty_sections[$new_section] ?? null;
-
-            if ($new_faculty_id) {
-                // If new section exists, save change in database
-                $target_student = Student::find($student_number);
-                $target_student->faculty_id = $new_faculty_id;
-                $target_student->has_dropped = false;
-                $target_student->save();
-            }
-            // Otherwise, do not update database
-            // This case only matters if an irregular section is passed
-        }
-
-        return back();
-    }
-
     public function showSupervisors(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
@@ -174,7 +155,8 @@ class AdminController extends Controller
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
                 'users.last_name',
-                'companies.company_name',
+                'users.email',
+                'companies.id AS company_id',
             )
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
@@ -191,7 +173,8 @@ class AdminController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
-                'company_name' => $supervisor_info->company_name ?? '',
+                'email' => $supervisor_info->email,
+                'company_id' => $supervisor_info->company_id,
                 'form_statuses' => $form_statuses,
             ]);
         }
@@ -233,6 +216,7 @@ class AdminController extends Controller
                 'faculties.id AS faculty_id',
                 'users.first_name',
                 'users.last_name',
+                'users.email',
                 'faculties.section',
             )
             ->orderBy('users.last_name')
@@ -430,6 +414,8 @@ class AdminController extends Controller
             }
             $form_status->delete();
         }
+
+        $user->delete();
 
         Student::find($student_number)->delete();
     }

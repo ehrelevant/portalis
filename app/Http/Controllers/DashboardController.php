@@ -5,19 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\FormAnswer;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
-use App\Models\Submission;
-use App\Models\SubmissionStatus;
 use App\Models\User;
 use App\Models\WebsiteState;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -51,6 +46,10 @@ class DashboardController extends Controller
                 $submission_statuses = DB::table('submission_statuses')
                     ->where('student_number', $student_number)
                     ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
+                    ->where(function ($query) {
+                        $query->whereRaw("requirements.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('requirements.deadline');
+                    })
                     ->select(
                         'requirements.id AS requirement_id',
                         'requirements.requirement_name',
@@ -67,9 +66,17 @@ class DashboardController extends Controller
                 return Inertia::render('dashboard/(student)/RequirementsDashboard', $props);
             case 'during':
             case 'post':
-                $student = Auth::user();
-                $student_user_id = $student->id;
-                $student_number = $student->role_id;
+                $student_user = Auth::user();
+                $student_user_id = $student_user->id;
+                $student_number = $student_user->role_id;
+
+                $student = DB::table('students')
+                    ->where('student_number', $student_number)
+                    ->firstOrFail();
+
+                if (!$student->faculty_id) {
+                    return Inertia::render('dashboard/(student)/Unenrolled');
+                }
 
                 $form_statuses = DB::table('form_statuses')
                     ->where('user_id', $student_user_id)
@@ -80,6 +87,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
@@ -121,6 +132,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 
@@ -153,6 +168,10 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
+                    ->where(function ($query) {
+                        $query->whereRaw("forms.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
+                            ->orWhereNull('forms.deadline');
+                    })
                     ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
                     ->get();
 

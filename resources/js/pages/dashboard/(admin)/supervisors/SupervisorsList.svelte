@@ -19,6 +19,18 @@
         router.get(`/dashboard/admin/supervisors?search=${searchQuery}`);
     }
 
+    function setCompany(evt, supervisorId) {
+        const companyId = evt.target.value;
+
+        router.put(
+            `/supervisors/${supervisorId}/assign/company/${companyId}`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
     let addFormElement;
     let isModalOpen;
 
@@ -81,6 +93,9 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Company</th
                     >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -96,16 +111,37 @@
                         supervisor_id,
                         first_name,
                         last_name,
-                        company_name,
+                        email,
+                        company_id: supervisor_company_id,
                         form_statuses,
                     } = supervisor}
                     <tr class="border-t-2 {borderColor}">
                         <td class="border-r-2 p-2 {borderColor}"
                             >{last_name}, {first_name}</td
                         >
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company_name}</td
-                        >
+                        <td class="border-r-2 p-2 text-center {borderColor}">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setCompany(evt, supervisor_id)}
+                                >
+                                    <option
+                                        selected={!supervisor_company_id}
+                                        value
+                                    />
+                                    {#each companies as company}
+                                        {@const { id, company_name } = company}
+                                        <option
+                                            selected={id ===
+                                                supervisor_company_id}
+                                            value={id}>{company_name}</option
+                                        >
+                                    {/each}
+                                </select>
+                            </div>
+                        </td>
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell

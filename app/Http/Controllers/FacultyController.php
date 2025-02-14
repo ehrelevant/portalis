@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Form;
-use App\Models\ReportStatus;
-use App\Models\Requirement;
 use App\Models\Student;
-use App\Models\SubmissionStatus;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Supervisor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -44,6 +39,9 @@ class FacultyController extends Controller
                         'users.first_name',
                         'users.last_name',
                         'faculties.section',
+                        'users.email',
+                        'students.wordpress_name',
+                        'students.wordpress_email',
                         'students.has_dropped',
                     )
                     ->orderBy('students.student_number')
@@ -51,17 +49,20 @@ class FacultyController extends Controller
 
                 foreach ($students_info as $student_info) {
                     $student_statuses = DB::table('submission_statuses')
-                    ->where('student_number', $student_info->student_number)
-                    ->select(
-                        'submission_statuses.requirement_id',
-                        'submission_statuses.status',
-                    )->get();
+                        ->where('student_number', $student_info->student_number)
+                        ->select(
+                            'submission_statuses.requirement_id',
+                            'submission_statuses.status',
+                        )->get();
 
                     $new_student = [
                         'student_number' => $student_info->student_number,
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
                         'section' => $student_info->section,
+                        'email' => $student_info->email,
+                        'wordpress_name' => $student_info->wordpress_name,
+                        'wordpress_email' => $student_info->wordpress_email,
                         'has_dropped' => $student_info->has_dropped,
                         'submissions' => $student_statuses,
                     ];
@@ -94,7 +95,11 @@ class FacultyController extends Controller
                         'users.first_name',
                         'users.last_name',
                         'faculties.section',
-                        'companies.company_name'
+                        'companies.company_name',
+                        'students.supervisor_id',
+                        'users.email',
+                        'students.wordpress_name',
+                        'students.wordpress_email',
                     )
                     ->orderBy('students.student_number')
                     ->get();
@@ -113,6 +118,10 @@ class FacultyController extends Controller
                         'section' => $student_info->section,
                         'company' => $student_info->company_name ?? '',
                         'form_statuses' => $form_statuses,
+                        'supervisor_id' => $student_info->supervisor_id,
+                        'email' => $student_info->email,
+                        'wordpress_name' => $student_info->wordpress_name,
+                        'wordpress_email' => $student_info->wordpress_email,
                     ]);
                 }
 
@@ -126,21 +135,33 @@ class FacultyController extends Controller
                     ->get()
                     ->keyBy('id');
 
+                $supervisors = DB::table('users')
+                    ->where('role', 'supervisor')
+                    ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+                    ->select(
+                        'supervisors.id',
+                        'users.first_name',
+                        'users.last_name',
+                    )
+                    ->get()
+                    ->keyBy('id')
+                    ->toArray();
+
                 return Inertia::render('dashboard/(faculty)/students/FormsList', [
                     'students' => $students,
                     'form_infos' => $form_infos,
+                    'supervisors' => $supervisors,
                 ]);
-
         }
     }
 
-    public function assignStudentSection(int $student_number, string $new_section = '')
+    public function assignStudentSection(int $student_number, ?string $new_section = null)
     {
         $faculty_sections = DB::table('faculties')
             ->pluck('id', 'section')
             ->toArray();
 
-        if ($new_section === '') {
+        if (!$new_section) {
             // If section is set to nothing, set section to null
             $target_student = Student::find($student_number);
             $target_student->faculty_id = null;
@@ -162,37 +183,27 @@ class FacultyController extends Controller
                 $target_student->has_dropped = false;
                 $target_student->save();
             }
-            // Otherwise, do not update database
-            // This case only matters if an irregular section is passed
         }
 
         return back();
     }
 
-    public function updateDeadlines(Request $request)
+    public function assignSupervisorCompany(int $supervisor_id, ?int $company_id = null)
     {
-        $form_values = $request->validate([
-            'requirements.*.id' => ['int'],
-            'requirements.*.deadline' => ['date', 'nullable'],
-            'forms.*.id' => ['int'],
-            'forms.*.deadline' => ['date', 'nullable'],
-        ]);
+        $supervisor = Supervisor::find($supervisor_id);
+        $supervisor->company_id = $company_id;
+        $supervisor->save();
 
-        $new_requirements = $form_values['requirements'];
-        $new_forms = $form_values['forms'];
+        return back();
+    }
 
-        foreach ($new_requirements as $new_requirement) {
-            ['id' => $id, 'deadline' => $deadline] = $new_requirement;
-            $requirement = Requirement::find($id);
-            $requirement->deadline = $deadline;
-            $requirement->save();
-        }
-        foreach ($new_forms as $new_form) {
-            ['id' => $id, 'deadline' => $deadline] = $new_form;
-            $form = Form::find($id);
-            $form->deadline = $deadline;
-            $form->save();
-        }
+    public function assignStudentSupervisor(int $student_id, ?int $supervisor_id = null)
+    {
+        $student = Student::find($student_id);
+        $student->supervisor_id = $supervisor_id;
+        $student->save();
+
+        return back();
     }
 
     public function showSupervisors(Request $request): Response

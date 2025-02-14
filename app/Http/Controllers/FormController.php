@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\FormAnswer;
 use App\Models\FormStatus;
-use App\Models\InternEvaluation;
-use App\Models\InternEvaluationStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
 use App\Models\User;
@@ -15,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class FormController extends Controller
 {
@@ -73,7 +70,7 @@ class FormController extends Controller
                         'criterion' => $rating_question->criterion,
                         'min_score' =>  $rating_question->min_score,
                         'max_score' =>  $rating_question->max_score,
-                        'tooltip' => $rating_question->tooltip
+                        'tooltip' => $rating_question->tooltip,
                     ];
             }
         }
@@ -148,7 +145,8 @@ class FormController extends Controller
     }
 
     // Form Redirects
-    public function answerForm(string $short_name, ?int $role_id = null) {
+    public function answerForm(string $short_name, ?int $role_id = null)
+    {
         $user = Auth::user();
 
         switch ($short_name) {
@@ -156,12 +154,12 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -173,12 +171,12 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -191,7 +189,8 @@ class FormController extends Controller
                 abort(404);
         }
     }
-    public function draftForm(Request $request, string $short_name, ?int $role_id = null) {
+    public function draftForm(Request $request, string $short_name, ?int $role_id = null)
+    {
         $user = Auth::user();
 
         switch ($short_name) {
@@ -199,12 +198,12 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -216,12 +215,12 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -234,7 +233,8 @@ class FormController extends Controller
                 abort(404);
         }
     }
-    public function submitForm(Request $request, string $short_name, ?int $role_id = null) {
+    public function submitForm(Request $request, string $short_name, ?int $role_id = null)
+    {
         $user = Auth::user();
 
         switch ($short_name) {
@@ -242,12 +242,12 @@ class FormController extends Controller
             case 'final':
             case 'intern-evaluation':
                 if ($user->role === User::ROLE_SUPERVISOR) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -259,12 +259,12 @@ class FormController extends Controller
             case 'company-evaluation':
             case 'self-evaluation':
                 if ($user->role === User::ROLE_STUDENT) {
-                    if ($role_id && $role_id !== $user->role_id) {
+                    if ($role_id && $role_id != $user->role_id) {
                         abort(401);
-                    } else if (!$role_id) {
+                    } elseif (!$role_id) {
                         $role_id = $user->role_id;
                     }
-                } else if ($user->role === User::ROLE_ADMIN) {
+                } elseif ($user->role === User::ROLE_ADMIN) {
                     if (!$role_id) {
                         abort(404);
                     }
@@ -277,7 +277,8 @@ class FormController extends Controller
                 abort(404);
         }
     }
-    public function viewForm(string $short_name, int $role_id) {
+    public function viewForm(string $short_name, int $role_id)
+    {
         switch ($short_name) {
             case 'midsem':
             case 'final':
@@ -355,7 +356,8 @@ class FormController extends Controller
                 ->pluck('users.id');
 
             $this->createForm($form_status, $supervised_student_user_ids);
-            $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();;
+            $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
+            ;
         }
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);

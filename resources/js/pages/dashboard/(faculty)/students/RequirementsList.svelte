@@ -25,7 +25,7 @@
         const sectionName = evt.target.value;
 
         router.put(
-            `/dashboard/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentNumber}/assign/section/${sectionName}`,
             {},
             {
                 preserveScroll: true,
@@ -72,6 +72,15 @@
                     <th scope="col" class="border-r-2 p-2 {borderColor}"
                         >Section</th
                     >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Email</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Name</th
+                    >
+                    <th scope="col" class="border-r-2 p-2 {borderColor}"
+                        >Wordpress Email</th
+                    >
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -87,6 +96,9 @@
                         section: student_section,
                         has_dropped,
                         submissions,
+                        email,
+                        wordpress_name,
+                        wordpress_email,
                     } = student}
                     <tr class="border-t-2 {borderColor}">
                         <th scope="row" class="border-r-2 p-2 {borderColor}"
@@ -98,7 +110,7 @@
                         <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">
                                 <select
-                                    class="bg-white px-2 text-light-primary-text dark:bg-gray-800 dark:text-dark-primary-text"
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
                                         setSection(evt, student_number)}
                                 >
@@ -120,6 +132,13 @@
                                 </select>
                             </div>
                         </td>
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_name}</td
+                        >
+                        <td class="border-r-2 p-2 {borderColor}"
+                            >{wordpress_email}</td
+                        >
                         {#each submissions as submission}
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
@@ -127,7 +146,8 @@
                                     href="/requirement/{requirement_id}/view/{student_number}"
                                     {status}
                                 />
-                            </td>{/each}
+                            </td>
+                        {/each}
                     </tr>
                 {/each}
             </table>
