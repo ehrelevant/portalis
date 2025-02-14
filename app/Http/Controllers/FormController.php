@@ -715,6 +715,12 @@ class FormController extends Controller
 
     public function validateForm(string $short_name, int $user_id): RedirectResponse
     {
+        $validator_user = Auth::user();
+
+        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            abort(401);
+        }
+
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
         $form_status = FormStatus::where('user_id', $user_id)
@@ -732,6 +738,12 @@ class FormController extends Controller
 
     public function invalidateForm(string $short_name, int $user_id): RedirectResponse
     {
+        $validator_user = Auth::user();
+
+        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            abort(401);
+        }
+
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
         $form_status = FormStatus::where('user_id', $user_id)
@@ -749,6 +761,12 @@ class FormController extends Controller
 
     public function rejectForm(string $short_name, int $user_id): RedirectResponse
     {
+        $validator_user = Auth::user();
+
+        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            abort(401);
+        }
+
         $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
         $form_status = FormStatus::where('user_id', $user_id)
