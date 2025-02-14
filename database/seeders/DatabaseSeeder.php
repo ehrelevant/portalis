@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
+use App\Models\User;
 use App\Models\WebsiteState;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,22 +15,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Company::factory()->create([
-            'company_name' => 'Company 1',
-        ]);
-        Company::factory()->create([
-            'company_name' => 'Company 2',
-        ]);
-
-        $this->call([
-            UserSeeder::class,
+        User::factory()->create([
+            'email' => 'portalis195@gmail.com',
+            'role' => 'admin',
+            'role_id' => 1,
+            'first_name' => 'Portalis',
+            'middle_name' => '',
+            'last_name' => 'Admin',
         ]);
 
         $this->call([
             RequirementSeeder::class,
-        ]);
-
-        $this->call([
             FormSeeder::class,
         ]);
 
