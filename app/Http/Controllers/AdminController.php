@@ -264,6 +264,20 @@ class AdminController extends Controller
             'wordpress_email' => ['required', 'email:rfc'],
         ]);
 
+        $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
+        $user_email_exists = User::where('email', $values['email'])->exists();
+
+        if ($student_number_exists) {
+            return back()->withErrors([
+                'student_number' => 'The provided student number already exists.',
+            ]);
+        } else if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
+
         $new_student = new Student();
         $new_student->student_number = $values['student_number'];
         $new_student->supervisor_id = $values['supervisor_id'];
