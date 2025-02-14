@@ -34,43 +34,51 @@
     <article>
         <div class="text-xl italic">Internship Phases</div>
         <div class="text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
-            consectetur cursus libero, sed pretium erat venenatis ut. Vivamus
-            iaculis justo in velit facilisis posuere. Pellentesque habitant
-            morbi tristique senectus et netus et malesuada fames ac turpis
-            egestas.
+            The CS 195 experience can be informally divided into three main
+            phases, Pre-Internship, During Internship, and Post-internship. The
+            layout of the website slightly differs for each phase, depending on
+            what is expected from its users.
         </div>
         <div
-            class="flex flex-col items-center justify-around gap-4 py-4 md:flex-row"
+            class="flex flex-col items-start justify-around gap-4 py-4 md:flex-row"
         >
             <div class="flex flex-col items-center p-2">
                 <Pre /> Pre-Internship
                 <div class="text-md pt-3 text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Duis consectetur cursus libero, sed pretium erat venenatis
-                    ut. Vivamus iaculis justo in velit facilisis posuere.
-                    Pellentesque habitant morbi tristique senectus et netus et
-                    malesuada fames ac turpis egestas.
+                    This phase, as its name suggests, describes the phase before
+                    actual internships. During this phase, only students are
+                    expected to submit any documents that need to be processed
+                    before formally enrolling into the semester. Once student
+                    documents have been approved, we move on to the next phase
+                    of CS 195.
                 </div>
             </div>
             <div class="flex flex-col items-center p-2">
                 <During /> During Internship
                 <div class="text-md pt-3 text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Duis consectetur cursus libero, sed pretium erat venenatis
-                    ut. Vivamus iaculis justo in velit facilisis posuere.
-                    Pellentesque habitant morbi tristique senectus et netus et
-                    malesuada fames ac turpis egestas.
+                    During this phase, students should have been enrolled
+                    already and have started their internship proper at their
+                    respective companies. Students are expected to document
+                    their weekly progress at their internships, through their
+                    respective blog, following the instructions of the CS195
+                    Faculty.
+                    <br /> <br />
+                    To assess student performance during their internships, each
+                    intern’s supervisor is expected to submit reports regarding their
+                    performance. If there are multiple interns under a single supervisor,
+                    only one form needs to be filled out for all students under said
+                    supervisor.
                 </div>
             </div>
             <div class="flex flex-col items-center p-2">
                 <Post /> Post-Internship
                 <div class="text-md pt-3 text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Duis consectetur cursus libero, sed pretium erat venenatis
-                    ut. Vivamus iaculis justo in velit facilisis posuere.
-                    Pellentesque habitant morbi tristique senectus et netus et
-                    malesuada fames ac turpis egestas.
+                    Closing off CS 195, this phase is dedicated to verifying and
+                    assessing student performance after their internship has
+                    been completed. Students are expected to fill up a
+                    self-assessment form that lists their total number of hours
+                    completed while their supervisor validates the information
+                    the student has filled up.
                 </div>
             </div>
         </div>
@@ -79,11 +87,11 @@
     <article>
         <div class="text-xl italic">Acknowledgements</div>
         <div class="text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
-            consectetur cursus libero, sed pretium erat venenatis ut. Vivamus
-            iaculis justo in velit facilisis posuere. Pellentesque habitant
-            morbi tristique senectus et netus et malesuada fames ac turpis
-            egestas.
+            Portalis: CS 195 Portal was originally developed by Clyde Ambroz S.
+            Acyatan, Dominic Lawrence R. Bermudez, Ehren A. Castillo, and
+            Eoghaine Czeriel L. Saavedra as their CS 191/192 project under Prof.
+            Ligaya Leah Figueroa for the University of the Philippines Diliman -
+            Department of Computer Science.
         </div>
     </article>
     <br />
