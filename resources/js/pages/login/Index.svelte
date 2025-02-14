@@ -14,16 +14,23 @@
     function handleSubmit(evt) {
         switch (evt.submitter.name) {
             case 'send_pin':
-                router.post('/login/send-pin', { email: values.email });
+                router.post(
+                    '/login/send-pin',
+                    { email: values.email },
+                    {
+                        onSuccess: () => {
+                            rateLimitTimer = 60;
+                            const countdown = setInterval(() => {
+                                rateLimitTimer -= 1;
+                                if (rateLimitTimer <= 0) {
+                                    rateLimitTimer = 0;
+                                    clearInterval(countdown);
+                                }
+                            }, 1000);
+                        },
+                    },
+                );
 
-                rateLimitTimer = 60;
-                const countdown = setInterval(() => {
-                    rateLimitTimer -= 1;
-                    if (rateLimitTimer <= 0) {
-                        rateLimitTimer = 0;
-                        clearInterval(countdown);
-                    }
-                }, 1000);
                 break;
             case 'login':
                 router.post('/login', values);
