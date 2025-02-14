@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\FormController;
@@ -67,15 +68,15 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/import/students', [FacultyController::class, 'importStudents']);
         Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
-
-        Route::get('/export/students/sections', [FacultyController::class, 'exportStudentSections']);
-        Route::get('/export/students/midsem-reports', [FacultyController::class, 'exportMidsemReportStudents']);
-        Route::get('/export/students/final-reports', [FacultyController::class, 'exportFinalReportStudents']);
-        Route::get('/export/students/company-evaluations', [FacultyController::class, 'exportCompanyEvaluations']);
-        Route::get('/export/students/student-assessments', [FacultyController::class, 'exportStudentAssessments']);
-        Route::get('/export/supervisors/midsem-reports', [FacultyController::class, 'exportMidsemReportSupervisors']);
-        Route::get('/export/supervisors/final-reports', [FacultyController::class, 'exportFinalReportSupervisors']);
     });
+
+    Route::get('/export/students/sections', [ExportsController::class, 'exportStudentSections']);
+    Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReportStudents']);
+    Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
+    Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
+    Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
+    Route::get('/export/supervisors/midsem-reports', [ExportsController::class, 'exportMidsemReportSupervisors']);
+    Route::get('/export/supervisors/final-reports', [ExportsController::class, 'exportFinalReportSupervisors']);
 
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
         Route::get('/dashboard/admin/students', [AdminController::class, 'showStudents']);
