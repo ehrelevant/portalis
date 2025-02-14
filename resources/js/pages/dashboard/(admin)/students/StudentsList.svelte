@@ -393,6 +393,7 @@
             <div class="flex flex-col">
                 <select
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    name="section"
                     bind:value={$addUserForm.section}
                 >
                     <option selected value />
@@ -411,6 +412,7 @@
             <div class="flex flex-col">
                 <select
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    name="supervisor"
                     bind:value={$addUserForm.supervisor_id}
                 >
                     <option selected value />
