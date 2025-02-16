@@ -17,8 +17,10 @@ class ExportsController extends Controller
             ->where('students.has_dropped', '0')
             // todo: confirm if sectionless students (section=null) should be included in CSV
             ->where('faculties.section', '!=', 'null')
+
             ->join('students', 'users.role_id', '=', 'students.student_number')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+
             ->select(
                 'students.student_number',
                 'users.first_name',
@@ -74,12 +76,12 @@ class ExportsController extends Controller
             ->join('students', 'users.role_id', '=', 'students.student_number')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
 
-            ->join('form_statuses', 'users.id', '=', 'form_statuses.user_id')
+            ->leftJoin('form_statuses', 'users.id', '=', 'form_statuses.user_id')
             ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id')
-            ->join('form_answers', 'form_statuses.id', '=', 'form_answers.form_status_id')
+            ->leftJoin('form_answers', 'form_statuses.id', '=', 'form_answers.form_status_id')
 
-            ->join('rating_scores', 'form_answers.id', '=', 'rating_scores.form_answer_id')
-            ->join('rating_questions', 'rating_scores.rating_question_id', '=', 'rating_questions.id')
+            ->leftJoin('rating_scores', 'form_answers.id', '=', 'rating_scores.form_answer_id')
+            ->leftJoin('rating_questions', 'rating_scores.rating_question_id', '=', 'rating_questions.id')
 
             ->select(
                 'students.student_number',
