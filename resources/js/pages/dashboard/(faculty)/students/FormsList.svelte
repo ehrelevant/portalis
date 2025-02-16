@@ -141,6 +141,14 @@
 
     <div class="flex w-full justify-end">
         <Link
+            href="/export/students/company-evaluations"
+            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Export Company Evaluations</Link
+        >
+    </div>
+
+    <div class="flex w-full justify-end">
+        <Link
             href="/dashboard"
             class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Back to Dashboard</Link
