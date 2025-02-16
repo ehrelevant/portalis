@@ -26,7 +26,7 @@
                     class="grid grid-cols-[auto,1fr,auto] items-center justify-center gap-2"
                 >
                     <p class="col-start-2 text-center">Total hours worked</p>
-                    <p class="text-center">Status</p>
+                    <p class="text-center">Validation Status</p>
 
                     {#each Object.entries(students) as [_, student]}
                         {@const {
@@ -42,7 +42,7 @@
                             value={total_hours}
                             disabled
                         />
-                        <div class="flex flex-row justify-center gap-2">
+                        <div class="flex flex-row justify-start gap-2">
                             <Status type={status} />
                             {#if status === 'validated'}
                                 <Link

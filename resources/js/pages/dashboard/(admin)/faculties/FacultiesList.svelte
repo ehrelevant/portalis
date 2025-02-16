@@ -6,6 +6,7 @@
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import Modal from '@/js/shared/components/Modal.svelte';
     import Required from '@/js/shared/components/Required.svelte';
+    import ErrorText from '@/js/shared/components/ErrorText.svelte';
 
     export let faculties;
 
@@ -36,8 +37,16 @@
             addFormElement.reportValidity();
             return;
         }
-        $addUserForm.post('/dashboard/admin/faculties/add');
-        isModalOpen = false;
+        $addUserForm.post(
+            '/dashboard/admin/faculties/add',
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    isModalOpen = false;
+                },
+            },
+        );
     }
 
     /** @type {string} */
@@ -132,56 +141,90 @@
         on:submit|preventDefault={addUser}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
-            <label for="first name"><Required />First Name</label>
-            <input
-                name="first name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.first_name}
-                required
-            />
+            <label for="first_name"><Required />First Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="first_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.first_name}
+                    required
+                />
+                {#if $addUserForm.errors.first_name}
+                    <ErrorText>
+                        {$addUserForm.errors.first_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
-            <label for="middle name"><Required />Middle Name</label>
-            <input
-                name="middle name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.middle_name}
-                required
-            />
+            <label for="middle_name"><Required />Middle Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="middle_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.middle_name}
+                    required
+                />
+                {#if $addUserForm.errors.middle_name}
+                    <ErrorText>
+                        {$addUserForm.errors.middle_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
-            <label for="last name"><Required />Last Name</label>
-            <input
-                name="last name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.last_name}
-                required
-            />
+            <label for="last_name"><Required />Last Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="last_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.last_name}
+                    required
+                />
+                {#if $addUserForm.errors.last_name}
+                    <ErrorText>
+                        {$addUserForm.errors.last_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="email"><Required />Email</label>
-            <input
-                name="emai"
-                type="email"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.email}
-                required
-            />
+            <div class="flex flex-col">
+                <input
+                    name="email"
+                    type="email"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.email}
+                    required
+                />
+                {#if $addUserForm.errors.email}
+                    <ErrorText>
+                        {$addUserForm.errors.email}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="section"><Required />Section</label>
-            <input
-                name="section"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.section}
-                required
-            />
-
-            <input
-                class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
-                type="submit"
-                value="Add Faculty"
-            />
+            <div class="flex flex-col">
+                <input
+                    name="section"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.section}
+                    required
+                />
+                {#if $addUserForm.errors.section}
+                    <ErrorText>
+                        {$addUserForm.errors.section}
+                    </ErrorText>
+                {/if}
+            </div>
         </div>
+        <input
+            class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
+            type="submit"
+            value="Add Faculty"
+        />
     </form>
 </Modal>

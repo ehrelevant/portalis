@@ -13,7 +13,7 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 text-light-primary-text backdrop-blur-md dark:text-dark-primary-text"
     >
         <div
-            class="flex flex-col items-end gap-2 rounded-xl bg-white p-8 dark:bg-black"
+            class="flex max-h-full flex-col items-end gap-2 overflow-auto rounded-xl bg-white p-8 dark:bg-black"
         >
             <button on:click={closeModal}>
                 <XMark />

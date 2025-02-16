@@ -264,6 +264,19 @@ class AdminController extends Controller
             'wordpress_email' => ['required', 'email:rfc'],
         ]);
 
+        $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
+        $user_email_exists = User::where('email', $values['email'])->exists();
+
+        if ($student_number_exists) {
+            return back()->withErrors([
+                'student_number' => 'The provided student number already exists.',
+            ]);
+        } else if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
         $new_student = new Student();
         $new_student->student_number = $values['student_number'];
         $new_student->supervisor_id = $values['supervisor_id'];
@@ -322,6 +335,14 @@ class AdminController extends Controller
             'company_id' => ['nullable', 'numeric', 'integer'],
         ]);
 
+        $user_email_exists = User::where('email', $values['email'])->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
         $new_supervisor = new Supervisor();
         $new_supervisor->company_id = $values['company_id'];
         $new_supervisor->save();
@@ -360,6 +381,19 @@ class AdminController extends Controller
             'email' => ['required', 'email:rfc'],
             'section' => ['required', 'string'],
         ]);
+
+        $user_email_exists = User::where('email', $values['email'])->exists();
+        $section_exists = Faculty::where('section', $values['section'])->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        } else if ($section_exists) {
+            return back()->withErrors([
+                'section' => 'The provided section already exists.',
+            ]);
+        }
 
         $new_faculty = new Faculty();
         $new_faculty->section = $values['section'];

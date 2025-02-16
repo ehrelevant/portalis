@@ -7,6 +7,7 @@
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
     import Required from '@/js/shared/components/Required.svelte';
     import Modal from '@/js/shared/components/Modal.svelte';
+    import ErrorText from '@/js/shared/components/ErrorText.svelte';
 
     export let students;
     export let requirements;
@@ -70,8 +71,16 @@
             addFormElement.reportValidity();
             return;
         }
-        $addUserForm.post('/dashboard/admin/students/add');
-        isModalOpen = false;
+        $addUserForm.post(
+            '/dashboard/admin/students/add',
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    isModalOpen = false;
+                },
+            },
+        );
     }
 
     /** @type {string} */
@@ -300,72 +309,127 @@
         on:submit|preventDefault={addUser}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
-            <label for="student number"><Required />Student Number</label>
-            <input
-                name="student number"
-                type="number"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.student_number}
-                required
-            />
+            <label for="student_number"><Required />Student Number</label>
+            <div class="flex flex-col">
+                <input
+                    name="student_number"
+                    type="number"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.student_number}
+                    required
+                />
+                {#if $addUserForm.errors.student_number}
+                    <ErrorText>
+                        {$addUserForm.errors.student_number}
+                    </ErrorText>
+                {/if}
+            </div>
 
-            <label for="first name"><Required />First Name</label>
-            <input
-                name="first name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.first_name}
-                required
-            />
+            <label for="first_name"><Required />First Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="first_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.first_name}
+                    required
+                />
+                {#if $addUserForm.errors.first_name}
+                    <ErrorText>
+                        {$addUserForm.errors.first_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
-            <label for="middle name"><Required />Middle Name</label>
-            <input
-                name="middle name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.middle_name}
-                required
-            />
+            <label for="middle_name"><Required />Middle Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="middle_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.middle_name}
+                    required
+                />
+                {#if $addUserForm.errors.middle_name}
+                    <ErrorText>
+                        {$addUserForm.errors.middle_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
-            <label for="last name"><Required />Last Name</label>
-            <input
-                name="last name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.last_name}
-                required
-            />
+            <label for="last_name"><Required />Last Name</label>
+            <div class="flex flex-col">
+                <input
+                    name="last_name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.last_name}
+                    required
+                />
+                {#if $addUserForm.errors.last_name}
+                    <ErrorText>
+                        {$addUserForm.errors.last_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="email"><Required />Email</label>
-            <input
-                name="emai"
-                type="email"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.email}
-                required
-            />
+            <div class="flex flex-col">
+                <input
+                    name="email"
+                    type="email"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.email}
+                    required
+                />
+                {#if $addUserForm.errors.email}
+                    <ErrorText>
+                        {$addUserForm.errors.email}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="section">Section</label>
-            <select
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.section}
-            >
-                <option selected value />
-                {#each sections as section}
-                    <option value={section}>{section}</option>
-                {/each}
-            </select>
+            <div class="flex flex-col">
+                <select
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    name="section"
+                    bind:value={$addUserForm.section}
+                >
+                    <option selected value />
+                    {#each sections as section}
+                        <option value={section}>{section}</option>
+                    {/each}
+                </select>
+                {#if $addUserForm.errors.section}
+                    <ErrorText>
+                        {$addUserForm.errors.section}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="supervisor">Supervisor</label>
-            <select
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.supervisor_id}
-            >
-                <option selected value />
-                {#each companies as company}
-                    {@const { id: company_id, company_name } = company}
-                    <optgroup label={company_name}>
-                        {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+            <div class="flex flex-col">
+                <select
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    name="supervisor"
+                    bind:value={$addUserForm.supervisor_id}
+                >
+                    <option selected value />
+                    {#each companies as company}
+                        {@const { id: company_id, company_name } = company}
+                        <optgroup label={company_name}>
+                            {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                {@const { first_name, last_name } =
+                                    companySupervisor}
+                                <option value={companySupervisorId}
+                                    >{last_name}, {first_name}</option
+                                >
+                            {/each}
+                        </optgroup>
+                    {/each}
+                    <optgroup label="No Company">
+                        {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
                             {@const { first_name, last_name } =
                                 companySupervisor}
                             <option value={companySupervisorId}
@@ -373,34 +437,45 @@
                             >
                         {/each}
                     </optgroup>
-                {/each}
-                <optgroup label="No Company">
-                    {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
-                        {@const { first_name, last_name } = companySupervisor}
-                        <option value={companySupervisorId}
-                            >{last_name}, {first_name}</option
-                        >
-                    {/each}
-                </optgroup>
-            </select>
+                </select>
+                {#if $addUserForm.errors.supervisor_id}
+                    <ErrorText>
+                        {$addUserForm.errors.supervisor_id}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="wordpress name"><Required />Wordpress Username</label>
-            <input
-                name="wordpress name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.wordpress_name}
-                required
-            />
+            <div class="flex flex-col">
+                <input
+                    name="wordpress name"
+                    type="text"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.wordpress_name}
+                    required
+                />
+                {#if $addUserForm.errors.wordpress_name}
+                    <ErrorText>
+                        {$addUserForm.errors.wordpress_name}
+                    </ErrorText>
+                {/if}
+            </div>
 
             <label for="wordpress email"><Required />Wordpress Email</label>
-            <input
-                name="wordpress email"
-                type="email"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addUserForm.wordpress_email}
-                required
-            />
+            <div class="flex flex-col">
+                <input
+                    name="wordpress email"
+                    type="email"
+                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                    bind:value={$addUserForm.wordpress_email}
+                    required
+                />
+                {#if $addUserForm.errors.wordpress_email}
+                    <ErrorText>
+                        {$addUserForm.errors.wordpress_email}
+                    </ErrorText>
+                {/if}
+            </div>
         </div>
 
         <input

@@ -50,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/form/{short_name}/submit/{role_id?}', [FormController::class, 'submitForm']);
     Route::get('/form/{short_name}/view/{role_id}', [FormController::class, 'viewForm'])->middleware([EnsureUserHasRole::class . ':faculty,admin']);
 
+    // Form Validation
+    Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
+    Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
+    Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
+
     Route::middleware([EnsureUserHasRole::class . ':faculty,admin'])->group(function () {
         Route::put('/students/{student_number}/assign/section/{new_section?}', [FacultyController::class, 'assignStudentSection']);
         Route::put('/students/{student_number}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
@@ -73,11 +78,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/requirement/{requirement_id}/view/{student_number}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
         Route::post('/requirement/{requirement_id}/view/{student_number}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
         Route::post('/requirement/{requirement_id}/view/{student_number}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
-
-        // Form Validation
-        Route::post('/form/{short_name}/validate/{user_id}', [FormController::class, 'validateForm']);
-        Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
-        Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
 
         // Update Settings
         Route::put('/globals/update-deadlines', [WebsiteStateController::class, 'updateDeadlines']);
