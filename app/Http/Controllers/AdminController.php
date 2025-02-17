@@ -125,7 +125,7 @@ class AdminController extends Controller
             $company_supervisors[$company->id] = $company_supervisors_info;
         }
 
-        return Inertia::render('dashboard/(admin)/students/StudentsList', [
+        return Inertia::render('dashboard/(admin)/StudentsList', [
             'students' => $students,
             'requirements' => $requirements,
             'sections' => $sections,
@@ -190,7 +190,7 @@ class AdminController extends Controller
 
         $companies = DB::table('companies')->get();
 
-        return Inertia::render('dashboard/(admin)/supervisors/SupervisorsList', [
+        return Inertia::render('dashboard/(admin)/SupervisorsList', [
             'supervisors' => $supervisors,
             'form_infos' => $form_infos,
             'companies' => $companies,
@@ -223,7 +223,7 @@ class AdminController extends Controller
             ->orderBy('users.first_name')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/faculties/FacultiesList', [
+        return Inertia::render('dashboard/(admin)/FacultiesList', [
             'faculties' => $faculties,
         ]);
     }
@@ -245,7 +245,7 @@ class AdminController extends Controller
             ->orderBy('companies.company_name')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/companies/CompaniesList', [
+        return Inertia::render('dashboard/(admin)/CompaniesList', [
             'companies' => $companies,
         ]);
     }

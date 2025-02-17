@@ -42,7 +42,7 @@ class LoginController extends Controller
             $user->password_expiry = null;
             $user->saveQuietly();
 
-            return redirect()->intended('/dashboard');
+            return redirect()->to('/dashboard');
         }
 
         return back()->withErrors([
@@ -68,9 +68,8 @@ class LoginController extends Controller
             $user->password_expiry = now()->addSeconds(intval(env('PIN_DURATION', 300)));
             $user->saveQuietly();
         } catch (ModelNotFoundException) {
-            return back()->withErrors([
-                'email' => 'The provided email cannot be found.',
-            ]);
+            // On Failure, do NOT display error messages, but also do not send email.
+            return back();
         }
 
         if (env('SEND_PIN_TO_EMAIL', false)) {
@@ -102,6 +101,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }

@@ -33,10 +33,6 @@
                 <div class="text-xl">
                     Upload <strong>.pdf</strong> file below:
                 </div>
-
-                <Link href="/dashboard">
-                    <CloseButton class="hover:cursor-pointer" />
-                </Link>
             </div>
 
             <label class="text-xl">
@@ -60,13 +56,17 @@
             {:else}
                 <div class="pb-7"></div>
             {/if}
-            <div class="m-2 flex justify-center">
+            <div class="m-2 flex flex-col justify-center items-center">
                 <input
                     type="submit"
                     value="Submit Document"
                     disabled={$form.processing}
-                    class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl my-2 text-dark-primary-text hover:opacity-90"
                 />
+
+                <Link href="/dashboard" class="w-fit cursor-pointer border-2 py-2 px-3 text-2xl text-dark-primary-text hover:opacity-90">
+                    Cancel
+                </Link>
             </div>
         </form>
     </div>
