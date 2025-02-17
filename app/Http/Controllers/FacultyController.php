@@ -253,6 +253,7 @@ class FacultyController extends Controller
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
+                'email' => $supervisor_info->email,
                 'company_name' => $supervisor_info->company_name ?? '',
                 'form_statuses' => $form_statuses,
             ]);
@@ -271,6 +272,30 @@ class FacultyController extends Controller
         return Inertia::render('dashboard/(faculty)/supervisors/FormsList', [
             'supervisors' => $supervisors,
             'form_infos' => $form_infos,
+        ]);
+    }
+
+    public function showCompanies(Request $request): Response
+    {
+        $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'company_name';
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+
+        $companies_partial = DB::table('companies')
+            ->where(function ($query) use ($search_text) {
+                $query->where('company_name', 'LIKE', '%' . $search_text . '%');
+            });
+
+        $companies = $companies_partial
+            ->select(
+                'companies.id AS company_id',
+                'companies.company_name'
+            )
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
+            ->get();
+
+        return Inertia::render('dashboard/faculty/companies/CompaniesList', [
+            'companies' => $companies,
         ]);
     }
 }
