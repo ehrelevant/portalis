@@ -42,7 +42,7 @@ class LoginController extends Controller
             $user->password_expiry = null;
             $user->saveQuietly();
 
-            return redirect()->intended('/dashboard');
+            return redirect()->to('/dashboard');
         }
 
         return back()->withErrors([
@@ -102,6 +102,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }
