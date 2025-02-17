@@ -9,11 +9,42 @@
 
     export let companies;
 
-    /** @type {string} */
-    let searchQuery = '';
+    let searchQuery;
+    function search(evt) {
+        router.get(
+            '/dashboard/admin/companies',
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
 
-    function search() {
-        router.get(`/dashboard/admin/companies?search=${searchQuery}`);
+    let sortColumn = 'company_name';
+    let sortIsAscending = false;
+    function sortByColumn(newSortColumn) {
+        if (sortColumn === newSortColumn) {
+            sortIsAscending = !sortIsAscending;
+        }
+        sortColumn = newSortColumn;
+
+        router.get(
+            `/dashboard/admin/companies`,
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     }
 
     let addFormElement;
@@ -44,20 +75,15 @@
     <Header txt="Companies List" />
 
     <!-- Search Function -->
-    <form
-        class="flex flex-row content-center justify-center"
-        on:submit|preventDefault={search}
-    >
-        <button class="flex items-center px-2" type="submit">
-            <Search />
-        </button>
+    <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
+            on:keyup={search}
         />
-    </form>
+    </div>
 
     <!-- List of Companies -->
     <Accordion open>
@@ -68,7 +94,12 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <th scope="col" class="p-2 {borderColor}">Company Name</th>
+                    <th
+                        scope="col"
+                        class="p-2 {borderColor}"
+                        on:click={() => sortByColumn('company_name')}
+                        >Company Name</th
+                    >
                     <th scope="col" class="border-l-2 p-2 {borderColor}"
                         >Actions</th
                     >

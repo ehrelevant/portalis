@@ -23,6 +23,8 @@ class AdminController extends Controller
     public function showStudents(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'student_number';
+        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         // TODO: Add student number search
         $users_partial = DB::table('users')
@@ -53,7 +55,7 @@ class AdminController extends Controller
                 'students.wordpress_name',
                 'students.wordpress_email',
             )
-            ->orderBy('students.student_number')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         foreach ($students_info as $student_info) {
@@ -138,6 +140,8 @@ class AdminController extends Controller
     public function showSupervisors(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'last_name';
+        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         $users_partial = DB::table('users')
             ->where('role', 'supervisor')
@@ -158,8 +162,7 @@ class AdminController extends Controller
                 'users.email',
                 'companies.id AS company_id',
             )
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         $supervisors = [];
@@ -200,6 +203,8 @@ class AdminController extends Controller
     public function showFaculties(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'last_name';
+        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         $users_partial = DB::table('users')
             ->where('role', 'faculty')
@@ -219,8 +224,7 @@ class AdminController extends Controller
                 'users.email',
                 'faculties.section',
             )
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         return Inertia::render('dashboard/(admin)/FacultiesList', [
@@ -231,6 +235,8 @@ class AdminController extends Controller
     public function showCompanies(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'company_name';
+        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         $companies_partial = DB::table('companies')
             ->where(function ($query) use ($search_text) {
@@ -242,7 +248,7 @@ class AdminController extends Controller
                 'companies.id AS company_id',
                 'companies.company_name'
             )
-            ->orderBy('companies.company_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         return Inertia::render('dashboard/(admin)/CompaniesList', [
