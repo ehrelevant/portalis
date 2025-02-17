@@ -2,15 +2,15 @@
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
-    import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import Modal from '@/js/shared/components/Modal.svelte';
     import Required from '@/js/shared/components/Required.svelte';
+    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
 
     export let companies;
 
     let searchQuery;
-    function search(evt) {
+    function search() {
         router.get(
             '/dashboard/admin/companies',
             {
@@ -26,10 +26,12 @@
     }
 
     let sortColumn = 'company_name';
-    let sortIsAscending = false;
+    let sortIsAscending = true;
     function sortByColumn(newSortColumn) {
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
+        } else {
+            sortIsAscending = true;
         }
         sortColumn = newSortColumn;
 
@@ -74,7 +76,7 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Companies List" />
 
-    <!-- Search Function -->
+    <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
@@ -94,15 +96,15 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <th
-                        scope="col"
-                        class="p-2 {borderColor}"
-                        on:click={() => sortByColumn('company_name')}
-                        >Company Name</th
+                    <ColumnHeader
+                        isActive={sortColumn === 'company_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('company_name')}
+                        first
                     >
-                    <th scope="col" class="border-l-2 p-2 {borderColor}"
-                        >Actions</th
-                    >
+                        Company Name
+                    </ColumnHeader>
+                    <ColumnHeader>Actions</ColumnHeader>
                 </tr>
                 {#each companies as company}
                     {@const { company_id, company_name } = company}

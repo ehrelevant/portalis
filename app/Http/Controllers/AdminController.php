@@ -24,15 +24,15 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'student_number';
-        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         // TODO: Add student number search
         $users_partial = DB::table('users')
-            ->where('role', 'student')
+            ->where('users.role', 'student')
             ->where(function ($query) use ($search_text) {
-                $query->where('first_name', 'LIKE', '%' . $search_text . '%')
-                    ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
-                    ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
+                $query->where('users.first_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('users.last_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('users.middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
         $students = [];
@@ -40,6 +40,8 @@ class AdminController extends Controller
         $students_info = $users_partial
             ->join('students', 'users.role_id', '=', 'students.student_number')
             ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+            ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
+            ->where('supervisor_users.role', 'supervisor')
             ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
@@ -50,6 +52,7 @@ class AdminController extends Controller
                 'faculties.section',
                 'students.has_dropped',
                 'supervisors.id AS supervisor_id',
+                'supervisor_users.last_name AS supervisor_last_name',
                 'companies.company_name',
                 'users.email',
                 'students.wordpress_name',
@@ -161,6 +164,7 @@ class AdminController extends Controller
                 'users.last_name',
                 'users.email',
                 'companies.id AS company_id',
+                'companies.company_name',
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -204,7 +208,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'last_name';
-        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $users_partial = DB::table('users')
             ->where('role', 'faculty')
@@ -236,7 +240,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'company_name';
-        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $companies_partial = DB::table('companies')
             ->where(function ($query) use ($search_text) {
