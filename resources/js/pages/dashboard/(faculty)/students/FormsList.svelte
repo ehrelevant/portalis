@@ -13,10 +13,6 @@
     /** @type {string} */
     let searchQuery = '';
 
-    function exportStudentSectionsCsv() {
-        router.get(`/export/students/sections`);
-    }
-
     function search() {
         router.get(`/dashboard/students?search=${searchQuery}`);
     }
@@ -136,17 +132,36 @@
     </Accordion>
     
     <div class="flex w-full justify-end">
-        <button
-            on:click={exportStudentSectionsCsv}
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            >Export</button
+        <a
+            target='_blank'
+            href="/export/students/sections"
+            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Export Student List</a
+        >
+    </div>
+
+    <div class="flex w-full justify-end">
+        <a
+            target='_blank'
+            href="/export/students/company-evaluations"
+            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Export Company Evaluations</a
+        >
+    </div>
+
+    <div class="flex w-full justify-end">
+        <a
+            target='_blank'
+            href="/export/students/student-assessments"
+            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Export Student Assessments</a
         >
     </div>
 
     <div class="flex w-full justify-end">
         <Link
             href="/dashboard"
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Back to Dashboard</Link
         >
     </div>
