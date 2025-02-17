@@ -389,7 +389,7 @@ class AdminController extends Controller
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
-            'section' => ['required', 'string'],
+            'section' => ['nullable', 'string'],
         ]);
 
         $user_email_exists = User::where('email', $values['email'])->exists();
@@ -399,7 +399,7 @@ class AdminController extends Controller
             return back()->withErrors([
                 'email' => 'The provided email already exists.',
             ]);
-        } else if ($section_exists) {
+        } else if ($values['section'] && $section_exists) {
             return back()->withErrors([
                 'section' => 'The provided section already exists.',
             ]);

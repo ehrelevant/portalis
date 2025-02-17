@@ -148,7 +148,9 @@
                             >{last_name}, {first_name}</td
                         >
                         <td class="border-l-2 p-2 {borderColor}">{email}</td>
-                        <td class="border-l-2 p-2 {borderColor}">{section}</td>
+                        <td class="border-l-2 p-2 {borderColor}"
+                            >{section ?? ''}</td
+                        >
                         <td class="border-l-2 p-2 text-center {borderColor}"
                             ><Link
                                 href="/dashboard/admin/faculties/delete/{faculty_id}"
@@ -246,14 +248,13 @@
                 {/if}
             </div>
 
-            <label for="section"><Required />Section</label>
+            <label for="section">Section</label>
             <div class="flex flex-col">
                 <input
                     name="section"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                     bind:value={$addUserForm.section}
-                    required
                 />
                 {#if $addUserForm.errors.section}
                     <ErrorText>
