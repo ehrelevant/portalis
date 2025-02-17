@@ -51,23 +51,8 @@ class ExportsController extends Controller
         return response()->download(public_path($csvFileName));
     }
 
-    /*
-    public function exportMidsemReportStudents(): BinaryFileResponse
+    public function exportFormsAsCsv(string $shortName, string $csvFileName): BinaryFileResponse
     {
-
-    }
-
-    public function exportFinalReportStudents(): BinaryFileResponse
-    {
-        
-    }
-    */
-
-    public function exportCompanyEvaluations(): BinaryFileResponse
-    {
-        $shortName = 'company-evaluation';
-        $csvFileName = 'company_evaluations.csv';
-
         $dbTable1 = DB::table('users')
             ->where('role', 'student')
             ->where('forms.short_name', $shortName)
@@ -108,14 +93,14 @@ class ExportsController extends Controller
                 'rating_questions.criterion'
             )
             ->get();
-        
+    
         // number of last columns to remove from $dbTable1
         /*
             'rating_questions.id',
             'rating_questions.criterion',
             'rating_scores.score'
         */
-        $num_extra_rows = 3;
+        $numExtraRows = 3;
 
         // ---
 
@@ -124,23 +109,23 @@ class ExportsController extends Controller
         // get headers of DB query
         $headers = array_keys((array) $dbTable1[0]);
         // remove rating question id, criterion and score from headers
-        $reduced_headers = array_slice($headers, 0, count($headers) - $num_extra_rows);
+        $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);
         // get only criterion from [rating_questions.criterion, rating_questions.id]
-        $rating_criteria = $dbTable2->pluck('criterion');
+        $ratingCriteria = $dbTable2->pluck('criterion');
         // produce actual headers from reduced headers ++ rating criteria
-        $actual_headers = array_merge($reduced_headers, $rating_criteria->toArray());
-        fputcsv($csvFile, $actual_headers);
+        $actualHeaders = array_merge($reducedHeaders, $ratingCriteria->toArray());
+        fputcsv($csvFile, $actualHeaders);
 
         for ($i = 0; $i < count($dbTable1); $i++) {
             $row = $dbTable1[$i];
             // remove rating question id, criterion and score from row
-            $reduced_row = array_slice((array) $row, 0, count((array) $row) - $num_extra_rows);
+            $reducedRow = array_slice((array) $row, 0, count((array) $row) - $numExtraRows);
 
             // get array of scores
-            $rating_scores = [];
-            foreach ($dbTable2 as $rating_criterion_id) {
-                if ($rating_criterion_id->id == $row->id) array_push($rating_scores, $row->score);
-                else array_push($rating_scores, null);
+            $ratingScores = [];
+            foreach ($dbTable2 as $ratingCriterionId) {
+                if ($ratingCriterionId->id == $row->id) array_push($ratingScores, $row->score);
+                else array_push($ratingScores, null);
             }
 
             // if the next row has the same student number (same student, score for next question),
@@ -155,21 +140,21 @@ class ExportsController extends Controller
                 $i++;
                 $row = $dbTable1[$i];
                 
-                $current_rating_scores = [];
-                foreach ($dbTable2 as $rating_criterion_id) {
-                    if ($rating_criterion_id->id == $row->id) array_push($current_rating_scores, $row->score);
-                    else array_push($current_rating_scores, null);
+                $currentRatingScores = [];
+                foreach ($dbTable2 as $ratingCriterionId) {
+                    if ($ratingCriterionId->id == $row->id) array_push($currentRatingScores, $row->score);
+                    else array_push($currentRatingScores, null);
                 }
 
-                for ($j = 0; $j < count($rating_scores); $j++) {
-                    if ($rating_scores[$j] == null) $rating_scores[$j] = $current_rating_scores[$j];
+                for ($j = 0; $j < count($ratingScores); $j++) {
+                    if ($ratingScores[$j] == null) $ratingScores[$j] = $currentRatingScores[$j];
                 }
             }
 
-            $actual_row = array_merge($reduced_row, $rating_scores);
-            fputcsv($csvFile, (array) $actual_row);
+            $actualRow = array_merge($reducedRow, $ratingScores);
+            fputcsv($csvFile, (array) $actualRow);
         }
-
+        
         fclose($csvFile);
 
         // ---
@@ -179,11 +164,28 @@ class ExportsController extends Controller
     }
 
     /*
-    public function exportStudentAssessments(): BinaryFileResponse
+    public function exportMidsemReportStudents(): BinaryFileResponse
+    {
+
+    }
+
+    public function exportFinalReportStudents(): BinaryFileResponse
     {
         
     }
+    */
 
+    public function exportCompanyEvaluations(): BinaryFileResponse
+    {
+        return self::exportFormsAsCsv('company-evaluation', 'company_evaluations.csv');
+    }
+
+    public function exportStudentAssessments(): BinaryFileResponse
+    {
+        return self::exportFormsAsCsv('self-evaluation', 'student_assessments.csv');
+    }
+
+    /*
     public function exportMidsemReportSupervisors(): BinaryFileResponse
     {
         
