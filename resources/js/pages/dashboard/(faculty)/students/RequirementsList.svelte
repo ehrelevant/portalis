@@ -151,10 +151,11 @@
     </Accordion>
     
     <div class="flex w-full justify-end">
-        <Link
+        <a
+            target='_blank'
             href="/export/students/sections"
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Student List</Link
+            method="get">Export Student List</a
         >
     </div>
 
