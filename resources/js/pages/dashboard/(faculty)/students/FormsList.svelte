@@ -5,16 +5,50 @@
     import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
+    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
 
     export let students;
     export let form_infos;
     export let supervisors;
 
-    /** @type {string} */
-    let searchQuery = '';
-
+    let searchQuery;
     function search() {
-        router.get(`/dashboard/students?search=${searchQuery}`);
+        router.get(
+            '/dashboard/students',
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
+
+    let sortColumn = 'student_number';
+    let sortIsAscending = true;
+    function sortByColumn(newSortColumn) {
+        if (sortColumn === newSortColumn) {
+            sortIsAscending = !sortIsAscending;
+        } else {
+            sortIsAscending = true;
+        }
+        sortColumn = newSortColumn;
+
+        router.get(
+            `/dashboard/students`,
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     }
 
     /** @type {string} */
@@ -24,21 +58,16 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
-    <!-- Search Function -->
-    <form
-        class="flex flex-row content-center justify-center"
-        on:submit|preventDefault={search}
-    >
-        <button class="flex items-center px-2" type="submit">
-            <Search />
-        </button>
+    <!-- Name Search Bar -->
+    <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
+            on:keyup={search}
         />
-    </form>
+    </div>
 
     <!-- List of Supervisors -->
     <Accordion open>
@@ -49,33 +78,67 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Name</th
+                    <ColumnHeader
+                        isActive={sortColumn === 'student_number'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('student_number')}
+                        first
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Section</th
+                        SN
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'last_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('last_name')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Supervisor Name</th
+                        Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'section'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('section')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Company Interned</th
+                        Section
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'supervisor_last_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() =>
+                            sortByColumn('supervisor_last_name')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Email</th
+                        Supervisor Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'company_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('company_name')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Wordpress Name</th
+                        Company Interned
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'email'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('email')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Wordpress Email</th
+                        Email
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'wordpress_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('wordpress_name')}
                     >
+                        Wordpress Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'wordpress_email'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('wordpress_email')}
+                    >
+                        Wordpress Email
+                    </ColumnHeader>
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
-                        <th scope="col" class="border-l-2 p-2 {borderColor}"
-                            >{form_name}</th
-                        >
+                        <ColumnHeader>{form_name}</ColumnHeader>
                     {/each}
                 </tr>
                 {#each students as student}
@@ -130,10 +193,10 @@
             </table>
         </div>
     </Accordion>
-    
+
     <div class="flex w-full justify-end">
         <a
-            target='_blank'
+            target="_blank"
             href="/export/students/sections"
             class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Export Student List</a
@@ -142,7 +205,7 @@
 
     <div class="flex w-full justify-end">
         <a
-            target='_blank'
+            target="_blank"
             href="/export/students/company-evaluations"
             class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Export Company Evaluations</a
@@ -151,7 +214,7 @@
 
     <div class="flex w-full justify-end">
         <a
-            target='_blank'
+            target="_blank"
             href="/export/students/student-assessments"
             class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Export Student Assessments</a

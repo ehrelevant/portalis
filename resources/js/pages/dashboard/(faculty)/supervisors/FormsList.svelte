@@ -5,15 +5,49 @@
     import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
+    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
 
     export let supervisors;
     export let form_infos;
 
-    /** @type {string} */
-    let searchQuery = '';
-
+    let searchQuery;
     function search() {
-        router.get(`/dashboard/supervisors?search=${searchQuery}`);
+        router.get(
+            '/dashboard/supervisors',
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
+
+    let sortColumn = 'student_number';
+    let sortIsAscending = true;
+    function sortByColumn(newSortColumn) {
+        if (sortColumn === newSortColumn) {
+            sortIsAscending = !sortIsAscending;
+        } else {
+            sortIsAscending = true;
+        }
+        sortColumn = newSortColumn;
+
+        router.get(
+            `/dashboard/supervisors`,
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     }
 
     /** @type {string} */
@@ -23,21 +57,16 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Supervisor List" />
 
-    <!-- Search Function -->
-    <form
-        class="flex flex-row content-center justify-center"
-        on:submit|preventDefault={search}
-    >
-        <button class="flex items-center px-2" type="submit">
-            <Search />
-        </button>
+    <!-- Name Search Bar -->
+    <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
+            on:keyup={search}
         />
-    </form>
+    </div>
 
     <!-- List of Supervisors -->
     <Accordion open>
@@ -48,12 +77,28 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Name</th
+                    <ColumnHeader
+                        isActive={sortColumn === 'last_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('last_name')}
+                        first
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Company</th
+                        Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'company_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('company_name')}
                     >
+                        Company
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'email'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('email')}
+                    >
+                        Email
+                    </ColumnHeader>
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
                         <th scope="col" class="border-l-2 p-2 {borderColor}"
@@ -66,6 +111,7 @@
                         supervisor_id,
                         first_name,
                         last_name,
+                        email,
                         company_name,
                         form_statuses,
                     } = supervisor}
@@ -75,6 +121,9 @@
                         >
                         <td class="border-r-2 p-2 text-center {borderColor}"
                             >{company_name}</td
+                        >
+                        <td class="border-r-2 p-2 text-center {borderColor}"
+                            >{email}</td
                         >
                         {#each Object.entries(form_statuses) as [form_id, form_status]}
                             <td class="border-l-2 p-2 text-center {borderColor}"

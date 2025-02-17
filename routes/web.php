@@ -86,8 +86,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
         Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
-        Route::get('/dashboard/students/{student_number}', [FacultyController::class, 'showStudent']);
         Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
+        Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
