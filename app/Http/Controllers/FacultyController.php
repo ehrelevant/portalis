@@ -294,7 +294,7 @@ class FacultyController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/faculty/companies/CompaniesList', [
+        return Inertia::render('dashboard/(faculty)/companies/CompaniesList', [
             'companies' => $companies,
         ]);
     }
