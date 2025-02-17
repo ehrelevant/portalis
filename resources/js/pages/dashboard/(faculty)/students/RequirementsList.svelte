@@ -5,20 +5,54 @@
     import Search from '@assets/search_logo.svelte';
     import StatusCell from '@/js/shared/components/StatusCell.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
+    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
 
     export let students;
     export let requirements;
     export let sections;
 
-    /** @type {string} */
-    let searchQuery = '';
-
     function exportStudentSectionsCsv() {
         router.get(`/export/students/sections`);
     }
 
+    let searchQuery;
     function search() {
-        router.get(`/dashboard/students?search=${searchQuery}`);
+        router.get(
+            '/dashboard/students',
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
+
+    let sortColumn = 'student_number';
+    let sortIsAscending = true;
+    function sortByColumn(newSortColumn) {
+        if (sortColumn === newSortColumn) {
+            sortIsAscending = !sortIsAscending;
+        } else {
+            sortIsAscending = true;
+        }
+        sortColumn = newSortColumn;
+
+        router.get(
+            `/dashboard/students`,
+            {
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     }
 
     function setSection(evt, studentNumber) {
@@ -40,21 +74,16 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
-    <!-- Search Function -->
-    <form
-        class="flex flex-row content-center justify-center"
-        on:submit|preventDefault={search}
-    >
-        <button class="flex items-center px-2" type="submit">
-            <Search />
-        </button>
+    <!-- Name Search Bar -->
+    <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
+            on:keyup={search}
         />
-    </form>
+    </div>
 
     <!-- List of Students -->
     <Accordion open>
@@ -65,27 +94,52 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <th scope="col" class="border-r-2 p-2 {borderColor}">SN</th>
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Name</th
+                    <ColumnHeader
+                        isActive={sortColumn === 'student_number'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('student_number')}
+                        first
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Section</th
+                        SN
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'last_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('last_name')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Email</th
+                        Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'section'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('section')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Wordpress Name</th
+                        Section
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'email'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('email')}
                     >
-                    <th scope="col" class="border-r-2 p-2 {borderColor}"
-                        >Wordpress Email</th
+                        Email
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'wordpress_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('wordpress_name')}
                     >
+                        Wordpress Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'wordpress_email'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('wordpress_email')}
+                    >
+                        Wordpress Email
+                    </ColumnHeader>
                     {#each requirements as requirement}
                         {@const { requirement_name } = requirement}
-                        <th scope="col" class="border-l-2 p-2 {borderColor}"
-                            >{requirement_name}</th
-                        >
+                        <ColumnHeader>{requirement_name}</ColumnHeader>
                     {/each}
                 </tr>
                 {#each students as student}
