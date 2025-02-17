@@ -1,8 +1,8 @@
 <script>
+    import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
-    import Search from '@assets/search_logo.svelte';
     import Accordion from '@/js/shared/components/Accordion.svelte';
     import Modal from '@/js/shared/components/Modal.svelte';
     import Required from '@/js/shared/components/Required.svelte';
@@ -76,12 +76,13 @@
             {},
             {
                 preserveScroll: true,
-                onSuccess: () => {
-                    isModalOpen = false;
-                },
             },
         );
     }
+
+    Inertia.on('success', () => {
+        isModalOpen = false;
+    });
 
     /** @type {string} */
     let borderColor = 'border-black dark:border-white';

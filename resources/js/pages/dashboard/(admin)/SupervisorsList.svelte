@@ -1,4 +1,5 @@
 <script>
+    import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '@shared/components/InternshipHeader.svelte';
@@ -91,12 +92,13 @@
             {},
             {
                 preserveScroll: true,
-                onSuccess: () => {
-                    isModalOpen = false;
-                },
             },
         );
     }
+
+    Inertia.on('success', () => {
+        isModalOpen = false;
+    });
 
     /** @type {string} */
     let borderColor = 'border-black dark:border-white';
