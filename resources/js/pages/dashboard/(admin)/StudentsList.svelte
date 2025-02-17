@@ -124,21 +124,16 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
-    <!-- Search Function -->
-    <form
-        class="flex flex-row content-center justify-center"
-        on:submit|preventDefault={search}
-    >
-        <button class="flex items-center px-2" type="submit">
-            <Search />
-        </button>
+    <!-- Name Search Bar -->
+    <div class="flex flex-row content-center justify-center">
         <input
             class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
+            on:keyup={search}
         />
-    </form>
+    </div>
 
     <!-- List of Students -->
     <Accordion open>
@@ -184,7 +179,7 @@
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('company_name')}
                     >
-                        Company
+                        Company Interned
                     </ColumnHeader>
                     <ColumnHeader
                         isActive={sortColumn === 'email'}
