@@ -4,25 +4,25 @@
     export let isAdmin = false;
 
     const bgColor =
-        status === 'validated'
+        status === 'Accepted'
             ? 'bg-floating-forest-light'
-            : status === 'submitted'
+            : status === 'For Review'
               ? 'bg-floating-brown-light'
-              : status === 'rejected'
+              : status === 'Returned'
                 ? 'bg-floating-red-light'
                 : 'bg-floating-gray-light';
 
     const textColor =
-        status === 'validated'
+        status === 'Accepted'
             ? 'text-floating-forest'
-            : status === 'submitted'
+            : status === 'For Review'
               ? 'text-floating-brown'
-              : status === 'rejected'
+              : status === 'Returned'
                 ? 'text-floating-red'
                 : 'text-floating-gray';
 </script>
 
-{#if status !== 'unsubmitted' || isAdmin}
+{#if status !== 'None' || isAdmin}
     <a class="flex items-center justify-center" {href} target="_blank">
         <div
             class="w-fit justify-center rounded-xl px-2 py-1 {bgColor} {textColor}"

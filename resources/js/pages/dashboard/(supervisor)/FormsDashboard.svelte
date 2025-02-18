@@ -44,13 +44,13 @@
                         />
                         <div class="flex flex-row justify-start gap-2">
                             <Status type={status} />
-                            {#if status === 'validated'}
+                            {#if status === 'Accepted'}
                                 <Link
                                     href="/form/self-evaluation/invalidate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     method="post">Invalidate</Link
                                 >
-                            {:else if status !== 'rejected' && status !== 'unsubmitted'}
+                            {:else if status !== 'Returned' && status !== 'None'}
                                 <Link
                                     href="/form/self-evaluation/validate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
@@ -75,7 +75,7 @@
                     {form_name}
                 </h2>
 
-                {#if status !== 'unsubmitted' && status !== 'rejected'}
+                {#if status !== 'None' && status !== 'Returned'}
                     <!-- Removes link if answered already -->
                     <div
                         class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"

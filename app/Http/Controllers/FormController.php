@@ -509,7 +509,7 @@ class FormController extends Controller
         FormStatus::where('user_id', $supervisor_user->id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('forms.short_name', $short_name)
-            ->update(['status' => 'submitted']);
+            ->update(['status' => 'For Review']);
 
         if (Auth::user()->role === User::ROLE_ADMIN) {
             return back();
@@ -704,7 +704,7 @@ class FormController extends Controller
         FormStatus::where('user_id', $student_user->id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
             ->where('forms.short_name', $short_name)
-            ->update(['status' => 'submitted']);
+            ->update(['status' => 'For Review']);
 
         if (Auth::user()->role === User::ROLE_ADMIN) {
             return back();
@@ -727,10 +727,10 @@ class FormController extends Controller
             ->where('form_id', $form_id)
             ->firstOrFail();
 
-        if ($form_status->status === 'submitted') {
+        if ($form_status->status === 'For Review') {
             FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'validated']);
+                ->update(['status' => 'Accepted']);
         }
 
         return back();
@@ -750,10 +750,10 @@ class FormController extends Controller
             ->where('form_id', $form_id)
             ->firstOrFail();
 
-        if ($form_status->status === 'validated') {
+        if ($form_status->status === 'Accepted') {
             FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'submitted']);
+                ->update(['status' => 'For Review']);
         }
 
         return back();
@@ -773,10 +773,10 @@ class FormController extends Controller
             ->where('form_id', $form_id)
             ->firstOrFail();
 
-        if ($form_status->status === 'submitted') {
+        if ($form_status->status === 'For Review') {
             FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'rejected']);
+                ->update(['status' => 'Returned']);
         }
 
         return back();

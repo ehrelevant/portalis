@@ -316,7 +316,7 @@ class AdminController extends Controller
             $new_submission_status = new SubmissionStatus();
             $new_submission_status->student_number = $new_student->student_number;
             $new_submission_status->requirement_id = $requirement->id;
-            $new_submission_status->status = 'unsubmitted';
+            $new_submission_status->status = 'None';
             $new_submission_status->save();
         }
 
@@ -328,7 +328,7 @@ class AdminController extends Controller
             $new_form_status = new FormStatus();
             $new_form_status->user_id = $new_user->id;
             $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'unsubmitted';
+            $new_form_status->status = 'None';
             $new_form_status->save();
         }
 
@@ -375,7 +375,7 @@ class AdminController extends Controller
             $new_form_status = new FormStatus();
             $new_form_status->user_id = $new_user->id;
             $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'unsubmitted';
+            $new_form_status->status = 'None';
             $new_form_status->save();
         }
 

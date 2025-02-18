@@ -249,17 +249,17 @@ class FormSeeder extends Seeder
                 FormStatus::factory()->create([
                     'form_id' => 1,
                     'user_id' => $user->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
                 FormStatus::factory()->create([
                     'form_id' => 2,
                     'user_id' => $user->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
                 FormStatus::factory()->create([
                     'form_id' => 5,
                     'user_id' => $user->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
             }
 
@@ -267,12 +267,12 @@ class FormSeeder extends Seeder
                 FormStatus::factory()->create([
                     'form_id' => 3,
                     'user_id' => $user->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
                 FormStatus::factory()->create([
                     'form_id' => 4,
                     'user_id' => $user->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
             }
         }

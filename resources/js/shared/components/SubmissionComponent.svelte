@@ -27,7 +27,7 @@
                 >
             {/if}
             {#if faculty}
-                {#if sub_status === 'submitted'}
+                {#if sub_status === 'For Review'}
                     <!-- Using `use:inertia` instead of Link temporarily due to some issues -->
                     <Link
                         href="/dashboard/faculty/students/{student_number}/{requirement_id}/reject"
@@ -45,7 +45,7 @@
                     >
                         Validate
                     </Link>
-                {:else if sub_status === 'validated'}
+                {:else if sub_status === 'Accepted'}
                     <Link
                         href="/dashboard/faculty/students/{student_number}/{requirement_id}/invalidate"
                         method="post"

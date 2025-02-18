@@ -83,13 +83,13 @@
 
     <div class="flex flex-row justify-center gap-2">
         <Status type={status} />
-        {#if status === 'validated'}
+        {#if status === 'Accepted'}
             <Link
                 href="/form/{form_info.short_name}/invalidate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                 method="post">Invalidate</Link
             >
-        {:else if status !== 'rejected'}
+        {:else if status !== 'Returned'}
             <Link
                 href="/form/{form_info.short_name}/validate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

@@ -32,7 +32,7 @@
     <div
         class="flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
     >
-        {#if submissionStatus !== 'unsubmitted'}
+        {#if submissionStatus !== 'None'}
             <a
                 href="/file/submission/{studentNumber}/{requirementId}"
                 target="_blank"

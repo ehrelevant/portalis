@@ -21,7 +21,7 @@ class FormStatusFactory extends Factory
         return [
             'form_id' => Form::factory(),
             'user_id' => User::factory(),
-            'status' => fake()->randomElement(['rejected', 'unsubmitted', 'submitted', 'validated']),
+            'status' => fake()->randomElement(['Returned', 'None', 'For Review', 'Accepted']),
         ];
     }
 }
