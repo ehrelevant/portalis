@@ -74,7 +74,8 @@ class ExportsController extends Controller
             //->where('form_statuses.status', 'For Review')
 
             ->join('students', 'users.role_id', '=', 'students.student_number')
-            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+            ->join('faculties', 'students.faculty_id', '=', 'faculties.id')
+            ->whereNot('students.has_dropped', true)
 
             ->leftJoin('form_statuses', 'users.id', '=', 'form_statuses.user_id')
             ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id')
