@@ -63,7 +63,7 @@ class ExportsController extends Controller
         // ---
 
         // todo: show user prompt to download from public folder to actual local filesystem
-        return response()->download(public_path($csvFileName));
+        return response()->download(public_path($csvFileName))->deleteFileAfterSend();
     }
 
     public function exportFormsAsCsv(string $shortName, string $csvFileName): BinaryFileResponse
@@ -119,7 +119,7 @@ class ExportsController extends Controller
 
             ->join('forms', 'form_rating_questions.form_id', '=', 'forms.id')
             ->join('rating_questions', 'form_rating_questions.rating_question_id', '=', 'rating_questions.id')
-            
+
             ->select(
                 'rating_questions.id',
                 'rating_questions.criterion'
@@ -169,7 +169,7 @@ class ExportsController extends Controller
             while ($i+1 < count($dbTable1) && $dbTable1[$i+1]->student_number == $row->student_number) {
                 $i++;
                 $row = $dbTable1[$i];
-                
+
                 $currentRatingScores = [];
                 foreach ($dbTable2 as $ratingCriterionId) {
                     if ($ratingCriterionId->id == $row->id) array_push($currentRatingScores, $row->score);
@@ -185,13 +185,13 @@ class ExportsController extends Controller
             $actualRow = array_merge($reducedRow, $ratingScores);
             fputcsv($csvFile, (array) $actualRow);
         }
-        
+
         fclose($csvFile);
 
         // ---
 
         // todo: show user prompt to download from public folder to actual local filesystem
-        return response()->download(public_path($csvFileName));
+        return response()->download(public_path($csvFileName))->deleteFileAfterSend();
     }
 
     /*
@@ -202,7 +202,7 @@ class ExportsController extends Controller
 
     public function exportFinalReportStudents(): BinaryFileResponse
     {
-        
+
     }
     */
 
@@ -219,12 +219,12 @@ class ExportsController extends Controller
     /*
     public function exportMidsemReportSupervisors(): BinaryFileResponse
     {
-        
+
     }
 
     public function exportFinalReportSupervisors(): BinaryFileResponse
     {
-        
+
     }
     */
 }
