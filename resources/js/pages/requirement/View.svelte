@@ -28,7 +28,6 @@
             </iframe>
         {/if}
         <div class="flex flex-row justify-center gap-2">
-            <Status type={status} />
             {#if ['Accepted'].includes(status)}
                 <Link
                     href="/requirement/{requirementId}/view/{studentNumber}/invalidate"
