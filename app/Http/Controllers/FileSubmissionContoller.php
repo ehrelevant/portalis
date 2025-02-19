@@ -75,7 +75,7 @@ class FileSubmissionContoller extends Controller
         $submission_status = SubmissionStatus::where('student_number', $student_number)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
-        $submission_status->status = 'submitted';
+        $submission_status->status = 'For Review';
         $submission_status->save();
 
         $submission = new Submission();
@@ -165,8 +165,8 @@ class FileSubmissionContoller extends Controller
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
-        if ($submission_status->status === 'submitted') {
-            $submission_status->status = 'validated';
+        if ($submission_status->status === 'For Review') {
+            $submission_status->status = 'Accepted';
         }
 
         $submission_status->save();
@@ -180,8 +180,8 @@ class FileSubmissionContoller extends Controller
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
-        if ($submission_status->status === 'validated') {
-            $submission_status->status = 'submitted';
+        if ($submission_status->status === 'Accepted') {
+            $submission_status->status = 'For Review';
         }
 
         $submission_status->save();
@@ -195,8 +195,8 @@ class FileSubmissionContoller extends Controller
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
-        if ($submission_status->status === 'submitted') {
-            $submission_status->status = 'rejected';
+        if ($submission_status->status === 'For Review') {
+            $submission_status->status = 'Returned';
         }
 
         $submission_status->save();

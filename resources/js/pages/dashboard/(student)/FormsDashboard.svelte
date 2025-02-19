@@ -19,7 +19,7 @@
                     {form_name}
                 </h2>
 
-                {#if status !== 'unsubmitted' && status !== 'rejected'}
+                {#if status !== 'None' && status !== 'Returned'}
                     <!-- Removes link if answered already -->
                     <div
                         class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"

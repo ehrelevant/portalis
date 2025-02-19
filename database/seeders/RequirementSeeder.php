@@ -45,7 +45,7 @@ class RequirementSeeder extends Seeder
                 SubmissionStatus::factory()->create([
                     'student_number' => $student->student_number,
                     'requirement_id' => $requirement->id,
-                    'status' => 'unsubmitted',
+                    'status' => 'None',
                 ]);
             }
         }

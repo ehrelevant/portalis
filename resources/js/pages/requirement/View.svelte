@@ -18,7 +18,7 @@
         txt="{studentName.last_name}, {studentName.first_name} — {requirementName}"
     />
     <div class="flex h-full w-full flex-col gap-4">
-        {#if status !== 'unsubmitted'}
+        {#if status !== 'None'}
             <iframe
                 src="/file/submission/{studentNumber}/{requirementId}"
                 title={requirementName}
@@ -29,13 +29,13 @@
         {/if}
         <div class="flex flex-row justify-center gap-2">
             <Status type={status} />
-            {#if ['validated'].includes(status)}
+            {#if ['Accepted'].includes(status)}
                 <Link
                     href="/requirement/{requirementId}/view/{studentNumber}/invalidate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
-            {:else if ['submitted'].includes(status)}
+            {:else if ['For Review'].includes(status)}
                 <Link
                     href="/requirement/{requirementId}/view/{studentNumber}/validate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

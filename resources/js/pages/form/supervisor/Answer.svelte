@@ -114,7 +114,7 @@
                 </Accordion>
             {/each}
 
-            {#if ['rejected', 'unsubmitted'].includes(status)}
+            {#if ['Returned', 'None'].includes(status)}
                 <div class="m-2 flex justify-center gap-4">
                     <input
                         name="draft"
@@ -138,13 +138,13 @@
     {#if isAdmin}
         <div class="flex flex-row justify-center gap-2">
             <Status type={status} />
-            {#if ['validated'].includes(status)}
+            {#if ['Accepted'].includes(status)}
                 <Link
                     href="/form/{form_info.short_name}/invalidate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
-            {:else if ['submitted'].includes(status)}
+            {:else if ['For Review'].includes(status)}
                 <Link
                     href="/form/{form_info.short_name}/validate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

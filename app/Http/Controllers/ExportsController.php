@@ -71,7 +71,7 @@ class ExportsController extends Controller
         $dbTable1 = DB::table('users')
             ->where('role', 'student')
             ->where('forms.short_name', $shortName)
-            //->where('form_statuses.status', 'submitted')
+            //->where('form_statuses.status', 'For Review')
 
             ->join('students', 'users.role_id', '=', 'students.student_number')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')

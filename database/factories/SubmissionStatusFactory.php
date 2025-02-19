@@ -21,7 +21,7 @@ class SubmissionStatusFactory extends Factory
         return [
             'student_number' => Student::factory(),
             'requirement_id' => Requirement::factory(),
-            'status' => fake()->randomElement(['rejected', 'unsubmitted', 'submitted', 'validated']),
+            'status' => fake()->randomElement(['Returned', 'None', 'For Review', 'Accepted']),
         ];
     }
 }

@@ -23,14 +23,16 @@ class AdminController extends Controller
     public function showStudents(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'student_number';
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         // TODO: Add student number search
         $users_partial = DB::table('users')
-            ->where('role', 'student')
+            ->where('users.role', 'student')
             ->where(function ($query) use ($search_text) {
-                $query->where('first_name', 'LIKE', '%' . $search_text . '%')
-                    ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
-                    ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
+                $query->where('users.first_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('users.last_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('users.middle_name', 'LIKE', '%' . $search_text . '%');
             });
 
         $students = [];
@@ -38,6 +40,8 @@ class AdminController extends Controller
         $students_info = $users_partial
             ->join('students', 'users.role_id', '=', 'students.student_number')
             ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
+            ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
+            ->where('supervisor_users.role', 'supervisor')
             ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
@@ -48,12 +52,13 @@ class AdminController extends Controller
                 'faculties.section',
                 'students.has_dropped',
                 'supervisors.id AS supervisor_id',
+                'supervisor_users.last_name AS supervisor_last_name',
                 'companies.company_name',
                 'users.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
             )
-            ->orderBy('students.student_number')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         foreach ($students_info as $student_info) {
@@ -138,6 +143,8 @@ class AdminController extends Controller
     public function showSupervisors(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'last_name';
+        $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         $users_partial = DB::table('users')
             ->where('role', 'supervisor')
@@ -157,9 +164,9 @@ class AdminController extends Controller
                 'users.last_name',
                 'users.email',
                 'companies.id AS company_id',
+                'companies.company_name',
             )
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         $supervisors = [];
@@ -200,6 +207,8 @@ class AdminController extends Controller
     public function showFaculties(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'last_name';
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $users_partial = DB::table('users')
             ->where('role', 'faculty')
@@ -219,8 +228,7 @@ class AdminController extends Controller
                 'users.email',
                 'faculties.section',
             )
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         return Inertia::render('dashboard/(admin)/FacultiesList', [
@@ -231,6 +239,8 @@ class AdminController extends Controller
     public function showCompanies(Request $request): Response
     {
         $search_text = $request->query('search') ?? '';
+        $sort_query = $request->query('sort') ?? 'company_name';
+        $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $companies_partial = DB::table('companies')
             ->where(function ($query) use ($search_text) {
@@ -242,7 +252,7 @@ class AdminController extends Controller
                 'companies.id AS company_id',
                 'companies.company_name'
             )
-            ->orderBy('companies.company_name')
+            ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         return Inertia::render('dashboard/(admin)/CompaniesList', [
@@ -306,7 +316,7 @@ class AdminController extends Controller
             $new_submission_status = new SubmissionStatus();
             $new_submission_status->student_number = $new_student->student_number;
             $new_submission_status->requirement_id = $requirement->id;
-            $new_submission_status->status = 'unsubmitted';
+            $new_submission_status->status = 'None';
             $new_submission_status->save();
         }
 
@@ -318,7 +328,7 @@ class AdminController extends Controller
             $new_form_status = new FormStatus();
             $new_form_status->user_id = $new_user->id;
             $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'unsubmitted';
+            $new_form_status->status = 'None';
             $new_form_status->save();
         }
 
@@ -365,7 +375,7 @@ class AdminController extends Controller
             $new_form_status = new FormStatus();
             $new_form_status->user_id = $new_user->id;
             $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'unsubmitted';
+            $new_form_status->status = 'None';
             $new_form_status->save();
         }
 
@@ -379,7 +389,7 @@ class AdminController extends Controller
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
-            'section' => ['required', 'string'],
+            'section' => ['nullable', 'string'],
         ]);
 
         $user_email_exists = User::where('email', $values['email'])->exists();
@@ -389,7 +399,7 @@ class AdminController extends Controller
             return back()->withErrors([
                 'email' => 'The provided email already exists.',
             ]);
-        } else if ($section_exists) {
+        } else if ($values['section'] && $section_exists) {
             return back()->withErrors([
                 'section' => 'The provided section already exists.',
             ]);
