@@ -194,37 +194,33 @@
         </div>
     </Accordion>
 
-    <div class="flex w-full justify-end">
-        <a
-            target="_blank"
-            href="/export/students/sections"
-            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Student List</a
-        >
-    </div>
+    <div class="flex flex-row items-start justify-between">
+        <div class="flex w-fit flex-col gap-2">
+            <a
+                target="_blank"
+                href="/export/students/sections"
+                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
+                method="get">Export Student Sections</a
+            >
 
-    <div class="flex w-full justify-end">
-        <a
-            target="_blank"
-            href="/export/students/company-evaluations"
-            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Company Evaluations</a
-        >
-    </div>
+            <a
+                target="_blank"
+                href="/export/students/company-evaluations"
+                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
+                method="get">Export Company Evaluations</a
+            >
 
-    <div class="flex w-full justify-end">
-        <a
-            target="_blank"
-            href="/export/students/student-assessments"
-            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Student Assessments</a
-        >
-    </div>
+            <a
+                target="_blank"
+                href="/export/students/student-assessments"
+                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
+                method="get">Export Student Assessments</a
+            >
+        </div>
 
-    <div class="flex w-full justify-end">
         <Link
             href="/dashboard"
-            class="flex w-60 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            class="flex w-fit flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Back to Dashboard</Link
         >
     </div>

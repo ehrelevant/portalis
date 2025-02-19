@@ -204,19 +204,16 @@
         </div>
     </Accordion>
 
-    <div class="flex w-full justify-end">
+    <div class="flex flex-row justify-between">
         <a
             target="_blank"
             href="/export/students/sections"
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Student List</a
+            class="flex w-fit flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
+            method="get">Export Student Sections</a
         >
-    </div>
-
-    <div class="flex w-full justify-end">
         <Link
             href="/dashboard"
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+            class="flex w-fit flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 hover:opacity-90 dark:bg-dark-primary"
             method="get">Back to Dashboard</Link
         >
     </div>
