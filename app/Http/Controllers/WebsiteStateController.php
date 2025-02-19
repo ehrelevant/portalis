@@ -10,27 +10,19 @@ use Illuminate\Validation\Rule;
 
 class WebsiteStateController extends Controller
 {
-    public function updateWebsiteState(Request $request)
+    public function updateSettings(Request $request)
     {
         $form_values = $request->validate([
             'phase' => ['required', Rule::in(['pre','during','post'])],
-        ]);
-
-        $website_state = WebsiteState::findOrFail(1);
-        $website_state->phase = $form_values['phase'];
-        $website_state->save();
-
-        return back();
-    }
-
-    public function updateDeadlines(Request $request)
-    {
-        $form_values = $request->validate([
             'requirements.*.id' => ['int'],
             'requirements.*.deadline' => ['date', 'nullable'],
             'forms.*.id' => ['int'],
             'forms.*.deadline' => ['date', 'nullable'],
         ]);
+
+        $website_state = WebsiteState::findOrFail(1);
+        $website_state->phase = $form_values['phase'];
+        $website_state->save();
 
         $new_requirements = $form_values['requirements'];
         $new_forms = $form_values['forms'];

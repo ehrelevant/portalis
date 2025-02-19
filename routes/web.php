@@ -80,8 +80,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/requirement/{requirement_id}/view/{student_number}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
 
         // Update Settings
-        Route::put('/globals/update-deadlines', [WebsiteStateController::class, 'updateDeadlines']);
-        Route::put('/globals/update-website-state', [WebsiteStateController::class, 'updateWebsiteState']);
+        Route::put('/globals/settings/update', [WebsiteStateController::class, 'updateSettings']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
