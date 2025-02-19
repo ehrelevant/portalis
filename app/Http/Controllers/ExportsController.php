@@ -31,14 +31,29 @@ class ExportsController extends Controller
             )
             ->orderBy('students.student_number')
             ->get();
-            
+
+        // store headers of DB query
+        if (count($dbTable) > 0)
+            // overwrite headers to be safe, though this *should* just be a redundancy
+            $headers = array_keys((array) $dbTable[0]);
+        else
+            $headers = [
+                'student_number',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'section',
+                //'has_dropped',
+            ];
+
         // ---
 
         $csvFile = fopen($csvFileName, 'w');
-        
-        $headers = array_keys((array) $dbTable[0]);
+
+        // add header row to CSV
         fputcsv($csvFile, $headers);
 
+        // add entry rows to CSV
         foreach ($dbTable as $row) {
             fputcsv($csvFile, (array) $row);
         }
@@ -82,6 +97,23 @@ class ExportsController extends Controller
             ->orderBy('students.student_number')
             ->get();
 
+        // store headers of DB query
+        if (count($dbTable1) > 0)
+            // overwrite headers to be safe, though this *should* just be a redundancy
+            $headers = array_keys((array) $dbTable1[0]);
+        else
+            $headers = [
+                'student_number',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'section',
+                'status',
+                'id',
+                'criterion',
+                'score'
+            ];
+
         $dbTable2 = DB::table('form_rating_questions')
             ->where('forms.short_name', $shortName)
 
@@ -93,7 +125,7 @@ class ExportsController extends Controller
                 'rating_questions.criterion'
             )
             ->get();
-    
+
         // number of last columns to remove from $dbTable1
         /*
             'rating_questions.id',
@@ -105,19 +137,17 @@ class ExportsController extends Controller
         // ---
 
         $csvFile = fopen($csvFileName, 'w');
-        
-        // get headers of DB query
-        $headers = array_keys((array) $dbTable1[0]);
-        // remove rating question id, criterion and score from headers
-        $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);
-        // get only criterion from [rating_questions.criterion, rating_questions.id]
-        $ratingCriteria = $dbTable2->pluck('criterion');
-        // produce actual headers from reduced headers ++ rating criteria
-        $actualHeaders = array_merge($reducedHeaders, $ratingCriteria->toArray());
+
+        // add header row to CSV
+        $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);    // remove rating question id, criterion and score from headers
+        $ratingCriteria = $dbTable2->pluck('criterion');                                // get only criterion from [rating_questions.criterion, rating_questions.id]
+        $actualHeaders = array_merge($reducedHeaders, $ratingCriteria->toArray());      // produce actual headers from reduced headers ++ rating criteria
         fputcsv($csvFile, $actualHeaders);
 
+        // add entry rows to CSV
         for ($i = 0; $i < count($dbTable1); $i++) {
             $row = $dbTable1[$i];
+
             // remove rating question id, criterion and score from row
             $reducedRow = array_slice((array) $row, 0, count((array) $row) - $numExtraRows);
 
@@ -151,6 +181,7 @@ class ExportsController extends Controller
                 }
             }
 
+            // produce actual row from reduced row ++ rating scores
             $actualRow = array_merge($reducedRow, $ratingScores);
             fputcsv($csvFile, (array) $actualRow);
         }
@@ -158,7 +189,7 @@ class ExportsController extends Controller
         fclose($csvFile);
 
         // ---
-        
+
         // todo: show user prompt to download from public folder to actual local filesystem
         return response()->download(public_path($csvFileName));
     }
