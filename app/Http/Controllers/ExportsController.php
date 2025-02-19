@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportsController extends Controller
 {
-    public function exportStudentSections(): BinaryFileResponse
+    public function exportStudentSections(): StreamedResponse
     {
-        $csvFileName = 'student_sections.csv';
+        $csvFileName = 'student_sections';
 
         $dbTable = DB::table('users')
             ->where('role', 'student')
@@ -48,25 +48,35 @@ class ExportsController extends Controller
 
         // ---
 
-        $csvFile = fopen($csvFileName, 'w');
+        $callback = function() use ($headers, $dbTable) {
+            $csvFile = fopen('php://output', 'w');
 
-        // add header row to CSV
-        fputcsv($csvFile, $headers);
+            // add header row to CSV
+            fputcsv($csvFile, $headers);
 
-        // add entry rows to CSV
-        foreach ($dbTable as $row) {
-            fputcsv($csvFile, (array) $row);
-        }
+            // add entry rows to CSV
+            foreach ($dbTable as $row) {
+                fputcsv($csvFile, (array) $row);
+            }
 
-        fclose($csvFile);
+            fclose($csvFile);
+        };
 
         // ---
 
+        $content_headers = [
+            'Cache-Control'         => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'          => 'text/csv',
+            'Content-Disposition'   => 'attachment; filename=' . $csvFileName . '.csv',
+            'Expires'               => '0',
+            'Pragma'                => 'public'
+        ];
+
         // todo: show user prompt to download from public folder to actual local filesystem
-        return response()->download(public_path($csvFileName))->deleteFileAfterSend();
+        return response()->stream($callback, 200, $content_headers);
     }
 
-    public function exportFormsAsCsv(string $shortName, string $csvFileName): BinaryFileResponse
+    public function exportFormsAsCsv(string $shortName, string $csvFileName): StreamedResponse
     {
         $dbTable1 = DB::table('users')
             ->where('role', 'student')
@@ -137,7 +147,8 @@ class ExportsController extends Controller
 
         // ---
 
-        $csvFile = fopen($csvFileName, 'w');
+        $callback = function() use ($headers, $numExtraRows, $dbTable1, $dbTable2) {
+            $csvFile = fopen('php://output', 'w');
 
         // add header row to CSV
         $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);    // remove rating question id, criterion and score from headers
@@ -188,11 +199,20 @@ class ExportsController extends Controller
         }
 
         fclose($csvFile);
+    };
 
         // ---
 
+        $content_headers = [
+            'Cache-Control'         => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'          => 'text/csv',
+            'Content-Disposition'   => 'attachment; filename=' . $csvFileName . '.csv',
+            'Expires'               => '0',
+            'Pragma'                => 'public'
+        ];
+
         // todo: show user prompt to download from public folder to actual local filesystem
-        return response()->download(public_path($csvFileName))->deleteFileAfterSend();
+        return response()->stream($callback, 200, $content_headers);
     }
 
     /*
@@ -207,14 +227,14 @@ class ExportsController extends Controller
     }
     */
 
-    public function exportCompanyEvaluations(): BinaryFileResponse
+    public function exportCompanyEvaluations(): StreamedResponse
     {
-        return self::exportFormsAsCsv('company-evaluation', 'company_evaluations.csv');
+        return self::exportFormsAsCsv('company-evaluation', 'company_evaluations');
     }
 
-    public function exportStudentAssessments(): BinaryFileResponse
+    public function exportStudentAssessments(): StreamedResponse
     {
-        return self::exportFormsAsCsv('self-evaluation', 'student_assessments.csv');
+        return self::exportFormsAsCsv('self-evaluation', 'student_assessments');
     }
 
     /*
