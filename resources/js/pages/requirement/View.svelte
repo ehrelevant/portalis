@@ -39,12 +39,12 @@
                 <Link
                     href="/requirement/{requirementId}/view/{studentNumber}/validate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                    method="post">Validate</Link
+                    method="post">Accept</Link
                 >
                 <Link
                     href="/requirement/{requirementId}/view/{studentNumber}/reject"
-                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Reject</Link
+                    class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                    method="post">Return To Student</Link
                 >
             {/if}
             {#if isAdmin}
