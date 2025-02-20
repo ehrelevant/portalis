@@ -1,6 +1,6 @@
 <script>
     import Status from '@/js/shared/components/Status.svelte';
-    import { Link } from '@inertiajs/svelte';
+    import { Link, router } from '@inertiajs/svelte';
     import Header from '@shared/components/InternshipHeader.svelte';
 
     export let studentNumber;
@@ -10,7 +10,13 @@
     export let status;
     export let isAdmin = false;
 
-    $: console.log(status, isAdmin);
+    function returnToStudent() {
+        if (confirm('Do you really want to return this to the student?')) {
+            router.post(
+                `/requirement/${requirementId}/view/${studentNumber}/reject`,
+            );
+        }
+    }
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 p-4">
@@ -40,10 +46,9 @@
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link
                 >
-                <Link
-                    href="/requirement/{requirementId}/view/{studentNumber}/reject"
+                <button
                     class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Return To Student</Link
+                    on:click={returnToStudent}>Return To Student</button
                 >
             {/if}
             {#if isAdmin}
