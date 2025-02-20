@@ -17,7 +17,11 @@
     });
 
     function saveSettings() {
-        $settingsForm.put('/globals/settings/update');
+        const isConfirmed = confirm('Do you really want to save your changes?');
+
+        if (isConfirmed) {
+            $settingsForm.put('/globals/settings/update');
+        }
     }
 </script>
 
