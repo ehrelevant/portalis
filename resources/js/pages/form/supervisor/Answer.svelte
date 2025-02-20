@@ -153,7 +153,7 @@
                 <Link
                     href="/form/{form_info.short_name}/reject/{evaluatorUserId}"
                     class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Return To Student</Link
+                    method="post">Return To Supervisor</Link
                 >
             {/if}
         </div>
