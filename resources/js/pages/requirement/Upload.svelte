@@ -38,7 +38,7 @@
                 <input
                     type="file"
                     class="flex cursor-pointer pt-3"
-                    on:input={(e) => ($form.file = e.target.files[0])}
+                    on:input={(e) => ($form.file = e.currentTarget.files[0])}
                 />
                 <p class="flex justify-end italic">(2MB max)</p>
                 {#if $form.progress}
