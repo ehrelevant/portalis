@@ -1,9 +1,4 @@
-/**
- *
- * @param {string} str
- * @returns {string}
- */
-export function toTitleCase(str) {
+export function toTitleCase(str: string) {
     return str.replace(
         /\w\S*/g,
         (text) =>

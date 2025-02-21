@@ -1,0 +1,37 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@/*": ["./resources/*"],
+            "@assets/*": ["./resources/assets/*"],
+            "@js/*": ["./resources/js/*"],
+            "@shared/*": ["./resources/js/shared/*"]
+        },
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "resolveJsonModule": true,
+        /**
+        * Typecheck JS in `.svelte` and `.js` files by default.
+        * Disable checkJs if you'd like to use dynamic types in JS.
+        * Note that setting allowJs false does not prevent the use
+        * of JS in `.svelte` files.
+        */
+        "allowJs": true,
+        "checkJs": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "esModuleInterop": true,
+        "noEmit": true,
+        "strict": false,
+        "types": ["vite/client"],
+        /**
+        * It'll be hard to integrate everything to typescript,
+        * especially with the lack of type declarations for some modules.
+        */
+        "noImplicitAny": false,
+    },
+    "include": ["resources/js/**/*.ts", "resources/js/**/*.js", "resources/js/**/*.svelte"],
+    "exclude": ["node_modules", "public"]
+}
