@@ -1,12 +1,12 @@
 <script>
     import NavBtn from './NavBtn.svelte';
-    import Home from '@assets/home_logo.svelte';
-    import Dashboard from '@assets/dashboard_logo.svelte';
-    import Privacy from '@assets/privacy_logo.svelte';
-    import Account from '@assets/account_logo.svelte';
+    import Home from '$assets/home_logo.svelte';
+    import Dashboard from '$assets/dashboard_logo.svelte';
+    import Privacy from '$assets/privacy_logo.svelte';
+    import Account from '$assets/account_logo.svelte';
     import Toggle from './ThemeSwitch.svelte';
-    import Menu from '@assets/menu_logo.svelte';
-    import Close from '@assets/x.svelte';
+    import Menu from '$assets/menu_logo.svelte';
+    import Close from '$assets/x.svelte';
     import { slide } from 'svelte/transition';
 
     let isMenuOpen = false;

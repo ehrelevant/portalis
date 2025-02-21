@@ -1,9 +1,9 @@
 <script>
     import { router, Link } from '@inertiajs/svelte';
 
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Accordion from '@/js/shared/components/Accordion.svelte';
-    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
+    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
 
     export let companies;
 

@@ -1,5 +1,5 @@
 <script>
-    import Status from '@shared/components/Status.svelte';
+    import Status from '$lib/components/Status.svelte';
     import { Link } from '@inertiajs/svelte';
 
     export let file_name;
@@ -56,7 +56,7 @@
                     </Link>
                 {/if}
             {/if}
-            <Status s_type={sub_status} />
+            <Status type={sub_status} />
         </div>
     </div>
 </li>

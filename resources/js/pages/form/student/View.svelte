@@ -1,8 +1,8 @@
 <script>
     import { Link } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Accordion from '@shared/components/Accordion.svelte';
-    import Status from '@shared/components/Status.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
+    import Status from '$lib/components/Status.svelte';
 
     export let student;
     export let evaluator_user_id;

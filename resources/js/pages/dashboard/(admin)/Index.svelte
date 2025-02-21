@@ -1,7 +1,7 @@
 <script>
     import { Link, useForm } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Account from '@assets/account_logo.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Account from '$assets/account_logo.svelte';
 
     const phases = ['pre', 'during', 'post'];
 

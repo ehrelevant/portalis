@@ -2,14 +2,13 @@
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Search from '@assets/search_logo.svelte';
-    import Accordion from '@/js/shared/components/Accordion.svelte';
-    import StatusCell from '@/js/shared/components/StatusCell.svelte';
-    import Required from '@/js/shared/components/Required.svelte';
-    import Modal from '@/js/shared/components/Modal.svelte';
-    import ErrorText from '@/js/shared/components/ErrorText.svelte';
-    import ColumnHeader from '@/js/shared/components/ColumnHeader.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
+    import StatusCell from '$lib/components/StatusCell.svelte';
+    import Required from '$lib/components/Required.svelte';
+    import Modal from '$lib/components/Modal.svelte';
+    import ErrorText from '$lib/components/ErrorText.svelte';
+    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
 
     export let students;
     export let requirements;

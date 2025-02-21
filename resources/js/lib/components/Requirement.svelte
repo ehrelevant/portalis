@@ -1,5 +1,5 @@
 <script>
-    import Status from '@shared/components/Status.svelte';
+    import Status from '$lib/components/Status.svelte';
     import { Link } from '@inertiajs/svelte';
 
     export let requirementId;

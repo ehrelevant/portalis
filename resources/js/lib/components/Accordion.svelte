@@ -1,6 +1,6 @@
 <script>
     import { slide } from 'svelte/transition';
-    import ArrowRight from '@assets/arrow_right.svelte';
+    import ArrowRight from '$assets/arrow_right.svelte';
 
     export let open = false;
 

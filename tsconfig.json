@@ -2,10 +2,10 @@
     "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
         "paths": {
-            "@/*": ["./resources/*"],
-            "@assets/*": ["./resources/assets/*"],
-            "@js/*": ["./resources/js/*"],
-            "@shared/*": ["./resources/js/shared/*"]
+            "$assets": ["./resources/assets"],
+            "$assets/*": ["./resources/assets/*"],
+            "$lib": ["./resources/js/lib"],
+            "$lib/*": ["./resources/js/lib/*"]
         },
         "module": "ESNext",
         "moduleResolution": "bundler",

@@ -1,8 +1,8 @@
 <script>
     import { Link, useForm } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Account from '@assets/account_logo.svelte';
-    import Accordion from '@/js/shared/components/Accordion.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Account from '$assets/account_logo.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
 
     const phases = ['pre', 'during', 'post'];
 

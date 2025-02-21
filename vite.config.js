@@ -12,10 +12,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': '/resources',
-            '@assets': '/resources/assets',
-            '@js': '/resources/js',
-            '@shared': '/resources/js/shared',
+            $assets: '/resources/assets',
+            $lib: '/resources/js/lib',
         },
     },
     server: {

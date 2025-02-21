@@ -1,6 +1,6 @@
 <script>
     import { router } from '@inertiajs/svelte';
-    import Account from '@assets/account_logo.svelte';
+    import Account from '$assets/account_logo.svelte';
 
     /** @type {string} */
     export let first_name;

@@ -1,4 +1,4 @@
-import Layout from '@shared/Layout.svelte';
+import Layout from '$lib/Layout.svelte';
 import { createInertiaApp } from '@inertiajs/svelte';
 import type { SvelteComponent } from 'svelte';
 

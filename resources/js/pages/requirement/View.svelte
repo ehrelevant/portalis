@@ -1,7 +1,7 @@
 <script>
-    import Status from '@/js/shared/components/Status.svelte';
+    import Status from '$lib/components/Status.svelte';
     import { Link, router } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
 
     export let studentNumber;
     export let studentName;

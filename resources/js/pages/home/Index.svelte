@@ -1,11 +1,11 @@
 <script>
-    import Dashboard from '@assets/dashboard_logo.svelte';
-    import Privacy from '@assets/privacy_logo.svelte';
-    import Github from '@assets/github_logo.svelte';
-    import Bug from '@assets/bug_logo.svelte';
-    import Pre from '@assets/pre_logo.svelte';
-    import During from '@assets/during_logo.svelte';
-    import Post from '@assets/post_logo.svelte';
+    import Dashboard from '$assets/dashboard_logo.svelte';
+    import Privacy from '$assets/privacy_logo.svelte';
+    import Github from '$assets/github_logo.svelte';
+    import Bug from '$assets/bug_logo.svelte';
+    import Pre from '$assets/pre_logo.svelte';
+    import During from '$assets/during_logo.svelte';
+    import Post from '$assets/post_logo.svelte';
 </script>
 
 <div class="main-screen min-h-full w-full p-4">

@@ -1,5 +1,5 @@
 <script>
-    import XMark from '@/assets/x.svelte';
+    import XMark from '$assets/x.svelte';
 
     export let isOpen = false;
 

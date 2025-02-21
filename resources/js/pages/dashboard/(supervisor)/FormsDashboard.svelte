@@ -1,9 +1,9 @@
 <script>
-    import Accordion from '@/js/shared/components/Accordion.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
     import { Link } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
 
-    import Status from '@shared/components/Status.svelte';
+    import Status from '$lib/components/Status.svelte';
 
     export let phase;
     export let students;

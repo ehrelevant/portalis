@@ -1,8 +1,8 @@
 <script>
     import { Link, useForm } from '@inertiajs/svelte';
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Accordion from '@shared/components/Accordion.svelte';
-    import Status from '@/js/shared/components/Status.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
+    import Status from '$lib/components/Status.svelte';
 
     export let errors = {};
     $: console.log(errors);

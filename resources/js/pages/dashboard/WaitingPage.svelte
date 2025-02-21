@@ -1,5 +1,5 @@
 <script>
-    import Header from '@shared/components/InternshipHeader.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
 </script>
 
 <div class="main-screen w-full p-4">

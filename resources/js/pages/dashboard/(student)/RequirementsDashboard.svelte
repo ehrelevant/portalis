@@ -1,7 +1,7 @@
 <script>
-    import Header from '@shared/components/InternshipHeader.svelte';
-    import Requirement from '@/js/shared/components/Requirement.svelte';
-    import Accordion from '@/js/shared/components/Accordion.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import Requirement from '$lib/components/Requirement.svelte';
+    import Accordion from '$lib/components/Accordion.svelte';
 
     export let student_number;
     export let submissions;

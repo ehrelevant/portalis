@@ -1,6 +1,6 @@
 <script>
-    import LightMode from '@assets/lightmode_logo.svelte';
-    import DarkMode from '@assets/darkmode_logo.svelte';
+    import LightMode from '$assets/lightmode_logo.svelte';
+    import DarkMode from '$assets/darkmode_logo.svelte';
     import { onMount } from 'svelte';
 
     export let icon = LightMode;
