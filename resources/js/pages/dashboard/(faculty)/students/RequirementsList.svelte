@@ -209,7 +209,7 @@
             target="_blank"
             href="/export/students/sections"
             class="flex w-fit flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-            method="get">Export Student Sections</a
+            >Export Student Sections</a
         >
         <Link
             href="/dashboard"

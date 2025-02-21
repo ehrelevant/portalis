@@ -361,21 +361,21 @@
                     target="_blank"
                     href="/export/students/sections"
                     class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    method="get">Export Student Sections</a
+                    >Export Student Sections</a
                 >
 
                 <a
                     target="_blank"
                     href="/export/students/company-evaluations"
                     class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    method="get">Export Company Evaluations</a
+                    >Export Company Evaluations</a
                 >
 
                 <a
                     target="_blank"
                     href="/export/students/student-assessments"
                     class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    method="get">Export Student Assessments</a
+                    >Export Student Assessments</a
                 >
             </div>
         </div>
