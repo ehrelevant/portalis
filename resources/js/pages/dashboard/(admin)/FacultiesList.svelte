@@ -135,7 +135,7 @@
                     </ColumnHeader>
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each faculties as faculty}
+                {#each faculties as faculty (faculty.faculty_id)}
                     {@const {
                         faculty_id,
                         first_name,

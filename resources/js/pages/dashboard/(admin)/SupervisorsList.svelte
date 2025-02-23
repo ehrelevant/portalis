@@ -155,7 +155,7 @@
                     {/each}
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each supervisors as supervisor}
+                {#each supervisors as supervisor (supervisor.supervisor_id)}
                     {@const {
                         supervisor_id,
                         first_name,

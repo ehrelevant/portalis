@@ -110,7 +110,7 @@
                     </ColumnHeader>
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each companies as company}
+                {#each companies as company (company.company_id)}
                     {@const { company_id, company_name } = company}
                     <tr class="border-t-2 {borderColor}">
                         <td class="p-2 {borderColor}">{company_name}</td>

@@ -140,7 +140,7 @@
                         <ColumnHeader>{form_name}</ColumnHeader>
                     {/each}
                 </tr>
-                {#each students as student}
+                {#each students as student (student.student_number)}
                     {@const {
                         student_number,
                         first_name,
