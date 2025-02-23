@@ -26,7 +26,7 @@
         );
     }
 
-    let sortColumn = 'student_number';
+    let sortColumn = 'last_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn) {
         if (sortColumn === newSortColumn) {
@@ -83,7 +83,14 @@
                         clickHandler={() => sortByColumn('last_name')}
                         first
                     >
-                        Name
+                        Last Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'first_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('first_name')}
+                    >
+                        First Name
                     </ColumnHeader>
                     <ColumnHeader
                         isActive={sortColumn === 'company_name'}
@@ -116,8 +123,10 @@
                         form_statuses,
                     } = supervisor}
                     <tr class="border-t-2 {borderColor}">
+                        <td class="border-r-2 p-2 {borderColor}">{last_name}</td
+                        >
                         <td class="border-r-2 p-2 {borderColor}"
-                            >{last_name}, {first_name}</td
+                            >{first_name}</td
                         >
                         <td class="border-r-2 p-2 text-center {borderColor}"
                             >{company_name}</td

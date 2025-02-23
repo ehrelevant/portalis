@@ -158,7 +158,14 @@
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('last_name')}
                     >
-                        Name
+                        Last Name
+                    </ColumnHeader>
+                    <ColumnHeader
+                        isActive={sortColumn === 'first_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('first_name')}
+                    >
+                        First Name
                     </ColumnHeader>
                     <ColumnHeader
                         isActive={sortColumn === 'section'}
@@ -232,8 +239,10 @@
                         <th class="border-r-2 p-2 {borderColor}"
                             >{student_number}</th
                         >
+                        <td class="border-r-2 p-2 {borderColor}">{last_name}</td
+                        >
                         <td class="border-r-2 p-2 {borderColor}"
-                            >{last_name}, {first_name}</td
+                            >{first_name}</td
                         >
                         <td class="border-r-2 p-2 {borderColor}">
                             <div class="flex items-center justify-center">
