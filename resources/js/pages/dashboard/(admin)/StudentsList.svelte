@@ -387,6 +387,14 @@
                     >Export Student Assessments</a
                 >
             </div>
+
+            <div class="flex flex-col gap-2">
+                <a
+                    href="/list/students/upload"
+                    class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
+                    >Import Student List</a
+                >
+            </div>
         </div>
 
         <Link

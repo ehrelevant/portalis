@@ -228,6 +228,26 @@
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
             on:click={openModal}>Add Supervisor</button
         >
+
+        <!--
+        <div class="flex flex-col gap-2">
+            <a
+                target="_blank"
+                href="/export/supervisors/list"
+                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
+                >Export Supervisor List</a
+            >
+        </div>
+        -->
+
+        <div class="flex flex-col gap-2">
+            <a
+                href="/list/supervisors/upload"
+                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
+                >Import Supervisor List</a
+            >
+        </div>
+
         <Link
             href="/dashboard"
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
