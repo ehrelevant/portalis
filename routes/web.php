@@ -7,6 +7,7 @@ use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\ImportsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
@@ -59,6 +60,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/students/{student_number}/assign/section/{new_section?}', [FacultyController::class, 'assignStudentSection']);
         Route::put('/students/{student_number}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
         Route::put('/supervisors/{supervisor_id}/assign/company/{company_id?}', [FacultyController::class, 'assignSupervisorCompany']);
+
+        Route::get('/list/students/upload', [ImportsController::class, 'showStudentCsvUploadForm']);
+        Route::get('/list/supervisors/upload', [ImportsController::class, 'showSupervisorCsvUploadForm']);
+        Route::post('/list/students/submit', [ImportsController::class, 'submitStudentCsv']);
+        Route::post('/list/supervisors/submit', [ImportsController::class, 'submitSupervisorCsv']);
 
         Route::post('/import/students', [FacultyController::class, 'importStudents']);
         Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
