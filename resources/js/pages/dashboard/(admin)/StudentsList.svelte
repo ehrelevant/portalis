@@ -409,7 +409,7 @@
             <div class="flex flex-col">
                 <input
                     name="student_number"
-                    type="number"
+                    type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                     bind:value={$addUserForm.student_number}
                     required
