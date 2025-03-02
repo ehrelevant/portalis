@@ -100,6 +100,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dashboard/admin/companies/add', [AdminController::class, 'addCompany']);
         Route::post('/dashboard/admin/faculties/add', [AdminController::class, 'addFaculty']);
 
+        Route::post('/dashboard/admin/students/update/{student_id}', [AdminController::class, 'updateStudent']);
+        Route::post('/dashboard/admin/supervisors/update/{supervisor_id}', [AdminController::class, 'updateSupervisor']);
+        Route::post('/dashboard/admin/companies/update/{company_id}', [AdminController::class, 'updateCompany']);
+        Route::post('/dashboard/admin/faculties/update/{faculty_id}', [AdminController::class, 'updateFaculty']);
+
         Route::delete('/dashboard/admin/students/delete/{student_id}', [AdminController::class, 'deleteStudent']);
         Route::delete('/dashboard/admin/supervisors/delete/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
         Route::delete('/dashboard/admin/companies/delete/{company_id}', [AdminController::class, 'deleteCompany']);
