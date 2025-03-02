@@ -38,7 +38,7 @@ class AdminController extends Controller
         $students = [];
 
         $students_info = $users_partial
-            ->join('students', 'users.role_id', '=', 'students.student_number')
+            ->join('students', 'users.role_id', '=', 'students.id')
             ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
             ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
             ->where('supervisor_users.role', 'supervisor')
@@ -46,6 +46,7 @@ class AdminController extends Controller
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
                 'users.id AS user_id',
+                'students.id AS student_id',
                 'students.student_number',
                 'users.first_name',
                 'users.last_name',
@@ -68,13 +69,14 @@ class AdminController extends Controller
                 ->pluck('status', 'form_id');
 
             $student_statuses = DB::table('submission_statuses')
-                ->where('student_number', $student_info->student_number)
+                ->where('student_id', $student_info->student_id)
                 ->select(
                     'submission_statuses.requirement_id',
                     'submission_statuses.status',
                 )->get();
 
             array_push($students, [
+                'student_id' => $student_info->student_id,
                 'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
@@ -263,7 +265,7 @@ class AdminController extends Controller
     public function addStudent(Request $request)
     {
         $values = $request->validate([
-            'student_number' => ['required', 'numeric', 'integer'],
+            'student_number' => ['required', 'string'],
             'first_name' => ['required', 'string'],
             'middle_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
@@ -304,7 +306,7 @@ class AdminController extends Controller
 
         $new_user = new User();
         $new_user->role = User::ROLE_STUDENT;
-        $new_user->role_id = $new_student->student_number;
+        $new_user->role_id = $new_student->id;
         $new_user->first_name = $values['first_name'];
         $new_user->middle_name = $values['middle_name'];
         $new_user->last_name = $values['last_name'];
@@ -314,7 +316,7 @@ class AdminController extends Controller
         $requirements = DB::table('requirements')->get();
         foreach ($requirements as $requirement) {
             $new_submission_status = new SubmissionStatus();
-            $new_submission_status->student_number = $new_student->student_number;
+            $new_submission_status->student_id = $new_student->id;
             $new_submission_status->requirement_id = $requirement->id;
             $new_submission_status->status = 'None';
             $new_submission_status->save();
@@ -434,13 +436,13 @@ class AdminController extends Controller
         return back();
     }
 
-    public function deleteStudent(int $student_number)
+    public function deleteStudent(int $student_id)
     {
         $user = User::where('role', User::ROLE_STUDENT)
-            ->where('role_id', $student_number)
+            ->where('role_id', $student_id)
             ->firstOrFail();
 
-        $submission_statuses = SubmissionStatus::where('student_number', $student_number)->get();
+        $submission_statuses = SubmissionStatus::where('student_id', $student_id)->get();
         foreach ($submission_statuses as $submission_status) {
             Submission::where('submission_status_id', $submission_status->id)->delete();
             $submission_status->delete();
@@ -461,7 +463,7 @@ class AdminController extends Controller
 
         $user->delete();
 
-        Student::find($student_number)->delete();
+        Student::find($student_id)->delete();
     }
 
     public function deleteSupervisor(int $supervisor_id)

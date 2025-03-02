@@ -41,10 +41,10 @@ class DashboardController extends Controller
 
         switch ($phase) {
             case 'pre':
-                $student_number = Auth::user()->role_id;
+                $student_id = Auth::user()->role_id;
 
                 $submission_statuses = DB::table('submission_statuses')
-                    ->where('student_number', $student_number)
+                    ->where('student_id', $student_id)
                     ->join('requirements', 'submission_statuses.requirement_id', '=', 'requirements.id')
                     ->where(function ($query) {
                         $query->whereRaw("requirements.deadline > STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')", Carbon::now('Asia/Manila')->format('Y-m-d H:i'))
@@ -59,7 +59,7 @@ class DashboardController extends Controller
                     ->get();
 
                 $props = [
-                    'student_number' => $student_number,
+                    'student_id' => $student_id,
                     'submissions' => $submission_statuses,
                 ];
 
@@ -68,10 +68,10 @@ class DashboardController extends Controller
             case 'post':
                 $student_user = Auth::user();
                 $student_user_id = $student_user->id;
-                $student_number = $student_user->role_id;
+                $student_id = $student_user->role_id;
 
                 $student = DB::table('students')
-                    ->where('student_number', $student_number)
+                    ->where('student_id', $student_id)
                     ->firstOrFail();
 
                 if (!$student->faculty_id) {
@@ -95,7 +95,7 @@ class DashboardController extends Controller
                     ->get();
 
                 $props = [
-                    'student_number' => $student_number,
+                    'student_id' => $student_id,
                     'form_statuses' => $form_statuses,
                 ];
 
@@ -177,7 +177,7 @@ class DashboardController extends Controller
 
                 $ungenerated_self_evaluation_statuses = DB::table('users')
                     ->where('role', 'student')
-                    ->join('students', 'students.student_number', '=', 'users.role_id')
+                    ->join('students', 'students.id', '=', 'users.role_id')
                     ->where('supervisor_id', $supervisor_user->role_id)
                     ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
                     ->where('form_id', 4)
@@ -220,7 +220,7 @@ class DashboardController extends Controller
 
                 $supervised_self_evaluation_statuses = DB::table('users')
                     ->where('role', 'student')
-                    ->join('students', 'students.student_number', '=', 'users.role_id')
+                    ->join('students', 'students.id', '=', 'users.role_id')
                     ->where('supervisor_id', $supervisor_user->role_id)
                     ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
                     ->where('form_id', 4)
@@ -232,8 +232,9 @@ class DashboardController extends Controller
 
                 foreach ($supervised_self_evaluation_statuses as $form_status) {
                     $student_info = DB::table('users')
-                        ->where('id', $form_status->user_id)
-                        ->select('id', 'first_name', 'last_name', 'role_id AS student_number')
+                        ->where('users.id', $form_status->user_id)
+                        ->join('students', 'students.id', '=', 'users.role_id')
+                        ->select('users.id AS user_id', 'first_name', 'last_name', 'student_number')
                         ->firstOrFail();
 
                     $total_hours = DB::table('form_statuses')
@@ -250,8 +251,8 @@ class DashboardController extends Controller
                         ->firstOrFail()
                         ->status;
 
-                    $students[$student_info->student_number] = [
-                        'student_user_id' => $student_info->id,
+                    $students[$student_info->student_id] = [
+                        'student_user_id' => $student_info->user_id,
                         'student_number' => $student_info->student_number,
                         'last_name' => $student_info->last_name,
                         'first_name' => $student_info->first_name,

@@ -51,11 +51,11 @@
         );
     }
 
-    function setSection(evt, studentNumber) {
+    function setSection(evt, studentId) {
         const sectionName = evt.target.value;
 
         router.put(
-            `/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentId}/assign/section/${sectionName}`,
             {},
             {
                 preserveScroll: true,
@@ -145,8 +145,9 @@
                         <ColumnHeader>{requirement_name}</ColumnHeader>
                     {/each}
                 </tr>
-                {#each students as student (student.student_number)}
+                {#each students as student (student.student_id)}
                     {@const {
+                        student_id,
                         student_number,
                         first_name,
                         last_name,
@@ -171,7 +172,7 @@
                                 <select
                                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
-                                        setSection(evt, student_number)}
+                                        setSection(evt, student_id)}
                                 >
                                     <option
                                         selected={!has_dropped &&
@@ -202,7 +203,7 @@
                             {@const { requirement_id, status } = submission}
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
-                                    href="/requirement/{requirement_id}/view/{student_number}"
+                                    href="/requirement/{requirement_id}/view/{student_id}"
                                     {status}
                                 />
                             </td>

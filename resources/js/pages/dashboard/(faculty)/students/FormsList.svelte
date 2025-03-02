@@ -147,8 +147,9 @@
                         <ColumnHeader>{form_name}</ColumnHeader>
                     {/each}
                 </tr>
-                {#each students as student (student.student_number)}
+                {#each students as student (student.student_id)}
                     {@const {
+                        student_id,
                         student_number,
                         first_name,
                         last_name,
@@ -192,7 +193,7 @@
                                 ><StatusCell
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/view/{student_number}"
+                                        .short_name}/view/{student_id}"
                                 />
                             </td>
                         {/each}

@@ -57,11 +57,11 @@
         );
     }
 
-    function setSection(evt, studentNumber) {
+    function setSection(evt, studentId) {
         const sectionName = evt.target.value;
 
         router.put(
-            `/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentId}/assign/section/${sectionName}`,
             {},
             {
                 preserveScroll: true,
@@ -69,11 +69,11 @@
         );
     }
 
-    function setSupervisor(evt, studentNumber) {
+    function setSupervisor(evt, studentId) {
         const supervisorId = evt.target.value;
 
         router.put(
-            `/students/${studentNumber}/assign/supervisor/${supervisorId}`,
+            `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
             {
                 preserveScroll: true,
@@ -220,8 +220,9 @@
                     {/each}
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each students as student (student.student_number)}
+                {#each students as student (student.student_id)}
                     {@const {
+                        student_id,
                         student_number,
                         first_name,
                         last_name,
@@ -249,7 +250,7 @@
                                 <select
                                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
-                                        setSection(evt, student_number)}
+                                        setSection(evt, student_id)}
                                 >
                                     <option
                                         selected={!has_dropped &&
@@ -274,7 +275,7 @@
                                 <select
                                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
-                                        setSupervisor(evt, student_number)}
+                                        setSupervisor(evt, student_id)}
                                 >
                                     <option selected={!supervisor_id} value />
                                     {#each companies as company}
@@ -330,7 +331,7 @@
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     isAdmin
-                                    href="/requirement/{requirement_id}/view/{student_number}"
+                                    href="/requirement/{requirement_id}/view/{student_id}"
                                     {status}
                                 />
                             </td>
@@ -341,13 +342,13 @@
                                     isAdmin
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/answer/{student_number}"
+                                        .short_name}/answer/{student_id}"
                                 />
                             </td>
                         {/each}
                         <td class="border-l-2 p-2 text-center {borderColor}"
                             ><Link
-                                href="/dashboard/admin/students/delete/{student_number}"
+                                href="/dashboard/admin/students/delete/{student_id}"
                                 class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                 method="delete">Delete</Link
                             >

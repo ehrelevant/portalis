@@ -4,7 +4,7 @@
 
     export let errors = {};
 
-    export let studentNumber;
+    export let studentId;
     export let studentName;
     export let requirementId;
     export let requirementName;
@@ -14,7 +14,7 @@
     });
 
     function handleSubmit() {
-        $form.post(`/requirement/${requirementId}/submit/${studentNumber}`);
+        $form.post(`/requirement/${requirementId}/submit/${studentId}`);
     }
 </script>
 

@@ -15,7 +15,7 @@ class AccountController extends Controller
 
         if ($user->role === 'student') {
             $wordpress_info = DB::table('students')
-                ->where('student_number', $user->role_id)
+                ->where('students.id', $user->role_id)
                 ->select('wordpress_name', 'wordpress_email')
                 ->firstOrFail();
 
