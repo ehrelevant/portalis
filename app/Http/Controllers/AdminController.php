@@ -267,7 +267,7 @@ class AdminController extends Controller
         $values = $request->validate([
             'student_number' => ['required', 'string'],
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'section' => ['nullable', 'string'],
@@ -308,7 +308,7 @@ class AdminController extends Controller
         $new_user->role = User::ROLE_STUDENT;
         $new_user->role_id = $new_student->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
@@ -432,6 +432,43 @@ class AdminController extends Controller
         $new_company = new Company();
         $new_company->company_name = $values['company_name'];
         $new_company->save();
+
+        return back();
+    }
+
+    public function updateStudent(Request $request, int $student_id)
+    {
+        $values = $request->validate([
+            'student_number' => ['required', 'string'],
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['nullable', 'string'],
+            'supervisor_id' => ['nullable', 'numeric', 'integer'],
+            'wordpress_name' => ['required', 'string'],
+            'wordpress_email' => ['required', 'email:rfc'],
+        ]);
+
+        $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        $student = Student::find($student_id);
+        $student->student_number = $values['student_number'];
+        if ($values['section']) {
+            $student->faculty_id = DB::table('faculties')
+                ->where('section', $values['section'])
+                ->firstOrFail()
+                ->id;
+        }
+        $student->supervisor_id = $values['supervisor_id'];
+        $student->wordpress_name = $values['wordpress_name'];
+        $student->wordpress_email = $values['wordpress_email'];
+        $student->save();
 
         return back();
     }
