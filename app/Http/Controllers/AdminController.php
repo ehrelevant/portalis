@@ -172,6 +172,7 @@ class AdminController extends Controller
                 'users.email',
                 'companies.id AS company_id',
                 'companies.company_name',
+                'users.is_disabled',
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -190,6 +191,7 @@ class AdminController extends Controller
                 'email' => $supervisor_info->email,
                 'company_id' => $supervisor_info->company_id,
                 'form_statuses' => $form_statuses,
+                'is_disabled' => $supervisor_info->is_disabled,
             ]);
         }
 
@@ -673,7 +675,7 @@ class AdminController extends Controller
 
     public function enableSupervisor(int $supervisor_id)
     {
-        User::where('role', User::ROLE_STUDENT)
+        User::where('role', User::ROLE_SUPERVISOR)
             ->where('role_id', $supervisor_id)
             ->update(['is_disabled' => false]);
     }

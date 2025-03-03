@@ -163,7 +163,7 @@
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
                     <ColumnHeader
@@ -209,8 +209,13 @@
                         email,
                         company_id: supervisor_company_id,
                         form_statuses,
+                        is_disabled,
                     } = supervisor}
-                    <tr class="border-t-2 {borderColor}">
+                    <tr
+                        class="border-t-2 {borderColor} {is_disabled
+                            ? 'bg-black text-gray-300'
+                            : ''}"
+                    >
                         <td class="border-r-2 p-2 {borderColor}">{last_name}</td
                         >
                         <td class="border-r-2 p-2 {borderColor}"
@@ -260,15 +265,23 @@
                                     >Edit</button
                                 >
                             </td>
-                            <td class="text-center {borderColor}"
-                                ><Link
-                                    href="/dashboard/admin/supervisors/delete/{supervisor_id}"
-                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                            {#if is_disabled}
+                                <Link
+                                    href="/dashboard/admin/supervisors/enable/{supervisor_id}"
+                                    class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                     as="button"
                                     preserveScroll
-                                    method="delete">Delete</Link
+                                    method="put">Enable</Link
                                 >
-                            </td>
+                            {:else}
+                                <Link
+                                    href="/dashboard/admin/supervisors/disable/{supervisor_id}"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
+                                    method="put">Disable</Link
+                                >
+                            {/if}
                         </div>
                     </tr>
                 {/each}
