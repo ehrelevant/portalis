@@ -38,14 +38,18 @@ class AdminController extends Controller
         $students = [];
 
         $students_info = $users_partial
-            ->join('students', 'users.role_id', '=', 'students.student_number')
+            ->join('students', 'users.role_id', '=', 'students.id')
             ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
             ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
-            ->where('supervisor_users.role', 'supervisor')
+            ->where(function ($query) {
+                $query->where('supervisor_users.role', User::ROLE_SUPERVISOR)
+                    ->orWhereNull('supervisor_users.id');
+            })
             ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
                 'users.id AS user_id',
+                'students.id AS student_id',
                 'students.student_number',
                 'users.first_name',
                 'users.last_name',
@@ -68,13 +72,14 @@ class AdminController extends Controller
                 ->pluck('status', 'form_id');
 
             $student_statuses = DB::table('submission_statuses')
-                ->where('student_number', $student_info->student_number)
+                ->where('student_id', $student_info->student_id)
                 ->select(
                     'submission_statuses.requirement_id',
                     'submission_statuses.status',
                 )->get();
 
             array_push($students, [
+                'student_id' => $student_info->student_id,
                 'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
                 'last_name' => $student_info->last_name,
@@ -263,9 +268,9 @@ class AdminController extends Controller
     public function addStudent(Request $request)
     {
         $values = $request->validate([
-            'student_number' => ['required', 'numeric', 'integer'],
+            'student_number' => ['required', 'string'],
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'section' => ['nullable', 'string'],
@@ -304,9 +309,9 @@ class AdminController extends Controller
 
         $new_user = new User();
         $new_user->role = User::ROLE_STUDENT;
-        $new_user->role_id = $new_student->student_number;
+        $new_user->role_id = $new_student->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
@@ -314,7 +319,7 @@ class AdminController extends Controller
         $requirements = DB::table('requirements')->get();
         foreach ($requirements as $requirement) {
             $new_submission_status = new SubmissionStatus();
-            $new_submission_status->student_number = $new_student->student_number;
+            $new_submission_status->student_id = $new_student->id;
             $new_submission_status->requirement_id = $requirement->id;
             $new_submission_status->status = 'None';
             $new_submission_status->save();
@@ -339,7 +344,7 @@ class AdminController extends Controller
     {
         $values = $request->validate([
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'company_id' => ['nullable', 'numeric', 'integer'],
@@ -361,7 +366,7 @@ class AdminController extends Controller
         $new_user->role = User::ROLE_SUPERVISOR;
         $new_user->role_id = $new_supervisor->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
@@ -386,7 +391,7 @@ class AdminController extends Controller
     {
         $values = $request->validate([
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'section' => ['nullable', 'string'],
@@ -413,7 +418,7 @@ class AdminController extends Controller
         $new_user->role = User::ROLE_FACULTY;
         $new_user->role_id = $new_faculty->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
@@ -434,13 +439,157 @@ class AdminController extends Controller
         return back();
     }
 
-    public function deleteStudent(int $student_number)
+    public function updateStudent(Request $request, int $student_id)
+    {
+        $values = $request->validate([
+            'student_number' => ['required', 'string'],
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['nullable', 'string'],
+            'supervisor_id' => ['nullable', 'numeric', 'integer'],
+            'wordpress_name' => ['required', 'string'],
+            'wordpress_email' => ['required', 'email:rfc'],
+        ]);
+
+        $student_number_exists = Student::where('student_number', $values['student_number'])
+            ->whereNot('id', $student_id)
+            ->exists();
+
+        $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        if ($student_number_exists) {
+            return back()->withErrors([
+                'student_number' => 'The provided student number already exists.',
+            ]);
+        } else if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        $student = Student::find($student_id);
+        $student->student_number = $values['student_number'];
+        if ($values['section']) {
+            $student->faculty_id = DB::table('faculties')
+                ->where('section', $values['section'])
+                ->firstOrFail()
+                ->id;
+        }
+        $student->supervisor_id = $values['supervisor_id'];
+        $student->wordpress_name = $values['wordpress_name'];
+        $student->wordpress_email = $values['wordpress_email'];
+        $student->save();
+
+        return back();
+    }
+
+    public function updateSupervisor(Request $request, int $supervisor_id)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'company_id' => ['nullable', 'numeric', 'integer'],
+        ]);
+
+        $user = User::where('role', User::ROLE_SUPERVISOR)->where('role_id', $supervisor_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        $supervisor = Supervisor::find($supervisor_id);
+        $supervisor->company_id = $values['company_id'];
+        $supervisor->save();
+
+        return back();
+    }
+
+    public function updateFaculty(Request $request, int $faculty_id)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['nullable', 'string'],
+        ]);
+
+        $user = User::where('role', User::ROLE_FACULTY)->where('role_id', $faculty_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        $section_exists = Faculty::where('section', $values['section'])
+            ->whereNot('id', $faculty_id)
+            ->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        } else if ($values['section'] && $section_exists) {
+            return back()->withErrors([
+                'section' => 'The provided section already exists.',
+            ]);
+        }
+
+        $faculty = Faculty::find($faculty_id);
+        $faculty->section = $values['section'];
+        $faculty->save();
+
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        return back();
+    }
+
+    public function updateCompany(Request $request, int $company_id)
+    {
+        $values = $request->validate([
+            'company_name' => ['required', 'string'],
+        ]);
+
+        $new_company = Company::find($company_id);
+        $new_company->company_name = $values['company_name'];
+        $new_company->save();
+
+        return back();
+    }
+
+    public function deleteStudent(int $student_id)
     {
         $user = User::where('role', User::ROLE_STUDENT)
-            ->where('role_id', $student_number)
+            ->where('role_id', $student_id)
             ->firstOrFail();
 
-        $submission_statuses = SubmissionStatus::where('student_number', $student_number)->get();
+        $submission_statuses = SubmissionStatus::where('student_id', $student_id)->get();
         foreach ($submission_statuses as $submission_status) {
             Submission::where('submission_status_id', $submission_status->id)->delete();
             $submission_status->delete();
@@ -461,7 +610,7 @@ class AdminController extends Controller
 
         $user->delete();
 
-        Student::find($student_number)->delete();
+        Student::find($student_id)->delete();
     }
 
     public function deleteSupervisor(int $supervisor_id)

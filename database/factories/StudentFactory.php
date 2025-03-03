@@ -19,6 +19,7 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
+            'student_number' => strval(fake()->randomNumber(9)),
             'supervisor_id' => Supervisor::factory(),
             'faculty_id' => Faculty::factory(),
             'grade' => fake()->randomFloat(),

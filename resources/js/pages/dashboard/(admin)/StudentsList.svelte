@@ -57,11 +57,11 @@
         );
     }
 
-    function setSection(evt, studentNumber) {
+    function setSection(evt, studentId) {
         const sectionName = evt.target.value;
 
         router.put(
-            `/students/${studentNumber}/assign/section/${sectionName}`,
+            `/students/${studentId}/assign/section/${sectionName}`,
             {},
             {
                 preserveScroll: true,
@@ -69,11 +69,11 @@
         );
     }
 
-    function setSupervisor(evt, studentNumber) {
+    function setSupervisor(evt, studentId) {
         const supervisorId = evt.target.value;
 
         router.put(
-            `/students/${studentNumber}/assign/supervisor/${supervisorId}`,
+            `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
             {
                 preserveScroll: true,
@@ -81,14 +81,10 @@
         );
     }
 
-    let addFormElement;
+    let userFormElement;
     let isModalOpen;
 
-    function openModal() {
-        isModalOpen = true;
-    }
-
-    let addUserForm = useForm({
+    let userForm = useForm({
         student_number: null,
         first_name: null,
         middle_name: null,
@@ -101,12 +97,63 @@
     });
 
     function addUser() {
-        if (!addFormElement.checkValidity()) {
-            addFormElement.reportValidity();
+        if (!userFormElement.checkValidity()) {
+            userFormElement.reportValidity();
             return;
         }
-        $addUserForm.post(
+        $userForm.post(
             '/dashboard/admin/students/add',
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function openAddForm() {
+        $userForm.student_number = null;
+        $userForm.first_name = null;
+        $userForm.middle_name = null;
+        $userForm.last_name = null;
+        $userForm.email = null;
+        $userForm.section = null;
+        $userForm.supervisor_id = null;
+        $userForm.wordpress_name = null;
+        $userForm.wordpress_email = null;
+
+        isModalOpen = true;
+    }
+
+    let formUserRoleId = null;
+    function openUpdateForm(studentId) {
+        const student = students.find(
+            (student) => student.student_id === studentId,
+        );
+
+        $userForm.student_number = student.student_number;
+        $userForm.first_name = student.first_name;
+        $userForm.middle_name = student.middle_name;
+        $userForm.last_name = student.last_name;
+        $userForm.email = student.email;
+        $userForm.section = student.section;
+        $userForm.supervisor_id = student.supervisor_id;
+        $userForm.wordpress_name = student.wordpress_name;
+        $userForm.wordpress_email = student.wordpress_email;
+
+        formUserRoleId = studentId;
+        isModalOpen = true;
+    }
+
+    function updateUser() {
+        if (!formUserRoleId) {
+            return;
+        }
+        if (!userFormElement.checkValidity()) {
+            userFormElement.reportValidity();
+            return;
+        }
+        $userForm.post(
+            `/dashboard/admin/students/update/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -220,8 +267,9 @@
                     {/each}
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each students as student (student.student_number)}
+                {#each students as student (student.student_id)}
                     {@const {
+                        student_id,
                         student_number,
                         first_name,
                         last_name,
@@ -249,7 +297,7 @@
                                 <select
                                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
-                                        setSection(evt, student_number)}
+                                        setSection(evt, student_id)}
                                 >
                                     <option
                                         selected={!has_dropped &&
@@ -274,7 +322,7 @@
                                 <select
                                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                     on:change={(evt) =>
-                                        setSupervisor(evt, student_number)}
+                                        setSupervisor(evt, student_id)}
                                 >
                                     <option selected={!supervisor_id} value />
                                     {#each companies as company}
@@ -330,7 +378,7 @@
                             <td class="border-l-2 p-2 text-center {borderColor}"
                                 ><StatusCell
                                     isAdmin
-                                    href="/requirement/{requirement_id}/view/{student_number}"
+                                    href="/requirement/{requirement_id}/view/{student_id}"
                                     {status}
                                 />
                             </td>
@@ -341,17 +389,30 @@
                                     isAdmin
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/answer/{student_number}"
+                                        .short_name}/answer/{student_id}"
                                 />
                             </td>
                         {/each}
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><Link
-                                href="/dashboard/admin/students/delete/{student_number}"
-                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                method="delete">Delete</Link
-                            >
-                        </td>
+                        <div
+                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
+                        >
+                            <td class="text-center {borderColor}"
+                                ><button
+                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
+                                    on:click={() => openUpdateForm(student_id)}
+                                    >Edit</button
+                                >
+                            </td>
+                            <td class="text-center {borderColor}"
+                                ><Link
+                                    href="/dashboard/admin/students/delete/{student_id}"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
+                                    method="delete">Delete</Link
+                                >
+                            </td>
+                        </div>
                     </tr>
                 {/each}
             </table>
@@ -362,7 +423,7 @@
         <div class="flex w-fit flex-col gap-4">
             <button
                 class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary p-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                on:click={openModal}>+ Add Student</button
+                on:click={openAddForm}>+ Add Student</button
             >
 
             <div class="flex flex-col gap-2">
@@ -407,23 +468,23 @@
 
 <Modal bind:isOpen={isModalOpen}>
     <form
-        bind:this={addFormElement}
+        bind:this={userFormElement}
         class="flex flex-col gap-4"
-        on:submit|preventDefault={addUser}
+        on:submit|preventDefault={formUserRoleId ? updateUser : addUser}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
             <label for="student_number"><Required />Student Number</label>
             <div class="flex flex-col">
                 <input
                     name="student_number"
-                    type="number"
+                    type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.student_number}
+                    bind:value={$userForm.student_number}
                     required
                 />
-                {#if $addUserForm.errors.student_number}
+                {#if $userForm.errors.student_number}
                     <ErrorText>
-                        {$addUserForm.errors.student_number}
+                        {$userForm.errors.student_number}
                     </ErrorText>
                 {/if}
             </div>
@@ -434,28 +495,27 @@
                     name="first_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.first_name}
+                    bind:value={$userForm.first_name}
                     required
                 />
-                {#if $addUserForm.errors.first_name}
+                {#if $userForm.errors.first_name}
                     <ErrorText>
-                        {$addUserForm.errors.first_name}
+                        {$userForm.errors.first_name}
                     </ErrorText>
                 {/if}
             </div>
 
-            <label for="middle_name"><Required />Middle Name</label>
+            <label for="middle_name">Middle Name</label>
             <div class="flex flex-col">
                 <input
                     name="middle_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.middle_name}
-                    required
+                    bind:value={$userForm.middle_name}
                 />
-                {#if $addUserForm.errors.middle_name}
+                {#if $userForm.errors.middle_name}
                     <ErrorText>
-                        {$addUserForm.errors.middle_name}
+                        {$userForm.errors.middle_name}
                     </ErrorText>
                 {/if}
             </div>
@@ -466,12 +526,12 @@
                     name="last_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.last_name}
+                    bind:value={$userForm.last_name}
                     required
                 />
-                {#if $addUserForm.errors.last_name}
+                {#if $userForm.errors.last_name}
                     <ErrorText>
-                        {$addUserForm.errors.last_name}
+                        {$userForm.errors.last_name}
                     </ErrorText>
                 {/if}
             </div>
@@ -482,12 +542,12 @@
                     name="email"
                     type="email"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.email}
+                    bind:value={$userForm.email}
                     required
                 />
-                {#if $addUserForm.errors.email}
+                {#if $userForm.errors.email}
                     <ErrorText>
-                        {$addUserForm.errors.email}
+                        {$userForm.errors.email}
                     </ErrorText>
                 {/if}
             </div>
@@ -497,16 +557,16 @@
                 <select
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                     name="section"
-                    bind:value={$addUserForm.section}
+                    bind:value={$userForm.section}
                 >
                     <option selected value />
                     {#each sections as section}
                         <option value={section}>{section}</option>
                     {/each}
                 </select>
-                {#if $addUserForm.errors.section}
+                {#if $userForm.errors.section}
                     <ErrorText>
-                        {$addUserForm.errors.section}
+                        {$userForm.errors.section}
                     </ErrorText>
                 {/if}
             </div>
@@ -516,7 +576,7 @@
                 <select
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                     name="supervisor"
-                    bind:value={$addUserForm.supervisor_id}
+                    bind:value={$userForm.supervisor_id}
                 >
                     <option selected value />
                     {#each companies as company}
@@ -541,9 +601,9 @@
                         {/each}
                     </optgroup>
                 </select>
-                {#if $addUserForm.errors.supervisor_id}
+                {#if $userForm.errors.supervisor_id}
                     <ErrorText>
-                        {$addUserForm.errors.supervisor_id}
+                        {$userForm.errors.supervisor_id}
                     </ErrorText>
                 {/if}
             </div>
@@ -554,12 +614,12 @@
                     name="wordpress name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.wordpress_name}
+                    bind:value={$userForm.wordpress_name}
                     required
                 />
-                {#if $addUserForm.errors.wordpress_name}
+                {#if $userForm.errors.wordpress_name}
                     <ErrorText>
-                        {$addUserForm.errors.wordpress_name}
+                        {$userForm.errors.wordpress_name}
                     </ErrorText>
                 {/if}
             </div>
@@ -570,12 +630,12 @@
                     name="wordpress email"
                     type="email"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.wordpress_email}
+                    bind:value={$userForm.wordpress_email}
                     required
                 />
-                {#if $addUserForm.errors.wordpress_email}
+                {#if $userForm.errors.wordpress_email}
                     <ErrorText>
-                        {$addUserForm.errors.wordpress_email}
+                        {$userForm.errors.wordpress_email}
                     </ErrorText>
                 {/if}
             </div>
@@ -584,7 +644,7 @@
         <input
             class="cursor-pointer rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value="Add Student"
+            value={formUserRoleId ? 'Update Student' : 'Add Student'}
         />
     </form>
 </Modal>

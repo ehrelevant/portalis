@@ -33,10 +33,11 @@ class FacultyController extends Controller
         switch ($phase) {
             case 'pre':
                 $students_info = $users_partial
-                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->join('students', 'users.role_id', '=', 'students.id')
                     ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
                     ->select(
                         'users.id AS user_id',
+                        'students.id AS student_id',
                         'students.student_number',
                         'users.first_name',
                         'users.last_name',
@@ -51,13 +52,14 @@ class FacultyController extends Controller
 
                 foreach ($students_info as $student_info) {
                     $student_statuses = DB::table('submission_statuses')
-                        ->where('student_number', $student_info->student_number)
+                        ->where('student_id', $student_info->student_id)
                         ->select(
                             'submission_statuses.requirement_id',
                             'submission_statuses.status',
                         )->get();
 
                     $new_student = [
+                        'student_id' => $student_info->student_id,
                         'student_number' => $student_info->student_number,
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
@@ -86,7 +88,7 @@ class FacultyController extends Controller
             case 'during':
             case 'post':
                 $students_info = $users_partial
-                    ->join('students', 'users.role_id', '=', 'students.student_number')
+                    ->join('students', 'users.role_id', '=', 'students.id')
                     ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
                     ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
                     ->where('supervisor_users.role', 'supervisor')
@@ -95,6 +97,7 @@ class FacultyController extends Controller
                     ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
                     ->select(
                         'users.id AS user_id',
+                        'students.id AS student_id',
                         'students.student_number',
                         'users.first_name',
                         'users.last_name',
@@ -117,6 +120,7 @@ class FacultyController extends Controller
                         ->pluck('status', 'form_id');
 
                     array_push($students, [
+                        'student_id' => $student_info->student_id,
                         'student_number' => $student_info->student_number,
                         'first_name' => $student_info->first_name,
                         'last_name' => $student_info->last_name,
@@ -160,7 +164,7 @@ class FacultyController extends Controller
         }
     }
 
-    public function assignStudentSection(int $student_number, ?string $new_section = null)
+    public function assignStudentSection(int $student_id, ?string $new_section = null)
     {
         $faculty_sections = DB::table('faculties')
             ->pluck('id', 'section')
@@ -168,13 +172,13 @@ class FacultyController extends Controller
 
         if (!$new_section) {
             // If section is set to nothing, set section to null
-            $target_student = Student::find($student_number);
+            $target_student = Student::find($student_id);
             $target_student->faculty_id = null;
             $target_student->has_dropped = false;
             $target_student->save();
         } elseif ($new_section === 'DRP') {
             // If section is set to DRP, flag student as DRP and set section to NULL in database
-            $target_student = Student::find($student_number);
+            $target_student = Student::find($student_id);
             $target_student->faculty_id = null;
             $target_student->has_dropped = true;
             $target_student->save();
@@ -183,7 +187,7 @@ class FacultyController extends Controller
 
             if ($new_faculty_id) {
                 // If new section exists, save change in database
-                $target_student = Student::find($student_number);
+                $target_student = Student::find($student_id);
                 $target_student->faculty_id = $new_faculty_id;
                 $target_student->has_dropped = false;
                 $target_student->save();

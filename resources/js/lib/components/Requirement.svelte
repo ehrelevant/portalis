@@ -6,7 +6,7 @@
     export let requirementName;
     export let deadline;
     export let submissionStatus;
-    export let studentNumber;
+    export let studentId;
 </script>
 
 <div
@@ -34,7 +34,7 @@
     >
         {#if submissionStatus !== 'None'}
             <a
-                href="/file/submission/{studentNumber}/{requirementId}"
+                href="/file/submission/{studentId}/{requirementId}"
                 target="_blank"
                 class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                 >View</a

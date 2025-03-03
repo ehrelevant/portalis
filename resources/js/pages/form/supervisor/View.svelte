@@ -38,7 +38,7 @@
                             {@const { criterion } = rating_question}
                             <p class="text-center">{criterion}</p>
                         {/each}
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const {
                                 last_name,
                                 first_name,
@@ -49,10 +49,9 @@
                                 <p
                                     class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                 >
-                                    {students[student_number]
-                                        .categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
+                                    {students[student_id].categorized_ratings[
+                                        category_id
+                                    ][rating_id]}
                                 </p>
                             {/each}
                         {/each}
@@ -66,12 +65,12 @@
                     <div
                         class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
                             <textarea
                                 class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                value={students[student_number].opens[open_id]}
+                                value={students[student_id].opens[open_id]}
                                 disabled
                             />
                         {/each}

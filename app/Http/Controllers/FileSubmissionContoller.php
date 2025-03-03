@@ -16,17 +16,17 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
 {
-    public function showUploadForm(int $requirement_id, ?int $student_number = null): Response
+    public function showUploadForm(int $requirement_id, ?int $student_id = null): Response
     {
         $user = Auth::user();
         if ($user->role === User::ROLE_STUDENT) {
-            if ($student_number && $student_number !== $user->role_id) {
+            if ($student_id && $student_id !== $user->role_id) {
                 abort(401);
-            } elseif (!$student_number) {
-                $student_number = $user->role_id;
+            } elseif (!$student_id) {
+                $student_id = $user->role_id;
             }
         } elseif ($user->role === User::ROLE_ADMIN) {
-            if (!$student_number) {
+            if (!$student_id) {
                 abort(404);
             }
         } else {
@@ -35,7 +35,7 @@ class FileSubmissionContoller extends Controller
 
         $student_name = DB::table('users')
             ->where('role', 'student')
-            ->where('role_id', $student_number)
+            ->where('role_id', $student_id)
             ->select('first_name', 'last_name')
             ->firstOrFail();
 
@@ -44,24 +44,24 @@ class FileSubmissionContoller extends Controller
             ->find($requirement_id);
 
         return Inertia::render('requirement/Upload', [
-            'studentNumber' => $student_number,
+            'studentId' => $student_id,
             'studentName' => $student_name,
             'requirementId' => $requirement->id,
             'requirementName' => $requirement->requirement_name,
         ]);
     }
 
-    public function submitDocument(Request $request, int $requirement_id, ?int $student_number = null): RedirectResponse
+    public function submitDocument(Request $request, int $requirement_id, ?int $student_id = null): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role === User::ROLE_STUDENT) {
-            if ($student_number && $student_number != $user->role_id) {
+            if ($student_id && $student_id != $user->role_id) {
                 abort(401);
-            } elseif (!$student_number) {
-                $student_number = $user->role_id;
+            } elseif (!$student_id) {
+                $student_id = $user->role_id;
             }
         } elseif ($user->role === User::ROLE_ADMIN) {
-            if (!$student_number) {
+            if (!$student_id) {
                 abort(404);
             }
         } else {
@@ -72,7 +72,7 @@ class FileSubmissionContoller extends Controller
             'file' => ['required', 'mimes:pdf', 'max:2048'],
         ]);
 
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
+        $submission_status = SubmissionStatus::where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
         $submission_status->status = 'For Review';
@@ -91,27 +91,27 @@ class FileSubmissionContoller extends Controller
         $submission->save();
 
         if ($user->role === User::ROLE_ADMIN) {
-            return redirect('/requirement/' . $requirement_id . '/view/' . $student_number);
+            return redirect('/requirement/' . $requirement_id . '/view/' . $student_id);
         } else {
             return redirect('/dashboard');
         }
     }
 
-    public function showStudentDocument(int $student_number, int $requirement_id): StreamedResponse
+    public function showStudentDocument(int $student_id, int $requirement_id): StreamedResponse
     {
         $role = Auth::user()->role;
         $role_id = intval(Auth::user()->role_id);
 
         $status = DB::table('submission_statuses')
-            ->where('student_number', $student_number)
+            ->where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail()
             ->status;
 
         // Students should only be able to see the most recent file if they have submitted/validated
-        if (($role === 'student' && $role_id === $student_number && $status !== 'pending') || in_array($role, [User::ROLE_ADMIN, User::ROLE_FACULTY])) {
+        if (($role === 'student' && $role_id === $student_id && $status !== 'pending') || in_array($role, [User::ROLE_ADMIN, User::ROLE_FACULTY])) {
             $filepath = DB::table('submission_statuses')
-                ->where('student_number', $student_number)
+                ->where('student_id', $student_id)
                 ->where('requirement_id', $requirement_id)
                 ->join('submissions', 'submission_statuses.id', '=', 'submissions.submission_status_id')
                 ->orderBy('created_at', 'desc')
@@ -131,9 +131,9 @@ class FileSubmissionContoller extends Controller
         abort(401);
     }
 
-    public function showStudentSubmission(int $requirement_id, int $student_number)
+    public function showStudentSubmission(int $requirement_id, int $student_id)
     {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
+        $submission_status = SubmissionStatus::where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail()
             ->status;
@@ -145,12 +145,12 @@ class FileSubmissionContoller extends Controller
 
         $student_name = DB::table('users')
             ->where('role', 'student')
-            ->where('role_id', $student_number)
+            ->where('role_id', $student_id)
             ->select('first_name', 'last_name')
             ->firstOrFail();
 
         return Inertia::render('requirement/View', [
-            'studentNumber' => $student_number,
+            'studentId' => $student_id,
             'studentName' => $student_name,
             'requirementId' => $requirement_id,
             'requirementName' => $requirement_name,
@@ -159,9 +159,9 @@ class FileSubmissionContoller extends Controller
         ]);
     }
 
-    public function validateStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
+    public function validateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
+        $submission_status = SubmissionStatus::where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
@@ -174,9 +174,9 @@ class FileSubmissionContoller extends Controller
         return back();
     }
 
-    public function invalidateStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
+    public function invalidateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
+        $submission_status = SubmissionStatus::where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
@@ -189,9 +189,9 @@ class FileSubmissionContoller extends Controller
         return back();
     }
 
-    public function rejectStudentSubmission(int $requirement_id, int $student_number): RedirectResponse
+    public function rejectStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_number', $student_number)
+        $submission_status = SubmissionStatus::where('student_id', $student_id)
             ->where('requirement_id', $requirement_id)
             ->firstOrFail();
 
