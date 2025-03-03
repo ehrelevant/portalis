@@ -50,24 +50,61 @@
         );
     }
 
-    let addFormElement;
+    let companyFormElement;
     let isModalOpen;
 
-    function openModal() {
-        isModalOpen = true;
-    }
-
-    let addCompanyForm = useForm({
+    let companyForm = useForm({
         company_name: null,
     });
 
     function addCompany() {
-        if (!addFormElement.checkValidity()) {
-            addFormElement.reportValidity();
+        if (!companyFormElement.checkValidity()) {
+            companyFormElement.reportValidity();
             return;
         }
-        $addCompanyForm.post('/dashboard/admin/companies/add');
+        $companyForm.post(
+            '/dashboard/admin/companies/add',
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
     }
+
+    function openAddForm() {
+        $companyForm.company_name = null;
+
+        isModalOpen = true;
+    }
+
+    let formCompanyId = null;
+    function openUpdateForm(companyId) {
+        $companyForm.company_name = companies[companyId].company_name;
+
+        formCompanyId = companyId;
+        isModalOpen = true;
+    }
+
+    function updateCompany() {
+        if (!formCompanyId) {
+            return;
+        }
+        if (!companyFormElement.checkValidity()) {
+            companyFormElement.reportValidity();
+            return;
+        }
+        $companyForm.post(
+            `/dashboard/admin/companies/update/${formCompanyId}`,
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    Inertia.on('success', () => {
+        isModalOpen = false;
+    });
 
     Inertia.on('success', () => {
         isModalOpen = false;
@@ -114,13 +151,26 @@
                     {@const { company_id, company_name } = company}
                     <tr class="border-t-2 {borderColor}">
                         <td class="p-2 {borderColor}">{company_name}</td>
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><Link
-                                href="/dashboard/admin/companies/delete/{company_id}"
-                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                method="delete">Delete</Link
-                            >
-                        </td>
+                        <div
+                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
+                        >
+                            <td class="text-center {borderColor}"
+                                ><button
+                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
+                                    on:click={() => openUpdateForm(company_id)}
+                                    >Edit</button
+                                >
+                            </td>
+                            <td class="text-center {borderColor}"
+                                ><Link
+                                    href="/dashboard/admin/companies/delete/{company_id}"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
+                                    method="delete">Delete</Link
+                                >
+                            </td>
+                        </div>
                     </tr>
                 {/each}
             </table>
@@ -130,7 +180,7 @@
     <div class="flex w-full justify-between">
         <button
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            on:click={openModal}>Add Company</button
+            on:click={openAddForm}>Add Company</button
         >
         <Link
             href="/dashboard"
@@ -142,9 +192,9 @@
 
 <Modal bind:isOpen={isModalOpen}>
     <form
-        bind:this={addFormElement}
+        bind:this={companyFormElement}
         class="flex flex-col gap-4"
-        on:submit|preventDefault={addCompany}
+        on:submit|preventDefault={formCompanyId ? updateCompany : addCompany}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
             <label for="middle name"><Required />Company</label>
@@ -152,15 +202,14 @@
                 name="middle name"
                 type="text"
                 class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$addCompanyForm.company_name}
+                bind:value={$companyForm.company_name}
                 required
             />
-
-            <input
-                class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
-                type="submit"
-                value="Add Company"
-            />
         </div>
+        <input
+            class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
+            type="submit"
+            value={formCompanyId ? 'Update Faculty' : 'Add Faculty'}
+        />
     </form>
 </Modal>

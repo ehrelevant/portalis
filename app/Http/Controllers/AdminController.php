@@ -450,7 +450,25 @@ class AdminController extends Controller
             'wordpress_email' => ['required', 'email:rfc'],
         ]);
 
+        $student_number_exists = Student::where('student_number', $values['student_number'])
+            ->whereNot('id', $student_id)
+            ->exists();
+
         $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        if ($student_number_exists) {
+            return back()->withErrors([
+                'student_number' => 'The provided student number already exists.',
+            ]);
+        } else if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
         $user->first_name = $values['first_name'];
         $user->middle_name = $values['middle_name'] ?? '';
         $user->last_name = $values['last_name'];
@@ -469,6 +487,95 @@ class AdminController extends Controller
         $student->wordpress_name = $values['wordpress_name'];
         $student->wordpress_email = $values['wordpress_email'];
         $student->save();
+
+        return back();
+    }
+
+    public function updateSupervisor(Request $request, int $supervisor_id)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'company_id' => ['nullable', 'numeric', 'integer'],
+        ]);
+
+        $user = User::where('role', User::ROLE_SUPERVISOR)->where('role_id', $supervisor_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        }
+
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        $supervisor = Supervisor::find($supervisor_id);
+        $supervisor->company_id = $values['company_id'];
+        $supervisor->save();
+
+        return back();
+    }
+
+    public function updateFaculty(Request $request, int $faculty_id)
+    {
+        $values = $request->validate([
+            'first_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
+            'last_name' => ['required', 'string'],
+            'email' => ['required', 'email:rfc'],
+            'section' => ['nullable', 'string'],
+        ]);
+
+        $user = User::where('role', User::ROLE_FACULTY)->where('role_id', $faculty_id)->firstOrFail();
+        $user_email_exists = User::where('email', $values['email'])
+            ->whereNot('id', $user->id)
+            ->exists();
+
+        $section_exists = Faculty::where('section', $values['section'])
+            ->whereNot('id', $faculty_id)
+            ->exists();
+
+        if ($user_email_exists) {
+            return back()->withErrors([
+                'email' => 'The provided email already exists.',
+            ]);
+        } else if ($values['section'] && $section_exists) {
+            return back()->withErrors([
+                'section' => 'The provided section already exists.',
+            ]);
+        }
+
+        $faculty = Faculty::find($faculty_id);
+        $faculty->section = $values['section'];
+        $faculty->save();
+
+        $user->first_name = $values['first_name'];
+        $user->middle_name = $values['middle_name'] ?? '';
+        $user->last_name = $values['last_name'];
+        $user->email = $values['email'];
+        $user->save();
+
+        return back();
+    }
+
+    public function updateCompany(Request $request, int $company_id)
+    {
+        $values = $request->validate([
+            'company_name' => ['required', 'string'],
+        ]);
+
+        $new_company = Company::find($company_id);
+        $new_company->company_name = $values['company_name'];
+        $new_company->save();
 
         return back();
     }

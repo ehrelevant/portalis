@@ -124,24 +124,28 @@
         isModalOpen = true;
     }
 
-    let formStudentId = null;
+    let formUserRoleId = null;
     function openUpdateForm(studentId) {
-        $userForm.student_number = students[studentId].student_number;
-        $userForm.first_name = students[studentId].first_name;
-        $userForm.middle_name = students[studentId].middle_name;
-        $userForm.last_name = students[studentId].last_name;
-        $userForm.email = students[studentId].email;
-        $userForm.section = students[studentId].section;
-        $userForm.supervisor_id = students[studentId].supervisor_id;
-        $userForm.wordpress_name = students[studentId].wordpress_name;
-        $userForm.wordpress_email = students[studentId].wordpress_email;
+        const student = students.find(
+            (student) => student.student_id === studentId,
+        );
 
-        formStudentId = studentId;
+        $userForm.student_number = student.student_number;
+        $userForm.first_name = student.first_name;
+        $userForm.middle_name = student.middle_name;
+        $userForm.last_name = student.last_name;
+        $userForm.email = student.email;
+        $userForm.section = student.section;
+        $userForm.supervisor_id = student.supervisor_id;
+        $userForm.wordpress_name = student.wordpress_name;
+        $userForm.wordpress_email = student.wordpress_email;
+
+        formUserRoleId = studentId;
         isModalOpen = true;
     }
 
     function updateUser() {
-        if (!formStudentId) {
+        if (!formUserRoleId) {
             return;
         }
         if (!userFormElement.checkValidity()) {
@@ -149,7 +153,7 @@
             return;
         }
         $userForm.post(
-            `/dashboard/admin/students/update/${formStudentId}`,
+            `/dashboard/admin/students/update/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -389,10 +393,12 @@
                                 />
                             </td>
                         {/each}
-                        <div class="border-l-2 p-2">
+                        <div
+                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
+                        >
                             <td class="text-center {borderColor}"
                                 ><button
-                                    class="rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
+                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
                                     on:click={() => openUpdateForm(student_id)}
                                     >Edit</button
                                 >
@@ -400,7 +406,9 @@
                             <td class="text-center {borderColor}"
                                 ><Link
                                     href="/dashboard/admin/students/delete/{student_id}"
-                                    class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
                                     method="delete">Delete</Link
                                 >
                             </td>
@@ -454,7 +462,7 @@
     <form
         bind:this={userFormElement}
         class="flex flex-col gap-4"
-        on:submit|preventDefault={formStudentId ? updateUser : addUser}
+        on:submit|preventDefault={formUserRoleId ? updateUser : addUser}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
             <label for="student_number"><Required />Student Number</label>
@@ -628,7 +636,7 @@
         <input
             class="cursor-pointer rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value={formStudentId ? 'Update Student' : 'Add Student'}
+            value={formUserRoleId ? 'Update Student' : 'Add Student'}
         />
     </form>
 </Modal>

@@ -51,14 +51,10 @@
         );
     }
 
-    let addFormElement;
+    let userFormElement;
     let isModalOpen;
 
-    function openModal() {
-        isModalOpen = true;
-    }
-
-    let addUserForm = useForm({
+    let userForm = useForm({
         first_name: null,
         middle_name: null,
         last_name: null,
@@ -67,12 +63,55 @@
     });
 
     function addUser() {
-        if (!addFormElement.checkValidity()) {
-            addFormElement.reportValidity();
+        if (!userFormElement.checkValidity()) {
+            userFormElement.reportValidity();
             return;
         }
-        $addUserForm.post(
+        $userForm.post(
             '/dashboard/admin/faculties/add',
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function openAddForm() {
+        $userForm.first_name = null;
+        $userForm.middle_name = null;
+        $userForm.last_name = null;
+        $userForm.email = null;
+        $userForm.section = null;
+
+        isModalOpen = true;
+    }
+
+    let formUserRoleId = null;
+    function openUpdateForm(facultyId) {
+        const faculty = faculties.find(
+            (faculty) => faculty.faculty_id === facultyId,
+        );
+
+        $userForm.first_name = faculty.first_name;
+        $userForm.middle_name = faculty.middle_name;
+        $userForm.last_name = faculty.last_name;
+        $userForm.email = faculty.email;
+        $userForm.section = faculty.section;
+
+        formUserRoleId = facultyId;
+        isModalOpen = true;
+    }
+
+    function updateUser() {
+        if (!formUserRoleId) {
+            return;
+        }
+        if (!userFormElement.checkValidity()) {
+            userFormElement.reportValidity();
+            return;
+        }
+        $userForm.post(
+            `/dashboard/admin/faculties/update/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -160,13 +199,26 @@
                         <td class="border-l-2 p-2 {borderColor}"
                             >{section ?? ''}</td
                         >
-                        <td class="border-l-2 p-2 text-center {borderColor}"
-                            ><Link
-                                href="/dashboard/admin/faculties/delete/{faculty_id}"
-                                class="rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                method="delete">Delete</Link
-                            >
-                        </td>
+                        <div
+                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
+                        >
+                            <td class="text-center {borderColor}"
+                                ><button
+                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
+                                    on:click={() => openUpdateForm(faculty_id)}
+                                    >Edit</button
+                                >
+                            </td>
+                            <td class="text-center {borderColor}"
+                                ><Link
+                                    href="/dashboard/admin/faculties/delete/{faculty_id}"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
+                                    method="delete">Delete</Link
+                                >
+                            </td>
+                        </div>
                     </tr>
                 {/each}
             </table>
@@ -176,7 +228,7 @@
     <div class="flex w-full justify-between">
         <button
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            on:click={openModal}>Add Faculty</button
+            on:click={openAddForm}>Add Faculty</button
         >
         <Link
             href="/dashboard"
@@ -188,9 +240,9 @@
 
 <Modal bind:isOpen={isModalOpen}>
     <form
-        bind:this={addFormElement}
+        bind:this={userFormElement}
         class="flex flex-col gap-4"
-        on:submit|preventDefault={addUser}
+        on:submit|preventDefault={formUserRoleId ? updateUser : addUser}
     >
         <div class="grid grid-cols-[auto,1fr] items-center gap-4">
             <label for="first_name"><Required />First Name</label>
@@ -199,28 +251,27 @@
                     name="first_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.first_name}
+                    bind:value={$userForm.first_name}
                     required
                 />
-                {#if $addUserForm.errors.first_name}
+                {#if $userForm.errors.first_name}
                     <ErrorText>
-                        {$addUserForm.errors.first_name}
+                        {$userForm.errors.first_name}
                     </ErrorText>
                 {/if}
             </div>
 
-            <label for="middle_name"><Required />Middle Name</label>
+            <label for="middle_name">Middle Name</label>
             <div class="flex flex-col">
                 <input
                     name="middle_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.middle_name}
-                    required
+                    bind:value={$userForm.middle_name}
                 />
-                {#if $addUserForm.errors.middle_name}
+                {#if $userForm.errors.middle_name}
                     <ErrorText>
-                        {$addUserForm.errors.middle_name}
+                        {$userForm.errors.middle_name}
                     </ErrorText>
                 {/if}
             </div>
@@ -231,12 +282,12 @@
                     name="last_name"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.last_name}
+                    bind:value={$userForm.last_name}
                     required
                 />
-                {#if $addUserForm.errors.last_name}
+                {#if $userForm.errors.last_name}
                     <ErrorText>
-                        {$addUserForm.errors.last_name}
+                        {$userForm.errors.last_name}
                     </ErrorText>
                 {/if}
             </div>
@@ -247,12 +298,12 @@
                     name="email"
                     type="email"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.email}
+                    bind:value={$userForm.email}
                     required
                 />
-                {#if $addUserForm.errors.email}
+                {#if $userForm.errors.email}
                     <ErrorText>
-                        {$addUserForm.errors.email}
+                        {$userForm.errors.email}
                     </ErrorText>
                 {/if}
             </div>
@@ -263,11 +314,11 @@
                     name="section"
                     type="text"
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$addUserForm.section}
+                    bind:value={$userForm.section}
                 />
-                {#if $addUserForm.errors.section}
+                {#if $userForm.errors.section}
                     <ErrorText>
-                        {$addUserForm.errors.section}
+                        {$userForm.errors.section}
                     </ErrorText>
                 {/if}
             </div>
@@ -275,7 +326,7 @@
         <input
             class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value="Add Faculty"
+            value={formUserRoleId ? 'Update Faculty' : 'Add Faculty'}
         />
     </form>
 </Modal>
