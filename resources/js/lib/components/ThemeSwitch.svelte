@@ -1,9 +1,12 @@
 <script>
-    import LightMode from '$assets/lightmode_logo.svelte';
-    import DarkMode from '$assets/darkmode_logo.svelte';
     import { onMount } from 'svelte';
+    import Icon from "@iconify/svelte";
 
-    export let icon = LightMode;
+    
+    let lightModeIcon = "uil:sun"
+    let darkModeIcon = "solar:moon-outline";
+
+    export let icon = lightModeIcon;
     let darkMode = true;
 
     onMount(() => {
@@ -17,12 +20,12 @@
 
     function updateTheme() {
         if (darkMode) {
-            icon = DarkMode;
+            icon = darkModeIcon;
 
             // eslint-disable-next-line no-undef
             document.documentElement.classList.add('dark');
         } else {
-            icon = LightMode;
+            icon = lightModeIcon;
 
             // eslint-disable-next-line no-undef
             document.documentElement.classList.remove('dark');
@@ -34,10 +37,9 @@
     class="
     h-16 w-16
     cursor-pointer content-center
-    justify-items-center text-light-primary-text
-    transition-colors hover:text-light-secondary
-    dark:text-dark-primary-text dark:hover:text-dark-secondary"
+    justify-items-center hover:text-dark-primary-text
+    transition-colors text-dark-secondary"
     on:click={handleSwitchMode}
 >
-    <svelte:component this={icon} />
+    <Icon icon={icon} class="text-2xl"/>
 </button>
