@@ -109,6 +109,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/dashboard/admin/supervisors/delete/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
         Route::delete('/dashboard/admin/companies/delete/{company_id}', [AdminController::class, 'deleteCompany']);
         Route::delete('/dashboard/admin/faculties/delete/{faculty_id}', [AdminController::class, 'deleteFaculty']);
+
+        Route::put('/dashboard/admin/students/enable/{student_id}', [AdminController::class, 'enableStudent']);
+        Route::put('/dashboard/admin/supervisors/enable/{supervisor_id}', [AdminController::class, 'enableSupervisor']);
+        Route::put('/dashboard/admin/faculties/enable/{faculty_id}', [AdminController::class, 'enableFaculty']);
+
+        Route::put('/dashboard/admin/students/disable/{student_id}', [AdminController::class, 'disableStudent']);
+        Route::put('/dashboard/admin/supervisors/disable/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
+        Route::put('/dashboard/admin/faculties/disable/{faculty_id}', [AdminController::class, 'disableFaculty']);
     });
 
     // View submitted file (Role checking is done in function)

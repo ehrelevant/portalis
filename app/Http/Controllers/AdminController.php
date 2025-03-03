@@ -61,6 +61,7 @@ class AdminController extends Controller
                 'users.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
+                'users.is_disabled',
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -92,6 +93,7 @@ class AdminController extends Controller
                 'form_statuses' => $form_statuses,
                 'has_dropped' => $student_info->has_dropped,
                 'submissions' => $student_statuses,
+                'is_disabled' => $student_info->is_disabled,
             ]);
         }
 
@@ -660,5 +662,53 @@ class AdminController extends Controller
             ->update(['company_id' => null]);
 
         Company::find($company_id)->delete();
+    }
+
+    public function enableStudent(int $student_id)
+    {
+        User::where('role', User::ROLE_STUDENT)
+            ->where('role_id', $student_id)
+            ->update(['is_disabled' => false]);
+    }
+
+    public function enableSupervisor(int $supervisor_id)
+    {
+        User::where('role', User::ROLE_STUDENT)
+            ->where('role_id', $supervisor_id)
+            ->update(['is_disabled' => false]);
+    }
+
+    public function enableFaculty(int $faculty_id)
+    {
+        User::where('role', User::ROLE_FACULTY)
+            ->where('role_id', $faculty_id)
+            ->update(['is_disabled' => false]);
+    }
+
+    public function disableStudent(int $student_id)
+    {
+        User::where('role', User::ROLE_STUDENT)
+            ->where('role_id', $student_id)
+            ->update(['is_disabled' => true]);
+    }
+
+    public function disableSupervisor(int $supervisor_id)
+    {
+        Student::where('supervisor_id', $supervisor_id)
+            ->update(['supervisor_id' => null]);
+
+        User::where('role', User::ROLE_SUPERVISOR)
+            ->where('role_id', $supervisor_id)
+            ->update(['is_disabled' => true]);
+    }
+
+    public function disableFaculty(int $faculty_id)
+    {
+        Student::where('faculty_id', $faculty_id)
+            ->update(['faculty_id' => null]);
+
+        User::where('role', User::ROLE_FACULTY)
+            ->where('role_id', $faculty_id)
+            ->update(['is_disabled' => true]);
     }
 }
