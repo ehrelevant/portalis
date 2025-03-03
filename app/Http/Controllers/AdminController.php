@@ -236,6 +236,7 @@ class AdminController extends Controller
                 'users.last_name',
                 'users.email',
                 'faculties.section',
+                'users.is_disabled'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
