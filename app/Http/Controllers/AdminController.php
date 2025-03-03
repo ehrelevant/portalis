@@ -41,7 +41,10 @@ class AdminController extends Controller
             ->join('students', 'users.role_id', '=', 'students.id')
             ->leftJoin('supervisors', 'supervisors.id', '=', 'students.supervisor_id')
             ->leftJoin('users AS supervisor_users', 'supervisor_users.role_id', '=', 'supervisors.id')
-            ->where('supervisor_users.role', 'supervisor')
+            ->where(function ($query) {
+                $query->where('supervisor_users.role', User::ROLE_SUPERVISOR)
+                    ->orWhereNull('supervisor_users.id');
+            })
             ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
@@ -341,7 +344,7 @@ class AdminController extends Controller
     {
         $values = $request->validate([
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'company_id' => ['nullable', 'numeric', 'integer'],
@@ -363,7 +366,7 @@ class AdminController extends Controller
         $new_user->role = User::ROLE_SUPERVISOR;
         $new_user->role_id = $new_supervisor->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
@@ -388,7 +391,7 @@ class AdminController extends Controller
     {
         $values = $request->validate([
             'first_name' => ['required', 'string'],
-            'middle_name' => ['required', 'string'],
+            'middle_name' => ['nullable', 'string'],
             'last_name' => ['required', 'string'],
             'email' => ['required', 'email:rfc'],
             'section' => ['nullable', 'string'],
@@ -415,7 +418,7 @@ class AdminController extends Controller
         $new_user->role = User::ROLE_FACULTY;
         $new_user->role_id = $new_faculty->id;
         $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'];
+        $new_user->middle_name = $values['middle_name'] ?? '';
         $new_user->last_name = $values['last_name'];
         $new_user->email = $values['email'];
         $new_user->save();
