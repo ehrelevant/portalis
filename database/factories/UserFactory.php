@@ -21,6 +21,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'remember_token' => Str::random(10),
             'role' => fake()->randomElement(['student', 'supervisor', 'faculty', 'admin']),
+            'is_disabled' => false,
         ];
     }
 

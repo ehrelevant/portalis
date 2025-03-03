@@ -189,7 +189,7 @@
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
                     <ColumnHeader
@@ -282,8 +282,13 @@
                         form_statuses,
                         has_dropped,
                         submissions,
+                        is_disabled,
                     } = student}
-                    <tr class="border-t-2 {borderColor}">
+                    <tr
+                        class="border-t-2 {borderColor} {is_disabled
+                            ? 'bg-black text-gray-300'
+                            : ''}"
+                    >
                         <th class="border-r-2 p-2 {borderColor}"
                             >{student_number}</th
                         >
@@ -398,19 +403,29 @@
                         >
                             <td class="text-center {borderColor}"
                                 ><button
-                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
+                                    class="h-full rounded-xl bg-floating-blue-light p-2 text-white hover:opacity-90 dark:bg-floating-blue"
                                     on:click={() => openUpdateForm(student_id)}
                                     >Edit</button
                                 >
                             </td>
-                            <td class="text-center {borderColor}"
-                                ><Link
-                                    href="/dashboard/admin/students/delete/{student_id}"
-                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                    as="button"
-                                    preserveScroll
-                                    method="delete">Delete</Link
-                                >
+                            <td class="text-center {borderColor}">
+                                {#if is_disabled}
+                                    <Link
+                                        href="/dashboard/admin/students/enable/{student_id}"
+                                        class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
+                                        as="button"
+                                        preserveScroll
+                                        method="put">Enable</Link
+                                    >
+                                {:else}
+                                    <Link
+                                        href="/dashboard/admin/students/disable/{student_id}"
+                                        class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
+                                        as="button"
+                                        preserveScroll
+                                        method="put">Disable</Link
+                                    >
+                                {/if}
                             </td>
                         </div>
                     </tr>

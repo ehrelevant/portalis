@@ -147,7 +147,7 @@
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
+                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
                     <ColumnHeader
@@ -188,8 +188,13 @@
                         last_name,
                         email,
                         section,
+                        is_disabled,
                     } = faculty}
-                    <tr class="border-t-2 {borderColor}">
+                    <tr
+                        class="border-t-2 {borderColor} {is_disabled
+                            ? 'bg-black text-gray-300'
+                            : ''}"
+                    >
                         <td class="border-r-2 p-2 {borderColor}">{last_name}</td
                         >
                         <td class="border-r-2 p-2 {borderColor}"
@@ -209,14 +214,24 @@
                                     >Edit</button
                                 >
                             </td>
-                            <td class="text-center {borderColor}"
-                                ><Link
-                                    href="/dashboard/admin/faculties/delete/{faculty_id}"
-                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                    as="button"
-                                    preserveScroll
-                                    method="delete">Delete</Link
-                                >
+                            <td class="text-center {borderColor}">
+                                {#if is_disabled}
+                                    <Link
+                                        href="/dashboard/admin/faculties/enable/{faculty_id}"
+                                        class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
+                                        as="button"
+                                        preserveScroll
+                                        method="put">Enable</Link
+                                    >
+                                {:else}
+                                    <Link
+                                        href="/dashboard/admin/faculties/disable/{faculty_id}"
+                                        class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
+                                        as="button"
+                                        preserveScroll
+                                        method="put">Disable</Link
+                                    >
+                                {/if}
                             </td>
                         </div>
                     </tr>
