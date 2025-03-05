@@ -63,8 +63,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/list/students/upload', [ImportsController::class, 'showStudentCsvUploadForm']);
         Route::get('/list/supervisors/upload', [ImportsController::class, 'showSupervisorCsvUploadForm']);
+        Route::get('/list/faculties/upload', [ImportsController::class, 'showFacultyCsvUploadForm']);
+        Route::get('/list/companies/upload', [ImportsController::class, 'showCompanyCsvUploadForm']);
         Route::post('/list/students/submit', [ImportsController::class, 'submitStudentCsv']);
         Route::post('/list/supervisors/submit', [ImportsController::class, 'submitSupervisorCsv']);
+        Route::post('/list/faculties/submit', [ImportsController::class, 'submitFacultyCsv']);
+        Route::post('/list/companies/submit', [ImportsController::class, 'submitCompanyCsv']);
 
         Route::post('/import/students', [FacultyController::class, 'importStudents']);
         Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
