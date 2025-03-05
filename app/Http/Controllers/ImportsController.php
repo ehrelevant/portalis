@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,7 +73,7 @@ class ImportsController extends Controller
         */
         
         // skip header row; might also be usable for todo 1/2
-        $studentCsvRow = fgetcsv($studentsCsv);
+        $studentCsvHeaders = fgetcsv($studentsCsv);
         
         $headers = array(
             'student_number' => 0,
@@ -119,21 +120,71 @@ class ImportsController extends Controller
             abort(401);
         }
 
-        // todo: validate CSV type, but be flexible with MIME type
+        // validate CSV MIME type
         // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
+        // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
         $request->validate([
             'file' => ['required', 'mimes:csv,txt'],
         ]);
 
         $filepath = $request->file('file')->store('/list/supervisors');
+        self::deleteAllSupervisors();
         self::importSupervisors($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
         return redirect('/dashboard/admin/supervisors');
     }
 
+    // todo: possibly move to AdminController?
+    public function deleteAllSupervisors(): void
+    {
+        $supervisor_ids = DB::table('users')
+            ->where('role', 'supervisor')
+            ->pluck('role_id');
+        
+        $admin_controller = new AdminController();
+        foreach ($supervisor_ids as $supervisor_id) {
+            $admin_controller->deleteSupervisor($supervisor_id);
+        }
+    }
+
     public function importSupervisors(string $csvPath): void
     {
+        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
+        $supervisorsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
 
+        // todo 1: allow dynamic order of columns in CSV
+        // todo 2: error handling (import validation)
+        /*
+            first_name
+            middle_name
+            last_name
+            email
+        */
+        
+        // skip header row; might also be usable for todo 1/2
+        $supervisorCsvHeaders = fgetcsv($supervisorsCsv);
+        
+        $headers = array(
+            'first_name' => 0,
+            'middle_name' => 1,
+            'last_name' => 2,
+            'email' => 3
+        );
+
+        // loop through every supervisor in row
+        while (($supervisorCsvRow = fgetcsv($supervisorsCsv)) !== FALSE) {      
+            $new_supervisor = new Supervisor();
+            $new_supervisor->save();
+
+            $new_user = new User();
+            $new_user->role = User::ROLE_SUPERVISOR;
+            $new_user->role_id = $new_supervisor->id;
+            $new_user->first_name = $supervisorCsvRow[$headers['first_name']];
+            $new_user->middle_name = $supervisorCsvRow[$headers['middle_name']] ?? '';
+            $new_user->last_name = $supervisorCsvRow[$headers['last_name']];
+            $new_user->email = $supervisorCsvRow[$headers['email']];
+            $new_user->save();
+        }
     }
 }
