@@ -71,7 +71,7 @@ class DashboardController extends Controller
                 $student_id = $student_user->role_id;
 
                 $student = DB::table('students')
-                    ->where('student_id', $student_id)
+                    ->where('id', $student_id)
                     ->firstOrFail();
 
                 if (!$student->faculty_id) {
