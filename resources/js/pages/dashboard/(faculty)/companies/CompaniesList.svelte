@@ -13,7 +13,7 @@
     let searchQuery;
     function search() {
         router.get(
-            '/dashboard/admin/companies',
+            '/dashboard/companies',
             {
                 search: searchQuery,
                 sort: sortColumn,
@@ -37,7 +37,7 @@
         sortColumn = newSortColumn;
 
         router.get(
-            `/dashboard/admin/companies`,
+            `/dashboard/companies`,
             {
                 search: searchQuery,
                 sort: sortColumn,
