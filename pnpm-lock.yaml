@@ -54,6 +54,9 @@ importers:
       laravel-vite-plugin:
         specifier: ^1.0.6
         version: 1.0.6(vite@5.4.11)
+      lucide-svelte:
+        specifier: ^0.477.0
+        version: 0.477.0(svelte@4.2.19)
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
@@ -1013,6 +1016,11 @@ packages:
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
+
+  lucide-svelte@0.477.0:
+    resolution: {integrity: sha512-w/zj6/CXTtTizIeo8SuWGYu0u45CJ7cD2AtNzIObVHZrWXNgaIIX/2cI25wybjSmYHIi4pub2TLv/kNPKiB3ww==}
+    peerDependencies:
+      svelte: ^3 || ^4 || ^5.0.0-next.42
 
   magic-string@0.30.13:
     resolution: {integrity: sha512-8rYBO+MsWkgjDSOvLomYnzhdwEG51olQ4zL5KXnNJWV5MNmrb4rTZdrtkhxjnD/QyZUqR/Z/XDsUs/4ej2nx0g==}
@@ -2411,6 +2419,10 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lru-cache@10.4.3: {}
+
+  lucide-svelte@0.477.0(svelte@4.2.19):
+    dependencies:
+      svelte: 4.2.19
 
   magic-string@0.30.13:
     dependencies:
