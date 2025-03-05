@@ -234,7 +234,7 @@ class DashboardController extends Controller
                     $student_info = DB::table('users')
                         ->where('users.id', $form_status->user_id)
                         ->join('students', 'students.id', '=', 'users.role_id')
-                        ->select('users.id AS user_id', 'first_name', 'last_name', 'student_number')
+                        ->select('users.id AS user_id', 'students.id AS student_id', 'first_name', 'last_name', 'student_number')
                         ->firstOrFail();
 
                     $total_hours = DB::table('form_statuses')
