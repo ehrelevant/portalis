@@ -217,7 +217,7 @@
                             <td class="text-center {borderColor}">
                                 {#if is_disabled}
                                     <Link
-                                        href="/api/disable/faculty/{faculty_id}"
+                                        href="/api/enable/faculty/{faculty_id}"
                                         class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                         as="button"
                                         preserveScroll
