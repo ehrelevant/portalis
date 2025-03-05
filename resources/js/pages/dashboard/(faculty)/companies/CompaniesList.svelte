@@ -209,7 +209,7 @@
         <input
             class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value={formCompanyId ? 'Update Faculty' : 'Add Faculty'}
+            value={formCompanyId ? 'Update Comoany' : 'Add Company'}
         />
     </form>
 </Modal>
