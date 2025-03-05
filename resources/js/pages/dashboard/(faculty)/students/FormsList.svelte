@@ -19,7 +19,7 @@
     let searchQuery;
     function search() {
         router.get(
-            '/dashboard/admin/students',
+            '/dashboard/students',
             {
                 search: searchQuery,
                 sort: sortColumn,
@@ -43,7 +43,7 @@
         sortColumn = newSortColumn;
 
         router.get(
-            `/dashboard/admin/students`,
+            `/dashboard/students`,
             {
                 search: searchQuery,
                 sort: sortColumn,
@@ -101,7 +101,7 @@
             return;
         }
         $userForm.post(
-            '/dashboard/students/add',
+            '/api/add/student',
             {},
             {
                 preserveScroll: true,
@@ -152,7 +152,7 @@
             return;
         }
         $userForm.post(
-            `/dashboard/students/update/${formUserRoleId}`,
+            `/api/update/student/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -394,7 +394,7 @@
                             <td class="text-center {borderColor}">
                                 {#if is_disabled}
                                     <Link
-                                        href="/dashboard/admin/students/enable/{student_id}"
+                                        href="/api/enable/student/{student_id}"
                                         class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                         as="button"
                                         preserveScroll
@@ -402,7 +402,7 @@
                                     >
                                 {:else}
                                     <Link
-                                        href="/dashboard/admin/students/disable/{student_id}"
+                                        href="/api/disable/student/{student_id}"
                                         class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
                                         as="button"
                                         preserveScroll
