@@ -63,7 +63,7 @@
             return;
         }
         $companyForm.post(
-            '/dashboard/admin/companies/add',
+            '/api/add/company',
             {},
             {
                 preserveScroll: true,
@@ -94,7 +94,7 @@
             return;
         }
         $companyForm.post(
-            `/dashboard/admin/companies/update/${formCompanyId}`,
+            `/api/update/company/${formCompanyId}`,
             {},
             {
                 preserveScroll: true,
@@ -163,7 +163,7 @@
                             </td>
                             <td class="text-center {borderColor}"
                                 ><Link
-                                    href="/dashboard/admin/companies/delete/{company_id}"
+                                    href="/api/delete/company/{company_id}"
                                     class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     as="button"
                                     preserveScroll

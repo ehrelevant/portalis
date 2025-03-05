@@ -84,7 +84,7 @@
             return;
         }
         $userForm.post(
-            '/dashboard/admin/supervisors/add',
+            '/api/add/supervisor',
             {},
             {
                 preserveScroll: true,
@@ -127,7 +127,7 @@
             return;
         }
         $userForm.post(
-            `/dashboard/admin/supervisors/update/${formUserRoleId}`,
+            `/api/update/supervisor/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -267,7 +267,7 @@
                             </td>
                             {#if is_disabled}
                                 <Link
-                                    href="/dashboard/admin/supervisors/enable/{supervisor_id}"
+                                    href="/api/disable/supervisor/{supervisor_id}"
                                     class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                     as="button"
                                     preserveScroll
@@ -275,7 +275,7 @@
                                 >
                             {:else}
                                 <Link
-                                    href="/dashboard/admin/supervisors/disable/{supervisor_id}"
+                                    href="/api/disable/supervisor/{supervisor_id}"
                                     class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
                                     as="button"
                                     preserveScroll
