@@ -60,8 +60,7 @@ class ImportsController extends Controller
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $studentsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
 
-        // todo 1: allow dynamic order of columns in CSV
-        // todo 2: error handling (import validation)
+        // todo: error handling (import validation)
         /*
             student_number
             first_name
@@ -72,19 +71,11 @@ class ImportsController extends Controller
             wordpress_email
         */
         
-        // skip header row; might also be usable for todo 1/2
-        $studentCsvHeaders = fgetcsv($studentsCsv);
+        // originally, header row is key=>value
+        // from CSV, this means index=>column_name (e.g. 0=>student_number)
+        // array_flip swaps key and value, which means column_name=>index (e.g. student_number=>0)
+        $headers = array_flip(fgetcsv($studentsCsv));
         
-        $headers = array(
-            'student_number' => 0,
-            'first_name' => 1,
-            'middle_name' => 2,
-            'last_name' => 3,
-            'email' => 4,
-            'wordpress_name' => 5,
-            'wordpress_email' => 6
-        );
-
         // loop through every student in row
         while (($studentCsvRow = fgetcsv($studentsCsv)) !== FALSE) {      
             $new_student = new Student();
@@ -153,8 +144,7 @@ class ImportsController extends Controller
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $supervisorsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
 
-        // todo 1: allow dynamic order of columns in CSV
-        // todo 2: error handling (import validation)
+        // todo: error handling (import validation)
         /*
             first_name
             middle_name
@@ -162,15 +152,10 @@ class ImportsController extends Controller
             email
         */
         
-        // skip header row; might also be usable for todo 1/2
-        $supervisorCsvHeaders = fgetcsv($supervisorsCsv);
-        
-        $headers = array(
-            'first_name' => 0,
-            'middle_name' => 1,
-            'last_name' => 2,
-            'email' => 3
-        );
+        // originally, header row is key=>value
+        // from CSV, this means index=>column_name (e.g. 0=>first_name)
+        // array_flip swaps key and value, which means column_name=>index (e.g. first_name=>0)
+        $headers = array_flip(fgetcsv($supervisorsCsv));
 
         // loop through every supervisor in row
         while (($supervisorCsvRow = fgetcsv($supervisorsCsv)) !== FALSE) {      
