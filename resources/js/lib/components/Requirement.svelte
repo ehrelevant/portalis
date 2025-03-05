@@ -2,6 +2,8 @@
     import Status from '$lib/components/Status.svelte';
     import { Link } from '@inertiajs/svelte';
 
+    import { Label } from "$lib/components/ui/label";
+
     export let requirementId;
     export let requirementName;
     export let deadline;
@@ -10,10 +12,10 @@
 </script>
 
 <div
-    class="my-1 flex flex-col justify-between rounded-xl bg-white p-3 dark:bg-black sm:flex-row"
+    class="my-2 flex flex-col justify-between rounded-xl border-b border-t p-4 bg-background sm:flex-row"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
-        <p class="text-md">{requirementName}</p>
+        <Label class="text-lg">{requirementName}</Label>
         {#if deadline}
             {@const deadlineDateTime = new Date(deadline)}
             <p class="text-xs">
