@@ -6,7 +6,7 @@
 <Accordion.Root class="w-full" value="item">
     <Accordion.Item class="border-b rounded-xl" value="item">
         <Accordion.Trigger
-            class="flex cursor-pointer flex-row p-4 text-left"
+            class="flex flex-row p-4 text-left"
         >
             <slot name="summary" />
         </Accordion.Trigger>

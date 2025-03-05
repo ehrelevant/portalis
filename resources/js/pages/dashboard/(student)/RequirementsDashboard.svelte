@@ -24,7 +24,7 @@
     <!-- File Submission Statuses -->
     {#if internshipDocumentSubmissions.length}
         <AccordionLocal>
-            <Label slot="summary" class="text-2xl">Internship Documents</Label>
+            <Label slot="summary" class="cursor-pointer text-2xl">Internship Documents</Label>
             <Accordion.Content class="px-4">
                 {#each internshipDocumentSubmissions as submission}
                     {@const {
@@ -47,7 +47,7 @@
 
     {#if governmentIdSubmissions.length}
         <AccordionLocal>
-            <Label slot="summary" class="text-2xl">Government IDs</Label>
+            <Label slot="summary" class="cursor-pointer text-2xl">Government IDs</Label>
             <Accordion.Content class="px-4">
                 {#each governmentIdSubmissions as submission}
                     {@const {
