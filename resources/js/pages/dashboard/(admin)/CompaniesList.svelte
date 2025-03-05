@@ -79,7 +79,11 @@
 
     let formCompanyId = null;
     function openUpdateForm(companyId) {
-        $companyForm.company_name = companies[companyId].company_name;
+        const company = companies.find(
+            (company) => company.company_id === companyId,
+        );
+
+        $companyForm.company_name = company.company_name;
 
         formCompanyId = companyId;
         isModalOpen = true;
