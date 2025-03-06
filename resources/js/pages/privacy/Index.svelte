@@ -2,7 +2,7 @@
     import Header from '$lib/components/InternshipHeader.svelte';
 </script>
 <div class="main-screen flex w-full flex-col gap-4 p-4">
-    <Header> Privacy Policy </Header>
+    <Header txt="Privacy Policy" />
     <div class="text-lg">
         In compliance with the <strong>Data Privacy Act of 2012</strong>
         and the UP Diliman Privacy Policy, and all relevant data privacy regulations,

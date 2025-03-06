@@ -19,7 +19,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 p-4">
-    <Header> Pre-Internship Phase </Header>
+    <Header txt="Pre-Internship Phase" />
 
     <!-- File Submission Statuses -->
     {#if internshipDocumentSubmissions.length}

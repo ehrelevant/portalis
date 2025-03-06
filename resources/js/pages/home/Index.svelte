@@ -12,17 +12,17 @@
 
 <div class="main-screen min-h-full w-full p-4">
     <Header>
-        <div class="flex flex-row justify-center sm:justify-start pb-2">
+            <Label class="text-4xl font-semibold"> <i> Portalis: </i> CS195 Internship Portal </Label>
+            
             <!-- Temporary spot for logos-->
-            <div class="pr-4">
-                <Dashboard />
+            <div class="flex flex-row justify-center sm:justify-start">
+                <div class="px-4">
+                    <Dashboard />
+                </div>
+                <div class="">
+                    <Dashboard />
+                </div>
             </div>
-            <div class="">
-                <Dashboard />
-            </div>
-        </div>
-
-        <Label class="text-4xl font-semibold"> <i> Portalis: </i> CS195 Internship Portal </Label>
     </Header>
     <br />
     <div class="text-md">
