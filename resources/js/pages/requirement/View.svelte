@@ -36,12 +36,14 @@
         <div class="flex flex-row justify-center gap-2">
             {#if ['Accepted'].includes(status)}
                 <Link
+                    as="button"
                     href="/requirement/{requirementId}/view/{studentId}/invalidate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
+                    as="button"
                     href="/requirement/{requirementId}/view/{studentId}/validate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link

@@ -46,17 +46,20 @@
                             <Status type={status} />
                             {#if status === 'Accepted'}
                                 <Link
+                                    as="button"
                                     href="/form/self-evaluation/invalidate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     method="post">Invalidate</Link
                                 >
                             {:else if status !== 'Returned' && status !== 'None'}
                                 <Link
+                                    as="button"
                                     href="/form/self-evaluation/validate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                                     method="post">Accept</Link
                                 >
                                 <Link
+                                    as="button"
                                     href="/form/self-evaluation/reject/{student_user_id}"
                                     class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     method="post">Return To Student</Link
