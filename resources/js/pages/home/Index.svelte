@@ -6,21 +6,24 @@
     import Pre from '$assets/pre_logo.svelte';
     import During from '$assets/during_logo.svelte';
     import Post from '$assets/post_logo.svelte';
+    import Header from '$lib/components/InternshipHeader.svelte';
+    import { Label } from "$lib/components/ui/label";
 </script>
 
 <div class="main-screen min-h-full w-full p-4">
-    <div class="flex flex-row justify-center sm:justify-start">
-        <!-- Temporary spot for logos-->
-        <div class="p-2">
-            <Dashboard />
+    <Header>
+        <div class="flex flex-row justify-center sm:justify-start pb-2">
+            <!-- Temporary spot for logos-->
+            <div class="pr-4">
+                <Dashboard />
+            </div>
+            <div class="">
+                <Dashboard />
+            </div>
         </div>
-        <div class="p-2">
-            <Dashboard />
-        </div>
-    </div>
-    <div class="text-4xl font-semibold">
-        <i> Portalis: </i> CS195 Internship Portal
-    </div>
+
+        <Label class="text-4xl font-semibold"> <i> Portalis: </i> CS195 Internship Portal </Label>
+    </Header>
     <br />
     <div class="text-md">
         Welcome and thank you for diving into Portalis. Portalis is the

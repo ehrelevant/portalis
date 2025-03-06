@@ -3,6 +3,7 @@
     import { Link } from '@inertiajs/svelte';
 
     import { Label } from "$lib/components/ui/label";
+    import { Button } from "$lib/components/ui/button";
 
     export let requirementId;
     export let requirementName;
@@ -12,7 +13,7 @@
 </script>
 
 <div
-    class="my-2 flex flex-col justify-between rounded-xl border-b border-t p-4 bg-background sm:flex-row"
+    class="my-2 flex flex-col justify-between rounded-xl border-dark-primary border-r border-b-2 p-4 sm:flex-row"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
         <Label class="text-lg">{requirementName}</Label>
@@ -35,17 +36,17 @@
         class="flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
     >
         {#if submissionStatus !== 'None'}
-            <a
+            <Button
                 href="/file/submission/{studentNumber}/{requirementId}"
                 target="_blank"
-                class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                >View</a
+                class="bg-dark-primary hover:bg-opacity-90 rounded-xl text-dark-primary-text"
+                >View</Button
             >
         {/if}
-        <Link
+        <Button
             href="/requirement/{requirementId}/upload"
-            class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            >Submit</Link
+            class="bg-dark-primary hover:bg-opacity-90 rounded-xl text-dark-primary-text"
+            >Submit</Button
         >
         <Status type={submissionStatus} />
     </div>
