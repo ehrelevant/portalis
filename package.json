@@ -36,7 +36,7 @@
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.11.1",
-        "@inertiajs/svelte": "^1.2.0"
+        "@inertiajs/svelte": "^2.0.4"
     },
     "packageManager": "pnpm@9.15.4"
 }
