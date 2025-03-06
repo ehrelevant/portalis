@@ -91,6 +91,30 @@ Route::middleware(['auth'])->group(function () {
 
         // Update Settings
         Route::put('/globals/settings/update', [WebsiteStateController::class, 'updateSettings']);
+
+        // Add/Update/Delete Routes
+        Route::post('/api/add/student', [AdminController::class, 'addStudent']);
+        Route::post('/api/add/supervisor', [AdminController::class, 'addSupervisor']);
+        Route::post('/api/add/company', [AdminController::class, 'addCompany']);
+        Route::post('/api/add/faculty', [AdminController::class, 'addFaculty']);
+
+        Route::post('/api/update/student/{student_id}', [AdminController::class, 'updateStudent']);
+        Route::post('/api/update/supervisor/{supervisor_id}', [AdminController::class, 'updateSupervisor']);
+        Route::post('/api/update/company/{company_id}', [AdminController::class, 'updateCompany']);
+        Route::post('/api/update/faculty/{faculty_id}', [AdminController::class, 'updateFaculty']);
+
+        Route::delete('/api/delete/student/{student_id}', [AdminController::class, 'deleteStudent']);
+        Route::delete('/api/delete/supervisor/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
+        Route::delete('/api/delete/company/{company_id}', [AdminController::class, 'deleteCompany']);
+        Route::delete('/api/delete/faculty/{faculty_id}', [AdminController::class, 'deleteFaculty']);
+
+        Route::put('/api/enable/student/{student_id}', [AdminController::class, 'enableStudent']);
+        Route::put('/api/enable/supervisor/{supervisor_id}', [AdminController::class, 'enableSupervisor']);
+        Route::put('/api/enable/faculty/{faculty_id}', [AdminController::class, 'enableFaculty']);
+
+        Route::put('/api/disable/student/{student_id}', [AdminController::class, 'disableStudent']);
+        Route::put('/api/disable/supervisor/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
+        Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
     });
 
     Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
@@ -104,29 +128,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/admin/supervisors', [AdminController::class, 'showSupervisors']);
         Route::get('/dashboard/admin/companies', [AdminController::class, 'showCompanies']);
         Route::get('/dashboard/admin/faculties', [AdminController::class, 'showFaculties']);
-
-        Route::post('/dashboard/admin/students/add', [AdminController::class, 'addStudent']);
-        Route::post('/dashboard/admin/supervisors/add', [AdminController::class, 'addSupervisor']);
-        Route::post('/dashboard/admin/companies/add', [AdminController::class, 'addCompany']);
-        Route::post('/dashboard/admin/faculties/add', [AdminController::class, 'addFaculty']);
-
-        Route::post('/dashboard/admin/students/update/{student_id}', [AdminController::class, 'updateStudent']);
-        Route::post('/dashboard/admin/supervisors/update/{supervisor_id}', [AdminController::class, 'updateSupervisor']);
-        Route::post('/dashboard/admin/companies/update/{company_id}', [AdminController::class, 'updateCompany']);
-        Route::post('/dashboard/admin/faculties/update/{faculty_id}', [AdminController::class, 'updateFaculty']);
-
-        Route::delete('/dashboard/admin/students/delete/{student_id}', [AdminController::class, 'deleteStudent']);
-        Route::delete('/dashboard/admin/supervisors/delete/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
-        Route::delete('/dashboard/admin/companies/delete/{company_id}', [AdminController::class, 'deleteCompany']);
-        Route::delete('/dashboard/admin/faculties/delete/{faculty_id}', [AdminController::class, 'deleteFaculty']);
-
-        Route::put('/dashboard/admin/students/enable/{student_id}', [AdminController::class, 'enableStudent']);
-        Route::put('/dashboard/admin/supervisors/enable/{supervisor_id}', [AdminController::class, 'enableSupervisor']);
-        Route::put('/dashboard/admin/faculties/enable/{faculty_id}', [AdminController::class, 'enableFaculty']);
-
-        Route::put('/dashboard/admin/students/disable/{student_id}', [AdminController::class, 'disableStudent']);
-        Route::put('/dashboard/admin/supervisors/disable/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
-        Route::put('/dashboard/admin/faculties/disable/{faculty_id}', [AdminController::class, 'disableFaculty']);
     });
 
     // View submitted file (Role checking is done in function)

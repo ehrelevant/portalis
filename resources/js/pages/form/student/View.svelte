@@ -71,19 +71,22 @@
         <Status type={status} />
         {#if status === 'Accepted'}
             <Link
+                as="button"
                 href="/form/{form_info.short_name}/invalidate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                 method="post">Invalidate</Link
             >
         {:else if status !== 'Returned'}
             <Link
+                as="button"
                 href="/form/{form_info.short_name}/validate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                 method="post">Accept</Link
             >
             <Link
+                as="button"
                 href="/form/{form_info.short_name}/reject/{evaluator_user_id}"
-                class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                class="flex w-56 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                 method="post">Return To Student</Link
             >
         {/if}

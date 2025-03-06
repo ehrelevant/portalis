@@ -30,6 +30,7 @@
                 {#if sub_status === 'For Review'}
                     <!-- Using `use:inertia` instead of Link temporarily due to some issues -->
                     <Link
+                        as="button"
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/reject"
                         method="post"
                         preserveScroll
@@ -38,6 +39,7 @@
                         Reject
                     </Link>
                     <Link
+                        as="button"
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/validate"
                         method="post"
                         preserveScroll
@@ -47,6 +49,7 @@
                     </Link>
                 {:else if sub_status === 'Accepted'}
                     <Link
+                        as="button"
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/invalidate"
                         method="post"
                         preserveScroll

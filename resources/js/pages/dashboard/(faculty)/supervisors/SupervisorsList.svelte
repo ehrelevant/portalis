@@ -4,17 +4,20 @@
 
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
+    import StatusCell from '$lib/components/StatusCell.svelte';
     import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import ColumnHeader from '$lib/components/ColumnHeader.svelte';
 
-    export let faculties;
+    export let supervisors;
+    export let form_infos;
+    export let companies;
 
     let searchQuery;
     function search() {
         router.get(
-            '/dashboard/admin/faculties',
+            '/dashboard/supervisors',
             {
                 search: searchQuery,
                 sort: sortColumn,
@@ -38,12 +41,25 @@
         sortColumn = newSortColumn;
 
         router.get(
-            `/dashboard/admin/faculties`,
+            `/dashboard/supervisors`,
             {
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
             },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
+
+    function setCompany(evt, supervisorId) {
+        const companyId = evt.target.value;
+
+        router.put(
+            `/supervisors/${supervisorId}/assign/company/${companyId}`,
+            {},
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -59,7 +75,7 @@
         middle_name: null,
         last_name: null,
         email: null,
-        section: null,
+        company_id: null,
     });
 
     function addUser() {
@@ -68,7 +84,7 @@
             return;
         }
         $userForm.post(
-            '/api/add/faculty',
+            '/api/add/supervisor',
             {},
             {
                 preserveScroll: true,
@@ -81,24 +97,24 @@
         $userForm.middle_name = null;
         $userForm.last_name = null;
         $userForm.email = null;
-        $userForm.section = null;
+        $userForm.company_id = null;
 
         isModalOpen = true;
     }
 
     let formUserRoleId = null;
-    function openUpdateForm(facultyId) {
-        const faculty = faculties.find(
-            (faculty) => faculty.faculty_id === facultyId,
+    function openUpdateForm(supervisorId) {
+        const supervisor = supervisors.find(
+            (supervisor) => supervisor.supervisor_id === supervisorId,
         );
 
-        $userForm.first_name = faculty.first_name;
-        $userForm.middle_name = faculty.middle_name;
-        $userForm.last_name = faculty.last_name;
-        $userForm.email = faculty.email;
-        $userForm.section = faculty.section;
+        $userForm.first_name = supervisor.first_name;
+        $userForm.middle_name = supervisor.middle_name;
+        $userForm.last_name = supervisor.last_name;
+        $userForm.email = supervisor.email;
+        $userForm.company_id = supervisor.company_id;
 
-        formUserRoleId = facultyId;
+        formUserRoleId = supervisorId;
         isModalOpen = true;
     }
 
@@ -111,7 +127,7 @@
             return;
         }
         $userForm.post(
-            `/api/update/faculty/${formUserRoleId}`,
+            `/api/update/supervisor/${formUserRoleId}`,
             {},
             {
                 preserveScroll: true,
@@ -128,7 +144,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Faculties List" />
+    <Header txt="Supervisor List" />
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
@@ -141,9 +157,9 @@
         />
     </div>
 
-    <!-- List of Faculties -->
+    <!-- List of Supervisors -->
     <Accordion open>
-        <h2 slot="summary" class="text-2xl">Faculties</h2>
+        <h2 slot="summary" class="text-2xl">Supervisors</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
             <table
@@ -166,30 +182,35 @@
                         First Name
                     </ColumnHeader>
                     <ColumnHeader
+                        isActive={sortColumn === 'company_name'}
+                        isAscending={sortIsAscending}
+                        clickHandler={() => sortByColumn('company_name')}
+                    >
+                        Company
+                    </ColumnHeader>
+                    <ColumnHeader
                         isActive={sortColumn === 'email'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('email')}
                     >
                         Email
                     </ColumnHeader>
-                    <ColumnHeader
-                        isActive={sortColumn === 'section'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('section')}
-                    >
-                        Section
-                    </ColumnHeader>
+                    {#each Object.entries(form_infos) as [_, form_info]}
+                        {@const { form_name } = form_info}
+                        <ColumnHeader>{form_name}</ColumnHeader>
+                    {/each}
                     <ColumnHeader>Actions</ColumnHeader>
                 </tr>
-                {#each faculties as faculty (faculty.faculty_id)}
+                {#each supervisors as supervisor (supervisor.supervisor_id)}
                     {@const {
-                        faculty_id,
+                        supervisor_id,
                         first_name,
                         last_name,
                         email,
-                        section,
+                        company_id: supervisor_company_id,
+                        form_statuses,
                         is_disabled,
-                    } = faculty}
+                    } = supervisor}
                     <tr
                         class="border-t-2 {borderColor} {is_disabled
                             ? 'bg-black text-gray-300'
@@ -200,39 +221,66 @@
                         <td class="border-r-2 p-2 {borderColor}"
                             >{first_name}</td
                         >
-                        <td class="border-l-2 p-2 {borderColor}">{email}</td>
-                        <td class="border-l-2 p-2 {borderColor}"
-                            >{section ?? ''}</td
-                        >
+                        <td class="border-r-2 p-2 text-center {borderColor}">
+                            <div class="flex items-center justify-center">
+                                <select
+                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                    on:change={(evt) =>
+                                        setCompany(evt, supervisor_id)}
+                                >
+                                    <option
+                                        selected={!supervisor_company_id}
+                                        value
+                                    />
+                                    {#each companies as company}
+                                        {@const { id, company_name } = company}
+                                        <option
+                                            selected={id ===
+                                                supervisor_company_id}
+                                            value={id}>{company_name}</option
+                                        >
+                                    {/each}
+                                </select>
+                            </div>
+                        </td>
+                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
+                        {#each Object.entries(form_statuses) as [form_id, form_status]}
+                            <td class="border-l-2 p-2 text-center {borderColor}"
+                                ><StatusCell
+                                    status={form_status}
+                                    href="/form/{form_infos[form_id]
+                                        .short_name}/view/{supervisor_id}"
+                                />
+                            </td>
+                        {/each}
                         <div
                             class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
                         >
                             <td class="text-center {borderColor}"
                                 ><button
                                     class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
-                                    on:click={() => openUpdateForm(faculty_id)}
+                                    on:click={() =>
+                                        openUpdateForm(supervisor_id)}
                                     >Edit</button
                                 >
                             </td>
-                            <td class="text-center {borderColor}">
-                                {#if is_disabled}
-                                    <Link
-                                        href="/api/enable/faculty/{faculty_id}"
-                                        class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Enable</Link
-                                    >
-                                {:else}
-                                    <Link
-                                        href="/api/disable/faculty/{faculty_id}"
-                                        class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Disable</Link
-                                    >
-                                {/if}
-                            </td>
+                            {#if is_disabled}
+                                <Link
+                                    href="/api/enable/supervisor/{supervisor_id}"
+                                    class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
+                                    as="button"
+                                    preserveScroll
+                                    method="put">Enable</Link
+                                >
+                            {:else}
+                                <Link
+                                    href="/api/disable/supervisor/{supervisor_id}"
+                                    class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
+                                    as="button"
+                                    preserveScroll
+                                    method="put">Disable</Link
+                                >
+                            {/if}
                         </div>
                     </tr>
                 {/each}
@@ -243,17 +291,8 @@
     <div class="flex w-full justify-between">
         <button
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            on:click={openAddForm}>Add Faculty</button
+            on:click={openAddForm}>Add Supervisor</button
         >
-
-        <div class="flex flex-col gap-2">
-            <a
-                href="/list/faculties/upload"
-                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                >Import Faculty List</a
-            >
-        </div>
-
         <Link
             href="/dashboard"
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
@@ -332,17 +371,22 @@
                 {/if}
             </div>
 
-            <label for="section">Section</label>
+            <label for="company">Company</label>
             <div class="flex flex-col">
-                <input
-                    name="section"
-                    type="text"
+                <select
                     class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.section}
-                />
-                {#if $userForm.errors.section}
+                    name="company"
+                    bind:value={$userForm.company_id}
+                >
+                    <option selected value />
+                    {#each companies as company}
+                        {@const { id, company_name } = company}
+                        <option value={id}>{company_name}</option>
+                    {/each}
+                </select>
+                {#if $userForm.errors.company}
                     <ErrorText>
-                        {$userForm.errors.section}
+                        {$userForm.errors.company}
                     </ErrorText>
                 {/if}
             </div>
@@ -350,7 +394,7 @@
         <input
             class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value={formUserRoleId ? 'Update Faculty' : 'Add Faculty'}
+            value={formUserRoleId ? 'Update Supervisor' : 'Add Supervisor'}
         />
     </form>
 </Modal>

@@ -80,10 +80,12 @@
                                         category_id
                                     ][rating_id].min_score}
                                     required
-                                    bind:value={$form.answers[student_id]
-                                        .categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
+                                    bind:value={
+                                        $form.answers[student_id]
+                                            .categorized_ratings[category_id][
+                                            rating_id
+                                        ]
+                                    }
                                     title={categorized_rating_questions[
                                         category_id
                                     ][rating_id].tooltip}
@@ -105,9 +107,9 @@
                             <p>{last_name}, {first_name}</p>
                             <textarea
                                 class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                bind:value={$form.answers[student_id].opens[
-                                    open_id
-                                ]}
+                                bind:value={
+                                    $form.answers[student_id].opens[open_id]
+                                }
                             />
                         {/each}
                     </div>
@@ -140,17 +142,20 @@
             <Status type={status} />
             {#if ['Accepted'].includes(status)}
                 <Link
+                    as="button"
                     href="/form/{form_info.short_name}/invalidate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
+                    as="button"
                     href="/form/{form_info.short_name}/validate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link
                 >
                 <Link
+                    as="button"
                     href="/form/{form_info.short_name}/reject/{evaluatorUserId}"
                     class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Return To Supervisor</Link

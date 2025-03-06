@@ -357,7 +357,6 @@ class FormController extends Controller
 
             $this->createForm($form_status, $supervised_student_user_ids);
             $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
-            ;
         }
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);

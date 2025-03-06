@@ -63,7 +63,7 @@
             return;
         }
         $companyForm.post(
-            '/dashboard/admin/companies/add',
+            '/api/add/company',
             {},
             {
                 preserveScroll: true,
@@ -79,7 +79,11 @@
 
     let formCompanyId = null;
     function openUpdateForm(companyId) {
-        $companyForm.company_name = companies[companyId].company_name;
+        const company = companies.find(
+            (company) => company.company_id === companyId,
+        );
+
+        $companyForm.company_name = company.company_name;
 
         formCompanyId = companyId;
         isModalOpen = true;
@@ -94,7 +98,7 @@
             return;
         }
         $companyForm.post(
-            `/dashboard/admin/companies/update/${formCompanyId}`,
+            `/api/update/company/${formCompanyId}`,
             {},
             {
                 preserveScroll: true,
@@ -163,7 +167,7 @@
                             </td>
                             <td class="text-center {borderColor}"
                                 ><Link
-                                    href="/dashboard/admin/companies/delete/{company_id}"
+                                    href="/api/delete/company/{company_id}"
                                     class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     as="button"
                                     preserveScroll
@@ -218,7 +222,7 @@
         <input
             class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
             type="submit"
-            value={formCompanyId ? 'Update Faculty' : 'Add Faculty'}
+            value={formCompanyId ? 'Update Company' : 'Add Company'}
         />
     </form>
 </Modal>
