@@ -377,7 +377,7 @@
                                 ><StatusCell
                                     status={form_status}
                                     href="/form/{form_infos[form_id]
-                                        .short_name}/answer/{student_id}"
+                                        .short_name}/view/{student_id}"
                                 />
                             </td>
                         {/each}
