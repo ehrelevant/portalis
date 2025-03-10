@@ -188,7 +188,7 @@
                 <TableCell
                     ><div class="flex flex-row gap-2">
                         <Button
-                            class={colorVariants.blue}
+                            class="grow {colorVariants.blue}"
                             on:click={() => openUpdateForm(faculty_id)}
                             >Edit</Button
                         >
