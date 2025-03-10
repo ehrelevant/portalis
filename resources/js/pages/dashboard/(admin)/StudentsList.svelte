@@ -11,6 +11,8 @@
     import TableCell from '$lib/components/table/TableCell.svelte';
     import TableRow from '$lib/components/table/TableRow.svelte';
     import Table from '$lib/components/table/Table.svelte';
+    import { Button } from '$lib/components/ui/button';
+    import { colorVariants } from '$lib/customVariants';
 
     export let students;
     export let requirements;
@@ -176,7 +178,7 @@
 
     <!-- List of Students -->
     <Table>
-        <TableRow>
+        <TableRow header>
             <TableColumnHeader
                 isActive={sortColumn === 'student_number'}
                 isAscending={sortIsAscending}
@@ -336,7 +338,7 @@
                 <TableCell>{wordpress_email}</TableCell>
                 {#each submissions as submission}
                     {@const { requirement_id, status } = submission}
-                    <TableCell
+                    <TableCell center
                         ><StatusCell
                             isAdmin
                             href="/requirement/{requirement_id}/view/{student_id}"
@@ -345,7 +347,7 @@
                     </TableCell>
                 {/each}
                 {#each Object.entries(form_statuses) as [form_id, form_status]}
-                    <TableCell
+                    <TableCell center
                         ><StatusCell
                             isAdmin
                             status={form_status}
@@ -354,36 +356,38 @@
                         />
                     </TableCell>
                 {/each}
-                <div
-                    class="flex flex-row items-center justify-center gap-2 p-2"
-                >
-                    <TableCell
-                        ><button
-                            class="h-full rounded-xl bg-floating-blue-light p-2 text-white hover:opacity-90 dark:bg-floating-blue"
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class={colorVariants.blue}
                             on:click={() => openUpdateForm(student_id)}
-                            >Edit</button
+                            >Edit</Button
                         >
-                    </TableCell>
-                    <TableCell>
                         {#if is_disabled}
                             <Link
                                 href="/api/enable/student/{student_id}"
-                                class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                 as="button"
                                 preserveScroll
-                                method="put">Enable</Link
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.green}"
+                                    >Enable</Button
+                                ></Link
                             >
                         {:else}
                             <Link
                                 href="/api/disable/student/{student_id}"
-                                class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
                                 as="button"
                                 preserveScroll
-                                method="put">Disable</Link
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.red}"
+                                    >Disable</Button
+                                ></Link
                             >
                         {/if}
-                    </TableCell>
-                </div>
+                    </div></TableCell
+                >
             </TableRow>
         {/each}
     </Table>
