@@ -1,9 +1,9 @@
 <script>
     import { router, page } from '@inertiajs/svelte';
-    import * as Card from "$lib/components/ui/card";
-    import { Input } from "$lib/components/ui/input";
-    import { Button } from "$lib/components/ui/button";
-    import { Label } from "$lib/components/ui/label";
+    import * as Card from '$lib/components/ui/card';
+    import { Input } from '$lib/components/ui/input';
+    import { Button } from '$lib/components/ui/button';
+    import { Label } from '$lib/components/ui/label';
 
     export let errors = {};
 
@@ -46,69 +46,65 @@
 <div class="main-screen flex w-full flex-col items-center justify-center">
     <Card.Root class="min-w-1/4 border-2">
         <Card.Header>
-            <Card.Title class="flex content-end py-2 text-3xl">Account Login</Card.Title>
+            <Card.Title class="flex content-end py-2 text-3xl"
+                >Account Login</Card.Title
+            >
         </Card.Header>
 
         <form on:submit|preventDefault={handleSubmit}>
             <Card.Content>
-                    <div class="grid w-full items-center gap-4">
-                        <div class="flex flex-col space-y-1.5">
-                            <Label for="email">Email:</Label>
-                            <Input 
-                                type="email"
-                                placeholder="Input email address"
-                                bind:value={values.email}
-                            />
+                <div class="grid w-full items-center gap-4">
+                    <div class="flex flex-col space-y-1.5">
+                        <Label for="email">Email:</Label>
+                        <Input
+                            type="email"
+                            placeholder="Input email address"
+                            bind:value={values.email}
+                        />
 
-                            {#if errors.email}
-                                <Label class="text-floating-red text-md">
-                                    {errors.email}
-                                </Label>
-                            {/if}
-                        </div>
-    
-                        <div class="flex flex-col space-y-1.5">
-                            <Label for="pin">PIN:</Label>
-                            <div class="flex items-end space-x-1.5">
-                                <Input 
-                                    type="text"
-                                    placeholder="Input PIN"
-                                    bind:value={values.pin}
-                                />
-                                <Button 
-                                    class="w-32 p-1 text-md"
-                                    type="submit"
-                                    name="send_pin"
-                                    disabled={isRateLimited}
-                                >
-                                    {isRateLimited ? rateLimitTimer : 'Send PIN'}
-                                </Button>
-                            </div>
-
-                            {#if errors.pin}
-                                <p
-                                    class="pb-4 text-floating-red "
-                                >
-                                    {errors.pin}
-                                </p>
-                            {/if}
-                        </div>
+                        {#if errors.email}
+                            <Label class="text-md text-floating-red">
+                                {errors.email}
+                            </Label>
+                        {/if}
                     </div>
+
+                    <div class="flex flex-col space-y-1.5">
+                        <Label for="pin">PIN:</Label>
+                        <div class="flex items-end space-x-1.5">
+                            <Input
+                                type="text"
+                                placeholder="Input PIN"
+                                bind:value={values.pin}
+                            />
+                            <Button
+                                class="text-md w-32 p-1"
+                                type="submit"
+                                name="send_pin"
+                                disabled={isRateLimited}
+                            >
+                                {isRateLimited ? rateLimitTimer : 'Send PIN'}
+                            </Button>
+                        </div>
+
+                        {#if errors.pin}
+                            <p class="pb-4 text-floating-red">
+                                {errors.pin}
+                            </p>
+                        {/if}
+                    </div>
+                </div>
             </Card.Content>
 
             <Card.Footer>
                 <Button
                     type="submit"
                     name="login"
-                    class="w-full cursor-pointer text-md"
+                    class="text-md w-full cursor-pointer"
                 >
                     Login
                 </Button>
             </Card.Footer>
         </form>
     </Card.Root>
-
-    {#if $page.props.flash.message}
-        <p class="italic">(For testing) PIN: {$page.props.flash.message}</p>
-    {/if}
 </div>
