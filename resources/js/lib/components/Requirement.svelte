@@ -2,6 +2,9 @@
     import Status from '$lib/components/Status.svelte';
     import { Link } from '@inertiajs/svelte';
 
+    import { Label } from '$lib/components/ui/label';
+    import { Button } from '$lib/components/ui/button';
+
     export let requirementId;
     export let requirementName;
     export let deadline;
@@ -10,10 +13,10 @@
 </script>
 
 <div
-    class="my-1 flex flex-col justify-between rounded-xl bg-white p-3 dark:bg-black sm:flex-row"
+    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
-        <p class="text-md">{requirementName}</p>
+        <Label class="text-lg">{requirementName}</Label>
         {#if deadline}
             {@const deadlineDateTime = new Date(deadline)}
             <p class="text-xs">
@@ -33,17 +36,17 @@
         class="flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
     >
         {#if submissionStatus !== 'None'}
-            <a
+            <Button
                 href="/file/submission/{studentId}/{requirementId}"
                 target="_blank"
-                class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                >View</a
+                class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
+                >View</Button
             >
         {/if}
-        <Link
+        <Button
             href="/requirement/{requirementId}/upload"
-            class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            >Submit</Link
+            class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
+            >Submit</Button
         >
         <Status type={submissionStatus} />
     </div>
