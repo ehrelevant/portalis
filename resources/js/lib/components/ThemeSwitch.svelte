@@ -6,7 +6,7 @@
 <button
     on:click={toggleMode}
     class="
-    h-16 w-16
+    aspect-square w-full
     cursor-pointer content-center
     justify-items-center text-dark-secondary
     transition-colors hover:text-dark-primary-text"
