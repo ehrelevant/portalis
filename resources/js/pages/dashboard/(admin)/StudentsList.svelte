@@ -13,6 +13,7 @@
     import Table from '$lib/components/table/Table.svelte';
     import { Button } from '$lib/components/ui/button';
     import { colorVariants } from '$lib/customVariants';
+    import * as Select from '$lib/components/ui/select';
 
     export let students;
     export let requirements;
@@ -61,9 +62,7 @@
         );
     }
 
-    function setSection(evt, studentId) {
-        const sectionName = evt.target.value;
-
+    function setSection(studentId, sectionName) {
         router.put(
             `/students/${studentId}/assign/section/${sectionName}`,
             {},
@@ -73,9 +72,7 @@
         );
     }
 
-    function setSupervisor(evt, studentId) {
-        const supervisorId = evt.target.value;
-
+    function setSupervisor(studentId, supervisorId) {
         router.put(
             `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
@@ -269,32 +266,38 @@
                 submissions,
                 is_disabled,
             } = student}
-            <TableRow>
+            <TableRow disabled={is_disabled}>
                 <TableCell>{student_number}</TableCell>
                 <TableCell>{last_name}</TableCell>
                 <TableCell>{first_name}</TableCell>
                 <TableCell>
-                    <div class="flex items-center justify-center">
-                        <select
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                            on:change={(evt) => setSection(evt, student_id)}
-                        >
-                            <option
-                                selected={!has_dropped && student_section}
-                                value
-                            />
+                    <Select.Root
+                        selected={has_dropped
+                            ? { label: 'DRP', value: 'DRP' }
+                            : !student_section
+                              ? { label: '-', value: '' }
+                              : {
+                                    label: student_section,
+                                    value: student_section,
+                                }}
+                        onSelectedChange={(v) => {
+                            console.log(v);
+                            v && setSection(student_id, v.value);
+                        }}
+                    >
+                        <Select.Trigger>
+                            <Select.Value placeholder="Section" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
                             {#each sections as section}
-                                <option
-                                    selected={!has_dropped &&
-                                        student_section === section}
-                                    value={section}>{section}</option
+                                <Select.Item value={section}
+                                    >{section}</Select.Item
                                 >
                             {/each}
-                            <option selected={has_dropped} value="DRP"
-                                >DRP</option
-                            >
-                        </select>
-                    </div>
+                            <Select.Item value="DRP">DRP</Select.Item>
+                        </Select.Content>
+                    </Select.Root>
                 </TableCell>
                 <TableCell>
                     <div class="flex items-center justify-center">
