@@ -1,45 +1,23 @@
 <script>
-    import { onMount } from 'svelte';
-    import Icon from "@iconify/svelte";
-
-    
-    let lightModeIcon = "uil:sun"
-    let darkModeIcon = "solar:moon-outline";
-
-    export let icon = lightModeIcon;
-    let darkMode = true;
-
-    onMount(() => {
-        updateTheme();
-    });
-
-    function handleSwitchMode() {
-        darkMode = !darkMode;
-        updateTheme();
-    }
-
-    function updateTheme() {
-        if (darkMode) {
-            icon = darkModeIcon;
-
-            // eslint-disable-next-line no-undef
-            document.documentElement.classList.add('dark');
-        } else {
-            icon = lightModeIcon;
-
-            // eslint-disable-next-line no-undef
-            document.documentElement.classList.remove('dark');
-        }
-    }
+    import Icon from '@iconify/svelte';
+    import { toggleMode } from 'mode-watcher';
 </script>
 
 <button
+    on:click={toggleMode}
     class="
     h-16 w-16
     cursor-pointer content-center
-    justify-items-center hover:text-dark-primary-text
-    transition-colors text-dark-secondary"
-    on:click={handleSwitchMode}
+    justify-items-center text-dark-secondary
+    transition-colors hover:text-dark-primary-text"
 >
-    <Icon icon={icon} class="text-2xl"/>
+    <Icon
+        icon="uil:sun"
+        class="block h-full w-full transition-all dark:hidden"
+    />
+    <Icon
+        icon="solar:moon-outline"
+        class="hidden h-full w-full transition-all dark:block"
+    />
+    <span class="sr-only">Toggle theme</span>
 </button>
