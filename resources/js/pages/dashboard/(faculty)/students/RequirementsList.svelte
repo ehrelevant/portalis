@@ -17,6 +17,7 @@
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import Icon from '@iconify/svelte';
     import Button from '$lib/components/ui/button/button.svelte';
+    import { colorVariants } from '$lib/customVariants';
 
     export let students;
     export let requirements;
@@ -315,36 +316,38 @@
                         />
                     </TableCell>
                 {/each}
-                <div
-                    class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
-                >
-                    <TableCell
-                        ><button
-                            class="h-full rounded-xl bg-floating-blue-light p-2 text-white hover:opacity-90 dark:bg-floating-blue"
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class={colorVariants.blue}
                             on:click={() => openUpdateForm(student_id)}
-                            >Edit</button
+                            >Edit</Button
                         >
-                    </TableCell>
-                    <TableCell>
                         {#if is_disabled}
                             <Link
                                 href="/api/enable/student/{student_id}"
-                                class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
                                 as="button"
                                 preserveScroll
-                                method="put">Enable</Link
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.green}"
+                                    >Enable</Button
+                                ></Link
                             >
                         {:else}
                             <Link
                                 href="/api/disable/student/{student_id}"
-                                class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
                                 as="button"
                                 preserveScroll
-                                method="put">Disable</Link
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.red}"
+                                    >Disable</Button
+                                ></Link
                             >
                         {/if}
-                    </TableCell>
-                </div>
+                    </div></TableCell
+                >
             </TableRow>
         {/each}
     </Table>
