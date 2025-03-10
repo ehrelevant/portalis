@@ -168,15 +168,21 @@
                             on:click={() => openUpdateForm(company_id)}
                             >Edit</Button
                         >
-                        <Link
-                            href="/api/delete/company/{company_id}"
-                            as="button"
-                            preserveScroll
-                            method="delete"
-                            class="grow"
-                            ><Button class="w-full {colorVariants.red}"
-                                >Delete</Button
-                            ></Link
+                        <Button
+                            class="grow {colorVariants.red}"
+                            on:click={() => {
+                                if (
+                                    confirm(
+                                        'Do you really want to delete this company?',
+                                    )
+                                ) {
+                                    router.put(
+                                        `/api/delete/company/${company_id}`,
+                                        {},
+                                        { preserveScroll: true },
+                                    );
+                                }
+                            }}>Delete</Button
                         >
                     </div></TableCell
                 >

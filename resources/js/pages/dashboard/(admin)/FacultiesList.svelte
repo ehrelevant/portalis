@@ -220,15 +220,21 @@
                                 ></Link
                             >
                         {:else}
-                            <Link
-                                href="/api/disable/faculty/{faculty_id}"
-                                as="button"
-                                preserveScroll
-                                method="put"
-                                class="grow"
-                                ><Button class="w-full {colorVariants.red}"
-                                    >Disable</Button
-                                ></Link
+                            <Button
+                                class="w-full grow {colorVariants.red}"
+                                on:click={() => {
+                                    if (
+                                        confirm(
+                                            'Do you really want to disable this user?',
+                                        )
+                                    ) {
+                                        router.put(
+                                            `/api/disable/faculty/${faculty_id}`,
+                                            {},
+                                            { preserveScroll: true },
+                                        );
+                                    }
+                                }}>Disable</Button
                             >
                         {/if}
                     </div></TableCell
