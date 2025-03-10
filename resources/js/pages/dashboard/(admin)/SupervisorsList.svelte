@@ -83,13 +83,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            '/api/add/supervisor',
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post('/api/add/supervisor', {
+            preserveScroll: true,
+        });
     }
 
     function openAddForm() {
@@ -126,13 +122,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            `/api/update/supervisor/${formUserRoleId}`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post(`/api/update/supervisor/${formUserRoleId}`, {
+            preserveScroll: true,
+        });
     }
 
     Inertia.on('success', () => {

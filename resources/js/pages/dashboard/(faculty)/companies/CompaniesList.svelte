@@ -62,13 +62,9 @@
             companyFormElement.reportValidity();
             return;
         }
-        $companyForm.post(
-            '/api/add/company',
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $companyForm.post('/api/add/company', {
+            preserveScroll: true,
+        });
     }
 
     function openAddForm() {
@@ -97,13 +93,9 @@
             companyFormElement.reportValidity();
             return;
         }
-        $companyForm.post(
-            `/api/update/company/${formCompanyId}`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $companyForm.post(`/api/update/company/${formCompanyId}`, {
+            preserveScroll: true,
+        });
     }
 
     Inertia.on('success', () => {

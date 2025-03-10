@@ -101,13 +101,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            '/api/add/student',
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post('/api/add/student', {
+            preserveScroll: true,
+        });
     }
 
     function openAddForm() {
@@ -152,13 +148,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            `/api/update/student/${formUserRoleId}`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post(`/api/update/student/${formUserRoleId}`, {
+            preserveScroll: true,
+        });
     }
 
     Inertia.on('success', () => {

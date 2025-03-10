@@ -67,13 +67,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            '/api/add/faculty',
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post('/api/add/faculty', {
+            preserveScroll: true,
+        });
     }
 
     function openAddForm() {
@@ -110,13 +106,9 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(
-            `/api/update/faculty/${formUserRoleId}`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
+        $userForm.post(`/api/update/faculty/${formUserRoleId}`, {
+            preserveScroll: true,
+        });
     }
 
     Inertia.on('success', () => {
