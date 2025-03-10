@@ -15,6 +15,8 @@
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
     import * as Select from '$lib/components/ui/select';
+    import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+    import Icon from '@iconify/svelte';
 
     export let students;
     export let requirements;
@@ -162,6 +164,48 @@
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
+
+    <div class="flex flex-row items-center justify-between gap-4">
+        <div class="flex flex-row items-center gap-4">
+            <Link href="/dashboard" method="get">
+                <Button class="flex flex-row gap-2"
+                    ><Icon icon="lets-icons:back" />Back to Dashboard</Button
+                ></Link
+            >
+        </div>
+        <div class="flex flex-row items-center gap-4">
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild let:builder>
+                    <Button
+                        builders={[builder]}
+                        variant="outline"
+                        class="flex flex-row gap-2"
+                        ><Icon icon="uil:export" />Export</Button
+                    >
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                    <DropdownMenu.Item
+                        href="/export/students/sections"
+                        target="_blank"
+                        >Export Student Section</DropdownMenu.Item
+                    >
+                    <DropdownMenu.Item
+                        href="/export/students/sections"
+                        target="_blank"
+                        >Export Company Evaluations</DropdownMenu.Item
+                    >
+                    <DropdownMenu.Item
+                        href="/export/students/student-assessments"
+                        target="_blank"
+                        >Export Student Assessments</DropdownMenu.Item
+                    >
+                </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            <Button class="flex flex-row gap-2" on:click={openAddForm}
+                ><Icon icon="material-symbols:add" />Add Student</Button
+            >
+        </div>
+    </div>
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
@@ -392,44 +436,6 @@
             </TableRow>
         {/each}
     </Table>
-
-    <div class="flex flex-row items-start justify-between">
-        <div class="flex w-fit flex-col gap-4">
-            <button
-                class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary p-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                on:click={openAddForm}>+ Add Student</button
-            >
-
-            <div class="flex flex-col gap-2">
-                <a
-                    target="_blank"
-                    href="/export/students/sections"
-                    class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    >Export Student Sections</a
-                >
-
-                <a
-                    target="_blank"
-                    href="/export/students/company-evaluations"
-                    class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    >Export Company Evaluations</a
-                >
-
-                <a
-                    target="_blank"
-                    href="/export/students/student-assessments"
-                    class="flex w-full flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-                    >Export Student Assessments</a
-                >
-            </div>
-        </div>
-
-        <Link
-            href="/dashboard"
-            class="flex w-fit flex-row items-center justify-center rounded-full bg-light-primary px-4 py-2 text-center hover:opacity-90 dark:bg-dark-primary"
-            method="get">Back to Dashboard</Link
-        >
-    </div>
 </div>
 
 <Modal bind:isOpen={isModalOpen}>

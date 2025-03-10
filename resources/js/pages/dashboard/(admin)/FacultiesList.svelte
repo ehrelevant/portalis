@@ -14,6 +14,7 @@
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
     import Table from '$lib/components/table/Table.svelte';
+    import Icon from '@iconify/svelte';
 
     export let faculties;
 
@@ -128,6 +129,21 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Faculties List" />
 
+    <div class="flex flex-row items-center justify-between gap-4">
+        <div class="flex flex-row items-center gap-4">
+            <Link href="/dashboard" method="get">
+                <Button class="flex flex-row gap-2"
+                    ><Icon icon="lets-icons:back" />Back to Dashboard</Button
+                ></Link
+            >
+        </div>
+        <div class="flex flex-row items-center gap-4">
+            <Button class="flex flex-row gap-2" on:click={openAddForm}
+                ><Icon icon="material-symbols:add" />Add Faculty</Button
+            >
+        </div>
+    </div>
+
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
         <Input
@@ -220,17 +236,6 @@
             </TableRow>
         {/each}
     </Table>
-    <div class="flex w-full justify-between">
-        <button
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            on:click={openAddForm}>Add Faculty</button
-        >
-        <Link
-            href="/dashboard"
-            class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            method="get">Back to Dashboard</Link
-        >
-    </div>
 </div>
 
 <Modal bind:isOpen={isModalOpen}>
