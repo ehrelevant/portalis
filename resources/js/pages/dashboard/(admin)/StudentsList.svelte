@@ -257,6 +257,7 @@
                 last_name,
                 section: student_section,
                 supervisor_id,
+                company_id: student_company_id,
                 company,
                 email,
                 wordpress_name,
@@ -281,7 +282,6 @@
                                     value: student_section,
                                 }}
                         onSelectedChange={(v) => {
-                            console.log(v);
                             v && setSection(student_id, v.value);
                         }}
                     >
@@ -300,6 +300,39 @@
                     </Select.Root>
                 </TableCell>
                 <TableCell>
+                    <Select.Root
+                        selected={!supervisor_id
+                            ? { label: '-', value: '' }
+                            : {
+                                  label: `${companySupervisors[student_company_id][supervisor_id].last_name}, ${companySupervisors[student_company_id][supervisor_id].first_name}`,
+                                  value: supervisor_id,
+                              }}
+                        onSelectedChange={(v) => {
+                            v && setSupervisor(student_id, v.value);
+                        }}
+                    >
+                        <Select.Trigger>
+                            <Select.Value placeholder="Supervisor Name" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
+                            {#each companies as company}
+                                {@const { id: company_id, company_name } =
+                                    company}
+                                <Select.Group>
+                                    <Select.Label>{company_name}</Select.Label>
+                                    {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                        {@const { first_name, last_name } =
+                                            companySupervisor}
+                                        <Select.Item value={companySupervisorId}
+                                            >{last_name}, {first_name}</Select.Item
+                                        >
+                                    {/each}
+                                </Select.Group>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                    <!--
                     <div class="flex items-center justify-center">
                         <select
                             class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
@@ -334,6 +367,7 @@
                             </optgroup>
                         </select>
                     </div>
+                    -->
                 </TableCell>
                 <TableCell>{company ?? ''}</TableCell>
                 <TableCell>{email}</TableCell>
