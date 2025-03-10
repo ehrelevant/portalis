@@ -332,42 +332,6 @@
                             {/each}
                         </Select.Content>
                     </Select.Root>
-                    <!--
-                    <div class="flex items-center justify-center">
-                        <select
-                            class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                            on:change={(evt) => setSupervisor(evt, student_id)}
-                        >
-                            <option selected={!supervisor_id} value />
-                            {#each companies as company}
-                                {@const { id: company_id, company_name } =
-                                    company}
-                                <optgroup label={company_name}>
-                                    {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
-                                        {@const { id, first_name, last_name } =
-                                            companySupervisor}
-                                        <option
-                                            value={companySupervisorId}
-                                            selected={id === supervisor_id}
-                                            >{last_name}, {first_name}</option
-                                        >
-                                    {/each}
-                                </optgroup>
-                            {/each}
-                            <optgroup label="No Company">
-                                {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
-                                    {@const { id, first_name, last_name } =
-                                        companySupervisor}
-                                    <option
-                                        value={companySupervisorId}
-                                        selected={id === supervisor_id}
-                                        >{last_name}, {first_name}</option
-                                    >
-                                {/each}
-                            </optgroup>
-                        </select>
-                    </div>
-                    -->
                 </TableCell>
                 <TableCell>{company ?? ''}</TableCell>
                 <TableCell>{email}</TableCell>
