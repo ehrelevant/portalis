@@ -1,6 +1,10 @@
 <script>
     import Navbar from '$lib/components/Navbar.svelte';
     import { ModeWatcher } from 'mode-watcher';
+    import { usePoll } from '@inertiajs/svelte';
+
+    // Regularly poll server every 30 seconds
+    usePoll(30000);
 </script>
 
 <ModeWatcher />
