@@ -23,8 +23,8 @@
         "eslint-plugin-svelte": "^2.46.1",
         "globals": "^15.15.0",
         "laravel-vite-plugin": "^1.2.0",
-        "postcss": "^8.5.3",
         "lucide-svelte": "^0.477.0",
+        "postcss": "^8.5.3",
         "prettier": "3.3.3",
         "prettier-plugin-svelte": "^3.3.3",
         "prettier-plugin-tailwindcss": "^0.6.11",
@@ -38,7 +38,8 @@
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.11.1",
-        "@inertiajs/svelte": "^2.0.4"
+        "@inertiajs/svelte": "^2.0.4",
+        "mode-watcher": "^0.5.1"
     },
     "packageManager": "pnpm@9.15.4"
 }
