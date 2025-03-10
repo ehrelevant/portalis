@@ -14,6 +14,7 @@
     import { Button } from '$lib/components/ui/button';
     import { colorVariants } from '$lib/customVariants';
     import * as Select from '$lib/components/ui/select';
+    import { Input } from '$lib/components/ui/input/index';
 
     export let students;
     export let requirements;
@@ -164,8 +165,7 @@
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
-        <input
-            class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
+        <Input
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
