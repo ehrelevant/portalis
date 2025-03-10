@@ -14,7 +14,7 @@
               ? colorVariants.yellow
               : status === 'Returned'
                 ? colorVariants.red
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80';
+                : colorVariants.secondary;
 </script>
 
 {#if status !== 'None' || isAdmin}
