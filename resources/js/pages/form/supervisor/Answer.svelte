@@ -1,8 +1,9 @@
 <script>
-    import { Link, useForm } from '@inertiajs/svelte';
+    import { Link, router, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
     import Status from '$lib/components/Status.svelte';
+    import { Button } from '$lib/components/ui/button';
 
     export let errors = {};
     $: console.log(errors);
@@ -154,11 +155,21 @@
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link
                 >
-                <Link
-                    as="button"
-                    href="/form/{form_info.short_name}/reject/{evaluatorUserId}"
-                    class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Return To Supervisor</Link
+                <Button
+                    variant="destructive"
+                    on:click={() => {
+                        if (
+                            confirm(
+                                'Do you really want to return this to the user?',
+                            )
+                        ) {
+                            router.post(
+                                `/form/${form_info.short_name}/reject/${evaluatorUserId}`,
+                                {},
+                                { preserveScroll: true },
+                            );
+                        }
+                    }}>Return To Supervisor</Button
                 >
             {/if}
         </div>
