@@ -8,7 +8,7 @@
     import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
-    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
+    import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
 
     export let supervisors;
     export let form_infos;
@@ -158,40 +158,39 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <ColumnHeader
+                    <TableColumnHeader
                         isActive={sortColumn === 'last_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('last_name')}
-                        first
                     >
                         Last Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'first_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('first_name')}
                     >
                         First Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'company_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('company_name')}
                     >
                         Company
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'email'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('email')}
                     >
                         Email
-                    </ColumnHeader>
+                    </TableColumnHeader>
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
-                        <ColumnHeader>{form_name}</ColumnHeader>
+                        <TableColumnHeader>{form_name}</TableColumnHeader>
                     {/each}
-                    <ColumnHeader>Actions</ColumnHeader>
+                    <TableColumnHeader>Actions</TableColumnHeader>
                 </tr>
                 {#each supervisors as supervisor (supervisor.supervisor_id)}
                     {@const {

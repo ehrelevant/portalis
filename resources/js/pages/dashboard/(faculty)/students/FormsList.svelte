@@ -8,7 +8,7 @@
     import Required from '$lib/components/Required.svelte';
     import Modal from '$lib/components/Modal.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
-    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
+    import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
 
     export let students;
     export let sections;
@@ -183,76 +183,75 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <ColumnHeader
+                    <TableColumnHeader
                         isActive={sortColumn === 'student_number'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('student_number')}
-                        first
                     >
                         SN
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'last_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('last_name')}
                     >
                         Last Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'first_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('first_name')}
                     >
                         First Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'section'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('section')}
                     >
                         Section
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'supervisor_last_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() =>
                             sortByColumn('supervisor_last_name')}
                     >
                         Supervisor Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'company_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('company_name')}
                     >
                         Company Interned
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'email'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('email')}
                     >
                         Email
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'wordpress_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('wordpress_name')}
                     >
                         Wordpress Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'wordpress_email'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('wordpress_email')}
                     >
                         Wordpress Email
-                    </ColumnHeader>
+                    </TableColumnHeader>
                     {#each Object.entries(form_infos) as [_, form_info]}
                         {@const { form_name } = form_info}
-                        <ColumnHeader>{form_name}</ColumnHeader>
+                        <TableColumnHeader>{form_name}</TableColumnHeader>
                     {/each}
-                    <ColumnHeader>Actions</ColumnHeader>
+                    <TableColumnHeader>Actions</TableColumnHeader>
                 </tr>
                 {#each students as student (student.student_id)}
                     {@const {

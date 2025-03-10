@@ -4,13 +4,13 @@
     export let clickHandler = null;
     export let isActive = false;
     export let isAscending = true;
-    export let first = false;
 </script>
 
 <th
     scope="col"
-    class="border-black p-2 dark:border-white
-        {first ? '' : 'border-l-2'}  {clickHandler ? 'cursor-pointer' : ''}"
+    class="whitespace-nowrap border-black p-2 dark:border-white {clickHandler
+        ? 'cursor-pointer'
+        : ''}"
     on:click={clickHandler}
 >
     <div class="flex h-full w-full flex-row items-center justify-center gap-2">

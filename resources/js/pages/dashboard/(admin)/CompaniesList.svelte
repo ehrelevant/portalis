@@ -6,7 +6,7 @@
     import Accordion from '$lib/components/Accordion.svelte';
     import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
-    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
+    import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
 
     export let companies;
 
@@ -133,15 +133,14 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <ColumnHeader
+                    <TableColumnHeader
                         isActive={sortColumn === 'company_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('company_name')}
-                        first
                     >
                         Company Name
-                    </ColumnHeader>
-                    <ColumnHeader>Actions</ColumnHeader>
+                    </TableColumnHeader>
+                    <TableColumnHeader>Actions</TableColumnHeader>
                 </tr>
                 {#each companies as company (company.company_id)}
                     {@const { company_id, company_name } = company}

@@ -7,7 +7,7 @@
     import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
-    import ColumnHeader from '$lib/components/ColumnHeader.svelte';
+    import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
 
     export let faculties;
 
@@ -142,36 +142,35 @@
                 class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
             >
                 <tr class="border-b-2 {borderColor}">
-                    <ColumnHeader
+                    <TableColumnHeader
                         isActive={sortColumn === 'last_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('last_name')}
-                        first
                     >
                         Last Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'first_name'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('first_name')}
                     >
                         First Name
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'email'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('email')}
                     >
                         Email
-                    </ColumnHeader>
-                    <ColumnHeader
+                    </TableColumnHeader>
+                    <TableColumnHeader
                         isActive={sortColumn === 'section'}
                         isAscending={sortIsAscending}
                         clickHandler={() => sortByColumn('section')}
                     >
                         Section
-                    </ColumnHeader>
-                    <ColumnHeader>Actions</ColumnHeader>
+                    </TableColumnHeader>
+                    <TableColumnHeader>Actions</TableColumnHeader>
                 </tr>
                 {#each faculties as faculty (faculty.faculty_id)}
                     {@const {
