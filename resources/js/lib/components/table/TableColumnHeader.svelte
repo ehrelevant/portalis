@@ -8,15 +8,19 @@
 
 <th
     scope="col"
-    class="whitespace-nowrap border-black p-2 dark:border-white {clickHandler
+    class="whitespace-nowrap border-black px-6 py-2 dark:border-white {clickHandler
         ? 'cursor-pointer'
         : ''}"
     on:click={clickHandler}
 >
-    <div class="flex h-full w-full flex-row items-center justify-center gap-2">
+    <div
+        class="flex h-full w-full flex-row items-center justify-center gap-2 text-center"
+    >
         <slot />
         {#if isActive}
-            <Icon icon="bxs:up-arrow" vFlip={isAscending} />
+            <Icon icon="tabler:caret-up-filled" vFlip={isAscending} />
+        {:else if clickHandler}
+            <Icon icon="tabler:caret-up-down-filled" vFlip={isAscending} />
         {/if}
     </div>
 </th>

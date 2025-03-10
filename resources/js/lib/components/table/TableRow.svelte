@@ -1,3 +1,7 @@
-<tr class="border-b-2 border-black dark:border-white">
+<script>
+    export let header = false;
+</script>
+
+<tr class="border-border {header ? 'bg-secondary' : 'border-t-2'}">
     <slot />
 </tr>
