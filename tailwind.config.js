@@ -84,6 +84,19 @@ const config = {
                     },
                 },
 
+                green: {
+                    DEFAULT: 'hsl(var(--green) / <alpha-value>)',
+                    foreground: 'hsl(var(--green-foreground) / <alpha-value>)',
+                },
+                yellow: {
+                    DEFAULT: 'hsl(var(--yellow) / <alpha-value>)',
+                    foreground: 'hsl(var(--yellow-foreground) / <alpha-value>)',
+                },
+                blue: {
+                    DEFAULT: 'hsl(var(--blue) / <alpha-value>)',
+                    foreground: 'hsl(var(--blue-foreground) / <alpha-value>)',
+                },
+
                 // Shadcn-svelte defaults
                 border: 'hsl(var(--border) / <alpha-value>)',
                 input: 'hsl(var(--input) / <alpha-value>)',
