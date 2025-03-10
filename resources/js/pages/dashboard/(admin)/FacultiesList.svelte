@@ -8,6 +8,12 @@
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
+    import TableRow from '$lib/components/table/TableRow.svelte';
+    import TableCell from '$lib/components/table/TableCell.svelte';
+    import { Button } from '$lib/components/ui/button';
+    import { colorVariants } from '$lib/customVariants';
+    import { Input } from '$lib/components/ui/input/index';
+    import Table from '$lib/components/table/Table.svelte';
 
     export let faculties;
 
@@ -124,8 +130,7 @@
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
-        <input
-            class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
+        <Input
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
@@ -134,103 +139,87 @@
     </div>
 
     <!-- List of Faculties -->
-    <Accordion>
-        <h2 slot="summary" class="text-2xl">Faculties</h2>
-
-        <div class="w-full overflow-x-auto rounded-xl">
-            <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
+    <Table>
+        <TableRow header>
+            <TableColumnHeader
+                isActive={sortColumn === 'last_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('last_name')}
             >
-                <tr class="border-b-2 {borderColor}">
-                    <TableColumnHeader
-                        isActive={sortColumn === 'last_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('last_name')}
-                    >
-                        Last Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'first_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('first_name')}
-                    >
-                        First Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'email'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('email')}
-                    >
-                        Email
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'section'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('section')}
-                    >
-                        Section
-                    </TableColumnHeader>
-                    <TableColumnHeader>Actions</TableColumnHeader>
-                </tr>
-                {#each faculties as faculty (faculty.faculty_id)}
-                    {@const {
-                        faculty_id,
-                        first_name,
-                        last_name,
-                        email,
-                        section,
-                        is_disabled,
-                    } = faculty}
-                    <tr
-                        class="border-t-2 {borderColor} {is_disabled
-                            ? 'bg-black text-gray-300'
-                            : ''}"
-                    >
-                        <td class="border-r-2 p-2 {borderColor}">{last_name}</td
+                Last Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'first_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('first_name')}
+            >
+                First Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'email'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('email')}
+            >
+                Email
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'section'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('section')}
+            >
+                Section
+            </TableColumnHeader>
+            <TableColumnHeader>Actions</TableColumnHeader>
+        </TableRow>
+        {#each faculties as faculty (faculty.faculty_id)}
+            {@const {
+                faculty_id,
+                first_name,
+                last_name,
+                email,
+                section,
+                is_disabled,
+            } = faculty}
+            <TableRow disabled={is_disabled}>
+                <TableCell>{last_name}</TableCell>
+                <TableCell>{first_name}</TableCell>
+                <TableCell>{email}</TableCell>
+                <TableCell>{section ?? ''}</TableCell>
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class={colorVariants.blue}
+                            on:click={() => openUpdateForm(faculty_id)}
+                            >Edit</Button
                         >
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{first_name}</td
-                        >
-                        <td class="border-l-2 p-2 {borderColor}">{email}</td>
-                        <td class="border-l-2 p-2 {borderColor}"
-                            >{section ?? ''}</td
-                        >
-                        <div
-                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
-                        >
-                            <td class="text-center {borderColor}"
-                                ><button
-                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
-                                    on:click={() => openUpdateForm(faculty_id)}
-                                    >Edit</button
-                                >
-                            </td>
-                            <td class="text-center {borderColor}">
-                                {#if is_disabled}
-                                    <Link
-                                        href="/api/enable/faculty/{faculty_id}"
-                                        class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Enable</Link
-                                    >
-                                {:else}
-                                    <Link
-                                        href="/api/disable/faculty/{faculty_id}"
-                                        class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Disable</Link
-                                    >
-                                {/if}
-                            </td>
-                        </div>
-                    </tr>
-                {/each}
-            </table>
-        </div>
-    </Accordion>
-
+                        {#if is_disabled}
+                            <Link
+                                href="/api/enable/faculty/{faculty_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.green}"
+                                    >Enable</Button
+                                ></Link
+                            >
+                        {:else}
+                            <Link
+                                href="/api/disable/faculty/{faculty_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.red}"
+                                    >Disable</Button
+                                ></Link
+                            >
+                        {/if}
+                    </div></TableCell
+                >
+            </TableRow>
+        {/each}
+    </Table>
     <div class="flex w-full justify-between">
         <button
             class="flex w-52 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"

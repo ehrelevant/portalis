@@ -9,6 +9,13 @@
     import Modal from '$lib/components/Modal.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
+    import TableCell from '$lib/components/table/TableCell.svelte';
+    import Table from '$lib/components/table/Table.svelte';
+    import TableRow from '$lib/components/table/TableRow.svelte';
+    import { Input } from '$lib/components/ui/input/index';
+    import { Button } from '$lib/components/ui/button';
+    import { colorVariants } from '$lib/customVariants';
+    import * as Select from '$lib/components/ui/select';
 
     export let students;
     export let sections;
@@ -56,9 +63,7 @@
         );
     }
 
-    function setSection(evt, studentId) {
-        const sectionName = evt.target.value;
-
+    function setSection(studentId, sectionName) {
         router.put(
             `/students/${studentId}/assign/section/${sectionName}`,
             {},
@@ -68,9 +73,7 @@
         );
     }
 
-    function setSupervisor(evt, studentId) {
-        const supervisorId = evt.target.value;
-
+    function setSupervisor(studentId, supervisorId) {
         router.put(
             `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
@@ -165,8 +168,7 @@
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
-        <input
-            class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
+        <Input
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
@@ -175,238 +177,208 @@
     </div>
 
     <!-- List of Students -->
-    <Accordion>
-        <h2 slot="summary" class="text-2xl">Students</h2>
-
-        <div class="w-full overflow-x-auto rounded-xl">
-            <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
+    <Table>
+        <TableRow header>
+            <TableColumnHeader
+                isActive={sortColumn === 'student_number'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('student_number')}
             >
-                <tr class="border-b-2 {borderColor}">
-                    <TableColumnHeader
-                        isActive={sortColumn === 'student_number'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('student_number')}
+                SN
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'last_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('last_name')}
+            >
+                Last Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'first_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('first_name')}
+            >
+                First Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'section'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('section')}
+            >
+                Section
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'supervisor_last_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('supervisor_last_name')}
+            >
+                Supervisor Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'company_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('company_name')}
+            >
+                Company Interned
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'email'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('email')}
+            >
+                Email
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'wordpress_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('wordpress_name')}
+            >
+                Wordpress Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'wordpress_email'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('wordpress_email')}
+            >
+                Wordpress Email
+            </TableColumnHeader>
+            {#each Object.entries(form_infos) as [_, form_info]}
+                {@const { form_name } = form_info}
+                <TableColumnHeader>{form_name}</TableColumnHeader>
+            {/each}
+            <TableColumnHeader>Actions</TableColumnHeader>
+        </TableRow>
+        {#each students as student (student.student_id)}
+            {@const {
+                student_id,
+                student_number,
+                first_name,
+                last_name,
+                section: student_section,
+                supervisor_id,
+                company_id: student_company_id,
+                company,
+                email,
+                wordpress_name,
+                wordpress_email,
+                form_statuses,
+                has_dropped,
+                is_disabled,
+            } = student}
+            <TableRow disabled={is_disabled}>
+                <TableCell>{student_number}</TableCell>
+                <TableCell>{last_name}</TableCell>
+                <TableCell>{first_name}</TableCell>
+                <TableCell>
+                    <Select.Root
+                        selected={has_dropped
+                            ? { label: 'DRP', value: 'DRP' }
+                            : !student_section
+                              ? { label: '-', value: '' }
+                              : {
+                                    label: student_section,
+                                    value: student_section,
+                                }}
+                        onSelectedChange={(v) => {
+                            v && setSection(student_id, v.value);
+                        }}
                     >
-                        SN
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'last_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('last_name')}
-                    >
-                        Last Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'first_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('first_name')}
-                    >
-                        First Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'section'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('section')}
-                    >
-                        Section
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'supervisor_last_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() =>
-                            sortByColumn('supervisor_last_name')}
-                    >
-                        Supervisor Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'company_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('company_name')}
-                    >
-                        Company Interned
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'email'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('email')}
-                    >
-                        Email
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'wordpress_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('wordpress_name')}
-                    >
-                        Wordpress Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'wordpress_email'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('wordpress_email')}
-                    >
-                        Wordpress Email
-                    </TableColumnHeader>
-                    {#each Object.entries(form_infos) as [_, form_info]}
-                        {@const { form_name } = form_info}
-                        <TableColumnHeader>{form_name}</TableColumnHeader>
-                    {/each}
-                    <TableColumnHeader>Actions</TableColumnHeader>
-                </tr>
-                {#each students as student (student.student_id)}
-                    {@const {
-                        student_id,
-                        student_number,
-                        first_name,
-                        last_name,
-                        section: student_section,
-                        supervisor_id,
-                        company,
-                        email,
-                        wordpress_name,
-                        wordpress_email,
-                        form_statuses,
-                        has_dropped,
-                        is_disabled,
-                    } = student}
-                    <tr
-                        class="border-t-2 {borderColor} {is_disabled
-                            ? 'bg-black text-gray-300'
-                            : ''}"
-                    >
-                        <th class="border-r-2 p-2 {borderColor}"
-                            >{student_number}</th
-                        >
-                        <td class="border-r-2 p-2 {borderColor}">{last_name}</td
-                        >
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{first_name}</td
-                        >
-                        <td class="border-r-2 p-2 {borderColor}">
-                            <div class="flex items-center justify-center">
-                                <select
-                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                    on:change={(evt) =>
-                                        setSection(evt, student_id)}
+                        <Select.Trigger>
+                            <Select.Value placeholder="Section" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
+                            {#each sections as section}
+                                <Select.Item value={section}
+                                    >{section}</Select.Item
                                 >
-                                    <option
-                                        selected={!has_dropped &&
-                                            student_section}
-                                        value
-                                    />
-                                    {#each sections as section}
-                                        <option
-                                            selected={!has_dropped &&
-                                                student_section === section}
-                                            value={section}>{section}</option
+                            {/each}
+                            <Select.Item value="DRP">DRP</Select.Item>
+                        </Select.Content>
+                    </Select.Root>
+                </TableCell>
+                <TableCell>
+                    <Select.Root
+                        selected={!supervisor_id
+                            ? { label: '-', value: '' }
+                            : {
+                                  label: `${companySupervisors[student_company_id][supervisor_id].last_name}, ${companySupervisors[student_company_id][supervisor_id].first_name}`,
+                                  value: supervisor_id,
+                              }}
+                        onSelectedChange={(v) => {
+                            v && setSupervisor(student_id, v.value);
+                        }}
+                    >
+                        <Select.Trigger>
+                            <Select.Value placeholder="Supervisor Name" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
+                            {#each companies as company}
+                                {@const { id: company_id, company_name } =
+                                    company}
+                                <Select.Group>
+                                    <Select.Label>{company_name}</Select.Label>
+                                    {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                        {@const { first_name, last_name } =
+                                            companySupervisor}
+                                        <Select.Item value={companySupervisorId}
+                                            >{last_name}, {first_name}</Select.Item
                                         >
                                     {/each}
-                                    <option selected={has_dropped} value="DRP"
-                                        >DRP</option
-                                    >
-                                </select>
-                            </div>
-                        </td>
-                        <td class="border-r-2 p-2 {borderColor}">
-                            <div class="flex items-center justify-center">
-                                <select
-                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                    on:change={(evt) =>
-                                        setSupervisor(evt, student_id)}
-                                >
-                                    <option selected={!supervisor_id} value />
-                                    {#each companies as company}
-                                        {@const {
-                                            id: company_id,
-                                            company_name,
-                                        } = company}
-                                        <optgroup label={company_name}>
-                                            {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
-                                                {@const {
-                                                    id,
-                                                    first_name,
-                                                    last_name,
-                                                } = companySupervisor}
-                                                <option
-                                                    value={companySupervisorId}
-                                                    selected={id ===
-                                                        supervisor_id}
-                                                    >{last_name}, {first_name}</option
-                                                >
-                                            {/each}
-                                        </optgroup>
-                                    {/each}
-                                    <optgroup label="No Company">
-                                        {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
-                                            {@const {
-                                                id,
-                                                first_name,
-                                                last_name,
-                                            } = companySupervisor}
-                                            <option
-                                                value={companySupervisorId}
-                                                selected={id === supervisor_id}
-                                                >{last_name}, {first_name}</option
-                                            >
-                                        {/each}
-                                    </optgroup>
-                                </select>
-                            </div>
-                        </td>
-                        <td class="border-r-2 p-2 text-center {borderColor}"
-                            >{company ?? ''}</td
-                        >
-                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{wordpress_name}</td
-                        >
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{wordpress_email}</td
-                        >
-                        {#each Object.entries(form_statuses) as [form_id, form_status]}
-                            <td class="border-l-2 p-2 text-center {borderColor}"
-                                ><StatusCell
-                                    status={form_status}
-                                    href="/form/{form_infos[form_id]
-                                        .short_name}/view/{student_id}"
-                                />
-                            </td>
-                        {/each}
-                        <div
-                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
-                        >
-                            <td class="text-center {borderColor}"
-                                ><button
-                                    class="h-full rounded-xl bg-floating-blue-light p-2 text-white hover:opacity-90 dark:bg-floating-blue"
-                                    on:click={() => openUpdateForm(student_id)}
-                                    >Edit</button
-                                >
-                            </td>
-                            <td class="text-center {borderColor}">
-                                {#if is_disabled}
-                                    <Link
-                                        href="/api/enable/student/{student_id}"
-                                        class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Enable</Link
-                                    >
-                                {:else}
-                                    <Link
-                                        href="/api/disable/student/{student_id}"
-                                        class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
-                                        as="button"
-                                        preserveScroll
-                                        method="put">Disable</Link
-                                    >
-                                {/if}
-                            </td>
-                        </div>
-                    </tr>
+                                </Select.Group>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                </TableCell>
+                <TableCell>{company ?? ''}</TableCell>
+                <TableCell>{email}</TableCell>
+                <TableCell>{wordpress_name}</TableCell>
+                <TableCell>{wordpress_email}</TableCell>
+                {#each Object.entries(form_statuses) as [form_id, form_status]}
+                    <TableCell center
+                        ><StatusCell
+                            status={form_status}
+                            href="/form/{form_infos[form_id]
+                                .short_name}/view/{student_id}"
+                        />
+                    </TableCell>
                 {/each}
-            </table>
-        </div>
-    </Accordion>
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class={colorVariants.blue}
+                            on:click={() => openUpdateForm(student_id)}
+                            >Edit</Button
+                        >
+                        {#if is_disabled}
+                            <Link
+                                href="/api/enable/student/{student_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.green}"
+                                    >Enable</Button
+                                ></Link
+                            >
+                        {:else}
+                            <Link
+                                href="/api/disable/student/{student_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.red}"
+                                    >Disable</Button
+                                ></Link
+                            >
+                        {/if}
+                    </div></TableCell
+                >
+            </TableRow>
+        {/each}
+    </Table>
 
     <div class="flex flex-row items-start justify-between">
         <div class="flex w-fit flex-col gap-4">

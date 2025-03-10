@@ -7,6 +7,12 @@
     import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
+    import TableCell from '$lib/components/table/TableCell.svelte';
+    import TableRow from '$lib/components/table/TableRow.svelte';
+    import Table from '$lib/components/table/Table.svelte';
+    import Button from '$lib/components/ui/button/button.svelte';
+    import { colorVariants } from '$lib/customVariants';
+    import { Input } from '$lib/components/ui/input/index';
 
     export let companies;
 
@@ -115,8 +121,7 @@
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
-        <input
-            class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
+        <Input
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
@@ -125,52 +130,43 @@
     </div>
 
     <!-- List of Companies -->
-    <Accordion>
-        <h2 slot="summary" class="text-2xl">Companies</h2>
-
-        <div class="w-full overflow-x-auto rounded-xl">
-            <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-black"
+    <Table>
+        <TableRow header>
+            <TableColumnHeader
+                isActive={sortColumn === 'company_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('company_name')}
             >
-                <tr class="border-b-2 {borderColor}">
-                    <TableColumnHeader
-                        isActive={sortColumn === 'company_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('company_name')}
-                    >
-                        Company Name
-                    </TableColumnHeader>
-                    <TableColumnHeader>Actions</TableColumnHeader>
-                </tr>
-                {#each companies as company (company.company_id)}
-                    {@const { company_id, company_name } = company}
-                    <tr class="border-t-2 {borderColor}">
-                        <td class="p-2 {borderColor}">{company_name}</td>
-                        <div
-                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
+                Company Name
+            </TableColumnHeader>
+            <TableColumnHeader>Actions</TableColumnHeader>
+        </TableRow>
+        {#each companies as company (company.company_id)}
+            {@const { company_id, company_name } = company}
+            <TableRow>
+                <TableCell>{company_name}</TableCell>
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class="grow {colorVariants.blue}"
+                            on:click={() => openUpdateForm(company_id)}
+                            >Edit</Button
                         >
-                            <td class="text-center {borderColor}"
-                                ><button
-                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
-                                    on:click={() => openUpdateForm(company_id)}
-                                    >Edit</button
-                                >
-                            </td>
-                            <td class="text-center {borderColor}"
-                                ><Link
-                                    href="/api/delete/company/{company_id}"
-                                    class="h-full rounded-xl bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                    as="button"
-                                    preserveScroll
-                                    method="delete">Delete</Link
-                                >
-                            </td>
-                        </div>
-                    </tr>
-                {/each}
-            </table>
-        </div>
-    </Accordion>
+                        <Link
+                            href="/api/delete/company/{company_id}"
+                            as="button"
+                            preserveScroll
+                            method="delete"
+                            class="grow"
+                            ><Button class="w-full {colorVariants.red}"
+                                >Delete</Button
+                            ></Link
+                        >
+                    </div></TableCell
+                >
+            </TableRow>
+        {/each}
+    </Table>
 
     <div class="flex w-full justify-between">
         <button

@@ -9,6 +9,13 @@
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
+    import TableCell from '$lib/components/table/TableCell.svelte';
+    import TableRow from '$lib/components/table/TableRow.svelte';
+    import Table from '$lib/components/table/Table.svelte';
+    import { colorVariants } from '$lib/customVariants';
+    import { Button } from '$lib/components/ui/button';
+    import { Input } from '$lib/components/ui/input/index';
+    import * as Select from '$lib/components/ui/select';
 
     export let supervisors;
     export let form_infos;
@@ -54,9 +61,7 @@
         );
     }
 
-    function setCompany(evt, supervisorId) {
-        const companyId = evt.target.value;
-
+    function setCompany(supervisorId, companyId) {
         router.put(
             `/supervisors/${supervisorId}/assign/company/${companyId}`,
             {},
@@ -140,8 +145,7 @@
 
     <!-- Name Search Bar -->
     <div class="flex flex-row content-center justify-center">
-        <input
-            class="text-md w-full rounded-md p-2 text-light-primary-text sm:text-xl"
+        <Input
             type="text"
             placeholder="Search by Name"
             bind:value={searchQuery}
@@ -150,134 +154,128 @@
     </div>
 
     <!-- List of Supervisors -->
-    <Accordion>
-        <h2 slot="summary" class="text-2xl">Supervisors</h2>
-
-        <div class="w-full overflow-x-auto rounded-xl">
-            <table
-                class="w-full border-collapse overflow-x-scroll rounded-xl bg-white dark:bg-gray-900"
+    <Table>
+        <TableRow header>
+            <TableColumnHeader
+                isActive={sortColumn === 'last_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('last_name')}
             >
-                <tr class="border-b-2 {borderColor}">
-                    <TableColumnHeader
-                        isActive={sortColumn === 'last_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('last_name')}
+                Last Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'first_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('first_name')}
+            >
+                First Name
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'company_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('company_name')}
+            >
+                Company
+            </TableColumnHeader>
+            <TableColumnHeader
+                isActive={sortColumn === 'email'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('email')}
+            >
+                Email
+            </TableColumnHeader>
+            {#each Object.entries(form_infos) as [_, form_info]}
+                {@const { form_name } = form_info}
+                <TableColumnHeader>{form_name}</TableColumnHeader>
+            {/each}
+            <TableColumnHeader>Actions</TableColumnHeader>
+        </TableRow>
+        {#each supervisors as supervisor (supervisor.supervisor_id)}
+            {@const {
+                supervisor_id,
+                first_name,
+                last_name,
+                email,
+                company_name: supervisor_company_name,
+                company_id: supervisor_company_id,
+                form_statuses,
+                is_disabled,
+            } = supervisor}
+            <TableRow disabled={is_disabled}>
+                <TableCell>{last_name}</TableCell>
+                <TableCell>{first_name}</TableCell>
+                <TableCell>
+                    <Select.Root
+                        selected={!supervisor_company_id
+                            ? { label: '-', value: '' }
+                            : {
+                                  label: supervisor_company_name,
+                                  value: supervisor_company_id,
+                              }}
+                        onSelectedChange={(v) => {
+                            console.log(supervisor_company_name);
+                            v && setCompany(supervisor_id, v.value);
+                        }}
                     >
-                        Last Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'first_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('first_name')}
-                    >
-                        First Name
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'company_name'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('company_name')}
-                    >
-                        Company
-                    </TableColumnHeader>
-                    <TableColumnHeader
-                        isActive={sortColumn === 'email'}
-                        isAscending={sortIsAscending}
-                        clickHandler={() => sortByColumn('email')}
-                    >
-                        Email
-                    </TableColumnHeader>
-                    {#each Object.entries(form_infos) as [_, form_info]}
-                        {@const { form_name } = form_info}
-                        <TableColumnHeader>{form_name}</TableColumnHeader>
-                    {/each}
-                    <TableColumnHeader>Actions</TableColumnHeader>
-                </tr>
-                {#each supervisors as supervisor (supervisor.supervisor_id)}
-                    {@const {
-                        supervisor_id,
-                        first_name,
-                        last_name,
-                        email,
-                        company_id: supervisor_company_id,
-                        form_statuses,
-                        is_disabled,
-                    } = supervisor}
-                    <tr
-                        class="border-t-2 {borderColor} {is_disabled
-                            ? 'bg-black text-gray-300'
-                            : ''}"
-                    >
-                        <td class="border-r-2 p-2 {borderColor}">{last_name}</td
-                        >
-                        <td class="border-r-2 p-2 {borderColor}"
-                            >{first_name}</td
-                        >
-                        <td class="border-r-2 p-2 text-center {borderColor}">
-                            <div class="flex items-center justify-center">
-                                <select
-                                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                    on:change={(evt) =>
-                                        setCompany(evt, supervisor_id)}
+                        <Select.Trigger>
+                            <Select.Value placeholder="Company" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
+                            {#each companies as company}
+                                {@const { id, company_name } = company}
+                                <Select.Item value={id}
+                                    >{company_name}</Select.Item
                                 >
-                                    <option
-                                        selected={!supervisor_company_id}
-                                        value
-                                    />
-                                    {#each companies as company}
-                                        {@const { id, company_name } = company}
-                                        <option
-                                            selected={id ===
-                                                supervisor_company_id}
-                                            value={id}>{company_name}</option
-                                        >
-                                    {/each}
-                                </select>
-                            </div>
-                        </td>
-                        <td class="border-r-2 p-2 {borderColor}">{email}</td>
-                        {#each Object.entries(form_statuses) as [form_id, form_status]}
-                            <td class="border-l-2 p-2 text-center {borderColor}"
-                                ><StatusCell
-                                    status={form_status}
-                                    href="/form/{form_infos[form_id]
-                                        .short_name}/view/{supervisor_id}"
-                                />
-                            </td>
-                        {/each}
-                        <div
-                            class="flex flex-row items-center justify-center gap-2 border-l-2 p-2"
-                        >
-                            <td class="text-center {borderColor}"
-                                ><button
-                                    class="h-full rounded-xl bg-floating-blue-light p-2 hover:opacity-90 dark:bg-floating-blue"
-                                    on:click={() =>
-                                        openUpdateForm(supervisor_id)}
-                                    >Edit</button
-                                >
-                            </td>
-                            {#if is_disabled}
-                                <Link
-                                    href="/api/enable/supervisor/{supervisor_id}"
-                                    class="h-full rounded-xl bg-light-primary p-2 text-white hover:opacity-90 dark:bg-dark-primary"
-                                    as="button"
-                                    preserveScroll
-                                    method="put">Enable</Link
-                                >
-                            {:else}
-                                <Link
-                                    href="/api/disable/supervisor/{supervisor_id}"
-                                    class="h-full rounded-xl bg-floating-red-light p-2 text-white hover:opacity-90 dark:bg-floating-red"
-                                    as="button"
-                                    preserveScroll
-                                    method="put">Disable</Link
-                                >
-                            {/if}
-                        </div>
-                    </tr>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                </TableCell>
+                <TableCell>{email}</TableCell>
+                {#each Object.entries(form_statuses) as [form_id, form_status]}
+                    <TableCell center
+                        ><StatusCell
+                            status={form_status}
+                            href="/form/{form_infos[form_id]
+                                .short_name}/view/{supervisor_id}"
+                        />
+                    </TableCell>
                 {/each}
-            </table>
-        </div>
-    </Accordion>
+                <TableCell
+                    ><div class="flex flex-row gap-2">
+                        <Button
+                            class={colorVariants.blue}
+                            on:click={() => openUpdateForm(supervisor_id)}
+                            >Edit</Button
+                        >
+                        {#if is_disabled}
+                            <Link
+                                href="/api/enable/supervisor/{supervisor_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.green}"
+                                    >Enable</Button
+                                ></Link
+                            >
+                        {:else}
+                            <Link
+                                href="/api/disable/supervisor/{supervisor_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                class="grow"
+                                ><Button class="w-full {colorVariants.red}"
+                                    >Disable</Button
+                                ></Link
+                            >
+                        {/if}
+                    </div></TableCell
+                >
+            </TableRow>
+        {/each}
+    </Table>
 
     <div class="flex w-full justify-between">
         <button

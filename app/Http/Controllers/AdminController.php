@@ -191,6 +191,7 @@ class AdminController extends Controller
                 'first_name' => $supervisor_info->first_name,
                 'last_name' => $supervisor_info->last_name,
                 'email' => $supervisor_info->email,
+                'company_name' => $supervisor_info->company_name,
                 'company_id' => $supervisor_info->company_id,
                 'form_statuses' => $form_statuses,
                 'is_disabled' => $supervisor_info->is_disabled,
