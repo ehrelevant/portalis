@@ -125,7 +125,7 @@
     </div>
 
     <!-- List of Companies -->
-    <Accordion open>
+    <Accordion>
         <h2 slot="summary" class="text-2xl">Companies</h2>
 
         <div class="w-full overflow-x-auto rounded-xl">
