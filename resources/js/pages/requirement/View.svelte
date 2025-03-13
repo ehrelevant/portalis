@@ -3,7 +3,7 @@
     import { Link, router } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
-    export let studentNumber;
+    export let studentId;
     export let studentName;
     export let requirementId;
     export let requirementName;
@@ -13,7 +13,7 @@
     function returnToStudent() {
         if (confirm('Do you really want to return this to the student?')) {
             router.post(
-                `/requirement/${requirementId}/view/${studentNumber}/reject`,
+                `/requirement/${requirementId}/view/${studentId}/reject`,
             );
         }
     }
@@ -26,7 +26,7 @@
     <div class="flex h-full w-full flex-col gap-4">
         {#if status !== 'None'}
             <iframe
-                src="/file/submission/{studentNumber}/{requirementId}"
+                src="/file/submission/{studentId}/{requirementId}"
                 title={requirementName}
                 class="h-full grow"
             >
@@ -36,13 +36,15 @@
         <div class="flex flex-row justify-center gap-2">
             {#if ['Accepted'].includes(status)}
                 <Link
-                    href="/requirement/{requirementId}/view/{studentNumber}/invalidate"
+                    as="button"
+                    href="/requirement/{requirementId}/view/{studentId}/invalidate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
-                    href="/requirement/{requirementId}/view/{studentNumber}/validate"
+                    as="button"
+                    href="/requirement/{requirementId}/view/{studentId}/validate"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link
                 >
@@ -53,7 +55,7 @@
             {/if}
             {#if isAdmin}
                 <Link
-                    href="/requirement/{requirementId}/upload/{studentNumber}"
+                    href="/requirement/{requirementId}/upload/{studentId}"
                     class="auto flex flex-row items-center justify-center rounded-full bg-floating-blue-light p-2 px-4 hover:opacity-90 dark:bg-floating-blue"
                     >Upload Document</Link
                 >

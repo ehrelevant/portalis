@@ -15,7 +15,7 @@ class TestStudentSeeder extends Seeder
     public function run(): void
     {
         Student::factory()->create([
-            'student_number' => 202200000,
+            'student_number' => '202200000',
             'supervisor_id' => 1,
             'faculty_id' => null,
             'grade' => null,
@@ -26,14 +26,14 @@ class TestStudentSeeder extends Seeder
         User::factory()->create([
             'email' => 'student@example.com',
             'role' => 'student',
-            'role_id' => 202200000,
+            'role_id' => 1,
             'first_name' => 'First',
             'middle_name' => 'Middle',
             'last_name' => 'Last',
         ]);
 
         Student::factory()->create([
-            'student_number' => 202200001,
+            'student_number' => '202200001',
             'supervisor_id' => 2,
             'faculty_id' => null,
             'grade' => null,
@@ -44,14 +44,14 @@ class TestStudentSeeder extends Seeder
         User::factory()->create([
             'email' => 'eacastillo1@up.edu.ph',
             'role' => 'student',
-            'role_id' => 202200001,
+            'role_id' => 2,
             'first_name' => 'Ehren',
             'middle_name' => 'Middle',
             'last_name' => 'Castillo',
         ]);
 
         Student::factory()->create([
-            'student_number' => 202200002,
+            'student_number' => '202200002',
             'supervisor_id' => 2,
             'faculty_id' => null,
             'grade' => null,
@@ -62,14 +62,14 @@ class TestStudentSeeder extends Seeder
         User::factory()->create([
             'email' => 'csacyatan1@up.edu.ph',
             'role' => 'student',
-            'role_id' => 202200002,
+            'role_id' => 3,
             'first_name' => 'Clyde Ambroz',
             'middle_name' => 'Middle',
             'last_name' => 'Acyatan',
         ]);
 
         Student::factory()->create([
-            'student_number' => 202200003,
+            'student_number' => '202200003',
             'supervisor_id' => 2,
             'faculty_id' => null,
             'grade' => null,
@@ -80,14 +80,14 @@ class TestStudentSeeder extends Seeder
         User::factory()->create([
             'email' => 'elsaavedra@up.edu.ph',
             'role' => 'student',
-            'role_id' => 202200003,
+            'role_id' => 4,
             'first_name' => 'Eoghaine Czeriel',
             'middle_name' => 'Middle',
             'last_name' => 'Saavedra',
         ]);
 
         Student::factory()->create([
-            'student_number' => 202200004,
+            'student_number' => '202200004',
             'supervisor_id' => 1,
             'faculty_id' => null,
             'grade' => null,
@@ -98,7 +98,7 @@ class TestStudentSeeder extends Seeder
         User::factory()->create([
             'email' => 'drbermudez1@up.edu.ph',
             'role' => 'student',
-            'role_id' => 202200004,
+            'role_id' => 5,
             'first_name' => 'Dominic Lawrence',
             'middle_name' => 'Middle',
             'last_name' => 'Bermudez',

@@ -14,7 +14,7 @@
     <div class="flex flex-col gap-4">
         {#each form_statuses as form_status}
             {@const { form_name, short_name, status, deadline } = form_status}
-            <Accordion open>
+            <Accordion>
                 <h2 slot="summary" class="text-2xl">
                     {form_name}
                 </h2>

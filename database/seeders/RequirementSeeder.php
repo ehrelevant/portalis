@@ -43,7 +43,7 @@ class RequirementSeeder extends Seeder
         foreach (Student::all() as $student) {
             foreach (Requirement::all() as $requirement) {
                 SubmissionStatus::factory()->create([
-                    'student_number' => $student->student_number,
+                    'student_id' => $student->id,
                     'requirement_id' => $requirement->id,
                     'status' => 'None',
                 ]);

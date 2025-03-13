@@ -2,14 +2,14 @@
     import Status from '$lib/components/Status.svelte';
     import { Link } from '@inertiajs/svelte';
 
-    import { Label } from "$lib/components/ui/label";
-    import { Button } from "$lib/components/ui/button";
+    import { Label } from '$lib/components/ui/label';
+    import { Button } from '$lib/components/ui/button';
 
     export let requirementId;
     export let requirementName;
     export let deadline;
     export let submissionStatus;
-    export let studentNumber;
+    export let studentId;
 </script>
 
 <div
@@ -37,15 +37,15 @@
     >
         {#if submissionStatus !== 'None'}
             <Button
-                href="/file/submission/{studentNumber}/{requirementId}"
+                href="/file/submission/{studentId}/{requirementId}"
                 target="_blank"
-                class="bg-dark-primary hover:bg-opacity-90 rounded-xl text-dark-primary-text"
+                class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
                 >View</Button
             >
         {/if}
         <Button
             href="/requirement/{requirementId}/upload"
-            class="bg-dark-primary hover:bg-opacity-90 rounded-xl text-dark-primary-text"
+            class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
             >Submit</Button
         >
         <Status type={submissionStatus} />

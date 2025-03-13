@@ -19,7 +19,7 @@ class SubmissionStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_number' => Student::factory(),
+            'student_id' => Student::factory(),
             'requirement_id' => Requirement::factory(),
             'status' => fake()->randomElement(['Returned', 'None', 'For Review', 'Accepted']),
         ];

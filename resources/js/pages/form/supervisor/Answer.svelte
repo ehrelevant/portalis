@@ -1,8 +1,9 @@
 <script>
-    import { Link, useForm } from '@inertiajs/svelte';
+    import { Link, router, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
     import Status from '$lib/components/Status.svelte';
+    import { Button } from '$lib/components/ui/button';
 
     export let errors = {};
     $: console.log(errors);
@@ -62,7 +63,7 @@
                             {@const { criterion } = rating_question}
                             <p class="text-center">{criterion}</p>
                         {/each}
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const {
                                 last_name,
                                 first_name,
@@ -80,10 +81,12 @@
                                         category_id
                                     ][rating_id].min_score}
                                     required
-                                    bind:value={$form.answers[student_number]
-                                        .categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
+                                    bind:value={
+                                        $form.answers[student_id]
+                                            .categorized_ratings[category_id][
+                                            rating_id
+                                        ]
+                                    }
                                     title={categorized_rating_questions[
                                         category_id
                                     ][rating_id].tooltip}
@@ -100,14 +103,14 @@
                     <div
                         class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
                             <textarea
                                 class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                bind:value={$form.answers[student_number].opens[
-                                    open_id
-                                ]}
+                                bind:value={
+                                    $form.answers[student_id].opens[open_id]
+                                }
                             />
                         {/each}
                     </div>
@@ -140,20 +143,33 @@
             <Status type={status} />
             {#if ['Accepted'].includes(status)}
                 <Link
+                    as="button"
                     href="/form/{form_info.short_name}/invalidate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                     method="post">Invalidate</Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
+                    as="button"
                     href="/form/{form_info.short_name}/validate/{evaluatorUserId}"
                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                     method="post">Accept</Link
                 >
-                <Link
-                    href="/form/{form_info.short_name}/reject/{evaluatorUserId}"
-                    class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Return To Supervisor</Link
+                <Button
+                    variant="destructive"
+                    on:click={() => {
+                        if (
+                            confirm(
+                                'Do you really want to return this to the user?',
+                            )
+                        ) {
+                            router.post(
+                                `/form/${form_info.short_name}/reject/${evaluatorUserId}`,
+                                {},
+                                { preserveScroll: true },
+                            );
+                        }
+                    }}>Return To Supervisor</Button
                 >
             {/if}
         </div>

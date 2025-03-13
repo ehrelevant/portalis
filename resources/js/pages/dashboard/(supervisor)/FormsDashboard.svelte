@@ -1,9 +1,10 @@
 <script>
     import Accordion from '$lib/components/Accordion.svelte';
-    import { Link } from '@inertiajs/svelte';
+    import { Link, router } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
     import Status from '$lib/components/Status.svelte';
+    import { Button } from '$lib/components/ui/button';
 
     export let phase;
     export let students;
@@ -46,20 +47,33 @@
                             <Status type={status} />
                             {#if status === 'Accepted'}
                                 <Link
+                                    as="button"
                                     href="/form/self-evaluation/invalidate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                                     method="post">Invalidate</Link
                                 >
                             {:else if status !== 'Returned' && status !== 'None'}
                                 <Link
+                                    as="button"
                                     href="/form/self-evaluation/validate/{student_user_id}"
                                     class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                                     method="post">Accept</Link
                                 >
-                                <Link
-                                    href="/form/self-evaluation/reject/{student_user_id}"
-                                    class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                    method="post">Return To Student</Link
+                                <Button
+                                    variant="destructive"
+                                    on:click={() => {
+                                        if (
+                                            confirm(
+                                                'Do you really want to return this to the user?',
+                                            )
+                                        ) {
+                                            router.post(
+                                                `/form/self-evaluation/reject/${student_user_id}`,
+                                                {},
+                                                { preserveScroll: true },
+                                            );
+                                        }
+                                    }}>Return To Student</Button
                                 >
                             {/if}
                         </div>
@@ -70,7 +84,7 @@
 
         {#each form_statuses as form_status}
             {@const { form_name, short_name, status, deadline } = form_status}
-            <Accordion open>
+            <Accordion>
                 <h2 slot="summary" class="text-2xl">
                     {form_name}
                 </h2>

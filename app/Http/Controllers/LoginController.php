@@ -63,7 +63,7 @@ class LoginController extends Controller
         $generated_pin = str_pad(random_int(0, 999999), 6, 0, STR_PAD_LEFT);
 
         try {
-            $user = User::where('email', $email)->firstOrFail();
+            $user = User::where('email', $email)->where('is_disabled', false)->firstOrFail();
             $user->password = Hash::make($generated_pin);
             $user->password_expiry = now()->addSeconds(intval(env('PIN_DURATION', 300)));
             $user->saveQuietly();
@@ -86,7 +86,7 @@ class LoginController extends Controller
 
         // Only for testing purposes
         if (env('DISPLAY_PIN_ON_PAGE', false)) {
-            return back()->with('message', $generated_pin);
+            return back()->with('info', $generated_pin);
         }
 
         return back();

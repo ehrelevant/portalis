@@ -303,7 +303,7 @@ class FormController extends Controller
 
             $student_info = DB::table('users')
                 ->where('id', $student_user_id)
-                ->select('first_name', 'last_name', 'role_id AS student_number')
+                ->select('first_name', 'last_name', 'role_id AS student_id')
                 ->firstOrFail();
 
             $categorized_ratings = [];
@@ -323,8 +323,8 @@ class FormController extends Controller
                 ->pluck('answer', 'open_question_id')
                 ->toArray();
 
-            $students[$student_info->student_number] = [
-                'student_number' => $student_info->student_number,
+            $students[$student_info->student_id] = [
+                'student_id' => $student_info->student_id,
                 'last_name' => $student_info->last_name,
                 'first_name' => $student_info->first_name,
                 'categorized_ratings' => $categorized_ratings,
@@ -351,13 +351,12 @@ class FormController extends Controller
         if ($form_answers->isEmpty()) {
             $supervised_student_user_ids = DB::table('users')
                 ->where('role', 'student')
-                ->join('students', 'students.student_number', '=', 'users.role_id')
+                ->join('students', 'students.id', '=', 'users.role_id')
                 ->where('supervisor_id', $supervisor_user->role_id)
                 ->pluck('users.id');
 
             $this->createForm($form_status, $supervised_student_user_ids);
             $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
-            ;
         }
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);
@@ -430,7 +429,7 @@ class FormController extends Controller
             $form_answer = FormAnswer::where('form_status_id', $form_status_id)
                 ->join('users', 'users.id', '=', 'form_answers.evaluated_user_id')
                 ->where('role', 'student')
-                ->where('role_id', $evaluation['student_number'])
+                ->where('role_id', $evaluation['student_id'])
                 ->select('form_answers.id')
                 ->firstOrFail();
 
@@ -466,7 +465,7 @@ class FormController extends Controller
 
         $form_values = $request->validate([
             'answers' => ['array'],
-            'answers.*.student_number' => ['integer', 'numeric'],
+            'answers.*.student_id' => ['integer', 'numeric'],
             'answers.*.categorized_ratings' => ['array'],
             'answers.*.categorized_ratings.*' => ['array'],
             'answers.*.categorized_ratings.*.*' => ['nullable'],
@@ -495,7 +494,7 @@ class FormController extends Controller
 
         $form_values = $request->validate([
             'answers' => ['array'],
-            'answers.*.student_number' => ['integer', 'numeric'],
+            'answers.*.student_id' => ['integer', 'numeric'],
             'answers.*.categorized_ratings' => ['array'],
             'answers.*.categorized_ratings.*' => ['array'],
             'answers.*.categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
@@ -546,13 +545,13 @@ class FormController extends Controller
         ];
     }
 
-    public function answerStudentForm(string $short_name, ?int $student_number)
+    public function answerStudentForm(string $short_name, ?int $student_id)
     {
         $student_user = Auth::user();
         if ($student_user->role === User::ROLE_ADMIN) {
             $student_user = DB::table('users')
                 ->where('role', 'student')
-                ->where('role_id', $student_number)
+                ->where('role_id', $student_id)
                 ->firstOrFail();
         }
 
@@ -585,11 +584,11 @@ class FormController extends Controller
         ]);
     }
 
-    public function viewStudentForm(string $short_name, int $student_number)
+    public function viewStudentForm(string $short_name, int $student_id)
     {
         $student_user = DB::table('users')
             ->where('role', 'student')
-            ->where('role_id', $student_number)
+            ->where('role_id', $student_id)
             ->firstOrFail();
 
         $user_id = $student_user->id;
@@ -653,13 +652,13 @@ class FormController extends Controller
         }
     }
 
-    public function draftStudentForm(Request $request, string $short_name, ?int $student_number)
+    public function draftStudentForm(Request $request, string $short_name, ?int $student_id)
     {
         $student_user = Auth::user();
         if ($student_user->role === User::ROLE_ADMIN) {
             $student_user = DB::table('users')
                 ->where('role', 'student')
-                ->where('role_id', $student_number)
+                ->where('role_id', $student_id)
                 ->firstOrFail();
         }
 
@@ -680,13 +679,13 @@ class FormController extends Controller
         }
     }
 
-    public function submitStudentForm(Request $request, string $short_name, ?int $student_number)
+    public function submitStudentForm(Request $request, string $short_name, ?int $student_id)
     {
         $student_user = Auth::user();
         if ($student_user->role === User::ROLE_ADMIN) {
             $student_user = DB::table('users')
                 ->where('role', 'student')
-                ->where('role_id', $student_number)
+                ->where('role_id', $student_id)
                 ->firstOrFail();
         }
 

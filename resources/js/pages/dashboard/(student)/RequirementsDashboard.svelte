@@ -6,7 +6,7 @@
     import * as Accordion from "$lib/components/ui/accordion";
     import { Label } from "$lib/components/ui/label";
 
-    export let student_number;
+    export let student_id;
     export let submissions;
 
     $: internshipDocumentSubmissions = submissions.filter((submission) => {
@@ -38,7 +38,7 @@
                             requirementName={requirement_name}
                             {deadline}
                             submissionStatus={status}
-                            studentNumber={student_number}
+                            studentId={student_id}
                         />
                 {/each}
             </Accordion.Content>
@@ -61,7 +61,7 @@
                             requirementName={requirement_name}
                             {deadline}
                             submissionStatus={status}
-                            studentNumber={student_number}
+                            studentId={student_id}
                         />
                 {/each}
             </Accordion.Content>

@@ -20,20 +20,6 @@ class Student extends Model
      */
     public $timestamps = false;
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'student_number';
-
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(Supervisor::class);

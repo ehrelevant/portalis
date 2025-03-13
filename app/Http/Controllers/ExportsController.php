@@ -18,7 +18,7 @@ class ExportsController extends Controller
             // todo: confirm if sectionless students (section=null) should be included in CSV
             ->where('faculties.section', '!=', 'null')
 
-            ->join('students', 'users.role_id', '=', 'students.student_number')
+            ->join('students', 'users.role_id', '=', 'students.id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
 
             ->select(
@@ -83,7 +83,7 @@ class ExportsController extends Controller
             ->where('forms.short_name', $shortName)
             //->where('form_statuses.status', 'For Review')
 
-            ->join('students', 'users.role_id', '=', 'students.student_number')
+            ->join('students', 'users.role_id', '=', 'students.id')
             ->join('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->whereNot('students.has_dropped', true)
 

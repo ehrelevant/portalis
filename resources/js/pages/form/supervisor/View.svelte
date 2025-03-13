@@ -1,8 +1,9 @@
 <script>
-    import { Link } from '@inertiajs/svelte';
+    import { Link, router } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
     import Status from '$lib/components/Status.svelte';
+    import Button from '$lib/components/ui/button/button.svelte';
 
     export let supervisor;
     export let evaluator_user_id;
@@ -38,7 +39,7 @@
                             {@const { criterion } = rating_question}
                             <p class="text-center">{criterion}</p>
                         {/each}
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const {
                                 last_name,
                                 first_name,
@@ -49,10 +50,9 @@
                                 <p
                                     class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
                                 >
-                                    {students[student_number]
-                                        .categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
+                                    {students[student_id].categorized_ratings[
+                                        category_id
+                                    ][rating_id]}
                                 </p>
                             {/each}
                         {/each}
@@ -66,12 +66,12 @@
                     <div
                         class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        {#each Object.entries(students) as [student_number, student]}
+                        {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
                             <textarea
                                 class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                value={students[student_number].opens[open_id]}
+                                value={students[student_id].opens[open_id]}
                                 disabled
                             />
                         {/each}
@@ -85,20 +85,33 @@
         <Status type={status} />
         {#if status === 'Accepted'}
             <Link
+                as="button"
                 href="/form/{form_info.short_name}/invalidate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
                 method="post">Invalidate</Link
             >
         {:else if status !== 'Returned'}
             <Link
+                as="button"
                 href="/form/{form_info.short_name}/validate/{evaluator_user_id}"
                 class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
                 method="post">Accept</Link
             >
-            <Link
-                href="/form/{form_info.short_name}/reject/{evaluator_user_id}"
-                class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                method="post">Return To Supervisor</Link
+            <Button
+                variant="destructive"
+                on:click={() => {
+                    if (
+                        confirm(
+                            'Do you really want to return this to the user?',
+                        )
+                    ) {
+                        router.post(
+                            `/form/${form_info.short_name}/reject/${evaluator_user_id}`,
+                            {},
+                            { preserveScroll: true },
+                        );
+                    }
+                }}>Return To Supervisor</Button
             >
         {/if}
     </div>
