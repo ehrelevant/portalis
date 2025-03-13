@@ -3,6 +3,10 @@
     import Header from '$lib/components/InternshipHeader.svelte';
     import Account from '$assets/account_logo.svelte';
 
+    import Icon from "@iconify/svelte";
+    import { Button } from "$lib/components/ui/button";
+    import { Label } from "$lib/components/ui/label";
+
     const phases = ['pre', 'during', 'post'];
 
     export let currentPhase;
@@ -27,37 +31,69 @@
 <div class="main-screen flex w-full flex-col gap-2 p-4">
     <Header txt="Admin Dashboard" />
 
-    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <Link
             href="/dashboard/admin/students"
-            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-            <Account />
-            <p>Student List</p>
+            <Button
+                class="flex grow w-full h-full rounded-xl p-3 text-2xl bg-muted border-b-dark-primary"
+                variant="outline"
+            >
+                <div
+                    class="flex flex-col items-center justify-center"
+                >
+                    <Icon icon="ph:student" class="text-4xl"/>
+                    <Label class="text-2xl">Student List</Label>
+                </div>
+            </Button>
         </Link>
 
         <Link
             href="/dashboard/admin/supervisors"
-            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-            <Account />
-            <p>Supervisor List</p>
+            <Button
+                class="flex grow w-full h-full rounded-xl p-3 text-2xl bg-muted border-b-dark-primary"
+                variant="outline"
+            >
+                <div
+                    class="flex flex-col items-center justify-center"
+                >
+                    <Icon icon="mdi:account-tie-outline" class="text-4xl"/>
+                    <Label class="text-2xl">Supervisor List</Label>
+                </div>
+            </Button>
         </Link>
 
         <Link
             href="/dashboard/admin/faculties"
-            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-            <Account />
-            <p>Faculty List</p>
+            <Button
+                class="flex grow w-full h-full rounded-xl p-3 text-2xl bg-muted border-b-dark-primary"
+                variant="outline"
+            >
+                <div
+                    class="flex flex-col items-center justify-center"
+                >
+                    <Icon icon="mdi:teach" class="text-4xl"/>
+                    <Label class="text-2xl">Faculty List</Label>
+                </div>
+            </Button>
         </Link>
 
         <Link
             href="/dashboard/admin/companies"
-            class="flex w-full flex-col items-center justify-center rounded-xl bg-white p-3 text-2xl hover:opacity-80 dark:bg-black"
         >
-            <Account />
-            <p>Company List</p>
+            <Button
+                class="flex grow w-full h-full rounded-xl p-3 text-2xl bg-muted border-b-dark-primary"
+                variant="outline"
+            >
+                <div
+                    class="flex flex-col items-center justify-center"
+                >
+                    <Icon icon="mdi:company" class="text-4xl"/>
+                    <Label class="text-2xl">Company List</Label>
+                </div>
+            </Button>
         </Link>
     </div>
 
