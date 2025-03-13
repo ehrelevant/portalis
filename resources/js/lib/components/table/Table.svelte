@@ -1,7 +1,7 @@
 <div
-    class="w-full border-collapse overflow-x-auto rounded-lg border-4 border-border"
+    class="max-h-[28em] w-full border-collapse overflow-auto rounded-lg border-4 border-border pb-10"
 >
-    <table class="w-full border-collapse">
+    <table class="relative w-full border-collapse">
         <slot />
     </table>
 </div>
