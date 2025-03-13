@@ -164,6 +164,8 @@ class FileSubmissionContoller extends Controller
     public function validateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
         try {
+            $validator_user = Auth::user();
+
             $submission_status = SubmissionStatus::where('student_id', $student_id)
                 ->where('requirement_id', $requirement_id)
                 ->firstOrFail();
@@ -174,17 +176,24 @@ class FileSubmissionContoller extends Controller
 
             $submission_status->save();
 
-            return redirect('/dashboard/students')->with('success', 'Successfully validated the submission. The tab may now be closed.');
+            $success_message = 'Successfully validated the requirement submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to validate the submission.');
+            return back()->with('error', 'Failed to validate the requirement submission.');
         }
     }
 
     public function invalidateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
         try {
+            $validator_user = Auth::user();
+
             $submission_status = SubmissionStatus::where('student_id', $student_id)
                 ->where('requirement_id', $requirement_id)
                 ->firstOrFail();
@@ -195,17 +204,24 @@ class FileSubmissionContoller extends Controller
 
             $submission_status->save();
 
-            return redirect('/dashboard/students')->with('success', 'Successfully invalidated the submission. The tab may now be closed.');
+            $success_message = 'Successfully invalidated the requirement submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to invalidate the submission.');
+            return back()->with('error', 'Failed to invalidate the requirement submission.');
         }
     }
 
     public function rejectStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
         try {
+            $validator_user = Auth::user();
+
             $submission_status = SubmissionStatus::where('student_id', $student_id)
                 ->where('requirement_id', $requirement_id)
                 ->firstOrFail();
@@ -216,11 +232,16 @@ class FileSubmissionContoller extends Controller
 
             $submission_status->save();
 
-            return redirect('/dashboard/students')->with('success', 'Successfully rejected the submission. The tab may now be closed.');
+            $success_message = 'Successfully rejected the requirement submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to reject the submission.');
+            return back()->with('error', 'Failed to reject the requirement submission.');
         }
     }
 }
