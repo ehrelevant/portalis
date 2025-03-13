@@ -1,11 +1,16 @@
 <script>
     import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
-    import Account from '$assets/account_logo.svelte';
-
     import Icon from "@iconify/svelte";
     import { Button } from "$lib/components/ui/button";
     import { Label } from "$lib/components/ui/label";
+    import { Input } from '$lib/components/ui/input';
+    import * as Select from "$lib/components/ui/select";
+    
+    import {
+        DateFormatter,
+        getLocalTimeZone
+    } from "@internationalized/date";
 
     const phases = ['pre', 'during', 'post'];
 
@@ -26,6 +31,10 @@
             $settingsForm.put('/globals/settings/update');
         }
     }
+
+    const df = new DateFormatter("en-US", {
+        dateStyle: "long"
+    });
 </script>
 
 <div class="main-screen flex w-full flex-col gap-2 p-4">
@@ -97,65 +106,73 @@
         </Link>
     </div>
 
-    <div class="w-full rounded-xl bg-gray-900 p-8">
+    <div class="w-full rounded-xl bg-muted p-8 border border-input">
         <form
             class="flex flex-col gap-4"
             on:submit|preventDefault={saveSettings}
         >
-            <div class="grid grid-cols-[auto,1fr] items-center gap-2">
-                <h2 class="col-span-2 text-xl font-bold">Phase</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-[auto,1fr] items-center gap-2">
+                    <Label class="col-span-2 text-xl font-bold border-b-2 border-b-dark-primary">Phase</Label>
 
-                <label class="ml-4" for="phase">Website Phase</label>
-                <select
-                    name="phase"
-                    bind:value={$settingsForm.phase}
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                >
-                    {#each phases as phase}
-                        <option selected={phase === currentPhase} value={phase}
-                            >{phase}-internship</option
-                        >
+                    <Label class="ml-4 text-md" for="phase">Website Phase</Label>
+                    <Select.Root
+                        selected={ $settingsForm.phase
+                            ? { label: $settingsForm.phase + "-internship", value: $settingsForm.phase}
+                            : undefined
+                        }
+                        onSelectedChange={(v) => {
+                        v && ($settingsForm.phase = v.value);
+                        }}
+                    >
+                        <Select.Trigger class="w-full">
+                            <Select.Value placeholder="{currentPhase}-internship" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            {#each phases as phase}
+                                <Select.Item value={phase}>{phase}-internship</Select.Item>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                
+                    <h2 class="col-span-2 mt-4 text-xl font-bold border-b-2 border-b-dark-primary">
+                        Requirement Deadlines
+                    </h2>
+                    {#each $settingsForm.requirements as requirement, i}
+                        {@const { requirement_name } = requirement}
+                        <Label class="ml-4 text-md" for="{requirement_name} deadline">
+                            {requirement_name}
+                        </Label>
+                        <Input
+                            name="{requirement_name} deadline"
+                            type="datetime-local"
+                            step="1"
+                            bind:value={$settingsForm.requirements[i].deadline}
+                            class="flex flex-col p-2 justify-between"
+                        />
                     {/each}
-                </select>
 
-                <h2 class="col-span-2 mt-4 text-xl font-bold">
-                    Requirement Deadlines
-                </h2>
-                {#each $settingsForm.requirements as requirement, i}
-                    {@const { requirement_name } = requirement}
-                    <label class="ml-4" for="{requirement_name} deadline">
-                        {requirement_name}
-                    </label>
-                    <input
-                        name="{requirement_name} deadline"
-                        type="datetime-local"
-                        step="1"
-                        bind:value={$settingsForm.requirements[i].deadline}
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    />
-                {/each}
-                <h2 class="col-span-2 mt-4 text-xl font-bold">
-                    Form Deadlines
-                </h2>
-                {#each $settingsForm.forms as form, i}
-                    {@const { form_name } = form}
-                    <label class="ml-4" for="{form_name} deadline">
-                        {form_name}
-                    </label>
-                    <input
-                        name="{form_name} deadline"
-                        type="datetime-local"
-                        step="1"
-                        bind:value={$settingsForm.forms[i].deadline}
-                        class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    />
-                {/each}
+                    <h2 class="col-span-2 mt-4 text-xl font-bold border-b-2 border-b-dark-primary">
+                        Form Deadlines
+                    </h2>
+                    {#each $settingsForm.forms as form, i}
+                        {@const { form_name } = form}
+                        <Label class="ml-4 text-md" for="{form_name} deadline">
+                            {form_name}
+                        </Label>
+                        <Input
+                            name="{form_name} deadline"
+                            type="datetime-local"
+                            step="1"
+                            bind:value={$settingsForm.forms[i].deadline}
+                            class="flex flex-col p-2 justify-between"
+                        />
+                    {/each}
             </div>
-            <input
+            <Button
                 type="submit"
-                value="Save"
-                class="w-full cursor-pointer rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-            />
+                variant="primary"
+                class="w-full cursor-pointer bg-dark-primary text-white text-xl p-2"
+            > Save </Button>
         </form>
     </div>
 </div>
