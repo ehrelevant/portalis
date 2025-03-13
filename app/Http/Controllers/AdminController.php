@@ -13,8 +13,10 @@ use App\Models\Submission;
 use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -275,176 +277,208 @@ class AdminController extends Controller
 
     public function addStudent(Request $request)
     {
-        $values = $request->validate([
-            'student_number' => ['required', 'string'],
-            'first_name' => ['required', 'string'],
-            'middle_name' => ['nullable', 'string'],
-            'last_name' => ['required', 'string'],
-            'email' => ['required', 'email:rfc'],
-            'section' => ['nullable', 'string'],
-            'supervisor_id' => ['nullable', 'numeric', 'integer'],
-            'wordpress_name' => ['required', 'string'],
-            'wordpress_email' => ['required', 'email:rfc'],
-        ]);
-
-        $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
-        $user_email_exists = User::where('email', $values['email'])->exists();
-
-        if ($student_number_exists) {
-            return back()->withErrors([
-                'student_number' => 'The provided student number already exists.',
+        try {
+            $values = $request->validate([
+                'student_number' => ['required', 'string'],
+                'first_name' => ['required', 'string'],
+                'middle_name' => ['nullable', 'string'],
+                'last_name' => ['required', 'string'],
+                'email' => ['required', 'email:rfc'],
+                'section' => ['nullable', 'string'],
+                'supervisor_id' => ['nullable', 'numeric', 'integer'],
+                'wordpress_name' => ['required', 'string'],
+                'wordpress_email' => ['required', 'email:rfc'],
             ]);
-        } else if ($user_email_exists) {
+
+            $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
+            $user_email_exists = User::where('email', $values['email'])->exists();
+
+            if ($student_number_exists) {
+                return back()->withErrors([
+                    'student_number' => 'The provided student number already exists.',
+                ])->with('error', 'Failed to add student.');
+            } else if ($user_email_exists) {
+                return back()->withErrors([
+                    'email' => 'The provided email already exists.',
+                ])->with('error', 'Failed to add student.');
+            }
+
+            $new_student = new Student();
+            $new_student->student_number = $values['student_number'];
+            $new_student->supervisor_id = $values['supervisor_id'];
+            if ($values['section']) {
+                $new_student->faculty_id = DB::table('faculties')
+                    ->where('section', $values['section'])
+                    ->firstOrFail()
+                    ->id;
+            } else {
+                $new_student->faculty_id = null;
+            }
+            $new_student->wordpress_name = $values['wordpress_name'];
+            $new_student->wordpress_email = $values['wordpress_email'];
+            $new_student->save();
+
+            $new_user = new User();
+            $new_user->role = User::ROLE_STUDENT;
+            $new_user->role_id = $new_student->id;
+            $new_user->first_name = $values['first_name'];
+            $new_user->middle_name = $values['middle_name'] ?? '';
+            $new_user->last_name = $values['last_name'];
+            $new_user->email = $values['email'];
+            $new_user->save();
+
+            $requirements = DB::table('requirements')->get();
+            foreach ($requirements as $requirement) {
+                $new_submission_status = new SubmissionStatus();
+                $new_submission_status->student_id = $new_student->id;
+                $new_submission_status->requirement_id = $requirement->id;
+                $new_submission_status->status = 'None';
+                $new_submission_status->save();
+            }
+
+            $forms = DB::table('forms')
+                ->where('short_name', 'company-evaluation')
+                ->orWhere('short_name', 'self-evaluation')
+                ->get();
+            foreach ($forms as $form) {
+                $new_form_status = new FormStatus();
+                $new_form_status->user_id = $new_user->id;
+                $new_form_status->form_id = $form->id;
+                $new_form_status->status = 'None';
+                $new_form_status->save();
+            }
+
+            return back()->with('success', 'Successfully added student.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
             return back()->withErrors([
-                'email' => 'The provided email already exists.',
-            ]);
+                'unknown' => ''
+            ])->with('error', 'Failed to add student.');
         }
-
-        $new_student = new Student();
-        $new_student->student_number = $values['student_number'];
-        $new_student->supervisor_id = $values['supervisor_id'];
-        if ($values['section']) {
-            $new_student->faculty_id = DB::table('faculties')
-                ->where('section', $values['section'])
-                ->firstOrFail()
-                ->id;
-        } else {
-            $new_student->faculty_id = null;
-        }
-        $new_student->wordpress_name = $values['wordpress_name'];
-        $new_student->wordpress_email = $values['wordpress_email'];
-        $new_student->save();
-
-        $new_user = new User();
-        $new_user->role = User::ROLE_STUDENT;
-        $new_user->role_id = $new_student->id;
-        $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'] ?? '';
-        $new_user->last_name = $values['last_name'];
-        $new_user->email = $values['email'];
-        $new_user->save();
-
-        $requirements = DB::table('requirements')->get();
-        foreach ($requirements as $requirement) {
-            $new_submission_status = new SubmissionStatus();
-            $new_submission_status->student_id = $new_student->id;
-            $new_submission_status->requirement_id = $requirement->id;
-            $new_submission_status->status = 'None';
-            $new_submission_status->save();
-        }
-
-        $forms = DB::table('forms')
-            ->where('short_name', 'company-evaluation')
-            ->orWhere('short_name', 'self-evaluation')
-            ->get();
-        foreach ($forms as $form) {
-            $new_form_status = new FormStatus();
-            $new_form_status->user_id = $new_user->id;
-            $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'None';
-            $new_form_status->save();
-        }
-
-        return back();
     }
 
     public function addSupervisor(Request $request)
     {
-        $values = $request->validate([
-            'first_name' => ['required', 'string'],
-            'middle_name' => ['nullable', 'string'],
-            'last_name' => ['required', 'string'],
-            'email' => ['required', 'email:rfc'],
-            'company_id' => ['nullable', 'numeric', 'integer'],
-        ]);
-
-        $user_email_exists = User::where('email', $values['email'])->exists();
-
-        if ($user_email_exists) {
-            return back()->withErrors([
-                'email' => 'The provided email already exists.',
+        try {
+            $values = $request->validate([
+                'first_name' => ['required', 'string'],
+                'middle_name' => ['nullable', 'string'],
+                'last_name' => ['required', 'string'],
+                'email' => ['required', 'email:rfc'],
+                'company_id' => ['nullable', 'numeric', 'integer'],
             ]);
+
+            $user_email_exists = User::where('email', $values['email'])->exists();
+
+            if ($user_email_exists) {
+                return back()->withErrors([
+                    'email' => 'The provided email already exists.',
+                ])->with('error', 'Failed to add supervisor.');
+            }
+
+            $new_supervisor = new Supervisor();
+            $new_supervisor->company_id = $values['company_id'];
+            $new_supervisor->save();
+
+            $new_user = new User();
+            $new_user->role = User::ROLE_SUPERVISOR;
+            $new_user->role_id = $new_supervisor->id;
+            $new_user->first_name = $values['first_name'];
+            $new_user->middle_name = $values['middle_name'] ?? '';
+            $new_user->last_name = $values['last_name'];
+            $new_user->email = $values['email'];
+            $new_user->save();
+
+            $forms = DB::table('forms')
+                ->where('short_name', 'midsem')
+                ->orWhere('short_name', 'final')
+                ->orWhere('short_name', 'intern-evaluation')
+                ->get();
+            foreach ($forms as $form) {
+                $new_form_status = new FormStatus();
+                $new_form_status->user_id = $new_user->id;
+                $new_form_status->form_id = $form->id;
+                $new_form_status->status = 'None';
+                $new_form_status->save();
+            }
+
+            return back()->with('success', 'Successfully added supervisor.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->withErrors([
+                'unknown' => ''
+            ])->with('error', 'Failed to add supervisor.');
         }
-
-        $new_supervisor = new Supervisor();
-        $new_supervisor->company_id = $values['company_id'];
-        $new_supervisor->save();
-
-        $new_user = new User();
-        $new_user->role = User::ROLE_SUPERVISOR;
-        $new_user->role_id = $new_supervisor->id;
-        $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'] ?? '';
-        $new_user->last_name = $values['last_name'];
-        $new_user->email = $values['email'];
-        $new_user->save();
-
-        $forms = DB::table('forms')
-            ->where('short_name', 'midsem')
-            ->orWhere('short_name', 'final')
-            ->orWhere('short_name', 'intern-evaluation')
-            ->get();
-        foreach ($forms as $form) {
-            $new_form_status = new FormStatus();
-            $new_form_status->user_id = $new_user->id;
-            $new_form_status->form_id = $form->id;
-            $new_form_status->status = 'None';
-            $new_form_status->save();
-        }
-
-        return back();
     }
 
     public function addFaculty(Request $request)
     {
-        $values = $request->validate([
-            'first_name' => ['required', 'string'],
-            'middle_name' => ['nullable', 'string'],
-            'last_name' => ['required', 'string'],
-            'email' => ['required', 'email:rfc'],
-            'section' => ['nullable', 'string'],
-        ]);
-
-        $user_email_exists = User::where('email', $values['email'])->exists();
-        $section_exists = Faculty::where('section', $values['section'])->exists();
-
-        if ($user_email_exists) {
-            return back()->withErrors([
-                'email' => 'The provided email already exists.',
+        try {
+            $values = $request->validate([
+                'first_name' => ['required', 'string'],
+                'middle_name' => ['nullable', 'string'],
+                'last_name' => ['required', 'string'],
+                'email' => ['required', 'email:rfc'],
+                'section' => ['nullable', 'string'],
             ]);
-        } else if ($values['section'] && $section_exists) {
+
+            $user_email_exists = User::where('email', $values['email'])->exists();
+            $section_exists = Faculty::where('section', $values['section'])->exists();
+
+            if ($user_email_exists) {
+                return back()->withErrors([
+                    'email' => 'The provided email already exists.',
+                ])->with('error', 'Failed to add faculty.');
+            } else if ($values['section'] && $section_exists) {
+                return back()->withErrors([
+                    'section' => 'The provided section already exists.',
+                ])->with('error', 'Failed to add faculty.');
+            }
+
+            $new_faculty = new Faculty();
+            $new_faculty->section = $values['section'];
+            $new_faculty->save();
+
+            $new_user = new User();
+            $new_user->role = User::ROLE_FACULTY;
+            $new_user->role_id = $new_faculty->id;
+            $new_user->first_name = $values['first_name'];
+            $new_user->middle_name = $values['middle_name'] ?? '';
+            $new_user->last_name = $values['last_name'];
+            $new_user->email = $values['email'];
+            $new_user->save();
+
+            return back()->with('success', 'Successfully added faculty.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
             return back()->withErrors([
-                'section' => 'The provided section already exists.',
-            ]);
+                'unknown' => ''
+            ])->with('error', 'Failed to add faculty.');
         }
-
-        $new_faculty = new Faculty();
-        $new_faculty->section = $values['section'];
-        $new_faculty->save();
-
-        $new_user = new User();
-        $new_user->role = User::ROLE_FACULTY;
-        $new_user->role_id = $new_faculty->id;
-        $new_user->first_name = $values['first_name'];
-        $new_user->middle_name = $values['middle_name'] ?? '';
-        $new_user->last_name = $values['last_name'];
-        $new_user->email = $values['email'];
-        $new_user->save();
-
-        return back();
     }
 
     public function addCompany(Request $request)
     {
-        $values = $request->validate([
-            'company_name' => ['required', 'string'],
-        ]);
+        try {
+            $values = $request->validate([
+                'company_name' => ['required', 'string'],
+            ]);
 
-        $new_company = new Company();
-        $new_company->company_name = $values['company_name'];
-        $new_company->save();
+            $new_company = new Company();
+            $new_company->company_name = $values['company_name'];
+            $new_company->save();
 
-        return back();
+            return back()->with('success', 'Successfully added company.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->withErrors([
+                'unknown' => ''
+            ])->with('error', 'Failed to add company.');
+        }
     }
 
     public function updateStudent(Request $request, int $student_id)
