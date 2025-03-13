@@ -13,7 +13,7 @@
 </script>
 
 <div
-    class="my-2 flex flex-col justify-between rounded-xl border-dark-primary bg-muted order-r border-b-2 p-4 sm:flex-row"
+    class="my-2 flex flex-col justify-between rounded-xl bg-muted placeholder:border-dark-primary border-b-2 p-4 sm:flex-row"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
         <Label class="text-lg">{requirementName}</Label>
