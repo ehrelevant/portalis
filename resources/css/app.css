@@ -66,6 +66,7 @@
 @layer base {
     * {
         @apply border-border;
+        scrollbar-color: hsl(var(--primary)) hsl(var(--secondary));
     }
     body {
         @apply bg-background text-foreground;
