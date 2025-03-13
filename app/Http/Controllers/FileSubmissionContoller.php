@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -161,46 +163,64 @@ class FileSubmissionContoller extends Controller
 
     public function validateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_id', $student_id)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
+        try {
+            $submission_status = SubmissionStatus::where('student_id', $student_id)
+                ->where('requirement_id', $requirement_id)
+                ->firstOrFail();
 
-        if ($submission_status->status === 'For Review') {
-            $submission_status->status = 'Accepted';
+            if ($submission_status->status === 'For Review') {
+                $submission_status->status = 'Accepted';
+            }
+
+            $submission_status->save();
+
+            return redirect('/dashboard/students')->with('success', 'Successfully validated the submission. The tab may now be closed.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to validate the submission.');
         }
-
-        $submission_status->save();
-
-        return back();
     }
 
     public function invalidateStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_id', $student_id)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
+        try {
+            $submission_status = SubmissionStatus::where('student_id', $student_id)
+                ->where('requirement_id', $requirement_id)
+                ->firstOrFail();
 
-        if ($submission_status->status === 'Accepted') {
-            $submission_status->status = 'For Review';
+            if ($submission_status->status === 'Accepted') {
+                $submission_status->status = 'For Review';
+            }
+
+            $submission_status->save();
+
+            return redirect('/dashboard/students')->with('success', 'Successfully invalidated the submission. The tab may now be closed.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to invalidate the submission.');
         }
-
-        $submission_status->save();
-
-        return back();
     }
 
     public function rejectStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
     {
-        $submission_status = SubmissionStatus::where('student_id', $student_id)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
+        try {
+            $submission_status = SubmissionStatus::where('student_id', $student_id)
+                ->where('requirement_id', $requirement_id)
+                ->firstOrFail();
 
-        if ($submission_status->status === 'For Review') {
-            $submission_status->status = 'Returned';
+            if ($submission_status->status === 'For Review') {
+                $submission_status->status = 'Returned';
+            }
+
+            $submission_status->save();
+
+            return redirect('/dashboard/students')->with('success', 'Successfully rejected the submission. The tab may now be closed.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to reject the submission.');
         }
-
-        $submission_status->save();
-
-        return back();
     }
 }

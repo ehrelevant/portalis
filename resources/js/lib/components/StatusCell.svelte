@@ -1,6 +1,5 @@
 <script>
     import { colorVariants } from '$lib/customVariants';
-    import Badge from './ui/badge/badge.svelte';
     import Button from './ui/button/button.svelte';
 
     export let href;
