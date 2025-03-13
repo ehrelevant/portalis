@@ -8,10 +8,12 @@ use App\Models\FormStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class FormController extends Controller
@@ -714,70 +716,103 @@ class FormController extends Controller
 
     public function validateForm(string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $validator_user = Auth::user();
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+                abort(401);
+            }
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        $form_status = FormStatus::where('user_id', $user_id)
-            ->where('form_id', $form_id)
-            ->firstOrFail();
-
-        if ($form_status->status === 'For Review') {
-            FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'Accepted']);
-        }
+                ->firstOrFail();
 
-        return back();
+            if ($form_status->status === 'For Review') {
+                FormStatus::where('user_id', $user_id)
+                    ->where('form_id', $form_id)
+                    ->update(['status' => 'Accepted']);
+            }
+
+            $success_message = 'Successfully validated the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to validate the form submission.');
+        }
     }
 
     public function invalidateForm(string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $validator_user = Auth::user();
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+                abort(401);
+            }
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        $form_status = FormStatus::where('user_id', $user_id)
-            ->where('form_id', $form_id)
-            ->firstOrFail();
-
-        if ($form_status->status === 'Accepted') {
-            FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'For Review']);
-        }
+                ->firstOrFail();
 
-        return back();
+            if ($form_status->status === 'Accepted') {
+                FormStatus::where('user_id', $user_id)
+                    ->where('form_id', $form_id)
+                    ->update(['status' => 'For Review']);
+            }
+
+            $success_message = 'Successfully invalidated the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to invalidate the form submission.');
+        }
     }
 
     public function rejectForm(string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $validator_user = Auth::user();
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+                abort(401);
+            }
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        $form_status = FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
             ->where('form_id', $form_id)
             ->firstOrFail();
 
-        if ($form_status->status === 'For Review') {
-            FormStatus::where('user_id', $user_id)
+            if ($form_status->status === 'For Review') {
+                FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
                 ->update(['status' => 'Returned']);
-        }
+            }
 
-        return back();
+            $success_message = 'Successfully rejected the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to reject the form submission.');
+        }
     }
 }
