@@ -1,14 +1,11 @@
 <script>
     import Navbar from '$lib/components/Navbar.svelte';
     import { ModeWatcher } from 'mode-watcher';
-    import { usePoll, page } from '@inertiajs/svelte';
+    import { page } from '@inertiajs/svelte';
     import * as Alert from '$lib/components/ui/alert';
     import Icon from '@iconify/svelte';
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
-
-    // Regularly poll server every 30 seconds
-    usePoll(30000);
 
     // In seconds
     const alertDuration = 15;
