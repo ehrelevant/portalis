@@ -14,9 +14,6 @@ importers:
       '@inertiajs/svelte':
         specifier: ^2.0.4
         version: 2.0.4(svelte@4.2.19)
-      mode-watcher:
-        specifier: ^0.5.1
-        version: 0.5.1(svelte@4.2.19)
     devDependencies:
       '@eslint/js':
         specifier: ^9.21.0
@@ -60,6 +57,9 @@ importers:
       lucide-svelte:
         specifier: ^0.477.0
         version: 0.477.0(svelte@4.2.19)
+      mode-watcher:
+        specifier: ^0.5.1
+        version: 0.5.1(svelte@4.2.19)
       postcss:
         specifier: ^8.5.3
         version: 8.5.3
@@ -78,6 +78,9 @@ importers:
       svelte-check:
         specifier: ^4.1.4
         version: 4.1.4(svelte@4.2.19)(typescript@5.8.2)
+      svelte-sonner:
+        specifier: ^0.3.28
+        version: 0.3.28(svelte@4.2.19)
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
@@ -1462,6 +1465,11 @@ packages:
     peerDependencies:
       svelte: ^3.19.0 || ^4.0.0
 
+  svelte-sonner@0.3.28:
+    resolution: {integrity: sha512-K3AmlySeFifF/cKgsYNv5uXqMVNln0NBAacOYgmkQStLa/UoU0LhfAACU6Gr+YYC8bOCHdVmFNoKuDbMEsppJg==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
+
   svelte@4.2.19:
     resolution: {integrity: sha512-IY1rnGr6izd10B0A8LqsBfmlT5OILVuZ7XsI0vdGPEvuonFV7NYEUK4dAkm9Zg2q0Um92kYjTpS1CAP3Nh/KWw==}
     engines: {node: '>=16'}
@@ -2826,6 +2834,10 @@ snapshots:
       svelte: 4.2.19
 
   svelte-hmr@0.16.0(svelte@4.2.19):
+    dependencies:
+      svelte: 4.2.19
+
+  svelte-sonner@0.3.28(svelte@4.2.19):
     dependencies:
       svelte: 4.2.19
 
