@@ -121,24 +121,25 @@
     Inertia.on('success', () => {
         isModalOpen = false;
     });
-
-    /** @type {string} */
-    let borderColor = 'border-black dark:border-white';
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Faculties List" />
 
-    <div class="flex flex-row items-center justify-between gap-4">
-        <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
             <Link href="/dashboard" method="get">
                 <Button class="flex flex-row gap-2"
                     ><Icon icon="lets-icons:back" />Back to Dashboard</Button
                 ></Link
             >
         </div>
-        <div class="flex flex-row items-center gap-4">
-            <Button class="flex flex-row gap-2" on:click={openAddForm}
+        <div
+            class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
+        >
+            <Button
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                on:click={openAddForm}
                 ><Icon icon="material-symbols:add" />Add Faculty</Button
             >
         </div>
