@@ -1,6 +1,5 @@
 <script>
     import Status from '$lib/components/Status.svelte';
-    import { Link } from '@inertiajs/svelte';
 
     import { Label } from '$lib/components/ui/label';
     import { Button } from '$lib/components/ui/button';
@@ -10,10 +9,15 @@
     export let deadline;
     export let submissionStatus;
     export let studentId;
+
+    $: deadlineDate = deadline && new Date(deadline);
+    $: isLate = deadline && deadlineDate < new Date();
 </script>
 
 <div
-    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row"
+    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row {isLate
+        ? 'bg-red/30'
+        : ''}"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
         <Label class="text-lg">{requirementName}</Label>
@@ -43,11 +47,13 @@
                 >View</Button
             >
         {/if}
-        <Button
-            href="/requirement/{requirementId}/upload"
-            class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
-            >Submit</Button
-        >
+        {#if !isLate}
+            <Button
+                href="/requirement/{requirementId}/upload"
+                class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
+                >Submit</Button
+            >
+        {/if}
         <Status type={submissionStatus} />
     </div>
 </div>
