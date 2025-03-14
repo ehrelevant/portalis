@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileSubmissionContoller extends Controller
@@ -55,47 +56,57 @@ class FileSubmissionContoller extends Controller
 
     public function submitDocument(Request $request, int $requirement_id, ?int $student_id = null): RedirectResponse
     {
-        $user = Auth::user();
-        if ($user->role === User::ROLE_STUDENT) {
-            if ($student_id && $student_id != $user->role_id) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'file' => ['required', 'mimes:pdf', 'max:2048'],
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator);
+            }
+
+            $user = Auth::user();
+            if ($user->role === User::ROLE_STUDENT) {
+                if ($student_id && $student_id != $user->role_id) {
+                    abort(401);
+                } elseif (!$student_id) {
+                    $student_id = $user->role_id;
+                }
+            } elseif ($user->role === User::ROLE_ADMIN) {
+                if (!$student_id) {
+                    abort(404);
+                }
+            } else {
                 abort(401);
-            } elseif (!$student_id) {
-                $student_id = $user->role_id;
             }
-        } elseif ($user->role === User::ROLE_ADMIN) {
-            if (!$student_id) {
-                abort(404);
+
+            $submission_status = SubmissionStatus::where('student_id', $student_id)
+                ->where('requirement_id', $requirement_id)
+                ->firstOrFail();
+            $submission_status->status = 'For Review';
+            $submission_status->save();
+
+            $submission = new Submission();
+            $submission->submission_status_id = $submission_status->id;
+
+            // TODO: Add proper revision and submission numbering
+            $submission->revision_number = 1;
+            $submission->submission_number = 1;
+
+            $filepath = $request->file('file')->store('student/documents');
+            $submission->filepath = $filepath;
+
+            $submission->save();
+
+            if ($user->role === User::ROLE_ADMIN) {
+                return redirect('/requirement/' . $requirement_id . '/view/' . $student_id)->with('success', 'Successfully submitted document.');
+            } else {
+                return redirect('/dashboard')->with('success', 'Successfully submitted document.');
             }
-        } else {
-            abort(401);
-        }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
 
-        $request->validate([
-            'file' => ['required', 'mimes:pdf', 'max:2048'],
-        ]);
-
-        $submission_status = SubmissionStatus::where('student_id', $student_id)
-            ->where('requirement_id', $requirement_id)
-            ->firstOrFail();
-        $submission_status->status = 'For Review';
-        $submission_status->save();
-
-        $submission = new Submission();
-        $submission->submission_status_id = $submission_status->id;
-
-        // TODO: Add proper revision and submission numbering
-        $submission->revision_number = 1;
-        $submission->submission_number = 1;
-
-        $filepath = $request->file('file')->store('student/documents');
-        $submission->filepath = $filepath;
-
-        $submission->save();
-
-        if ($user->role === User::ROLE_ADMIN) {
-            return redirect('/requirement/' . $requirement_id . '/view/' . $student_id);
-        } else {
-            return redirect('/dashboard');
+            return back()->with('success', 'Failed to submit document.');
         }
     }
 
