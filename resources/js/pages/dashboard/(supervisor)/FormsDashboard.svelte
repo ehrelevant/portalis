@@ -1,17 +1,35 @@
 <script>
     import AccordionLocal from '$lib/components/Accordion.svelte';
-    import { Link, router } from '@inertiajs/svelte';
+    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
     import Status from '$lib/components/Status.svelte';
-    import { Button } from '$lib/components/ui/button';
     import ListLink from '$lib/components/ListLink.svelte';
     import * as Accordion from '$lib/components/ui/accordion';
-    import { Label } from '$lib/components/ui/label';
+    import * as Dialog from '$lib/components/ui/dialog/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import { Button } from '$lib/components/ui/button/index';
+    import { colorVariants } from '$lib/customVariants';
+    import { Textarea } from '$lib/components/ui/textarea';
 
     export let phase;
     export let students;
     export let form_statuses;
+
+    let isReturnFormOpen = false;
+    const returnForm = useForm({
+        remarks: null,
+    });
+
+    function returnFormSubmission(student_user_id) {
+        $returnForm.post(`/form/self-evaluation/reject/${student_user_id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                $returnForm.reset();
+                isReturnFormOpen = false;
+            },
+        });
+    }
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">
@@ -48,36 +66,67 @@
                             />
                             <div class="flex flex-row justify-start gap-2">
                                 <Status type={status} />
-                                {#if status === 'Accepted'}
+                                {#if ['Accepted'].includes(status)}
                                     <Link
                                         as="button"
                                         href="/form/self-evaluation/invalidate/{student_user_id}"
-                                        class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                        method="post">Invalidate</Link
+                                        method="post"
+                                        ><Button variant="destructive"
+                                            >Invalidate</Button
+                                        ></Link
                                     >
-                                {:else if status !== 'Returned' && status !== 'None'}
+                                {:else if ['For Review'].includes(status)}
                                     <Link
                                         as="button"
                                         href="/form/self-evaluation/validate/{student_user_id}"
-                                        class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                                        method="post">Accept</Link
+                                        method="post"
+                                        ><Button class={colorVariants.green}
+                                            >Accept</Button
+                                        ></Link
                                     >
-                                    <Button
-                                        variant="destructive"
-                                        on:click={() => {
-                                            if (
-                                                confirm(
-                                                    'Do you really want to return this to the user?',
-                                                )
-                                            ) {
-                                                router.post(
-                                                    `/form/self-evaluation/reject/${student_user_id}`,
-                                                    {},
-                                                    { preserveScroll: true },
-                                                );
-                                            }
-                                        }}>Return To Student</Button
-                                    >
+                                    <Dialog.Root bind:open={isReturnFormOpen}>
+                                        <Dialog.Trigger>
+                                            <Button variant="destructive"
+                                                >Return to Student</Button
+                                            >
+                                        </Dialog.Trigger>
+                                        <Dialog.Content
+                                            class="sm:max-w-[425px]"
+                                        >
+                                            <Dialog.Header>
+                                                <Dialog.Title
+                                                    >Return to Student</Dialog.Title
+                                                >
+                                            </Dialog.Header>
+                                            <form
+                                                on:submit|preventDefault={returnFormSubmission}
+                                                class="flex flex-col gap-4"
+                                            >
+                                                <Label for="remarks"
+                                                    >Remarks</Label
+                                                >
+                                                <Textarea
+                                                    id="remarks"
+                                                    bind:value={
+                                                        $returnForm.remarks
+                                                    }
+                                                />
+                                                <Dialog.Footer>
+                                                    <Dialog.Close>
+                                                        <Button
+                                                            variant="outline"
+                                                            >Cancel</Button
+                                                        >
+                                                    </Dialog.Close>
+                                                    <Button
+                                                        variant="destructive"
+                                                        type="submit"
+                                                        >Return to Student</Button
+                                                    >
+                                                </Dialog.Footer>
+                                            </form>
+                                        </Dialog.Content>
+                                    </Dialog.Root>
                                 {/if}
                             </div>
                         {/each}
