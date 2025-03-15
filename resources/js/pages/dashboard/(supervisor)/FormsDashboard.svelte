@@ -99,7 +99,10 @@
                                                 >
                                             </Dialog.Header>
                                             <form
-                                                on:submit|preventDefault={returnFormSubmission}
+                                                on:submit|preventDefault={() =>
+                                                    returnFormSubmission(
+                                                        student_user_id,
+                                                    )}
                                                 class="flex flex-col gap-4"
                                             >
                                                 <Label for="remarks"

@@ -743,7 +743,7 @@ class FormController extends Controller
         try {
             $validator_user = Auth::user();
 
-            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
                 abort(401);
             }
 
@@ -762,8 +762,10 @@ class FormController extends Controller
             $success_message = 'Successfully validated the form submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else {
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully validated the form submission.');
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -777,7 +779,7 @@ class FormController extends Controller
         try {
             $validator_user = Auth::user();
 
-            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
                 abort(401);
             }
 
@@ -796,8 +798,10 @@ class FormController extends Controller
             $success_message = 'Successfully invalidated the form submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else {
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully invalidated the form submission.');
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -815,7 +819,7 @@ class FormController extends Controller
 
             $validator_user = Auth::user();
 
-            if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
                 abort(401);
             }
 
@@ -837,8 +841,10 @@ class FormController extends Controller
             $success_message = 'Successfully rejected the form submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else {
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully rejected the form submission.');
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
