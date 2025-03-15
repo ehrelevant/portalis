@@ -51,6 +51,7 @@ class DashboardController extends Controller
                         'requirements.requirement_name',
                         'requirements.deadline',
                         'submission_statuses.status',
+                        'submission_statuses.remarks',
                     )
                     ->orderBy('requirements.deadline')
                     ->get();
@@ -84,7 +85,7 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
-                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
+                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline', 'form_statuses.remarks')
                     ->orderBy('forms.deadline')
                     ->get();
 
@@ -126,7 +127,7 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
-                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
+                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline', 'form_statuses.remarks')
                     ->orderBy('forms.deadline')
                     ->get();
 
@@ -159,7 +160,7 @@ class DashboardController extends Controller
                         'form_statuses.form_id'
                     )
                     ->where('forms.phase', $phase)
-                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline')
+                    ->select('forms.form_name', 'forms.short_name', 'form_statuses.status', 'forms.deadline', 'form_statuses.remarks')
                     ->orderBy('forms.deadline')
                     ->get();
 
