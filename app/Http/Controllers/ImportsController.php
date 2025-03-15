@@ -16,16 +16,31 @@ use Inertia\Response;
 
 class ImportsController extends Controller
 {
-    public function csvToCollection($csv)
+    public function getCsvHeaders($csv)
     {
         // originally, header row is key=>value
         // from CSV, this means index=>column_name (e.g. 0=>student_number)
-        // array_flip swaps key and value, which means column_name=>index
+        // array_flip swaps key and value, which means column_name=>index (e.g. student_number=>0)
         $headers = array_flip(fgetcsv($csv));
+
+        return $headers;
+    }
+
+    public function csvToCollection($csv)
+    {
+        // get headers of CSV
+        $headers = self::getCsvHeaders($csv);
 
         // loop through every row in CSV
         $collection = [];
-        while (($csv_row = fgetcsv($csv)) !== FALSE) {   
+        while (($csv_row = fgetcsv($csv)) !== FALSE) {
+            // skip CSV row if it is shorter than the header row
+            if (count($csv_row) < count($headers)) {
+                continue;
+            }
+
+            // ---
+
             $collection_row = array();
             
             foreach ($headers as $key => $value) {
@@ -38,14 +53,25 @@ class ImportsController extends Controller
         return collect($collection);
     }
 
-    public function validateCsv($csvPath, $primary_keys, $unique_keys): bool
+    public function validateCsv($csvPath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional): bool
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
+        $importedCsvHeaders = self::getCsvHeaders($importedCsv);
+        //error_log($importedCsvHeaders[0]);
+
+        $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $importedCollection = self::csvToCollection($importedCsv);
 
-        // check CSV for null or duplicate values of primary keys
+        // check if primary keys are:
+            // present in CSV headers
+            // not null
+            // unique
         foreach ($primary_keys as $primary_key) {
+            if (!array_key_exists($primary_key, $importedCsvHeaders)) {
+                return false;
+            }
+
             foreach ($importedCollection as $importedRow) {
                 if ($importedRow[$primary_key] == NULL) {
                     return false;
@@ -57,9 +83,38 @@ class ImportsController extends Controller
             }
         }
 
-        // check CSV for duplicate values of unique keys
+        // check if unique keys are:
+            // present in CSV headers
+            // unique
         foreach ($unique_keys as $unique_key) {
+            if (!array_key_exists($unique_key, $importedCsvHeaders)) {
+                return false;
+            }
+
             if (count($importedCollection->duplicatesStrict($unique_key)) > 0) {
+                return false;
+            }
+        }
+
+        // check if other required keys are:
+            // present in CSV headers
+            // not null
+        foreach ($other_keys_required as $other_key) {
+            if (!array_key_exists($other_key, $importedCsvHeaders)) {
+                return false;
+            }
+
+            foreach ($importedCollection as $importedRow) {
+                if ($importedRow[$other_key] == NULL) {
+                    return false;
+                }
+            }
+        }
+
+        // check if other optional keys are
+            // present in CSV headers
+        foreach ($other_keys_optional as $other_key) {
+            if (!array_key_exists($other_key, $importedCsvHeaders)) {
                 return false;
             }
         }
@@ -95,18 +150,20 @@ class ImportsController extends Controller
 
         /*
             student_number      primary
-            first_name
-            middle_name
-            last_name
+            first_name          other_reqd
+            middle_name         other_opt
+            last_name           other_reqd
             email               unique
-            wordpress_name
+            wordpress_name      other_reqd
             wordpress_email     unique
         */
 
         // check CSV for validity of values under primary/unique keys
         $primary_keys = ['student_number'];
         $unique_keys = ['email', 'wordpress_email'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+        $other_keys_required = ['first_name', 'last_name', 'wordpress_name'];
+        $other_keys_optional = ['middle_name'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
             // todo: display error message instead of abort 404
             abort(404);
         }
@@ -190,16 +247,18 @@ class ImportsController extends Controller
         // ---
 
         /*
-            first_name
-            middle_name
-            last_name
+            first_name      other_reqd
+            middle_name     other_opt
+            last_name       other_reqd
             email           unique
         */
 
         // check CSV for validity of values under primary/unique keys
         $primary_keys = [];
         $unique_keys = ['email'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+        $other_keys_required = ['first_name', 'last_name'];
+        $other_keys_optional = ['middle_name'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
             // todo: display error message instead of abort 404
             abort(404);
         }
@@ -280,9 +339,9 @@ class ImportsController extends Controller
         // ---
 
         /*
-            first_name
-            middle_name
-            last_name
+            first_name      other_reqd
+            middle_name     other_opt
+            last_name       other_reqd
             section         foreign
             email           unique
         */
@@ -290,7 +349,9 @@ class ImportsController extends Controller
         // check CSV for validity of values under primary/unique keys
         $primary_keys = [];
         $unique_keys = ['email'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+        $other_keys_required = ['first_name', 'last_name'];
+        $other_keys_optional = ['middle_name'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
             // todo: display error message instead of abort 404
             abort(404);
         }
@@ -371,13 +432,15 @@ class ImportsController extends Controller
         // ---
 
         /*
-            company_name
+            company_name    unique
         */
 
         // check CSV for validity of values under primary/unique keys
         $primary_keys = [];
         $unique_keys = ['company_name'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+        $other_keys_required = [];
+        $other_keys_optional = [];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
             // todo: display error message instead of abort 404
             abort(404);
         }
