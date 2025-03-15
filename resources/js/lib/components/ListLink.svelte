@@ -50,7 +50,7 @@
                 </Dialog.Trigger>
                 <Dialog.Content class="sm:max-w-[425px]">
                     <Dialog.Header>
-                        <Dialog.Title>Faculty Remarks</Dialog.Title>
+                        <Dialog.Title>Submission Remarks</Dialog.Title>
                         <Dialog.Description class="min-h-24"
                             >{remarks}</Dialog.Description
                         >
