@@ -759,18 +759,18 @@ class FormController extends Controller
                     ->update(['status' => 'Accepted']);
             }
 
-            $success_message = 'Successfully validated the form submission. This tab may now be closed.';
+            $success_message = 'Successfully accepted the form submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
-                return redirect('/dashboard')->with('success', 'Successfully validated the form submission.');
+                return redirect('/dashboard')->with('success', 'Successfully accepted the form submission.');
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to validate the form submission.');
+            return back()->with('error', 'Failed to accept the form submission.');
         }
     }
 
@@ -838,18 +838,18 @@ class FormController extends Controller
                     ]);
             }
 
-            $success_message = 'Successfully rejected the form submission. This tab may now be closed.';
+            $success_message = 'Successfully returned the form submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
-                return redirect('/dashboard')->with('success', 'Successfully rejected the form submission.');
+                return redirect('/dashboard')->with('success', 'Successfully returned the form submission.');
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to reject the form submission.');
+            return back()->with('error', 'Failed to return the form submission.');
         }
     }
 }

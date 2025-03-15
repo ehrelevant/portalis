@@ -187,7 +187,7 @@ class FileSubmissionContoller extends Controller
 
             $submission_status->save();
 
-            $success_message = 'Successfully validated the requirement submission. This tab may now be closed.';
+            $success_message = 'Successfully accepted the requirement submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
             } else {
@@ -196,7 +196,7 @@ class FileSubmissionContoller extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to validate the requirement submission.');
+            return back()->with('error', 'Failed to accept the requirement submission.');
         }
     }
 
@@ -248,7 +248,7 @@ class FileSubmissionContoller extends Controller
 
             $submission_status->save();
 
-            $success_message = 'Successfully rejected the requirement submission. This tab may now be closed.';
+            $success_message = 'Successfully returned the requirement submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
                 return redirect('/dashboard/admin/students')->with('success', $success_message);
             } else {
@@ -257,7 +257,7 @@ class FileSubmissionContoller extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('error', 'Failed to reject the requirement submission.');
+            return back()->with('error', 'Failed to return the requirement submission.');
         }
     }
 }
