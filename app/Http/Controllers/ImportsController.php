@@ -16,6 +16,60 @@ use Inertia\Response;
 
 class ImportsController extends Controller
 {
+    public function csvToCollection($csv)
+    {
+        // originally, header row is key=>value
+        // from CSV, this means index=>column_name (e.g. 0=>student_number)
+        // array_flip swaps key and value, which means column_name=>index
+        $headers = array_flip(fgetcsv($csv));
+
+        // loop through every row in CSV
+        $collection = [];
+        while (($csv_row = fgetcsv($csv)) !== FALSE) {   
+            $collection_row = array();
+            
+            foreach ($headers as $key => $value) {
+                $collection_row[$key] = $csv_row[$value];
+            }
+
+            array_push($collection, $collection_row);
+        }
+
+        return collect($collection);
+    }
+
+    public function validateCsv($csvPath, $primary_keys, $unique_keys): bool
+    {
+        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
+        $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
+        $importedCollection = self::csvToCollection($importedCsv);
+
+        // check CSV for null or duplicate values of primary keys
+        foreach ($primary_keys as $primary_key) {
+            foreach ($importedCollection as $importedRow) {
+                if ($importedRow[$primary_key] == NULL) {
+                    return false;
+                }
+            }
+
+            if (count($importedCollection->duplicatesStrict($primary_key)) > 0) {
+                return false;
+            }
+        }
+
+        // check CSV for duplicate values of unique keys
+        foreach ($unique_keys as $unique_key) {
+            if (count($importedCollection->duplicatesStrict($unique_key)) > 0) {
+                return false;
+            }
+        }
+
+        // CSV is valid if none of the above guard clauses are hit
+        return true;
+    }
+
+    // ---
+
     public function showStudentCsvUploadForm(): Response
     {
         return Inertia::render('list/UploadStudents');
@@ -36,6 +90,33 @@ class ImportsController extends Controller
         ]);
 
         $filepath = $request->file('file')->store('list/students');
+
+        // ---
+
+        /*
+            student_number      primary
+            first_name
+            middle_name
+            last_name
+            email               unique
+            wordpress_name
+            wordpress_email     unique
+        */
+
+        // check CSV for validity of values under primary/unique keys
+        $primary_keys = ['student_number'];
+        $unique_keys = ['email', 'wordpress_email'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+            // todo: display error message instead of abort 404
+            abort(404);
+        }
+
+        // todo: check foreign keys
+        $foreign_keys = [];
+
+        // ---
+
+        // replace current database with CSV if valid
         self::deleteAllStudents();
         self::importStudents($filepath);
 
@@ -54,47 +135,31 @@ class ImportsController extends Controller
         foreach ($student_ids as $student_id) {
             $admin_controller->deleteStudent($student_id);
         }
-        
     }
 
     public function importStudents($csvPath): void
     {   
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $studentsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-
-        // todo: error handling (import validation)
-        /*
-            student_number
-            first_name
-            middle_name
-            last_name
-            email
-            wordpress_name
-            wordpress_email
-        */
-        
-        // originally, header row is key=>value
-        // from CSV, this means index=>column_name (e.g. 0=>student_number)
-        // array_flip swaps key and value, which means column_name=>index (e.g. student_number=>0)
-        $headers = array_flip(fgetcsv($studentsCsv));
+        $studentsCollection = self::csvToCollection($studentsCsv);
         
         // loop through every student in row
-        while (($studentCsvRow = fgetcsv($studentsCsv)) !== FALSE) {      
+        foreach ($studentsCollection as $studentRow) {      
             $new_student = new Student();
-            $new_student->student_number = $studentCsvRow[$headers['student_number']];
+            $new_student->student_number = $studentRow['student_number'];
             $new_student->supervisor_id = null;
             $new_student->faculty_id = null;
-            $new_student->wordpress_name = $studentCsvRow[$headers['wordpress_name']];
-            $new_student->wordpress_email = $studentCsvRow[$headers['wordpress_email']];
+            $new_student->wordpress_name = $studentRow['wordpress_name'];
+            $new_student->wordpress_email = $studentRow['wordpress_email'];
             $new_student->save();
 
             $new_user = new User();
             $new_user->role = User::ROLE_STUDENT;
             $new_user->role_id = $new_student->id;
-            $new_user->first_name = $studentCsvRow[$headers['first_name']];
-            $new_user->middle_name = $studentCsvRow[$headers['middle_name']] ?? '';
-            $new_user->last_name = $studentCsvRow[$headers['last_name']];
-            $new_user->email = $studentCsvRow[$headers['email']];
+            $new_user->first_name = $studentRow['first_name'];
+            $new_user->middle_name = $studentRow['middle_name'] ?? '';
+            $new_user->last_name = $studentRow['last_name'];
+            $new_user->email = $studentRow['email'];
             $new_user->save();
         }
     }
@@ -121,6 +186,30 @@ class ImportsController extends Controller
         ]);
 
         $filepath = $request->file('file')->store('list/supervisors');
+
+        // ---
+
+        /*
+            first_name
+            middle_name
+            last_name
+            email           unique
+        */
+
+        // check CSV for validity of values under primary/unique keys
+        $primary_keys = [];
+        $unique_keys = ['email'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+            // todo: display error message instead of abort 404
+            abort(404);
+        }
+
+        // todo: check foreign keys
+        $foreign_keys = ['section'];
+
+        // ---
+
+        // replace current database with CSV if valid
         self::deleteAllSupervisors();
         self::importSupervisors($filepath);
 
@@ -145,32 +234,20 @@ class ImportsController extends Controller
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $supervisorsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
+        $supervisorsCollection = self::csvToCollection($supervisorsCsv);
 
-        // todo: error handling (import validation)
-        /*
-            first_name
-            middle_name
-            last_name
-            email
-        */
-        
-        // originally, header row is key=>value
-        // from CSV, this means index=>column_name (e.g. 0=>first_name)
-        // array_flip swaps key and value, which means column_name=>index (e.g. first_name=>0)
-        $headers = array_flip(fgetcsv($supervisorsCsv));
-
-        // loop through every supervisor in row
-        while (($supervisorCsvRow = fgetcsv($supervisorsCsv)) !== FALSE) {      
+        // loop through every supervisor in CSV
+        foreach ($supervisorsCollection as $supervisorRow) {      
             $new_supervisor = new Supervisor();
             $new_supervisor->save();
 
             $new_user = new User();
             $new_user->role = User::ROLE_SUPERVISOR;
             $new_user->role_id = $new_supervisor->id;
-            $new_user->first_name = $supervisorCsvRow[$headers['first_name']];
-            $new_user->middle_name = $supervisorCsvRow[$headers['middle_name']] ?? '';
-            $new_user->last_name = $supervisorCsvRow[$headers['last_name']];
-            $new_user->email = $supervisorCsvRow[$headers['email']];
+            $new_user->first_name = $supervisorRow['first_name'];
+            $new_user->middle_name = $supervisorRow['middle_name'] ?? '';
+            $new_user->last_name = $supervisorRow['last_name'];
+            $new_user->email = $supervisorRow['email'];
             $new_user->save();
         }
     }
@@ -187,7 +264,7 @@ class ImportsController extends Controller
     {   
         // todo: confirm if faculty should be allowed to add other faculty
         $user = Auth::user();
-        if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
+        if ($user->role !== User::ROLE_ADMIN) {
             abort(401);
         }
 
@@ -199,6 +276,31 @@ class ImportsController extends Controller
         ]);
 
         $filepath = $request->file('file')->store('list/faculties');
+
+        // ---
+
+        /*
+            first_name
+            middle_name
+            last_name
+            section         foreign
+            email           unique
+        */
+
+        // check CSV for validity of values under primary/unique keys
+        $primary_keys = [];
+        $unique_keys = ['email'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+            // todo: display error message instead of abort 404
+            abort(404);
+        }
+
+        // todo: check foreign keys
+        $foreign_keys = ['section'];
+
+        // ---
+
+        // replace current database with CSV if valid
         self::deleteAllFaculties();
         self::importFaculties($filepath);
 
@@ -223,34 +325,21 @@ class ImportsController extends Controller
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $facultiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-
-        // todo: error handling (import validation)
-        /*
-            first_name
-            middle_name
-            last_name
-            section
-            email
-        */
-        
-        // originally, header row is key=>value
-        // from CSV, this means index=>column_name (e.g. 0=>first_name)
-        // array_flip swaps key and value, which means column_name=>index (e.g. first_name=>0)
-        $headers = array_flip(fgetcsv($facultiesCsv));
+        $facultiesCollection = self::csvToCollection($facultiesCsv);
 
         // loop through every faculty in row
-        while (($facultyCsvRow = fgetcsv($facultiesCsv)) !== FALSE) {      
+        foreach ($facultiesCollection as $facultyRow) {      
             $new_faculty = new Faculty();
-            $new_faculty->section = $facultyCsvRow[$headers['section']];
+            $new_faculty->section = $facultyRow['section'];
             $new_faculty->save();
 
             $new_user = new User();
             $new_user->role = User::ROLE_FACULTY;
             $new_user->role_id = $new_faculty->id;
-            $new_user->first_name = $facultyCsvRow[$headers['first_name']];
-            $new_user->middle_name = $facultyCsvRow[$headers['middle_name']] ?? '';
-            $new_user->last_name = $facultyCsvRow[$headers['last_name']];
-            $new_user->email = $facultyCsvRow[$headers['email']];
+            $new_user->first_name = $facultyRow['first_name'];
+            $new_user->middle_name = $facultyRow['middle_name'] ?? '';
+            $new_user->last_name = $facultyRow['last_name'];
+            $new_user->email = $facultyRow['email'];
             $new_user->save();
         }
     }   
@@ -278,6 +367,27 @@ class ImportsController extends Controller
         ]);
 
         $filepath = $request->file('file')->store('list/companies');
+
+        // ---
+
+        /*
+            company_name
+        */
+
+        // check CSV for validity of values under primary/unique keys
+        $primary_keys = [];
+        $unique_keys = ['company_name'];
+        if (!self::validateCsv($filepath, $primary_keys, $unique_keys)) {
+            // todo: display error message instead of abort 404
+            abort(404);
+        }
+
+        // company list has no foreign keys
+        //$foreign_keys = [];
+
+        // ---
+
+        // replace current database with CSV if valid
         self::deleteAllCompanies();
         self::importCompanies($filepath);
 
@@ -301,21 +411,12 @@ class ImportsController extends Controller
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $companiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
+        $companiesCollection = self::csvToCollection($companiesCsv);
 
-        // todo: error handling (import validation)
-        /*
-            company_name
-        */
-        
-        // originally, header row is key=>value
-        // from CSV, this means index=>column_name (e.g. 0=>first_name)
-        // array_flip swaps key and value, which means column_name=>index (e.g. first_name=>0)
-        $headers = array_flip(fgetcsv($companiesCsv));
-
-        // loop through every company in row
-        while (($companyCsvRow = fgetcsv($companiesCsv)) !== FALSE) {      
+        // loop through every company in CSV
+        foreach ($companiesCollection as $companyRow) {      
             $new_company = new Company();
-            $new_company->company_name = $companyCsvRow[$headers['company_name']];
+            $new_company->company_name = $companyRow['company_name'];
             $new_company->save();
         }
     }   
