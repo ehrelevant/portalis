@@ -34,6 +34,7 @@
                         requirement_name,
                         deadline,
                         status,
+                        remarks,
                     } = submission}
                     <ListLink
                         name={requirement_name}
@@ -41,6 +42,7 @@
                         viewHref="/file/submission/{student_id}/{requirement_id}"
                         {deadline}
                         {status}
+                        {remarks}
                     />
                 {/each}
             </Accordion.Content>
@@ -59,6 +61,7 @@
                         requirement_name,
                         deadline,
                         status,
+                        remarks,
                     } = submission}
                     <ListLink
                         name={requirement_name}
@@ -66,6 +69,7 @@
                         viewHref="/file/submission/{student_id}/{requirement_id}"
                         {deadline}
                         {status}
+                        {remarks}
                     />
                 {/each}
             </Accordion.Content>
