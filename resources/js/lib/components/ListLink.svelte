@@ -3,24 +3,30 @@
 
     import { Label } from '$lib/components/ui/label';
     import { Button } from '$lib/components/ui/button';
+    import { Link } from '@inertiajs/svelte';
 
-    export let requirementId;
-    export let requirementName;
+    export let name;
     export let deadline;
-    export let submissionStatus;
-    export let studentId;
+    export let status;
+    export let viewHref = null;
+    export let submitHref;
 
     $: deadlineDate = deadline && new Date(deadline);
     $: isLate = deadline && deadlineDate < new Date();
+    $: isLinkActive = !isLate && ['None', 'Returned'].includes(status);
 </script>
 
-<div
-    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row {isLate
+<Link
+    href={submitHref}
+    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row
+        {!isLinkActive ? 'pointer-events-none' : ''} {isLate
         ? 'bg-red/30'
         : ''}"
 >
-    <div class="flex flex-col items-center justify-center sm:items-start">
-        <Label class="text-lg">{requirementName}</Label>
+    <div
+        class="pointer-events-auto flex flex-col items-center justify-center sm:items-start"
+    >
+        <Label class="text-lg">{name}</Label>
         {#if deadline}
             {@const deadlineDateTime = new Date(deadline)}
             <p class="text-xs">
@@ -37,23 +43,16 @@
         {/if}
     </div>
     <div
-        class="flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
+        class="pointer-events-auto flex flex-col content-center items-center justify-center gap-2 sm:flex-row"
     >
-        {#if submissionStatus !== 'None'}
+        {#if viewHref && status !== 'None'}
             <Button
-                href="/file/submission/{studentId}/{requirementId}"
+                href={viewHref}
                 target="_blank"
                 class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
                 >View</Button
             >
         {/if}
-        {#if !isLate}
-            <Button
-                href="/requirement/{requirementId}/upload"
-                class="rounded-xl bg-dark-primary text-dark-primary-text hover:bg-opacity-90"
-                >Submit</Button
-            >
-        {/if}
-        <Status type={submissionStatus} />
+        <Status type={status} />
     </div>
-</div>
+</Link>
