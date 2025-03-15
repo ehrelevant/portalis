@@ -1,7 +1,12 @@
 <script>
-    import Status from '$lib/components/Status.svelte';
-    import { Link, router } from '@inertiajs/svelte';
+    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
+
+    import * as Dialog from '$lib/components/ui/dialog/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import { Button } from '$lib/components/ui/button/index';
+    import { colorVariants } from '$lib/customVariants';
+    import { Textarea } from '$lib/components/ui/textarea';
 
     export let studentId;
     export let studentName;
@@ -10,12 +15,22 @@
     export let status;
     export let isAdmin = false;
 
-    function returnToStudent() {
-        if (confirm('Do you really want to return this to the student?')) {
-            router.post(
-                `/requirement/${requirementId}/view/${studentId}/reject`,
-            );
-        }
+    let isReturnFormOpen = false;
+    const returnForm = useForm({
+        remarks: null,
+    });
+
+    function returnRequirementSubmission() {
+        $returnForm.post(
+            `/requirement/${requirementId}/view/${studentId}/reject`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    $returnForm.reset();
+                    isReturnFormOpen = false;
+                },
+            },
+        );
     }
 </script>
 
@@ -38,26 +53,53 @@
                 <Link
                     as="button"
                     href="/requirement/{requirementId}/view/{studentId}/invalidate"
-                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Invalidate</Link
+                    method="post"
+                    ><Button variant="destructive">Invalidate</Button></Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
                     as="button"
                     href="/requirement/{requirementId}/view/{studentId}/validate"
-                    class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                    method="post">Accept</Link
+                    method="post"
+                    ><Button class={colorVariants.green}>Accept</Button></Link
                 >
-                <button
-                    class="flex w-40 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    on:click={returnToStudent}>Return To Student</button
-                >
+                <Dialog.Root bind:open={isReturnFormOpen}>
+                    <Dialog.Trigger>
+                        <Button variant="destructive">Return to Student</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content class="sm:max-w-[425px]">
+                        <Dialog.Header>
+                            <Dialog.Title>Return to Student</Dialog.Title>
+                            <Dialog.Description>
+                                Return {requirementName} submission to {studentName.last_name},
+                                {studentName.first_name}.
+                            </Dialog.Description>
+                        </Dialog.Header>
+                        <form
+                            on:submit|preventDefault={returnRequirementSubmission}
+                            class="flex flex-col gap-4"
+                        >
+                            <Label for="remarks">Remarks</Label>
+                            <Textarea
+                                id="remarks"
+                                bind:value={$returnForm.remarks}
+                            />
+                            <Dialog.Footer>
+                                <Dialog.Close>
+                                    <Button variant="outline">Cancel</Button>
+                                </Dialog.Close>
+                                <Button variant="destructive" type="submit"
+                                    >Return to Student</Button
+                                >
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
             {/if}
             {#if isAdmin}
-                <Link
-                    href="/requirement/{requirementId}/upload/{studentId}"
-                    class="auto flex flex-row items-center justify-center rounded-full bg-floating-blue-light p-2 px-4 hover:opacity-90 dark:bg-floating-blue"
-                    >Upload Document</Link
+                <Link href="/requirement/{requirementId}/upload/{studentId}"
+                    ><Button class={colorVariants.blue}>Upload Document</Button
+                    ></Link
                 >
             {/if}
         </div>
