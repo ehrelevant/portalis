@@ -228,9 +228,13 @@ class FileSubmissionContoller extends Controller
         }
     }
 
-    public function rejectStudentSubmission(int $requirement_id, int $student_id): RedirectResponse
+    public function rejectStudentSubmission(Request $request, int $requirement_id, int $student_id): RedirectResponse
     {
         try {
+            $form_values = $request->validate([
+                'remarks' => ['nullable', 'string'],
+            ]);
+
             $validator_user = Auth::user();
 
             $submission_status = SubmissionStatus::where('student_id', $student_id)
@@ -239,6 +243,7 @@ class FileSubmissionContoller extends Controller
 
             if ($submission_status->status === 'For Review') {
                 $submission_status->status = 'Returned';
+                $submission_status->remarks = $form_values['remarks'];
             }
 
             $submission_status->save();

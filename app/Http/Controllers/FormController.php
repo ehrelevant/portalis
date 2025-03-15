@@ -806,9 +806,13 @@ class FormController extends Controller
         }
     }
 
-    public function rejectForm(string $short_name, int $user_id): RedirectResponse
+    public function rejectForm(Request $request, string $short_name, int $user_id): RedirectResponse
     {
         try {
+            $form_values = $request->validate([
+                'remarks' => ['nullable', 'string'],
+            ]);
+
             $validator_user = Auth::user();
 
             if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
@@ -824,7 +828,10 @@ class FormController extends Controller
             if ($form_status->status === 'For Review') {
                 FormStatus::where('user_id', $user_id)
                     ->where('form_id', $form_id)
-                    ->update(['status' => 'Returned']);
+                    ->update([
+                        'status' => 'Returned',
+                        'remarks' => $form_values['remarks'],
+                    ]);
             }
 
             $success_message = 'Successfully rejected the form submission. This tab may now be closed.';
