@@ -169,7 +169,7 @@ class ImportsController extends Controller
         }
 
         // todo: check foreign keys
-        $foreign_keys = [];
+        $foreign_keys = ['section', 'supervisor_name'];
 
         // ---
 
@@ -264,7 +264,7 @@ class ImportsController extends Controller
         }
 
         // todo: check foreign keys
-        $foreign_keys = ['section'];
+        $foreign_keys = ['company_name'];
 
         // ---
 
@@ -350,14 +350,14 @@ class ImportsController extends Controller
         $primary_keys = [];
         $unique_keys = ['email'];
         $other_keys_required = ['first_name', 'last_name'];
-        $other_keys_optional = ['middle_name'];
+        $other_keys_optional = ['middle_name', 'section'];
         if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
             // todo: display error message instead of abort 404
             abort(404);
         }
 
-        // todo: check foreign keys
-        $foreign_keys = ['section'];
+        // faculty list has no foreign keys
+        //$foreign_keys = [];
 
         // ---
 
