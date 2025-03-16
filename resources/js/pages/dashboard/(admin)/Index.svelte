@@ -170,7 +170,7 @@
             </div>
             <Button
                 type="submit"
-                variant="primary"
+                variant="outline"
                 class="w-full cursor-pointer bg-dark-primary text-white text-xl p-2"
             > Save </Button>
         </form>
