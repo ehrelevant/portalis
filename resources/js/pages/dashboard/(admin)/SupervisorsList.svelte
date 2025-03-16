@@ -158,6 +158,12 @@
                 variant="outline">Import Supervisors</Button
             >
             <Button
+                href="/export/supervisors/list"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                target="_blank"
+                variant="outline">Export Supervisors</Button
+            >
+            <Button
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 on:click={openAddForm}
                 ><Icon icon="material-symbols:add" />Add Supervisor</Button

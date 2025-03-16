@@ -144,6 +144,12 @@
                 ><Icon icon="material-symbols:add" />Import Faculties</Button
             >
             <Button
+                href="/export/faculties/list"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                target="_blank"
+                variant="outline">Export Faculties</Button
+            >
+            <Button
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 on:click={openAddForm}
                 ><Icon icon="material-symbols:add" />Add Faculty</Button

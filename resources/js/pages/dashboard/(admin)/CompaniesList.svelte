@@ -134,6 +134,12 @@
                 variant="outline">Import Companies</Button
             >
             <Button
+                href="/export/companies/list"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                target="_blank"
+                variant="outline">Export Companies</Button
+            >
+            <Button
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 on:click={openAddForm}
                 ><Icon icon="material-symbols:add" />Add Company</Button
