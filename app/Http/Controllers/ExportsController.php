@@ -107,7 +107,7 @@ class ExportsController extends Controller
                 'users.email',
                 'companies.company_name',
             )
-            ->orderBy('users.last_name', 'users.first_name')
+            ->orderBy('users.last_name', 'ASC', 'users.first_name', 'ASC')
             ->get();
 
         // store headers of DB query
@@ -161,7 +161,6 @@ class ExportsController extends Controller
             ->where('role', 'faculty')
 
             ->join('faculties', 'users.role_id', '=', 'faculties.id')
-            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
 
             ->select(
                 'users.first_name',
@@ -170,7 +169,7 @@ class ExportsController extends Controller
                 'users.email',
                 'faculties.section'
             )
-            ->orderBy('users.last_name', 'users.first_name')
+            ->orderBy('users.last_name', 'ASC', 'users.first_name', 'ASC')
             ->get();
 
         // store headers of DB query
