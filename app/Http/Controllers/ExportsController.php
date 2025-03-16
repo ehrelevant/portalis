@@ -62,6 +62,20 @@ class ExportsController extends Controller
             fclose($csvFile);
         };
 
+        // store headers of DB query
+        if (count($dbTable) > 0)
+            // overwrite headers to be safe, though this *should* just be a redundancy
+            $headers = array_keys((array) $dbTable[0]);
+        else
+            $headers = [
+                'student_number',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'section',
+                //'has_dropped',
+            ];
+
         // ---
 
         $content_headers = [
@@ -75,6 +89,180 @@ class ExportsController extends Controller
         // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
+
+    public function exportSupervisorList(): StreamedResponse
+    {
+        $csvFileName = 'supervisor_list';
+
+        $dbTable = DB::table('users')
+            ->where('role', 'supervisor')
+
+            ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
+            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
+
+            ->select(
+                'users.first_name',
+                'users.middle_name',
+                'users.last_name',
+                'users.email',
+                'companies.company_name',
+            )
+            ->orderBy('users.last_name', 'users.first_name')
+            ->get();
+
+        // store headers of DB query
+        if (count($dbTable) > 0)
+            // overwrite headers to be safe, though this *should* just be a redundancy
+            $headers = array_keys((array) $dbTable[0]);
+        else
+            $headers = [
+                'first_name',
+                'middle_name',
+                'last_name',
+                'email',
+                'company_name',
+            ];
+
+        // ---
+
+        $callback = function() use ($headers, $dbTable) {
+            $csvFile = fopen('php://output', 'w');
+
+            // add header row to CSV
+            fputcsv($csvFile, $headers);
+
+            // add entry rows to CSV
+            foreach ($dbTable as $row) {
+                fputcsv($csvFile, (array) $row);
+            }
+
+            fclose($csvFile);
+        };
+
+        // ---
+
+        $content_headers = [
+            'Cache-Control'         => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'          => 'text/csv',
+            'Content-Disposition'   => 'attachment; filename=' . $csvFileName . '.csv',
+            'Expires'               => '0',
+            'Pragma'                => 'public'
+        ];
+
+        // todo: show user prompt to download from public folder to actual local filesystem
+        return response()->stream($callback, 200, $content_headers);
+    }
+
+    public function exportFacultyList(): StreamedResponse
+    {
+        $csvFileName = 'faculty_list';
+
+        $dbTable = DB::table('users')
+            ->where('role', 'faculty')
+
+            ->join('faculties', 'users.role_id', '=', 'faculties.id')
+            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
+
+            ->select(
+                'users.first_name',
+                'users.middle_name',
+                'users.last_name',
+                'users.email',
+                'faculties.section'
+            )
+            ->orderBy('users.last_name', 'users.first_name')
+            ->get();
+
+        // store headers of DB query
+        if (count($dbTable) > 0)
+            // overwrite headers to be safe, though this *should* just be a redundancy
+            $headers = array_keys((array) $dbTable[0]);
+        else
+            $headers = [
+                'first_name',
+                'middle_name',
+                'last_name',
+                'email',
+                'section',
+            ];
+
+        // ---
+
+        $callback = function() use ($headers, $dbTable) {
+            $csvFile = fopen('php://output', 'w');
+
+            // add header row to CSV
+            fputcsv($csvFile, $headers);
+
+            // add entry rows to CSV
+            foreach ($dbTable as $row) {
+                fputcsv($csvFile, (array) $row);
+            }
+
+            fclose($csvFile);
+        };
+
+        // ---
+
+        $content_headers = [
+            'Cache-Control'         => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'          => 'text/csv',
+            'Content-Disposition'   => 'attachment; filename=' . $csvFileName . '.csv',
+            'Expires'               => '0',
+            'Pragma'                => 'public'
+        ];
+
+        // todo: show user prompt to download from public folder to actual local filesystem
+        return response()->stream($callback, 200, $content_headers);
+    }
+
+    public function exportCompanyList(): StreamedResponse
+    {
+        $csvFileName = 'company_list';
+
+        $dbTable = DB::table('companies')
+            ->select(
+                'companies.company_name',
+            )
+            ->orderBy('companies.company_name')
+            ->get();
+
+        // store headers of DB query
+        $headers = [
+            'company_name',
+        ];
+
+        // ---
+
+        $callback = function() use ($headers, $dbTable) {
+            $csvFile = fopen('php://output', 'w');
+
+            // add header row to CSV
+            fputcsv($csvFile, $headers);
+
+            // add entry rows to CSV
+            foreach ($dbTable as $row) {
+                fputcsv($csvFile, (array) $row);
+            }
+
+            fclose($csvFile);
+        };
+
+        // ---
+
+        $content_headers = [
+            'Cache-Control'         => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type'          => 'text/csv',
+            'Content-Disposition'   => 'attachment; filename=' . $csvFileName . '.csv',
+            'Expires'               => '0',
+            'Pragma'                => 'public'
+        ];
+
+        // todo: show user prompt to download from public folder to actual local filesystem
+        return response()->stream($callback, 200, $content_headers);
+    }
+
+    // ---
 
     public function exportFormsAsCsv(string $shortName, string $csvFileName): StreamedResponse
     {
