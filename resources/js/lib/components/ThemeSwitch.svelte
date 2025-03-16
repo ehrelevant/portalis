@@ -1,43 +1,23 @@
 <script>
-    import LightMode from '$assets/lightmode_logo.svelte';
-    import DarkMode from '$assets/darkmode_logo.svelte';
-    import { onMount } from 'svelte';
-
-    export let icon = LightMode;
-    let darkMode = true;
-
-    onMount(() => {
-        updateTheme();
-    });
-
-    function handleSwitchMode() {
-        darkMode = !darkMode;
-        updateTheme();
-    }
-
-    function updateTheme() {
-        if (darkMode) {
-            icon = DarkMode;
-
-            // eslint-disable-next-line no-undef
-            document.documentElement.classList.add('dark');
-        } else {
-            icon = LightMode;
-
-            // eslint-disable-next-line no-undef
-            document.documentElement.classList.remove('dark');
-        }
-    }
+    import Icon from '@iconify/svelte';
+    import { toggleMode } from 'mode-watcher';
 </script>
 
 <button
+    on:click={toggleMode}
     class="
-    h-16 w-16
+    aspect-square w-full
     cursor-pointer content-center
-    justify-items-center text-light-primary-text
-    transition-colors hover:text-light-secondary
-    dark:text-dark-primary-text dark:hover:text-dark-secondary"
-    on:click={handleSwitchMode}
+    justify-items-center text-dark-secondary
+    transition-colors hover:text-dark-primary-text"
 >
-    <svelte:component this={icon} />
+    <Icon
+        icon="uil:sun"
+        class="block h-full w-full transition-all dark:hidden"
+    />
+    <Icon
+        icon="solar:moon-outline"
+        class="hidden h-full w-full transition-all dark:block"
+    />
+    <span class="sr-only">Toggle theme</span>
 </button>

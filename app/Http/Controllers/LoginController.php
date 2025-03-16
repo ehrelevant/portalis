@@ -86,7 +86,7 @@ class LoginController extends Controller
 
         // Only for testing purposes
         if (env('DISPLAY_PIN_ON_PAGE', false)) {
-            return back()->with('message', $generated_pin);
+            return back()->with('info', $generated_pin);
         }
 
         return back();

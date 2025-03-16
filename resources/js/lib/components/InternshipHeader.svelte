@@ -1,9 +1,12 @@
 <script>
-    export let txt;
+    import { Label } from '$lib/components/ui/label';
+
+    export let txt = '';
 </script>
 
-<div
-    class="w-stretch my-4 flex justify-center bg-light-primary p-4 text-center text-3xl dark:bg-dark-primary sm:justify-start sm:text-4xl"
+<Label
+    class="w-stretch flex flex-col border-b-4 p-4 text-3xl sm:flex-row sm:justify-between sm:text-4xl"
 >
     {txt}
-</div>
+    <slot />
+</Label>

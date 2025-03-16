@@ -1,7 +1,10 @@
 <script>
     import Header from '$lib/components/InternshipHeader.svelte';
-    import Requirement from '$lib/components/Requirement.svelte';
-    import Accordion from '$lib/components/Accordion.svelte';
+    import AccordionLocal from '$lib/components/Accordion.svelte';
+
+    import * as Accordion from '$lib/components/ui/accordion';
+    import { Label } from '$lib/components/ui/label';
+    import ListLink from '$lib/components/ListLink.svelte';
 
     export let student_id;
     export let submissions;
@@ -20,52 +23,56 @@
 
     <!-- File Submission Statuses -->
     {#if internshipDocumentSubmissions.length}
-        <Accordion open>
-            <h2 slot="summary" class="text-2xl">Internship Documents</h2>
-            <ul>
+        <AccordionLocal>
+            <Label slot="summary" class="cursor-pointer text-2xl"
+                >Internship Documents</Label
+            >
+            <Accordion.Content class="px-4">
                 {#each internshipDocumentSubmissions as submission}
                     {@const {
                         requirement_id,
                         requirement_name,
                         deadline,
                         status,
+                        remarks,
                     } = submission}
-                    <li>
-                        <Requirement
-                            requirementId={requirement_id}
-                            requirementName={requirement_name}
-                            {deadline}
-                            submissionStatus={status}
-                            studentId={student_id}
-                        />
-                    </li>
+                    <ListLink
+                        name={requirement_name}
+                        submitHref="/requirement/{requirement_id}/upload"
+                        viewHref="/file/submission/{student_id}/{requirement_id}"
+                        {deadline}
+                        {status}
+                        {remarks}
+                    />
                 {/each}
-            </ul>
-        </Accordion>
+            </Accordion.Content>
+        </AccordionLocal>
     {/if}
 
     {#if governmentIdSubmissions.length}
-        <Accordion open>
-            <h2 slot="summary" class="text-2xl">Government IDs</h2>
-            <ul>
+        <AccordionLocal>
+            <Label slot="summary" class="cursor-pointer text-2xl"
+                >Government IDs</Label
+            >
+            <Accordion.Content class="px-4">
                 {#each governmentIdSubmissions as submission}
                     {@const {
                         requirement_id,
                         requirement_name,
                         deadline,
                         status,
+                        remarks,
                     } = submission}
-                    <li>
-                        <Requirement
-                            requirementId={requirement_id}
-                            requirementName={requirement_name}
-                            {deadline}
-                            submissionStatus={status}
-                            studentId={student_id}
-                        />
-                    </li>
+                    <ListLink
+                        name={requirement_name}
+                        submitHref="/requirement/{requirement_id}/upload"
+                        viewHref="/file/submission/{student_id}/{requirement_id}"
+                        {deadline}
+                        {status}
+                        {remarks}
+                    />
                 {/each}
-            </ul>
-        </Accordion>
+            </Accordion.Content>
+        </AccordionLocal>
     {/if}
 </div>

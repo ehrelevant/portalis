@@ -22,5 +22,5 @@ class FormStatus extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['status'];
+    protected $fillable = ['status', 'remarks'];
 }
