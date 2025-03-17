@@ -85,10 +85,11 @@
             class="flex flex-col gap-4"
             on:submit|preventDefault={saveSettings}
         >
-            <div class="grid grid-cols-1 sm:grid-cols-[auto,1fr] items-center gap-2">
-                    <Label class="col-span-2 text-xl font-bold border-b-2 border-b-dark-primary">Phase</Label>
-
-                    <Label class="ml-4 text-md" for="phase">Website Phase</Label>
+            <div class="grid grid-cols-1 xl:grid-cols-[1fr,1fr,1fr] items-start gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 items-center px-2">
+                    <Label class="col-span-2 mb-4 text-xl font-bold border-b-2 border-b-dark-primary">Phase</Label>
+                
+                    <Label class="ml-4 xl:ml-0 text-md" for="phase">Website Phase</Label>
                     <Select.Root
                         selected={ $settingsForm.phase
                             ? { label: $settingsForm.phase + "-internship", value: $settingsForm.phase}
@@ -107,13 +108,15 @@
                             {/each}
                         </Select.Content>
                     </Select.Root>
+                </div>
                 
-                    <h2 class="col-span-2 mt-4 text-xl font-bold border-b-2 border-b-dark-primary">
+                <div class="grid grid-cols-1 sm:grid-cols-2 items-center px-2">
+                    <Label class="col-span-2 mb-4 text-xl font-bold border-b-2 border-b-dark-primary">
                         Requirement Deadlines
-                    </h2>
+                    </Label>
                     {#each $settingsForm.requirements as requirement, i}
                         {@const { requirement_name } = requirement}
-                        <Label class="ml-4 text-md" for="{requirement_name} deadline">
+                        <Label class="ml-4 xl:ml-0 text-md" for="{requirement_name} deadline">
                             {requirement_name}
                         </Label>
                         <Input
@@ -124,13 +127,15 @@
                             class="flex flex-col p-2 justify-between"
                         />
                     {/each}
+                </div>
 
-                    <h2 class="col-span-2 mt-4 text-xl font-bold border-b-2 border-b-dark-primary">
+                <div class="grid grid-cols-1 sm:grid-cols-2 items-center px-2">
+                    <Label class="col-span-2 mb-4 text-xl font-bold border-b-2 border-b-dark-primary">
                         Form Deadlines
-                    </h2>
+                    </Label>
                     {#each $settingsForm.forms as form, i}
                         {@const { form_name } = form}
-                        <Label class="ml-4 text-md" for="{form_name} deadline">
+                        <Label class="ml-4 xl:ml-0 text-md" for="{form_name} deadline">
                             {form_name}
                         </Label>
                         <Input
@@ -141,11 +146,11 @@
                             class="flex flex-col p-2 justify-between"
                         />
                     {/each}
+                </div>
             </div>
             <Button
                 type="submit"
-                variant="outline"
-                class="w-full cursor-pointer bg-dark-primary text-white text-xl p-2"
+                class="w-full cursor-pointer bg-dark-primary text-white hover:bg-opacity-90 text-xl p-2"
             > Save </Button>
         </form>
     </div>
