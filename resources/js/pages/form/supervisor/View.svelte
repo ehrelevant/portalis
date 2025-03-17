@@ -1,9 +1,15 @@
 <script>
-    import { Link, router } from '@inertiajs/svelte';
+    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
     import Status from '$lib/components/Status.svelte';
-    import Button from '$lib/components/ui/button/button.svelte';
+
+    import * as Dialog from '$lib/components/ui/dialog/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import { Button } from '$lib/components/ui/button/index';
+    import { colorVariants } from '$lib/customVariants';
+    import { Textarea } from '$lib/components/ui/textarea';
+    import { Input } from '$lib/components/ui/input/index';
 
     export let supervisor;
     export let evaluator_user_id;
@@ -13,6 +19,24 @@
     export let open_questions;
     export let form_info;
     export let status;
+
+    let isReturnFormOpen = false;
+    const returnForm = useForm({
+        remarks: null,
+    });
+
+    function returnFormSubmission() {
+        $returnForm.post(
+            `/form/${form_info.short_name}/reject/${evaluator_user_id}`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    $returnForm.reset();
+                    isReturnFormOpen = false;
+                },
+            },
+        );
+    }
 </script>
 
 <div class="main-screen flex flex-col gap-4 p-4">
@@ -47,13 +71,14 @@
                             } = student}
                             <p>{last_name}, {first_name}</p>
                             {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
-                                <p
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                >
-                                    {students[student_id].categorized_ratings[
-                                        category_id
-                                    ][rating_id]}
-                                </p>
+                                <Input
+                                    type="number"
+                                    value={students[student_id]
+                                        .categorized_ratings[category_id][
+                                        rating_id
+                                    ]}
+                                    disabled
+                                />
                             {/each}
                         {/each}
                     </div>
@@ -69,8 +94,7 @@
                         {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
-                            <textarea
-                                class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            <Textarea
                                 value={students[student_id].opens[open_id]}
                                 disabled
                             />
@@ -83,36 +107,52 @@
 
     <div class="flex flex-row justify-center gap-2">
         <Status type={status} />
-        {#if status === 'Accepted'}
+        {#if ['Accepted'].includes(status)}
             <Link
                 as="button"
                 href="/form/{form_info.short_name}/invalidate/{evaluator_user_id}"
-                class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                method="post">Invalidate</Link
+                method="post"
+                ><Button variant="destructive">Invalidate</Button></Link
             >
-        {:else if status !== 'Returned'}
+        {:else if ['For Review'].includes(status)}
             <Link
                 as="button"
                 href="/form/{form_info.short_name}/validate/{evaluator_user_id}"
-                class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                method="post">Accept</Link
+                method="post"
+                ><Button class={colorVariants.green}>Accept</Button></Link
             >
-            <Button
-                variant="destructive"
-                on:click={() => {
-                    if (
-                        confirm(
-                            'Do you really want to return this to the user?',
-                        )
-                    ) {
-                        router.post(
-                            `/form/${form_info.short_name}/reject/${evaluator_user_id}`,
-                            {},
-                            { preserveScroll: true },
-                        );
-                    }
-                }}>Return To Supervisor</Button
-            >
+            <Dialog.Root bind:open={isReturnFormOpen}>
+                <Dialog.Trigger>
+                    <Button variant="destructive">Return to Supervisor</Button>
+                </Dialog.Trigger>
+                <Dialog.Content class="sm:max-w-[425px]">
+                    <Dialog.Header>
+                        <Dialog.Title>Return to Supervisor</Dialog.Title>
+                        <Dialog.Description>
+                            Return {form_info.form_name} form submission to {supervisor.last_name},
+                            {supervisor.first_name}.
+                        </Dialog.Description>
+                    </Dialog.Header>
+                    <form
+                        on:submit|preventDefault={returnFormSubmission}
+                        class="flex flex-col gap-4"
+                    >
+                        <Label for="remarks">Remarks</Label>
+                        <Textarea
+                            id="remarks"
+                            bind:value={$returnForm.remarks}
+                        />
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button variant="destructive" type="submit"
+                                >Return to Supervisor</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
         {/if}
     </div>
 </div>

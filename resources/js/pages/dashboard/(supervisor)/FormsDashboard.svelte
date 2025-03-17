@@ -1,154 +1,166 @@
 <script>
-    import Accordion from '$lib/components/Accordion.svelte';
-    import { Link, router } from '@inertiajs/svelte';
+    import AccordionLocal from '$lib/components/Accordion.svelte';
+    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
     import Status from '$lib/components/Status.svelte';
-    import { Button } from '$lib/components/ui/button';
+    import ListLink from '$lib/components/ListLink.svelte';
+    import * as Accordion from '$lib/components/ui/accordion';
+    import * as Dialog from '$lib/components/ui/dialog/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import { Button } from '$lib/components/ui/button/index';
+    import { colorVariants } from '$lib/customVariants';
+    import { Textarea } from '$lib/components/ui/textarea';
 
     export let phase;
     export let students;
-    export let company_name;
     export let form_statuses;
+
+    let isReturnFormOpen = false;
+    const returnForm = useForm({
+        remarks: null,
+    });
+
+    function returnFormSubmission(student_user_id) {
+        $returnForm.post(`/form/self-evaluation/reject/${student_user_id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                $returnForm.reset();
+                isReturnFormOpen = false;
+            },
+        });
+    }
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">
     <Header txt="During Internship Phase" />
 
     <div class="flex flex-col gap-4">
-        <h2 class="text-2xl">Company: {company_name}</h2>
         {#if phase === 'post'}
-            <Accordion>
-                <h2 slot="summary" class="text-2xl">
-                    Total hours worked as assessed by interns
-                </h2>
-
-                <div
-                    class="grid grid-cols-[auto,1fr,auto] items-center justify-center gap-2"
+            <AccordionLocal>
+                <Label slot="summary" class="cursor-pointer text-2xl"
+                    >Total hours worked as assessed by interns</Label
                 >
-                    <p class="col-start-2 text-center">Total hours worked</p>
-                    <p class="text-center">Validation Status</p>
+                <Accordion.Content class="px-4">
+                    <div
+                        class="grid grid-cols-[auto,1fr,auto] items-center justify-center gap-2"
+                    >
+                        <p class="col-start-2 text-center">
+                            Total hours worked
+                        </p>
+                        <p class="text-center">Validation Status</p>
 
-                    {#each Object.entries(students) as [_, student]}
+                        {#each Object.entries(students) as [_, student]}
+                            {@const {
+                                student_user_id,
+                                last_name,
+                                first_name,
+                                total_hours,
+                                self_assessment_status: status,
+                            } = student}
+                            <p>{last_name}, {first_name}</p>
+                            <input
+                                class="bg-white p-2 text-center text-xl text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                value={total_hours}
+                                disabled
+                            />
+                            <div class="flex flex-row justify-start gap-2">
+                                <Status type={status} />
+                                {#if ['Accepted'].includes(status)}
+                                    <Link
+                                        as="button"
+                                        href="/form/self-evaluation/invalidate/{student_user_id}"
+                                        method="post"
+                                        ><Button variant="destructive"
+                                            >Invalidate</Button
+                                        ></Link
+                                    >
+                                {:else if ['For Review'].includes(status)}
+                                    <Link
+                                        as="button"
+                                        href="/form/self-evaluation/validate/{student_user_id}"
+                                        method="post"
+                                        ><Button class={colorVariants.green}
+                                            >Accept</Button
+                                        ></Link
+                                    >
+                                    <Dialog.Root bind:open={isReturnFormOpen}>
+                                        <Dialog.Trigger>
+                                            <Button variant="destructive"
+                                                >Return to Student</Button
+                                            >
+                                        </Dialog.Trigger>
+                                        <Dialog.Content
+                                            class="sm:max-w-[425px]"
+                                        >
+                                            <Dialog.Header>
+                                                <Dialog.Title
+                                                    >Return to Student</Dialog.Title
+                                                >
+                                            </Dialog.Header>
+                                            <form
+                                                on:submit|preventDefault={() =>
+                                                    returnFormSubmission(
+                                                        student_user_id,
+                                                    )}
+                                                class="flex flex-col gap-4"
+                                            >
+                                                <Label for="remarks"
+                                                    >Remarks</Label
+                                                >
+                                                <Textarea
+                                                    id="remarks"
+                                                    bind:value={
+                                                        $returnForm.remarks
+                                                    }
+                                                />
+                                                <Dialog.Footer>
+                                                    <Dialog.Close>
+                                                        <Button
+                                                            variant="outline"
+                                                            >Cancel</Button
+                                                        >
+                                                    </Dialog.Close>
+                                                    <Button
+                                                        variant="destructive"
+                                                        type="submit"
+                                                        >Return to Student</Button
+                                                    >
+                                                </Dialog.Footer>
+                                            </form>
+                                        </Dialog.Content>
+                                    </Dialog.Root>
+                                {/if}
+                            </div>
+                        {/each}
+                    </div>
+                </Accordion.Content>
+            </AccordionLocal>
+        {/if}
+        <AccordionLocal>
+            <Label slot="summary" class="cursor-pointer text-2xl"
+                >Supervisor Forms</Label
+            >
+            <Accordion.Content class="px-4">
+                <div class="flex flex-col gap-4">
+                    {#each form_statuses as form_status}
                         {@const {
-                            student_user_id,
-                            last_name,
-                            first_name,
-                            total_hours,
-                            self_assessment_status: status,
-                        } = student}
-                        <p>{last_name}, {first_name}</p>
-                        <input
-                            class="bg-white p-2 text-center text-xl text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                            value={total_hours}
-                            disabled
-                        />
-                        <div class="flex flex-row justify-start gap-2">
-                            <Status type={status} />
-                            {#if status === 'Accepted'}
-                                <Link
-                                    as="button"
-                                    href="/form/self-evaluation/invalidate/{student_user_id}"
-                                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                                    method="post">Invalidate</Link
-                                >
-                            {:else if status !== 'Returned' && status !== 'None'}
-                                <Link
-                                    as="button"
-                                    href="/form/self-evaluation/validate/{student_user_id}"
-                                    class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                                    method="post">Accept</Link
-                                >
-                                <Button
-                                    variant="destructive"
-                                    on:click={() => {
-                                        if (
-                                            confirm(
-                                                'Do you really want to return this to the user?',
-                                            )
-                                        ) {
-                                            router.post(
-                                                `/form/self-evaluation/reject/${student_user_id}`,
-                                                {},
-                                                { preserveScroll: true },
-                                            );
-                                        }
-                                    }}>Return To Student</Button
-                                >
-                            {/if}
-                        </div>
+                            form_name,
+                            short_name,
+                            status,
+                            deadline,
+                            remarks,
+                        } = form_status}
+                        <ListLink
+                            name="{form_name} Form"
+                            submitHref="/form/{short_name}/answer"
+                            {status}
+                            {deadline}
+                            {remarks}
+                        ></ListLink>
                     {/each}
                 </div>
-            </Accordion>
-        {/if}
-
-        {#each form_statuses as form_status}
-            {@const { form_name, short_name, status, deadline } = form_status}
-            <Accordion>
-                <h2 slot="summary" class="text-2xl">
-                    {form_name}
-                </h2>
-
-                {#if status !== 'None' && status !== 'Returned'}
-                    <!-- Removes link if answered already -->
-                    <div
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div
-                            class="flex flex-col items-center justify-center sm:items-start"
-                        >
-                            <p class="flex items-center">{form_name} Form</p>
-                            {#if deadline}
-                                {@const deadlineDateTime = new Date(deadline)}
-                                <p class="text-xs">
-                                    (Deadline: {deadlineDateTime.toLocaleDateString(
-                                        undefined,
-                                        {
-                                            weekday: 'short',
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
-                                            second: 'numeric',
-                                        },
-                                    )})
-                                </p>
-                            {/if}
-                        </div>
-                        <Status type={status} />
-                    </div>
-                {:else}
-                    <Link
-                        href="/form/{short_name}/answer"
-                        class="flex flex-row justify-between rounded-xl bg-white p-4 hover:opacity-90 dark:bg-black"
-                    >
-                        <div
-                            class="flex flex-col items-center justify-center sm:items-start"
-                        >
-                            <p class="flex items-center">{form_name} Form</p>
-                            {#if deadline}
-                                {@const deadlineDateTime = new Date(deadline)}
-                                <p class="text-xs">
-                                    (Deadline: {deadlineDateTime.toLocaleDateString(
-                                        undefined,
-                                        {
-                                            weekday: 'short',
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
-                                            second: 'numeric',
-                                        },
-                                    )})
-                                </p>
-                            {/if}
-                        </div>
-                        <Status type={status} />
-                    </Link>
-                {/if}
-            </Accordion>
-        {/each}
+            </Accordion.Content>
+        </AccordionLocal>
     </div>
 </section>

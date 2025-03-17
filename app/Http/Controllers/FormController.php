@@ -8,10 +8,12 @@ use App\Models\FormStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class FormController extends Controller
@@ -455,65 +457,77 @@ class FormController extends Controller
 
     public function draftSupervisorForm(Request $request, string $short_name, ?int $supervisor_id)
     {
-        $supervisor_user = Auth::user();
-        if ($supervisor_user->role === User::ROLE_ADMIN) {
-            $supervisor_user = DB::table('users')
-                ->where('role', 'supervisor')
-                ->where('role_id', $supervisor_id)
-                ->firstOrFail();
-        }
+        try {
+            $supervisor_user = Auth::user();
+            if ($supervisor_user->role === User::ROLE_ADMIN) {
+                $supervisor_user = DB::table('users')
+                    ->where('role', 'supervisor')
+                    ->where('role_id', $supervisor_id)
+                    ->firstOrFail();
+            }
 
-        $form_values = $request->validate([
-            'answers' => ['array'],
-            'answers.*.student_id' => ['integer', 'numeric'],
-            'answers.*.categorized_ratings' => ['array'],
-            'answers.*.categorized_ratings.*' => ['array'],
-            'answers.*.categorized_ratings.*.*' => ['nullable'],
-            'answers.*.opens' => ['array'],
-            'answers.*.opens.*' => ['nullable'],
-        ]);
+            $form_values = $request->validate([
+                'answers' => ['array'],
+                'answers.*.student_id' => ['integer', 'numeric'],
+                'answers.*.categorized_ratings' => ['array'],
+                'answers.*.categorized_ratings.*' => ['array'],
+                'answers.*.categorized_ratings.*.*' => ['nullable'],
+                'answers.*.opens' => ['array'],
+                'answers.*.opens.*' => ['nullable'],
+            ]);
 
-        $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
+            $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
 
-        if (Auth::user()->role === User::ROLE_ADMIN) {
-            return back();
-        } else {
-            return redirect('/dashboard');
+            if (Auth::user()->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+            } else {
+                return redirect('/dashboard')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to draft form.');
         }
     }
 
     public function submitSupervisorForm(Request $request, string $short_name, ?int $supervisor_id)
     {
-        $supervisor_user = Auth::user();
-        if ($supervisor_user->role === User::ROLE_ADMIN) {
-            $supervisor_user = DB::table('users')
-                ->where('role', 'supervisor')
-                ->where('role_id', $supervisor_id)
-                ->firstOrFail();
-        }
+        try {
+            $supervisor_user = Auth::user();
+            if ($supervisor_user->role === User::ROLE_ADMIN) {
+                $supervisor_user = DB::table('users')
+                    ->where('role', 'supervisor')
+                    ->where('role_id', $supervisor_id)
+                    ->firstOrFail();
+            }
 
-        $form_values = $request->validate([
-            'answers' => ['array'],
-            'answers.*.student_id' => ['integer', 'numeric'],
-            'answers.*.categorized_ratings' => ['array'],
-            'answers.*.categorized_ratings.*' => ['array'],
-            'answers.*.categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
-            'answers.*.opens' => ['array'],
-            'answers.*.opens.*' => ['nullable', 'string'],
-        ]);
+            $form_values = $request->validate([
+                'answers' => ['array'],
+                'answers.*.student_id' => ['integer', 'numeric'],
+                'answers.*.categorized_ratings' => ['array'],
+                'answers.*.categorized_ratings.*' => ['array'],
+                'answers.*.categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
+                'answers.*.opens' => ['array'],
+                'answers.*.opens.*' => ['nullable', 'string'],
+            ]);
 
-        $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
+            $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
 
-        // Update status for all reports under the supervisor
-        FormStatus::where('user_id', $supervisor_user->id)
-            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
-            ->where('forms.short_name', $short_name)
-            ->update(['status' => 'For Review']);
+            // Update status for all reports under the supervisor
+            FormStatus::where('user_id', $supervisor_user->id)
+                ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                ->where('forms.short_name', $short_name)
+                ->update(['status' => 'For Review']);
 
-        if (Auth::user()->role === User::ROLE_ADMIN) {
-            return back();
-        } else {
-            return redirect('/dashboard');
+            if (Auth::user()->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+            } else {
+                return redirect('/dashboard')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to submit form.');
         }
     }
 
@@ -654,130 +668,188 @@ class FormController extends Controller
 
     public function draftStudentForm(Request $request, string $short_name, ?int $student_id)
     {
-        $student_user = Auth::user();
-        if ($student_user->role === User::ROLE_ADMIN) {
-            $student_user = DB::table('users')
-                ->where('role', 'student')
-                ->where('role_id', $student_id)
-                ->firstOrFail();
-        }
+        try {
+            $student_user = Auth::user();
+            if ($student_user->role === User::ROLE_ADMIN) {
+                $student_user = DB::table('users')
+                    ->where('role', 'student')
+                    ->where('role_id', $student_id)
+                    ->firstOrFail();
+            }
 
-        $form_values = $request->validate([
-            'categorized_ratings' => ['array'],
-            'categorized_ratings.*' => ['array'],
-            'categorized_ratings.*.*' => ['nullable'],
-            'opens' => ['array'],
-            'opens.*' => ['nullable'],
-        ]);
+            $form_values = $request->validate([
+                'categorized_ratings' => ['array'],
+                'categorized_ratings.*' => ['array'],
+                'categorized_ratings.*.*' => ['nullable'],
+                'opens' => ['array'],
+                'opens.*' => ['nullable'],
+            ]);
 
-        $this->updateStudentForm($form_values, $short_name, $student_user);
+            $this->updateStudentForm($form_values, $short_name, $student_user);
 
-        if (Auth::user()->role === User::ROLE_ADMIN) {
-            return back();
-        } else {
-            return redirect('/dashboard');
+            if (Auth::user()->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+            } else {
+                return redirect('/dashboard')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to draft form.');
         }
     }
 
     public function submitStudentForm(Request $request, string $short_name, ?int $student_id)
     {
-        $student_user = Auth::user();
-        if ($student_user->role === User::ROLE_ADMIN) {
-            $student_user = DB::table('users')
-                ->where('role', 'student')
-                ->where('role_id', $student_id)
-                ->firstOrFail();
-        }
+        try {
+            $student_user = Auth::user();
+            if ($student_user->role === User::ROLE_ADMIN) {
+                $student_user = DB::table('users')
+                    ->where('role', 'student')
+                    ->where('role_id', $student_id)
+                    ->firstOrFail();
+            }
 
-        $form_values = $request->validate([
-            'categorized_ratings' => ['array'],
-            'categorized_ratings.*' => ['array'],
-            'categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
-            'opens' => ['array'],
-            'opens.*' => ['nullable', 'string'],
-        ]);
+            $form_values = $request->validate([
+                'categorized_ratings' => ['array'],
+                'categorized_ratings.*' => ['array'],
+                'categorized_ratings.*.*' => ['required', 'integer', 'numeric'],
+                'opens' => ['array'],
+                'opens.*' => ['nullable', 'string'],
+            ]);
 
-        $this->updateStudentForm($form_values, $short_name, $student_user);
+            $this->updateStudentForm($form_values, $short_name, $student_user);
 
-        // Update status for all reports under the supervisor
-        FormStatus::where('user_id', $student_user->id)
-            ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
-            ->where('forms.short_name', $short_name)
-            ->update(['status' => 'For Review']);
+            // Update status for all reports under the supervisor
+            FormStatus::where('user_id', $student_user->id)
+                ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
+                ->where('forms.short_name', $short_name)
+                ->update(['status' => 'For Review']);
 
-        if (Auth::user()->role === User::ROLE_ADMIN) {
-            return back();
-        } else {
-            return redirect('/dashboard');
+            if (Auth::user()->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+            } else {
+                return redirect('/dashboard')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to submit form.');
         }
     }
 
     public function validateForm(string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $validator_user = Auth::user();
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
+                abort(401);
+            }
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        $form_status = FormStatus::where('user_id', $user_id)
-            ->where('form_id', $form_id)
-            ->firstOrFail();
-
-        if ($form_status->status === 'For Review') {
-            FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'Accepted']);
-        }
+                ->firstOrFail();
 
-        return back();
+            if ($form_status->status === 'For Review') {
+                FormStatus::where('user_id', $user_id)
+                    ->where('form_id', $form_id)
+                    ->update(['status' => 'Accepted']);
+            }
+
+            $success_message = 'Successfully accepted the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully accepted the form submission.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to accept the form submission.');
+        }
     }
 
     public function invalidateForm(string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $validator_user = Auth::user();
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
+                abort(401);
+            }
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        $form_status = FormStatus::where('user_id', $user_id)
-            ->where('form_id', $form_id)
-            ->firstOrFail();
-
-        if ($form_status->status === 'Accepted') {
-            FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'For Review']);
-        }
+                ->firstOrFail();
 
-        return back();
+            if ($form_status->status === 'Accepted') {
+                FormStatus::where('user_id', $user_id)
+                    ->where('form_id', $form_id)
+                    ->update(['status' => 'For Review']);
+            }
+
+            $success_message = 'Successfully invalidated the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully invalidated the form submission.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to invalidate the form submission.');
+        }
     }
 
-    public function rejectForm(string $short_name, int $user_id): RedirectResponse
+    public function rejectForm(Request $request, string $short_name, int $user_id): RedirectResponse
     {
-        $validator_user = Auth::user();
+        try {
+            $form_values = $request->validate([
+                'remarks' => ['nullable', 'string'],
+            ]);
 
-        if (!(in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation'))) {
-            abort(401);
-        }
+            $validator_user = Auth::user();
 
-        $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
+            if (!((in_array($validator_user->role, [User::ROLE_ADMIN, User::ROLE_FACULTY]) || ($validator_user->role == User::ROLE_SUPERVISOR && $short_name === 'self-evaluation')))) {
+                abort(401);
+            }
 
-        $form_status = FormStatus::where('user_id', $user_id)
-            ->where('form_id', $form_id)
-            ->firstOrFail();
+            $form_id = Form::where('short_name', $short_name)->firstOrFail()->id;
 
-        if ($form_status->status === 'For Review') {
-            FormStatus::where('user_id', $user_id)
+            $form_status = FormStatus::where('user_id', $user_id)
                 ->where('form_id', $form_id)
-                ->update(['status' => 'Returned']);
-        }
+                ->firstOrFail();
 
-        return back();
+            if ($form_status->status === 'For Review') {
+                FormStatus::where('user_id', $user_id)
+                    ->where('form_id', $form_id)
+                    ->update([
+                        'status' => 'Returned',
+                        'remarks' => $form_values['remarks'],
+                    ]);
+            }
+
+            $success_message = 'Successfully returned the form submission. This tab may now be closed.';
+            if ($validator_user->role === User::ROLE_ADMIN) {
+                return redirect('/dashboard/admin/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_FACULTY) {
+                return redirect('/dashboard/students')->with('success', $success_message);
+            } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
+                return redirect('/dashboard')->with('success', 'Successfully returned the form submission.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to return the form submission.');
+        }
     }
 }

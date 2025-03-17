@@ -66,6 +66,7 @@
 @layer base {
     * {
         @apply border-border;
+        scrollbar-color: hsl(var(--primary)) hsl(var(--secondary));
     }
     body {
         @apply bg-background text-foreground;
@@ -85,6 +86,7 @@
     }
 
     .main-screen {
+        @apply min-h-full grow;
         /* @apply min-h-full grow bg-light-background p-1 text-light-primary-text transition-colors dark:bg-background dark:text-dark-primary-text; */
     }
 }

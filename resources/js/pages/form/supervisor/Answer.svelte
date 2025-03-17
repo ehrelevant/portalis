@@ -3,7 +3,13 @@
     import Header from '$lib/components/InternshipHeader.svelte';
     import Accordion from '$lib/components/Accordion.svelte';
     import Status from '$lib/components/Status.svelte';
-    import { Button } from '$lib/components/ui/button';
+
+    import * as Dialog from '$lib/components/ui/dialog/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import { Input } from '$lib/components/ui/input/index';
+    import { Button } from '$lib/components/ui/button/index';
+    import { colorVariants } from '$lib/customVariants';
+    import { Textarea } from '$lib/components/ui/textarea';
 
     export let errors = {};
     $: console.log(errors);
@@ -37,6 +43,24 @@
         }
         $form.post(`/form/${form_info.short_name}/submit/${evaluatorRoleId}`);
     }
+
+    let isReturnFormOpen = false;
+    const returnForm = useForm({
+        remarks: null,
+    });
+
+    function returnFormSubmission() {
+        $returnForm.post(
+            `/form/${form_info.short_name}/reject/${evaluatorUserId}`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    $returnForm.reset();
+                    isReturnFormOpen = false;
+                },
+            },
+        );
+    }
 </script>
 
 <div class="main-screen flex flex-col gap-4 p-4">
@@ -69,10 +93,9 @@
                                 first_name,
                                 categorized_ratings,
                             } = student}
-                            <p>{last_name}, {first_name}</p>
+                            <Label>{last_name}, {first_name}</Label>
                             {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
-                                <input
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                <Input
                                     type="number"
                                     max={categorized_rating_questions[
                                         category_id
@@ -106,8 +129,7 @@
                         {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
-                            <textarea
-                                class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            <Textarea
                                 bind:value={
                                     $form.answers[student_id].opens[open_id]
                                 }
@@ -119,18 +141,18 @@
 
             {#if ['Returned', 'None'].includes(status)}
                 <div class="m-2 flex justify-center gap-4">
-                    <input
+                    <Input
                         name="draft"
                         type="button"
                         value="Save Draft"
-                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        class="cursor-pointer {colorVariants.blue}"
                         on:click={draftForm}
                     />
-                    <input
+                    <Input
                         name="submit"
                         type="button"
                         value="Submit Response"
-                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        class="cursor-pointer {colorVariants.green}"
                         on:click={submitForm}
                     />
                 </div>
@@ -145,32 +167,51 @@
                 <Link
                     as="button"
                     href="/form/{form_info.short_name}/invalidate/{evaluatorUserId}"
-                    class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
-                    method="post">Invalidate</Link
+                    method="post"
+                    ><Button variant="destructive">Invalidate</Button></Link
                 >
             {:else if ['For Review'].includes(status)}
                 <Link
                     as="button"
                     href="/form/{form_info.short_name}/validate/{evaluatorUserId}"
-                    class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
-                    method="post">Accept</Link
+                    method="post"
+                    ><Button class={colorVariants.green}>Accept</Button></Link
                 >
-                <Button
-                    variant="destructive"
-                    on:click={() => {
-                        if (
-                            confirm(
-                                'Do you really want to return this to the user?',
-                            )
-                        ) {
-                            router.post(
-                                `/form/${form_info.short_name}/reject/${evaluatorUserId}`,
-                                {},
-                                { preserveScroll: true },
-                            );
-                        }
-                    }}>Return To Supervisor</Button
-                >
+
+                <Dialog.Root bind:open={isReturnFormOpen}>
+                    <Dialog.Trigger>
+                        <Button variant="destructive"
+                            >Return to Supervisor</Button
+                        >
+                    </Dialog.Trigger>
+                    <Dialog.Content class="sm:max-w-[425px]">
+                        <Dialog.Header>
+                            <Dialog.Title>Return to Supervisor</Dialog.Title>
+                            <Dialog.Description>
+                                Return {form_info.form_name} form submission to {supervisor.last_name},
+                                {supervisor.first_name}.
+                            </Dialog.Description>
+                        </Dialog.Header>
+                        <form
+                            on:submit|preventDefault={returnFormSubmission}
+                            class="flex flex-col gap-4"
+                        >
+                            <Label for="remarks">Remarks</Label>
+                            <Textarea
+                                id="remarks"
+                                bind:value={$returnForm.remarks}
+                            />
+                            <Dialog.Footer>
+                                <Dialog.Close>
+                                    <Button variant="outline">Cancel</Button>
+                                </Dialog.Close>
+                                <Button variant="destructive" type="submit"
+                                    >Return to Supervisor</Button
+                                >
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
             {/if}
         </div>
     {/if}

@@ -7,6 +7,7 @@ use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FileSubmissionContoller;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\ImportsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
@@ -60,6 +61,15 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/students/{student_id}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
         Route::put('/supervisors/{supervisor_id}/assign/company/{company_id?}', [FacultyController::class, 'assignSupervisorCompany']);
 
+        Route::get('/list/students/upload', [ImportsController::class, 'showStudentCsvUploadForm']);
+        Route::get('/list/supervisors/upload', [ImportsController::class, 'showSupervisorCsvUploadForm']);
+        Route::get('/list/faculties/upload', [ImportsController::class, 'showFacultyCsvUploadForm']);
+        Route::get('/list/companies/upload', [ImportsController::class, 'showCompanyCsvUploadForm']);
+        Route::post('/list/students/submit', [ImportsController::class, 'submitStudentCsv']);
+        Route::post('/list/supervisors/submit', [ImportsController::class, 'submitSupervisorCsv']);
+        Route::post('/list/faculties/submit', [ImportsController::class, 'submitFacultyCsv']);
+        Route::post('/list/companies/submit', [ImportsController::class, 'submitCompanyCsv']);
+
         Route::post('/import/students', [FacultyController::class, 'importStudents']);
         Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
 
@@ -68,8 +78,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
         Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
         Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
+        Route::get('/export/supervisors/list', [ExportsController::class, 'exportSupervisorList']);
         Route::get('/export/supervisors/midsem-reports', [ExportsController::class, 'exportMidsemReportSupervisors']);
         Route::get('/export/supervisors/final-reports', [ExportsController::class, 'exportFinalReportSupervisors']);
+        Route::get('/export/faculties/list', [ExportsController::class, 'exportFacultyList']);
+        Route::get('/export/companies/list', [ExportsController::class, 'exportCompanyList']);
 
         // Requirement Viewing
         Route::get('/requirement/{requirement_id}/view/{student_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);

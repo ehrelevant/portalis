@@ -13,6 +13,8 @@
     import Button from '$lib/components/ui/button/button.svelte';
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import * as Dialog from '$lib/components/ui/dialog/index';
     import Icon from '@iconify/svelte';
 
     export let companies;
@@ -112,26 +114,67 @@
     Inertia.on('success', () => {
         isModalOpen = false;
     });
-
-    /** @type {string} */
-    let borderColor = 'border-black dark:border-white';
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Companies List" />
 
-    <div class="flex flex-row items-center justify-between gap-4">
-        <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
             <Link href="/dashboard" method="get">
                 <Button class="flex flex-row gap-2"
                     ><Icon icon="lets-icons:back" />Back to Dashboard</Button
                 ></Link
             >
         </div>
-        <div class="flex flex-row items-center gap-4">
-            <Button class="flex flex-row gap-2" on:click={openAddForm}
-                ><Icon icon="material-symbols:add" />Add Company</Button
-            >
+        <div
+            class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
+        >
+            <Dialog.Root bind:open={isModalOpen}>
+                <Dialog.Trigger>
+                    <Button
+                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        on:click={openAddForm}
+                        ><Icon icon="material-symbols:add" />Add Company</Button
+                    >
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Add Company</Dialog.Title>
+                    </Dialog.Header>
+                    <form
+                        bind:this={companyFormElement}
+                        class="flex flex-col gap-4"
+                        on:submit|preventDefault={formCompanyId
+                            ? updateCompany
+                            : addCompany}
+                    >
+                        <div
+                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                        >
+                            <Label for="company_name"><Required />Company</Label
+                            >
+                            <Input
+                                name="company_name"
+                                type="text"
+                                bind:value={$companyForm.company_name}
+                                required
+                            />
+                        </div>
+
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit"
+                                >{formCompanyId
+                                    ? 'Update Company'
+                                    : 'Add Company'}</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
         </div>
     </div>
 
@@ -189,27 +232,3 @@
         {/each}
     </Table>
 </div>
-
-<Modal bind:isOpen={isModalOpen}>
-    <form
-        bind:this={companyFormElement}
-        class="flex flex-col gap-4"
-        on:submit|preventDefault={formCompanyId ? updateCompany : addCompany}
-    >
-        <div class="grid grid-cols-[auto,1fr] items-center gap-4">
-            <label for="middle name"><Required />Company</label>
-            <input
-                name="middle name"
-                type="text"
-                class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                bind:value={$companyForm.company_name}
-                required
-            />
-        </div>
-        <input
-            class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
-            type="submit"
-            value={formCompanyId ? 'Update Comoany' : 'Add Company'}
-        />
-    </form>
-</Modal>

@@ -84,6 +84,11 @@ const config = {
                     },
                 },
 
+                red: {
+                    DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
+                    foreground:
+                        'hsl(var(--destructive-foreground) / <alpha-value>)',
+                },
                 green: {
                     DEFAULT: 'hsl(var(--green) / <alpha-value>)',
                     foreground: 'hsl(var(--green-foreground) / <alpha-value>)',

@@ -14,6 +14,8 @@
     import { Button } from '$lib/components/ui/button';
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import Icon from '@iconify/svelte';
@@ -24,6 +26,7 @@
     export let form_infos;
     export let companies;
     export let companySupervisors;
+    export let supervisors;
 
     let searchQuery;
     function search() {
@@ -165,21 +168,28 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
-    <div class="flex flex-row items-center justify-between gap-4">
-        <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
             <Link href="/dashboard" method="get">
                 <Button class="flex flex-row gap-2"
                     ><Icon icon="lets-icons:back" />Back to Dashboard</Button
                 ></Link
             >
         </div>
-        <div class="flex flex-row items-center gap-4">
+        <div
+            class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
+        >
+            <Button
+                href="/list/students/upload"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                variant="outline">Import Students</Button
+            >
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild let:builder>
                     <Button
                         builders={[builder]}
                         variant="outline"
-                        class="flex flex-row gap-2"
+                        class="flex w-full flex-row gap-2 sm:w-auto"
                         ><Icon icon="uil:export" />Export</Button
                     >
                 </DropdownMenu.Trigger>
@@ -190,7 +200,7 @@
                         >Export Student Section</DropdownMenu.Item
                     >
                     <DropdownMenu.Item
-                        href="/export/students/sections"
+                        href="/export/students/company-evaluations"
                         target="_blank"
                         >Export Company Evaluations</DropdownMenu.Item
                     >
@@ -201,9 +211,256 @@
                     >
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
-            <Button class="flex flex-row gap-2" on:click={openAddForm}
-                ><Icon icon="material-symbols:add" />Add Student</Button
-            >
+
+            <Dialog.Root bind:open={isModalOpen}>
+                <Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    on:click={openAddForm}
+                    ><Icon icon="material-symbols:add" />Add Student</Button
+                >
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Add Student</Dialog.Title>
+                    </Dialog.Header>
+                    <form
+                        bind:this={userFormElement}
+                        class="flex flex-col gap-4"
+                        on:submit|preventDefault={formUserRoleId
+                            ? updateUser
+                            : addUser}
+                    >
+                        <div
+                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                        >
+                            <Label for="student_number"
+                                ><Required />Student Number</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="student_number"
+                                    type="text"
+                                    bind:value={$userForm.student_number}
+                                    required
+                                />
+                                {#if $userForm.errors.student_number}
+                                    <ErrorText>
+                                        {$userForm.errors.student_number}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="first_name"
+                                ><Required />First Name</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="first_name"
+                                    type="text"
+                                    bind:value={$userForm.first_name}
+                                    required
+                                />
+                                {#if $userForm.errors.first_name}
+                                    <ErrorText>
+                                        {$userForm.errors.first_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="middle_name">Middle Name</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="middle_name"
+                                    type="text"
+                                    bind:value={$userForm.middle_name}
+                                />
+                                {#if $userForm.errors.middle_name}
+                                    <ErrorText>
+                                        {$userForm.errors.middle_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="last_name"><Required />Last Name</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="last_name"
+                                    type="text"
+                                    bind:value={$userForm.last_name}
+                                    required
+                                />
+                                {#if $userForm.errors.last_name}
+                                    <ErrorText>
+                                        {$userForm.errors.last_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="email"><Required />Email</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="email"
+                                    type="email"
+                                    bind:value={$userForm.email}
+                                    required
+                                />
+                                {#if $userForm.errors.email}
+                                    <ErrorText>
+                                        {$userForm.errors.email}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="section">Section</Label>
+                            <div class="flex flex-col">
+                                <Select.Root
+                                    selected={$userForm.section === 'DRP'
+                                        ? { label: 'DRP', value: 'DRP' }
+                                        : !$userForm.section
+                                          ? { label: '-', value: '' }
+                                          : {
+                                                label: $userForm.section,
+                                                value: $userForm.section,
+                                            }}
+                                    onSelectedChange={(v) => {
+                                        v && ($userForm.section = v.value);
+                                    }}
+                                >
+                                    <Select.Trigger>
+                                        <Select.Value placeholder="Section" />
+                                    </Select.Trigger>
+                                    <Select.Content>
+                                        <Select.Item value="">-</Select.Item>
+                                        {#each sections as section}
+                                            <Select.Item value={section}
+                                                >{section}</Select.Item
+                                            >
+                                        {/each}
+                                        <Select.Item value="DRP"
+                                            >DRP</Select.Item
+                                        >
+                                    </Select.Content>
+                                </Select.Root>
+                                {#if $userForm.errors.section}
+                                    <ErrorText>
+                                        {$userForm.errors.section}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="supervisor">Supervisor</Label>
+                            <div class="flex flex-col">
+                                <Select.Root
+                                    selected={!$userForm.supervisor_id
+                                        ? { label: '-', value: '' }
+                                        : {
+                                              label: `${supervisors[$userForm.supervisor_id].last_name}, ${supervisors[$userForm.supervisor_id].first_name}`,
+                                              value: $userForm.supervisor_id,
+                                          }}
+                                    onSelectedChange={(v) => {
+                                        v &&
+                                            ($userForm.supervisor_id = v.value);
+                                    }}
+                                >
+                                    <Select.Trigger>
+                                        <Select.Value
+                                            placeholder="Supervisor Name"
+                                        />
+                                    </Select.Trigger>
+                                    <Select.Content>
+                                        <Select.Item value="">-</Select.Item>
+                                        {#each companies as company}
+                                            {@const {
+                                                id: company_id,
+                                                company_name,
+                                            } = company}
+                                            <Select.Group>
+                                                <Select.Label
+                                                    >{company_name}</Select.Label
+                                                >
+                                                {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                                    {@const {
+                                                        first_name,
+                                                        last_name,
+                                                    } = companySupervisor}
+                                                    <Select.Item
+                                                        value={companySupervisorId}
+                                                        >{last_name}, {first_name}</Select.Item
+                                                    >
+                                                {/each}
+                                            </Select.Group>
+                                        {/each}
+                                        <Select.Group>
+                                            <Select.Label
+                                                >No Company</Select.Label
+                                            >
+                                            {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                                                {@const {
+                                                    first_name,
+                                                    last_name,
+                                                } = companySupervisor}
+                                                <Select.Item
+                                                    value={companySupervisorId}
+                                                    >{last_name}, {first_name}</Select.Item
+                                                >
+                                            {/each}
+                                        </Select.Group>
+                                    </Select.Content>
+                                </Select.Root>
+                                {#if $userForm.errors.supervisor_id}
+                                    <ErrorText>
+                                        {$userForm.errors.supervisor_id}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="wordpress name"
+                                ><Required />Wordpress Username</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="wordpress name"
+                                    type="text"
+                                    bind:value={$userForm.wordpress_name}
+                                    required
+                                />
+                                {#if $userForm.errors.wordpress_name}
+                                    <ErrorText>
+                                        {$userForm.errors.wordpress_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="wordpress email"
+                                ><Required />Wordpress Email</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="wordpress email"
+                                    type="email"
+                                    bind:value={$userForm.wordpress_email}
+                                    required
+                                />
+                                {#if $userForm.errors.wordpress_email}
+                                    <ErrorText>
+                                        {$userForm.errors.wordpress_email}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit"
+                                >{formUserRoleId
+                                    ? 'Update Student'
+                                    : 'Add Student'}</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
         </div>
     </div>
 
@@ -348,7 +605,7 @@
                         selected={!supervisor_id
                             ? { label: '-', value: '' }
                             : {
-                                  label: `${companySupervisors[student_company_id][supervisor_id].last_name}, ${companySupervisors[student_company_id][supervisor_id].first_name}`,
+                                  label: `${supervisors[supervisor_id].last_name}, ${supervisors[supervisor_id].first_name}`,
                                   value: supervisor_id,
                               }}
                         onSelectedChange={(v) => {
@@ -374,6 +631,16 @@
                                     {/each}
                                 </Select.Group>
                             {/each}
+                            <Select.Group>
+                                <Select.Label>No Company</Select.Label>
+                                {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
+                                    {@const { first_name, last_name } =
+                                        companySupervisor}
+                                    <Select.Item value={companySupervisorId}
+                                        >{last_name}, {first_name}</Select.Item
+                                    >
+                                {/each}
+                            </Select.Group>
                         </Select.Content>
                     </Select.Root>
                 </TableCell>
@@ -443,186 +710,3 @@
         {/each}
     </Table>
 </div>
-
-<Modal bind:isOpen={isModalOpen}>
-    <form
-        bind:this={userFormElement}
-        class="flex flex-col gap-4"
-        on:submit|preventDefault={formUserRoleId ? updateUser : addUser}
-    >
-        <div class="grid grid-cols-[auto,1fr] items-center gap-4">
-            <label for="student_number"><Required />Student Number</label>
-            <div class="flex flex-col">
-                <input
-                    name="student_number"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.student_number}
-                    required
-                />
-                {#if $userForm.errors.student_number}
-                    <ErrorText>
-                        {$userForm.errors.student_number}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="first_name"><Required />First Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="first_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.first_name}
-                    required
-                />
-                {#if $userForm.errors.first_name}
-                    <ErrorText>
-                        {$userForm.errors.first_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="middle_name">Middle Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="middle_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.middle_name}
-                />
-                {#if $userForm.errors.middle_name}
-                    <ErrorText>
-                        {$userForm.errors.middle_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="last_name"><Required />Last Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="last_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.last_name}
-                    required
-                />
-                {#if $userForm.errors.last_name}
-                    <ErrorText>
-                        {$userForm.errors.last_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="email"><Required />Email</label>
-            <div class="flex flex-col">
-                <input
-                    name="email"
-                    type="email"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.email}
-                    required
-                />
-                {#if $userForm.errors.email}
-                    <ErrorText>
-                        {$userForm.errors.email}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="section">Section</label>
-            <div class="flex flex-col">
-                <select
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    name="section"
-                    bind:value={$userForm.section}
-                >
-                    <option selected value />
-                    {#each sections as section}
-                        <option value={section}>{section}</option>
-                    {/each}
-                </select>
-                {#if $userForm.errors.section}
-                    <ErrorText>
-                        {$userForm.errors.section}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="supervisor">Supervisor</label>
-            <div class="flex flex-col">
-                <select
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    name="supervisor"
-                    bind:value={$userForm.supervisor_id}
-                >
-                    <option selected value />
-                    {#each companies as company}
-                        {@const { id: company_id, company_name } = company}
-                        <optgroup label={company_name}>
-                            {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
-                                {@const { first_name, last_name } =
-                                    companySupervisor}
-                                <option value={companySupervisorId}
-                                    >{last_name}, {first_name}</option
-                                >
-                            {/each}
-                        </optgroup>
-                    {/each}
-                    <optgroup label="No Company">
-                        {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
-                            {@const { first_name, last_name } =
-                                companySupervisor}
-                            <option value={companySupervisorId}
-                                >{last_name}, {first_name}</option
-                            >
-                        {/each}
-                    </optgroup>
-                </select>
-                {#if $userForm.errors.supervisor_id}
-                    <ErrorText>
-                        {$userForm.errors.supervisor_id}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="wordpress name"><Required />Wordpress Username</label>
-            <div class="flex flex-col">
-                <input
-                    name="wordpress name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.wordpress_name}
-                    required
-                />
-                {#if $userForm.errors.wordpress_name}
-                    <ErrorText>
-                        {$userForm.errors.wordpress_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="wordpress email"><Required />Wordpress Email</label>
-            <div class="flex flex-col">
-                <input
-                    name="wordpress email"
-                    type="email"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.wordpress_email}
-                    required
-                />
-                {#if $userForm.errors.wordpress_email}
-                    <ErrorText>
-                        {$userForm.errors.wordpress_email}
-                    </ErrorText>
-                {/if}
-            </div>
-        </div>
-
-        <input
-            class="cursor-pointer rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
-            type="submit"
-            value={formUserRoleId ? 'Update Student' : 'Add Student'}
-        />
-    </form>
-</Modal>
