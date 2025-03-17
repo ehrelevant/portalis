@@ -1,6 +1,8 @@
 <script>
     import { router } from '@inertiajs/svelte';
-    import Account from '$assets/account_logo.svelte';
+    import Icon from "@iconify/svelte";
+    import * as Card from "$lib/components/ui/card";
+    import { Button } from "$lib/components/ui/button";
 
     /** @type {string} */
     export let first_name;
@@ -20,15 +22,15 @@
 <div
     class="main-screen flex flex-col content-center items-center justify-center"
 >
-    <div class="h-auto w-auto">
-        <div class="flex content-end py-2 text-3xl">
-            <Account />
-            <div class="ml-1">Account Details</div>
-        </div>
-        <div
-            class="text-md rounded-xl bg-light-primary p-7 dark:bg-dark-primary"
-        >
-            Currently logged in:
+    <Card.Root class="min-w-1/4 border-2">
+        <Card.Header>
+            <Card.Title class="flex content-end items-center py-2 gap-2 text-3xl">
+                <Icon icon="octicon:person-16" class="text-3xl"/>
+                Account Details
+            </Card.Title>
+        </Card.Header>
+
+        <Card.Content class="py-4 px-8">
             <div class="flex flex-col text-2xl">
                 <p class="italic">({role})</p>
                 <p>
@@ -41,19 +43,17 @@
                     <p>Wordpress Email: {wordpress_email}</p>
                 {/if}
             </div>
+        </Card.Content>
 
-            <div>
-                <form
-                    on:submit|preventDefault={() => router.post('/logout')}
-                    class="flex justify-end pt-3"
-                >
-                    <input
-                        type="submit"
-                        class="w-1/2 cursor-pointer rounded-2xl border-4 p-1 text-xl transition-all ease-in hover:bg-light-secondary-text dark:hover:bg-dark-secondary-text"
-                        value="Logout"
-                    />
-                </form>
-            </div>
-        </div>
-    </div>
+        <Card.Footer class="flex justify-end p-3">
+            <form
+                on:submit|preventDefault={() => router.post('/logout')}
+            >
+                <Button
+                    type="submit"
+                    class="cursor-pointer bg-dark-primary text-white hover:bg-opacity-90 text-xl px-8"
+                > Logout </Button>
+            </form>
+        </Card.Footer>
+    </Card.Root>
 </div>
