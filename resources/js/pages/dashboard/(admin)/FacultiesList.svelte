@@ -13,6 +13,8 @@
     import { Button } from '$lib/components/ui/button';
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
+    import { Label } from '$lib/components/ui/label/index';
+    import * as Dialog from '$lib/components/ui/dialog/index';
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
 
@@ -143,11 +145,114 @@
                 variant="outline"
                 ><Icon icon="material-symbols:add" />Import Faculties</Button
             >
-            <Button
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                on:click={openAddForm}
-                ><Icon icon="material-symbols:add" />Add Faculty</Button
-            >
+            <Dialog.Root bind:open={isModalOpen}>
+                <Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    on:click={openAddForm}
+                    ><Icon icon="material-symbols:add" />Add Faculty</Button
+                >
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Add Faculty</Dialog.Title>
+                    </Dialog.Header>
+                    <form
+                        bind:this={userFormElement}
+                        class="flex flex-col gap-4"
+                        on:submit|preventDefault={formUserRoleId
+                            ? updateUser
+                            : addUser}
+                    >
+                        <div
+                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                        >
+                            <Label for="first_name"
+                                ><Required />First Name</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="first_name"
+                                    type="text"
+                                    bind:value={$userForm.first_name}
+                                    required
+                                />
+                                {#if $userForm.errors.first_name}
+                                    <ErrorText>
+                                        {$userForm.errors.first_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="middle_name">Middle Name</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="middle_name"
+                                    type="text"
+                                    bind:value={$userForm.middle_name}
+                                />
+                                {#if $userForm.errors.middle_name}
+                                    <ErrorText>
+                                        {$userForm.errors.middle_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="last_name"><Required />Last Name</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="last_name"
+                                    type="text"
+                                    bind:value={$userForm.last_name}
+                                    required
+                                />
+                                {#if $userForm.errors.last_name}
+                                    <ErrorText>
+                                        {$userForm.errors.last_name}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="email"><Required />Email</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="email"
+                                    type="email"
+                                    bind:value={$userForm.email}
+                                    required
+                                />
+                                {#if $userForm.errors.email}
+                                    <ErrorText>
+                                        {$userForm.errors.email}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="section">Section</Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="section"
+                                    type="text"
+                                    bind:value={$userForm.section}
+                                />
+                                {#if $userForm.errors.section}
+                                    <ErrorText>
+                                        {$userForm.errors.section}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+                        </div>
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit"
+                                >{formUserRoleId
+                                    ? 'Update Faculty'
+                                    : 'Add Faculty'}</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
         </div>
     </div>
 
@@ -250,96 +355,3 @@
         {/each}
     </Table>
 </div>
-
-<Modal bind:isOpen={isModalOpen}>
-    <form
-        bind:this={userFormElement}
-        class="flex flex-col gap-4"
-        on:submit|preventDefault={formUserRoleId ? updateUser : addUser}
-    >
-        <div class="grid grid-cols-[auto,1fr] items-center gap-4">
-            <label for="first_name"><Required />First Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="first_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.first_name}
-                    required
-                />
-                {#if $userForm.errors.first_name}
-                    <ErrorText>
-                        {$userForm.errors.first_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="middle_name">Middle Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="middle_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.middle_name}
-                />
-                {#if $userForm.errors.middle_name}
-                    <ErrorText>
-                        {$userForm.errors.middle_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="last_name"><Required />Last Name</label>
-            <div class="flex flex-col">
-                <input
-                    name="last_name"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.last_name}
-                    required
-                />
-                {#if $userForm.errors.last_name}
-                    <ErrorText>
-                        {$userForm.errors.last_name}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="email"><Required />Email</label>
-            <div class="flex flex-col">
-                <input
-                    name="email"
-                    type="email"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.email}
-                    required
-                />
-                {#if $userForm.errors.email}
-                    <ErrorText>
-                        {$userForm.errors.email}
-                    </ErrorText>
-                {/if}
-            </div>
-
-            <label for="section">Section</label>
-            <div class="flex flex-col">
-                <input
-                    name="section"
-                    type="text"
-                    class="bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                    bind:value={$userForm.section}
-                />
-                {#if $userForm.errors.section}
-                    <ErrorText>
-                        {$userForm.errors.section}
-                    </ErrorText>
-                {/if}
-            </div>
-        </div>
-        <input
-            class="cursor-pointer items-center rounded-full bg-light-primary p-2 px-4 hover:opacity-90 dark:bg-dark-primary"
-            type="submit"
-            value={formUserRoleId ? 'Update Faculty' : 'Add Faculty'}
-        />
-    </form>
-</Modal>
