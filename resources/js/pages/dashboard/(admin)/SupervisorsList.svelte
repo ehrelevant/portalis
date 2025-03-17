@@ -159,6 +159,12 @@
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 variant="outline">Import Supervisors</Button
             >
+            <Button
+                href="/export/supervisors/list"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                target="_blank"
+                variant="outline">Export Supervisors</Button
+            >
             <Dialog.Root bind:open={isModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"

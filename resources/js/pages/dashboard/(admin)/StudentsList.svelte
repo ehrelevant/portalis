@@ -200,7 +200,7 @@
                         >Export Student Section</DropdownMenu.Item
                     >
                     <DropdownMenu.Item
-                        href="/export/students/sections"
+                        href="/export/students/company-evaluations"
                         target="_blank"
                         >Export Company Evaluations</DropdownMenu.Item
                     >

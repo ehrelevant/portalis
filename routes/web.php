@@ -78,8 +78,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
         Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
         Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
+        Route::get('/export/supervisors/list', [ExportsController::class, 'exportSupervisorList']);
         Route::get('/export/supervisors/midsem-reports', [ExportsController::class, 'exportMidsemReportSupervisors']);
         Route::get('/export/supervisors/final-reports', [ExportsController::class, 'exportFinalReportSupervisors']);
+        Route::get('/export/faculties/list', [ExportsController::class, 'exportFacultyList']);
+        Route::get('/export/companies/list', [ExportsController::class, 'exportCompanyList']);
 
         // Requirement Viewing
         Route::get('/requirement/{requirement_id}/view/{student_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);

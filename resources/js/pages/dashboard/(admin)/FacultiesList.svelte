@@ -145,6 +145,12 @@
                 variant="outline"
                 ><Icon icon="material-symbols:add" />Import Faculties</Button
             >
+            <Button
+                href="/export/faculties/list"
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                target="_blank"
+                variant="outline">Export Faculties</Button
+            >
             <Dialog.Root bind:open={isModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
