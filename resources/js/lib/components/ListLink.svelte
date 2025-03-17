@@ -65,7 +65,7 @@
         {/if}
         {#if isLinkActive}
             <Link href={submitHref} target="_blank"
-                ><Button class={colorVariants.green}>Submit</Button></Link
+                ><Button class="bg-dark-primary hover:bg-opacity-90 text-white">Submit</Button></Link
             >
         {/if}
         <Status type={status} />

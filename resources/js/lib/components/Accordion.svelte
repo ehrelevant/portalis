@@ -5,7 +5,7 @@
 <!-- Only works when parent containers are flexboxes -->
 <Accordion.Root class="w-full" value="item">
     <Accordion.Item class="rounded-xl border-b" value="item">
-        <Accordion.Trigger class="flex flex-row text-left">
+        <Accordion.Trigger class="flex flex-row text-left p-4">
             <slot name="summary" />
         </Accordion.Trigger>
         <Accordion.Content class="p-2">
