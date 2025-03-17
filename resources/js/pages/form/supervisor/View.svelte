@@ -9,6 +9,7 @@
     import { Button } from '$lib/components/ui/button/index';
     import { colorVariants } from '$lib/customVariants';
     import { Textarea } from '$lib/components/ui/textarea';
+    import { Input } from '$lib/components/ui/input/index';
 
     export let supervisor;
     export let evaluator_user_id;
@@ -70,13 +71,14 @@
                             } = student}
                             <p>{last_name}, {first_name}</p>
                             {#each Object.entries(categorized_ratings[category_id]) as [rating_id, _]}
-                                <p
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                >
-                                    {students[student_id].categorized_ratings[
-                                        category_id
-                                    ][rating_id]}
-                                </p>
+                                <Input
+                                    type="number"
+                                    value={students[student_id]
+                                        .categorized_ratings[category_id][
+                                        rating_id
+                                    ]}
+                                    disabled
+                                />
                             {/each}
                         {/each}
                     </div>
@@ -92,8 +94,7 @@
                         {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
                             <p>{last_name}, {first_name}</p>
-                            <textarea
-                                class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            <Textarea
                                 value={students[student_id].opens[open_id]}
                                 disabled
                             />

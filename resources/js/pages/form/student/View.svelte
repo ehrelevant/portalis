@@ -9,6 +9,7 @@
     import { Button } from '$lib/components/ui/button/index';
     import { colorVariants } from '$lib/customVariants';
     import { Textarea } from '$lib/components/ui/textarea';
+    import { Input } from '$lib/components/ui/input/index';
 
     export let student;
     export let evaluator_user_id;
@@ -56,18 +57,22 @@
                     >
                         {#each Object.entries(values.categorized_ratings[category_id]) as [rating_id, _]}
                             <div class="flex flex-col gap-2">
-                                <p class="text-pretty text-lg">
+                                <Label
+                                    for="rating_{rating_id}"
+                                    class="text-pretty text-lg"
+                                >
                                     {categorized_rating_questions[category_id][
                                         rating_id
                                     ].criterion}
-                                </p>
-                                <p
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                                >
-                                    {values.categorized_ratings[category_id][
-                                        rating_id
-                                    ]}
-                                </p>
+                                </Label>
+                                <Input
+                                    name="rating_{rating_id}"
+                                    type="number"
+                                    value={values.categorized_ratings[
+                                        category_id
+                                    ][rating_id]}
+                                    disabled
+                                />
                             </div>
                         {/each}
                     </div>
@@ -80,11 +85,7 @@
                     <div
                         class="grid grid-cols-[1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        <textarea
-                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                            bind:value={values.opens[open_id]}
-                            disabled
-                        />
+                        <Textarea value={values.opens[open_id]} disabled />
                     </div>
                 </Accordion>
             {/each}
