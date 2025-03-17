@@ -54,6 +54,7 @@ class AdminController extends Controller
                 'students.id AS student_id',
                 'students.student_number',
                 'users.first_name',
+                'users.middle_name',
                 'users.last_name',
                 'faculties.section',
                 'students.has_dropped',
@@ -86,11 +87,12 @@ class AdminController extends Controller
                 'student_id' => $student_info->student_id,
                 'student_number' => $student_info->student_number,
                 'first_name' => $student_info->first_name,
+                'middle_name' => $student_info->middle_name,
                 'last_name' => $student_info->last_name,
                 'section' => $student_info->section,
                 'supervisor_id' => $student_info->supervisor_id,
-                'company_id' => $student_info->company_id,
-                'company' => $student_info->company_name,
+                'company_id' => $student_info->company_id ?? 0,
+                'company' => $student_info->company_name ?? '',
                 'email' => $student_info->email,
                 'wordpress_name' => $student_info->wordpress_name,
                 'wordpress_email' => $student_info->wordpress_email,
@@ -128,6 +130,14 @@ class AdminController extends Controller
             ->keyBy('id')
             ->toArray();
 
+        $supervisors = DB::table('users')
+            ->where('role', 'supervisor')
+            ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+            ->select('supervisors.id', 'users.first_name', 'users.last_name')
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
         foreach ($companies as $company) {
             $company_supervisors_info = DB::table('users')
                 ->where('role', 'supervisor')
@@ -148,6 +158,7 @@ class AdminController extends Controller
             'form_infos' => $form_infos,
             'companies' => $companies,
             'companySupervisors' => $company_supervisors,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -172,6 +183,7 @@ class AdminController extends Controller
                 'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
                 'users.first_name',
+                'users.middle_name',
                 'users.last_name',
                 'users.email',
                 'companies.id AS company_id',
@@ -191,6 +203,7 @@ class AdminController extends Controller
             array_push($supervisors, [
                 'supervisor_id' => $supervisor_info->supervisor_id,
                 'first_name' => $supervisor_info->first_name,
+                'middle_name' => $supervisor_info->middle_name,
                 'last_name' => $supervisor_info->last_name,
                 'email' => $supervisor_info->email,
                 'company_name' => $supervisor_info->company_name,
@@ -238,6 +251,7 @@ class AdminController extends Controller
                 'users.id AS user_id',
                 'faculties.id AS faculty_id',
                 'users.first_name',
+                'users.middle_name',
                 'users.last_name',
                 'users.email',
                 'faculties.section',
