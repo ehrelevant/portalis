@@ -230,9 +230,8 @@
                                         'Do you really want to delete this company?',
                                     )
                                 ) {
-                                    router.put(
+                                    router.delete(
                                         `/api/delete/company/${company_id}`,
-                                        {},
                                         { preserveScroll: true },
                                     );
                                 }
