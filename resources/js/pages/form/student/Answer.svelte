@@ -6,6 +6,7 @@
 
     import * as Dialog from '$lib/components/ui/dialog/index';
     import { Label } from '$lib/components/ui/label/index';
+    import { Input } from '$lib/components/ui/input/index';
     import { Button } from '$lib/components/ui/button/index';
     import { colorVariants } from '$lib/customVariants';
     import { Textarea } from '$lib/components/ui/textarea';
@@ -80,13 +81,16 @@
                     >
                         {#each Object.entries($form.categorized_ratings[category_id]) as [rating_id, _]}
                             <div class="flex flex-col gap-2">
-                                <p class="text-pretty text-lg">
+                                <Label
+                                    for="rating_{rating_id}"
+                                    class="text-pretty text-lg"
+                                >
                                     {categorized_rating_questions[category_id][
                                         rating_id
                                     ].criterion}
-                                </p>
-                                <input
-                                    class="bg-white p-2 text-center text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                                </Label>
+                                <Input
+                                    name="rating_{rating_id}"
                                     type="number"
                                     max={categorized_rating_questions[
                                         category_id
@@ -113,28 +117,25 @@
                     <div
                         class="grid grid-cols-[1fr] items-center justify-center gap-x-4 gap-y-2"
                     >
-                        <textarea
-                            class="w-full bg-white p-2 text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
-                            bind:value={$form.opens[open_id]}
-                        />
+                        <Textarea bind:value={$form.opens[open_id]} />
                     </div>
                 </Accordion>
             {/each}
 
             {#if ['Returned', 'None'].includes(status)}
                 <div class="m-2 flex justify-center gap-4">
-                    <input
+                    <Input
                         name="draft"
                         type="button"
                         value="Save Draft"
-                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        class="cursor-pointer {colorVariants.blue}"
                         on:click={draftForm}
                     />
-                    <input
+                    <Input
                         name="submit"
                         type="button"
                         value="Submit Response"
-                        class="w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                        class="cursor-pointer {colorVariants.green}"
                         on:click={submitForm}
                     />
                 </div>
