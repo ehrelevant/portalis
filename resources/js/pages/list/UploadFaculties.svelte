@@ -9,19 +9,20 @@
     });
 
     function handleSubmit() {
-        $form.post(`/list/faculties/submit`);
+        if (
+            confirm(
+                'This action may replace all existing faculty users. Are you sure you want to proceed?',
+            )
+        ) {
+            $form.post(`/list/faculties/submit`);
+        }
     }
 </script>
 
 <div class="main-screen flex w-full flex-col justify-center p-4">
-    <Header
-        txt="Import Faculty List"
-    />
+    <Header txt="Import Faculty List" />
     <div class="flex grow flex-col items-center justify-center">
-        <form
-            on:submit|preventDefault={handleSubmit}
-            class="flex flex-col"
-        >
+        <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
             <div class="flex w-full flex-row justify-between">
                 <div class="text-xl">
                     Upload <strong>.csv</strong> file below:
