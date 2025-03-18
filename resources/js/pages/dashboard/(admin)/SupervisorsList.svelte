@@ -252,7 +252,11 @@
                                     selected={!$userForm.company_id
                                         ? { label: '-', value: '' }
                                         : {
-                                              label: $userForm.company_id,
+                                              label: companies.find(
+                                                  (company) =>
+                                                      company.id ===
+                                                      $userForm.company_id,
+                                              ).company_name,
                                               value: $userForm.company_id,
                                           }}
                                     onSelectedChange={(v) => {
