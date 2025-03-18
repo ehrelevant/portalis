@@ -42,7 +42,7 @@ class ImportsController extends Controller
             // ---
 
             $collection_row = array();
-            
+
             foreach ($headers as $key => $value) {
                 $collection_row[$key] = $csv_row[$value];
             }
@@ -64,9 +64,9 @@ class ImportsController extends Controller
         $importedCollection = self::csvToCollection($importedCsv);
 
         // check if primary keys are:
-            // present in CSV headers
-            // not null
-            // unique
+        // present in CSV headers
+        // not null
+        // unique
         foreach ($primary_keys as $primary_key) {
             if (!array_key_exists($primary_key, $importedCsvHeaders)) {
                 return false;
@@ -84,8 +84,8 @@ class ImportsController extends Controller
         }
 
         // check if unique keys are:
-            // present in CSV headers
-            // unique
+        // present in CSV headers
+        // unique
         foreach ($unique_keys as $unique_key) {
             if (!array_key_exists($unique_key, $importedCsvHeaders)) {
                 return false;
@@ -97,8 +97,8 @@ class ImportsController extends Controller
         }
 
         // check if other required keys are:
-            // present in CSV headers
-            // not null
+        // present in CSV headers
+        // not null
         foreach ($other_keys_required as $other_key) {
             if (!array_key_exists($other_key, $importedCsvHeaders)) {
                 return false;
@@ -112,7 +112,7 @@ class ImportsController extends Controller
         }
 
         // check if other optional keys are
-            // present in CSV headers
+        // present in CSV headers
         foreach ($other_keys_optional as $other_key) {
             if (!array_key_exists($other_key, $importedCsvHeaders)) {
                 return false;
@@ -164,8 +164,7 @@ class ImportsController extends Controller
         $other_keys_required = ['first_name', 'last_name', 'wordpress_name'];
         $other_keys_optional = ['middle_name'];
         if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
-            // todo: display error message instead of abort 404
-            abort(404);
+            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
         // todo: check foreign keys
@@ -178,7 +177,7 @@ class ImportsController extends Controller
         self::importStudents($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/students');
+        return redirect('/dashboard/admin/students')->with('success', 'Successfully imported student list.');
     }
 
     // todo: possibly move to AdminController?
@@ -187,7 +186,7 @@ class ImportsController extends Controller
         $student_ids = DB::table('users')
             ->where('role', 'student')
             ->pluck('role_id');
-        
+
         $admin_controller = new AdminController();
         foreach ($student_ids as $student_id) {
             $admin_controller->deleteStudent($student_id);
@@ -195,13 +194,13 @@ class ImportsController extends Controller
     }
 
     public function importStudents($csvPath): void
-    {   
+    {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $studentsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $studentsCollection = self::csvToCollection($studentsCsv);
-        
+
         // loop through every student in row
-        foreach ($studentsCollection as $studentRow) {      
+        foreach ($studentsCollection as $studentRow) {
             $new_student = new Student();
             $new_student->student_number = $studentRow['student_number'];
             $new_student->supervisor_id = null;
@@ -259,8 +258,7 @@ class ImportsController extends Controller
         $other_keys_required = ['first_name', 'last_name'];
         $other_keys_optional = ['middle_name'];
         if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
-            // todo: display error message instead of abort 404
-            abort(404);
+            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
         // todo: check foreign keys
@@ -273,7 +271,7 @@ class ImportsController extends Controller
         self::importSupervisors($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/supervisors');
+        return redirect('/dashboard/admin/supervisors')->with('success', 'Successfully imported supervisor list.');
     }
 
     // todo: possibly move to AdminController?
@@ -282,7 +280,7 @@ class ImportsController extends Controller
         $supervisor_ids = DB::table('users')
             ->where('role', 'supervisor')
             ->pluck('role_id');
-        
+
         $admin_controller = new AdminController();
         foreach ($supervisor_ids as $supervisor_id) {
             $admin_controller->deleteSupervisor($supervisor_id);
@@ -296,7 +294,7 @@ class ImportsController extends Controller
         $supervisorsCollection = self::csvToCollection($supervisorsCsv);
 
         // loop through every supervisor in CSV
-        foreach ($supervisorsCollection as $supervisorRow) {      
+        foreach ($supervisorsCollection as $supervisorRow) {
             $new_supervisor = new Supervisor();
             $new_supervisor->save();
 
@@ -320,7 +318,7 @@ class ImportsController extends Controller
     }
 
     public function submitFacultyCsv(Request $request): RedirectResponse
-    {   
+    {
         // todo: confirm if faculty should be allowed to add other faculty
         $user = Auth::user();
         if ($user->role !== User::ROLE_ADMIN) {
@@ -352,8 +350,7 @@ class ImportsController extends Controller
         $other_keys_required = ['first_name', 'last_name'];
         $other_keys_optional = ['middle_name', 'section'];
         if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
-            // todo: display error message instead of abort 404
-            abort(404);
+            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
         // faculty list has no foreign keys
@@ -366,7 +363,7 @@ class ImportsController extends Controller
         self::importFaculties($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/faculties');
+        return redirect('/dashboard/admin/faculties')->with('success', 'Successfully imported faculty list.');
     }
 
     // todo: possibly move to AdminController?
@@ -375,7 +372,7 @@ class ImportsController extends Controller
         $faculty_ids = DB::table('users')
             ->where('role', 'faculty')
             ->pluck('role_id');
-        
+
         $admin_controller = new AdminController();
         foreach ($faculty_ids as $faculty_id) {
             $admin_controller->deleteFaculty($faculty_id);
@@ -389,7 +386,7 @@ class ImportsController extends Controller
         $facultiesCollection = self::csvToCollection($facultiesCsv);
 
         // loop through every faculty in row
-        foreach ($facultiesCollection as $facultyRow) {      
+        foreach ($facultiesCollection as $facultyRow) {
             $new_faculty = new Faculty();
             $new_faculty->section = $facultyRow['section'];
             $new_faculty->save();
@@ -403,7 +400,7 @@ class ImportsController extends Controller
             $new_user->email = $facultyRow['email'];
             $new_user->save();
         }
-    }   
+    }
 
     // ---
 
@@ -414,7 +411,7 @@ class ImportsController extends Controller
     }
 
     public function submitCompanyCsv(Request $request): RedirectResponse
-    {   
+    {
         $user = Auth::user();
         if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
             abort(401);
@@ -441,8 +438,7 @@ class ImportsController extends Controller
         $other_keys_required = [];
         $other_keys_optional = [];
         if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
-            // todo: display error message instead of abort 404
-            abort(404);
+            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
         // company list has no foreign keys
@@ -455,7 +451,7 @@ class ImportsController extends Controller
         self::importCompanies($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/companies');
+        return redirect('/dashboard/admin/companies')->with('success', 'Successfully imported company list.');
     }
 
     // todo: possibly move to AdminController?
@@ -463,7 +459,7 @@ class ImportsController extends Controller
     {
         $company_ids = DB::table('companies')
             ->pluck('id');
-        
+
         $admin_controller = new AdminController();
         foreach ($company_ids as $company_id) {
             $admin_controller->deleteCompany($company_id);
@@ -477,10 +473,10 @@ class ImportsController extends Controller
         $companiesCollection = self::csvToCollection($companiesCsv);
 
         // loop through every company in CSV
-        foreach ($companiesCollection as $companyRow) {      
+        foreach ($companiesCollection as $companyRow) {
             $new_company = new Company();
             $new_company->company_name = $companyRow['company_name'];
             $new_company->save();
         }
-    }   
+    }
 }
