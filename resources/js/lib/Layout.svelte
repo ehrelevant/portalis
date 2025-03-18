@@ -15,7 +15,7 @@
 </script>
 
 <ModeWatcher />
-<Toaster richColors />
+<Toaster richColors closeButton />
 <main class="min-w-screen flex min-h-screen flex-col sm:flex-row">
     <Navbar />
     <slot />
