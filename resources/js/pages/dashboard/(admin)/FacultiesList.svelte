@@ -139,11 +139,11 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
-            <Button
-                href="/list/faculties/upload"
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                variant="outline"
-                ><Icon icon="material-symbols:add" />Import Faculties</Button
+            <Link href="/list/faculties/upload"
+                ><Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    variant="outline"><Icon icon="uil:import" />Import</Button
+                ></Link
             >
             <Button
                 href="/export/faculties/list"

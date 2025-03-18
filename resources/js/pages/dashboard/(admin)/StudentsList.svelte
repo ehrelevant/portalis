@@ -179,10 +179,11 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
-            <Button
-                href="/list/students/upload"
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                variant="outline">Import Students</Button
+            <Link href="/list/students/upload"
+                ><Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    variant="outline"><Icon icon="uil:import" />Import</Button
+                ></Link
             >
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild let:builder>
