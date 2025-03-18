@@ -44,7 +44,8 @@
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.11.1",
-        "@inertiajs/svelte": "^2.0.5"
+        "@inertiajs/svelte": "^2.0.5",
+        "@rollup/plugin-typescript": "^12.1.2"
     },
     "packageManager": "pnpm@9.15.4"
 }
