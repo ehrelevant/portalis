@@ -23,7 +23,13 @@ class LoginController extends Controller
             'pin' => ['required'],
         ]);
 
-        $user = User::where('email', $credentials['email'])->firstOrFail();
+        $user = User::where('email', $credentials['email'])->first();
+        if (!$user) {
+            return back()->withErrors([
+                'pin' => 'The provided pin has either expired or does not match the given email.',
+            ]);
+        }
+
         if ($user->password_expiry < now()) {
             $user->password = null;
             $user->password_expiry = null;
