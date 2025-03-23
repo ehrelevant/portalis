@@ -279,7 +279,8 @@ class AdminController extends Controller
         $companies = $companies_partial
             ->select(
                 'companies.id AS company_id',
-                'companies.company_name'
+                'companies.company_name',
+                'companies.is_disabled'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -827,6 +828,20 @@ class AdminController extends Controller
         }
     }
 
+    public function enableCompany(int $company_id)
+    {
+        try {
+            Company::where('id', $company_id)
+                ->update(['is_disabled' => false]);
+
+            return back()->with('success', 'Successfully enabled company.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to enable company.');
+        }
+    }
+
     public function disableStudent(int $student_id)
     {
         try {
@@ -875,6 +890,23 @@ class AdminController extends Controller
             Log::error($e->getMessage());
 
             return back()->with('error', 'Failed to disable faculty.');
+        }
+    }
+
+    public function disableCompany(int $company_id)
+    {
+        try {
+            Supervisor::where('company_id', $company_id)
+                ->update(['company_id' => null]);
+
+            Company::where('id', $company_id)
+                ->update(['is_disabled' => true]);
+
+            return back()->with('success', 'Successfully disabled company.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable company.');
         }
     }
 }

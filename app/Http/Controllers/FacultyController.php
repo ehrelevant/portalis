@@ -402,7 +402,8 @@ class FacultyController extends Controller
         $companies = $companies_partial
             ->select(
                 'companies.id AS company_id',
-                'companies.company_name'
+                'companies.company_name',
+                'companies.is_disabled'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();

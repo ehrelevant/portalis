@@ -213,31 +213,45 @@
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
         {#each companies as company (company.company_id)}
-            {@const { company_id, company_name } = company}
-            <TableRow>
+            {@const { company_id, company_name, is_disabled } = company}
+            <TableRow disabled={is_disabled}>
                 <TableCell>{company_name}</TableCell>
                 <TableCell
-                    ><div class="flex flex-row gap-2">
+                    ><div
+                        class="flex flex-row items-center justify-center gap-2"
+                    >
                         <Button
-                            class="grow {colorVariants.blue}"
+                            class={colorVariants.blue}
                             on:click={() => openUpdateForm(company_id)}
                             >Edit</Button
                         >
-                        <Button
-                            class="grow {colorVariants.red}"
-                            on:click={() => {
-                                if (
-                                    confirm(
-                                        'Do you really want to delete this company?',
-                                    )
-                                ) {
-                                    router.delete(
-                                        `/api/delete/company/${company_id}`,
-                                        { preserveScroll: true },
-                                    );
-                                }
-                            }}>Delete</Button
-                        >
+                        {#if is_disabled}
+                            <Link
+                                href="/api/enable/company/{company_id}"
+                                as="button"
+                                preserveScroll
+                                method="put"
+                                ><Button class={colorVariants.green}
+                                    >Enable</Button
+                                ></Link
+                            >
+                        {:else}
+                            <Button
+                                class={colorVariants.red}
+                                on:click={() => {
+                                    if (
+                                        confirm(
+                                            'Do you really want to disable this company?',
+                                        )
+                                    ) {
+                                        router.put(
+                                            `/api/disable/company/${company_id}`,
+                                            { preserveScroll: true },
+                                        );
+                                    }
+                                }}>Disable</Button
+                            >
+                        {/if}
                     </div></TableCell
                 >
             </TableRow>
