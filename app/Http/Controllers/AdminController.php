@@ -891,4 +891,26 @@ class AdminController extends Controller
             return back()->with('error', 'Failed to disable company.');
         }
     }
+
+    public function disableStudents(Request $request)
+    {
+        try {
+            $selected_student_ids = $request->validate([
+                'selectedStudentIds' => ['required', 'array'],
+                'selectedStudentIds.*' => ['integer', 'numeric'],
+            ])['selectedStudentIds'];
+
+            foreach ($selected_student_ids as $selected_student_id) {
+                User::where('role', User::ROLE_STUDENT)
+                    ->where('role_id', $selected_student_id)
+                    ->update(['is_disabled' => true]);
+            }
+
+            return back()->with('success', 'Successfully disabled students.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable students.');
+        }
+    }
 }

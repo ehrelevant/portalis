@@ -58,6 +58,36 @@
         },
     ];
 
+    let selected: { [x: number]: boolean | 'indeterminate' } = students.reduce(
+        (selectedRecordAcc, { student_id }) => {
+            return { ...selectedRecordAcc, [student_id]: false };
+        },
+        {},
+    );
+    $: hasSelected = Object.values(selected).some((val) => val);
+
+    function bulkDisable() {
+        const selectedStudentIds = Object.entries(selected)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([index, _]) => Number(index));
+
+        router.put(
+            '/api/disable/students',
+            {
+                selectedStudentIds,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => {
+                    for (const { student_id } of students) {
+                        selected[student_id] = false;
+                    }
+                },
+            },
+        );
+    }
+
     function getFormFromId(targetFormId: number) {
         return formIdNames.find(({ form_id }) => form_id === targetFormId);
     }
@@ -221,6 +251,12 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
+            <Button
+                on:click={bulkDisable}
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                variant="destructive"
+                disabled={!hasSelected}>Disable Selected</Button
+            >
             <Link href="/list/students/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
@@ -514,6 +550,7 @@
     <!-- List of Students -->
     <Table>
         <TableRow header>
+            <TableColumnHeader />
             <TableColumnHeader
                 isActive={sortColumn === 'student_number'}
                 isAscending={sortIsAscending}
@@ -610,7 +647,13 @@
                 form_id_statuses,
                 submission_id_statuses,
             } = student}
-            <TableRow disabled={is_disabled}>
+            <TableRow
+                disabled={is_disabled}
+                selected={Boolean(selected[student_id])}
+            >
+                <TableCell
+                    ><Checkbox bind:checked={selected[student_id]} /></TableCell
+                >
                 <TableCell>{student_number}</TableCell>
                 <TableCell>{last_name}</TableCell>
                 <TableCell>{first_name}</TableCell>

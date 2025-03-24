@@ -120,6 +120,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/api/disable/supervisor/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
         Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
         Route::put('/api/disable/company/{company_id}', [AdminController::class, 'disableCompany']);
+
+        Route::put('/api/disable/students', [AdminController::class, 'disableStudents']);
+        Route::put('/api/disable/supervisors', [AdminController::class, 'disableSupervisors']);
+        Route::put('/api/disable/faculties', [AdminController::class, 'disableFaculties']);
+        Route::put('/api/disable/companies', [AdminController::class, 'disableCompanies']);
     });
 
     // Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
