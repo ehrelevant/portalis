@@ -53,112 +53,85 @@ class AdminController extends Controller
                 'users.id AS user_id',
                 'students.id AS student_id',
                 'students.student_number',
+
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
-                'faculties.section',
-                'students.has_dropped',
-                'supervisors.id AS supervisor_id',
-                'supervisor_users.last_name AS supervisor_last_name',
-                'companies.id AS company_id',
-                'companies.company_name',
+
                 'users.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
+
+                'students.has_dropped',
                 'users.is_disabled',
+
+                'faculties.id AS faculty_id',
+                'faculties.section',
+
+                'supervisors.id AS supervisor_id',
+                'supervisor_users.last_name AS supervisor_last_name',
+                'supervisor_users.first_name AS supervisor_first_name',
+
+                'companies.id AS company_id',
+                'companies.company_name',
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         foreach ($students_info as $student_info) {
-            $form_statuses = DB::table('form_statuses')
+            $form_id_statuses = DB::table('form_statuses')
                 ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
                 ->where('user_id', $student_info->user_id)
-                ->pluck('status', 'form_id');
+                ->get();
 
-            $student_statuses = DB::table('submission_statuses')
+            $submission_id_statuses = DB::table('submission_statuses')
                 ->where('student_id', $student_info->student_id)
                 ->select(
                     'submission_statuses.requirement_id',
                     'submission_statuses.status',
                 )->get();
 
-            array_push($students, [
-                'student_id' => $student_info->student_id,
-                'student_number' => $student_info->student_number,
-                'first_name' => $student_info->first_name,
-                'middle_name' => $student_info->middle_name,
-                'last_name' => $student_info->last_name,
-                'section' => $student_info->section,
-                'supervisor_id' => $student_info->supervisor_id,
-                'company_id' => $student_info->company_id ?? 0,
-                'company' => $student_info->company_name ?? '',
-                'email' => $student_info->email,
-                'wordpress_name' => $student_info->wordpress_name,
-                'wordpress_email' => $student_info->wordpress_email,
-                'form_statuses' => $form_statuses,
-                'has_dropped' => $student_info->has_dropped,
-                'submissions' => $student_statuses,
-                'is_disabled' => $student_info->is_disabled,
-            ]);
+            array_push(
+                $students,
+                array_merge(json_decode(json_encode($student_info), true), [
+                    'form_id_statuses' => $form_id_statuses,
+                    'submission_id_statuses' => $submission_id_statuses,
+                ])
+            );
         }
 
         $requirements = DB::table('requirements')
             ->get();
 
-        $sections = DB::table('faculties')
-            ->pluck('section');
+        $faculties = DB::table('faculties')
+            ->select('id AS faculty_id', 'section')
+            ->get();
 
-        $form_infos = DB::table('users')
+        $form_id_names = DB::table('users')
             ->where('role', 'student')
             ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
-            ->select('forms.id', 'forms.form_name', 'forms.short_name')
-            ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
-            ->get()
-            ->keyBy('id');
+            ->select('forms.id AS form_id', 'forms.form_name', 'forms.short_name')
+            ->groupBy('form_id', 'forms.form_name', 'forms.short_name')
+            ->get();
 
-        $companies = DB::table('companies')->get();
-        $company_supervisors = [];
+        $companies = DB::table('companies')
+            ->select('id AS company_id', 'company_name', 'is_disabled')
+            ->get();
 
-        $company_supervisors['0'] = DB::table('users')
+        $supervisor_company_id_names = DB::table('users')
             ->where('role', 'supervisor')
             ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
-            ->whereNull('company_id')
-            ->select('supervisors.id', 'users.first_name', 'users.last_name')
-            ->get()
-            ->keyBy('id')
-            ->toArray();
-
-        $supervisors = DB::table('users')
-            ->where('role', 'supervisor')
-            ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
-            ->select('supervisors.id', 'users.first_name', 'users.last_name')
-            ->get()
-            ->keyBy('id')
-            ->toArray();
-
-        foreach ($companies as $company) {
-            $company_supervisors_info = DB::table('users')
-                ->where('role', 'supervisor')
-                ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
-                ->where('company_id', $company->id)
-                ->select('supervisors.id', 'users.first_name', 'users.last_name')
-                ->get()
-                ->keyBy('id')
-                ->toArray();
-
-            $company_supervisors[$company->id] = $company_supervisors_info;
-        }
+            ->select('supervisors.id AS supervisor_id', 'supervisors.company_id', 'users.first_name', 'users.middle_name', 'users.last_name')
+            ->get();
 
         return Inertia::render('dashboard/(admin)/StudentsList', [
             'students' => $students,
             'requirements' => $requirements,
-            'sections' => $sections,
-            'form_infos' => $form_infos,
+            'faculties' => $faculties,
+            'formIdNames' => $form_id_names,
             'companies' => $companies,
-            'companySupervisors' => $company_supervisors,
-            'supervisors' => $supervisors,
+            'supervisorCompanyIdNames' => $supervisor_company_id_names,
         ]);
     }
 
@@ -182,51 +155,48 @@ class AdminController extends Controller
             ->select(
                 'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
+
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
+
                 'users.email',
+
+                'users.is_disabled',
+
                 'companies.id AS company_id',
                 'companies.company_name',
-                'users.is_disabled',
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
         $supervisors = [];
         foreach ($supervisors_info as $supervisor_info) {
-            $form_statuses = DB::table('form_statuses')
+            $form_id_statuses = DB::table('form_statuses')
                 ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
                 ->where('user_id', $supervisor_info->user_id)
-                ->pluck('status', 'form_id');
+                ->get();
 
-            array_push($supervisors, [
-                'supervisor_id' => $supervisor_info->supervisor_id,
-                'first_name' => $supervisor_info->first_name,
-                'middle_name' => $supervisor_info->middle_name,
-                'last_name' => $supervisor_info->last_name,
-                'email' => $supervisor_info->email,
-                'company_name' => $supervisor_info->company_name,
-                'company_id' => $supervisor_info->company_id,
-                'form_statuses' => $form_statuses,
-                'is_disabled' => $supervisor_info->is_disabled,
-            ]);
+            array_push($supervisors, array_merge(json_decode(json_encode($supervisor_info), true), [
+                'form_id_statuses' => $form_id_statuses,
+            ]));
         }
 
-        $form_infos = DB::table('users')
+        $form_id_names = DB::table('users')
             ->where('role', 'supervisor')
             ->join('form_statuses', 'form_statuses.user_id', '=', 'users.id')
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
-            ->select('forms.id', 'forms.form_name', 'forms.short_name')
-            ->groupBy('forms.id', 'forms.form_name', 'forms.short_name')
-            ->get()
-            ->keyBy('id');
+            ->select('forms.id AS form_id', 'forms.form_name', 'forms.short_name')
+            ->groupBy('form_id', 'forms.form_name', 'forms.short_name')
+            ->get();
 
-        $companies = DB::table('companies')->get();
+        $companies = DB::table('companies')
+            ->select('id AS company_id', 'company_name', 'is_disabled')
+            ->get();
 
         return Inertia::render('dashboard/(admin)/SupervisorsList', [
             'supervisors' => $supervisors,
-            'form_infos' => $form_infos,
+            'formIdNames' => $form_id_names,
             'companies' => $companies,
         ]);
     }
@@ -250,11 +220,14 @@ class AdminController extends Controller
             ->select(
                 'users.id AS user_id',
                 'faculties.id AS faculty_id',
+
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
+
                 'users.email',
                 'faculties.section',
+
                 'users.is_disabled'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')

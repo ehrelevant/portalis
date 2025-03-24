@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+    import type { Company, FormIdName, SupervisorProps } from '$lib/types';
+
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
@@ -20,11 +22,15 @@
     import * as Select from '$lib/components/ui/select';
     import Icon from '@iconify/svelte';
 
-    export let supervisors;
-    export let form_infos;
-    export let companies;
+    export let supervisors: SupervisorProps[];
+    export let formIdNames: FormIdName[];
+    export let companies: Company[];
 
-    let searchQuery;
+    function getFormFromId(targetFormId: number) {
+        return formIdNames.find(({ form_id }) => form_id === targetFormId);
+    }
+
+    let searchQuery: string;
     function search() {
         router.get(
             '/dashboard/admin/supervisors',
@@ -42,7 +48,7 @@
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
-    function sortByColumn(newSortColumn) {
+    function sortByColumn(newSortColumn: string) {
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -64,7 +70,7 @@
         );
     }
 
-    function setCompany(supervisorId, companyId) {
+    function setCompany(supervisorId: number, companyId: number) {
         router.put(
             `/supervisors/${supervisorId}/assign/company/${companyId}`,
             {},
@@ -107,7 +113,7 @@
     }
 
     let formUserRoleId = null;
-    function openUpdateForm(supervisorId) {
+    function openUpdateForm(supervisorId: number) {
         const supervisor = supervisors.find(
             (supervisor) => supervisor.supervisor_id === supervisorId,
         );
@@ -255,7 +261,7 @@
                                         : {
                                               label: companies.find(
                                                   (company) =>
-                                                      company.id ===
+                                                      company.company_id ===
                                                       $userForm.company_id,
                                               ).company_name,
                                               value: $userForm.company_id,
@@ -270,9 +276,11 @@
                                     <Select.Content>
                                         <Select.Item value="">-</Select.Item>
                                         {#each companies as company}
-                                            {@const { id, company_name } =
-                                                company}
-                                            <Select.Item value={id}
+                                            {@const {
+                                                company_id,
+                                                company_name,
+                                            } = company}
+                                            <Select.Item value={company_id}
                                                 >{company_name}</Select.Item
                                             >
                                         {/each}
@@ -337,8 +345,8 @@
             >
                 Email
             </TableColumnHeader>
-            {#each Object.entries(form_infos) as [_, form_info]}
-                {@const { form_name } = form_info}
+            {#each formIdNames as formIdName}
+                {@const { form_name } = formIdName}
                 <TableColumnHeader>{form_name}</TableColumnHeader>
             {/each}
             <TableColumnHeader>Actions</TableColumnHeader>
@@ -351,7 +359,7 @@
                 email,
                 company_name: supervisor_company_name,
                 company_id: supervisor_company_id,
-                form_statuses,
+                form_id_statuses,
                 is_disabled,
             } = supervisor}
             <TableRow disabled={is_disabled}>
@@ -360,7 +368,7 @@
                 <TableCell>
                     <Select.Root
                         selected={!supervisor_company_id
-                            ? { label: '-', value: '' }
+                            ? { label: '-', value: null }
                             : {
                                   label: supervisor_company_name,
                                   value: supervisor_company_id,
@@ -375,8 +383,8 @@
                         <Select.Content>
                             <Select.Item value="">-</Select.Item>
                             {#each companies as company}
-                                {@const { id, company_name } = company}
-                                <Select.Item value={id}
+                                {@const { company_id, company_name } = company}
+                                <Select.Item value={company_id}
                                     >{company_name}</Select.Item
                                 >
                             {/each}
@@ -384,12 +392,13 @@
                     </Select.Root>
                 </TableCell>
                 <TableCell>{email}</TableCell>
-                {#each Object.entries(form_statuses) as [form_id, form_status]}
+                {#each form_id_statuses as form_id_status}
+                    {@const { form_id, status } = form_id_status}
                     <TableCell center
                         ><StatusCell
                             isAdmin
-                            status={form_status}
-                            href="/form/{form_infos[form_id]
+                            {status}
+                            href="/form/{getFormFromId(form_id)
                                 .short_name}/answer/{supervisor_id}"
                         />
                     </TableCell>

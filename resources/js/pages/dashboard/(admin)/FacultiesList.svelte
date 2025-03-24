@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
+    import type { FacultyProps } from '$lib/types';
+
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
-    import Accordion from '$lib/components/Accordion.svelte';
-    import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
@@ -18,9 +18,9 @@
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
 
-    export let faculties;
+    export let faculties: FacultyProps[];
 
-    let searchQuery;
+    let searchQuery: string;
     function search() {
         router.get(
             '/dashboard/admin/faculties',
@@ -38,7 +38,7 @@
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
-    function sortByColumn(newSortColumn) {
+    function sortByColumn(newSortColumn: string) {
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -92,7 +92,7 @@
     }
 
     let formUserRoleId = null;
-    function openUpdateForm(facultyId) {
+    function openUpdateForm(facultyId: number) {
         const faculty = faculties.find(
             (faculty) => faculty.faculty_id === facultyId,
         );
@@ -320,9 +320,11 @@
                 <TableCell>{email}</TableCell>
                 <TableCell>{section ?? ''}</TableCell>
                 <TableCell
-                    ><div class="flex flex-row gap-2">
+                    ><div
+                        class="flex flex-row items-center justify-center gap-2"
+                    >
                         <Button
-                            class="grow {colorVariants.blue}"
+                            class={colorVariants.blue}
                             on:click={() => openUpdateForm(faculty_id)}
                             >Edit</Button
                         >
@@ -332,14 +334,13 @@
                                 as="button"
                                 preserveScroll
                                 method="put"
-                                class="grow"
                                 ><Button class="w-full {colorVariants.green}"
                                     >Enable</Button
                                 ></Link
                             >
                         {:else}
                             <Button
-                                class="w-full grow {colorVariants.red}"
+                                class={colorVariants.red}
                                 on:click={() => {
                                     if (
                                         confirm(

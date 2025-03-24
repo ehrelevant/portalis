@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
+    import type { Company } from '$lib/types';
+
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
-    import Accordion from '$lib/components/Accordion.svelte';
-    import Modal from '$lib/components/Modal.svelte';
     import Required from '$lib/components/Required.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
     import Table from '$lib/components/table/Table.svelte';
@@ -17,9 +17,9 @@
     import * as Dialog from '$lib/components/ui/dialog/index';
     import Icon from '@iconify/svelte';
 
-    export let companies;
+    export let companies: Company[];
 
-    let searchQuery;
+    let searchQuery: string;
     function search() {
         router.get(
             '/dashboard/admin/companies',
@@ -37,7 +37,7 @@
 
     let sortColumn = 'company_name';
     let sortIsAscending = true;
-    function sortByColumn(newSortColumn) {
+    function sortByColumn(newSortColumn: string) {
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -83,7 +83,7 @@
     }
 
     let formCompanyId = null;
-    function openUpdateForm(companyId) {
+    function openUpdateForm(companyId: number) {
         const company = companies.find(
             (company) => company.company_id === companyId,
         );
