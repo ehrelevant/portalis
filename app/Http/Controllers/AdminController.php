@@ -15,6 +15,7 @@ use App\Models\Supervisor;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -125,13 +126,18 @@ class AdminController extends Controller
             ->select('supervisors.id AS supervisor_id', 'supervisors.company_id', 'users.first_name', 'users.middle_name', 'users.last_name')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/StudentsList', [
+        $is_admin = Auth::user()->role === User::ROLE_ADMIN;
+        $phase = DB::table('website_states')->firstOrFail()->phase;
+
+        return Inertia::render('dashboard/tables/StudentsList', [
             'students' => $students,
             'requirements' => $requirements,
             'faculties' => $faculties,
             'formIdNames' => $form_id_names,
             'companies' => $companies,
             'supervisorCompanyIdNames' => $supervisor_company_id_names,
+            'isAdmin' => $is_admin,
+            'phase' => $phase,
         ]);
     }
 
@@ -194,10 +200,13 @@ class AdminController extends Controller
             ->select('id AS company_id', 'company_name', 'is_disabled')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/SupervisorsList', [
+        $is_admin = Auth::user()->role === User::ROLE_ADMIN;
+
+        return Inertia::render('dashboard/tables/SupervisorsList', [
             'supervisors' => $supervisors,
             'formIdNames' => $form_id_names,
             'companies' => $companies,
+            'isAdmin' => $is_admin,
         ]);
     }
 
@@ -233,7 +242,7 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/FacultiesList', [
+        return Inertia::render('dashboard/tables/FacultiesList', [
             'faculties' => $faculties,
         ]);
     }
@@ -258,7 +267,7 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/(admin)/CompaniesList', [
+        return Inertia::render('dashboard/tables/CompaniesList', [
             'companies' => $companies,
         ]);
     }

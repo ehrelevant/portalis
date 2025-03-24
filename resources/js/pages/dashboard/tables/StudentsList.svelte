@@ -1,34 +1,76 @@
-<script>
+<script lang="ts">
+    import type {
+        StudentProps,
+        Requirement,
+        FormIdName,
+        Faculty,
+        SupervisorCompanyIdName,
+        Company,
+    } from '$lib/types';
+
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
-    import Accordion from '$lib/components/Accordion.svelte';
     import StatusCell from '$lib/components/StatusCell.svelte';
     import Required from '$lib/components/Required.svelte';
-    import Modal from '$lib/components/Modal.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
     import TableCell from '$lib/components/table/TableCell.svelte';
-    import Table from '$lib/components/table/Table.svelte';
     import TableRow from '$lib/components/table/TableRow.svelte';
-    import { Input } from '$lib/components/ui/input/index';
+    import Table from '$lib/components/table/Table.svelte';
     import { Button } from '$lib/components/ui/button';
+    import { colorVariants } from '$lib/customVariants';
+    import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
+    import { Checkbox } from '$lib/components/ui/checkbox/index';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import Icon from '@iconify/svelte';
-    import { colorVariants } from '$lib/customVariants';
 
-    export let students;
-    export let sections;
-    export let form_infos;
-    export let companies;
-    export let companySupervisors;
-    export let supervisors;
+    export let students: StudentProps[];
+    export let requirements: Requirement[];
+    export let faculties: Faculty[];
+    export let supervisorCompanyIdNames: SupervisorCompanyIdName[];
+    export let formIdNames: FormIdName[];
+    export let companies: Company[];
+    export let isAdmin: boolean;
+    export let phase: string;
 
-    let searchQuery;
+    $: companiesSupervisors = [
+        ...companies.map((company) => {
+            return {
+                ...company,
+                supervisors: supervisorCompanyIdNames.filter(
+                    (supervisor) =>
+                        supervisor.company_id === company.company_id,
+                ),
+            };
+        }),
+        {
+            company_id: null,
+            company_name: null,
+            is_disabled: false,
+            supervisors: supervisorCompanyIdNames.filter(
+                (supervisor) => supervisor.company_id === null,
+            ),
+        },
+    ];
+
+    function getFormFromId(targetFormId: number) {
+        return formIdNames.find(({ form_id }) => form_id === targetFormId);
+    }
+
+    function getSupervisorNameFromId(targetSupervisorId: number) {
+        const { first_name, last_name } = supervisorCompanyIdNames.find(
+            ({ supervisor_id }) => supervisor_id === targetSupervisorId,
+        );
+
+        return `${last_name}, ${first_name}`;
+    }
+
+    let searchQuery: string;
     function search() {
         router.get(
             '/dashboard/students',
@@ -46,7 +88,7 @@
 
     let sortColumn = 'student_number';
     let sortIsAscending = true;
-    function sortByColumn(newSortColumn) {
+    function sortByColumn(newSortColumn: string) {
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -68,7 +110,7 @@
         );
     }
 
-    function setSection(studentId, sectionName) {
+    function setSection(studentId: number, sectionName: string) {
         router.put(
             `/students/${studentId}/assign/section/${sectionName}`,
             {},
@@ -78,7 +120,7 @@
         );
     }
 
-    function setSupervisor(studentId, supervisorId) {
+    function setSupervisor(studentId: number, supervisorId: number) {
         router.put(
             `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
@@ -128,7 +170,7 @@
     }
 
     let formUserRoleId = null;
-    function openUpdateForm(studentId) {
+    function openUpdateForm(studentId: number) {
         const student = students.find(
             (student) => student.student_id === studentId,
         );
@@ -179,6 +221,12 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
+            <Link href="/list/students/upload"
+                ><Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    variant="outline"><Icon icon="uil:import" />Import</Button
+                ></Link
+            >
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild let:builder>
                     <Button
@@ -195,7 +243,7 @@
                         >Export Student Section</DropdownMenu.Item
                     >
                     <DropdownMenu.Item
-                        href="/export/students/sections"
+                        href="/export/students/company-evaluations"
                         target="_blank"
                         >Export Company Evaluations</DropdownMenu.Item
                     >
@@ -206,6 +254,7 @@
                     >
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
+
             <Dialog.Root bind:open={isModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
@@ -324,7 +373,8 @@
                                     </Select.Trigger>
                                     <Select.Content>
                                         <Select.Item value="">-</Select.Item>
-                                        {#each sections as section}
+                                        {#each faculties as faculty}
+                                            {@const { section } = faculty}
                                             <Select.Item value={section}
                                                 >{section}</Select.Item
                                             >
@@ -345,9 +395,11 @@
                             <div class="flex flex-col">
                                 <Select.Root
                                     selected={!$userForm.supervisor_id
-                                        ? { label: '-', value: '' }
+                                        ? { label: '-', value: null }
                                         : {
-                                              label: `${supervisors[$userForm.supervisor_id].last_name}, ${supervisors[$userForm.supervisor_id].first_name}`,
+                                              label: getSupervisorNameFromId(
+                                                  $userForm.supervisor_id,
+                                              ),
                                               value: $userForm.supervisor_id,
                                           }}
                                     onSelectedChange={(v) => {
@@ -361,21 +413,25 @@
                                         />
                                     </Select.Trigger>
                                     <Select.Content>
-                                        <Select.Item value="">-</Select.Item>
-                                        {#each companies as company}
+                                        <Select.Item value={null}>-</Select.Item
+                                        >
+                                        {#each companiesSupervisors as companySupervisors}
                                             {@const {
-                                                id: company_id,
                                                 company_name,
-                                            } = company}
+                                                supervisors,
+                                            } = companySupervisors}
                                             <Select.Group>
                                                 <Select.Label
-                                                    >{company_name}</Select.Label
+                                                    >{company_name ??
+                                                        'No Company'}</Select.Label
                                                 >
-                                                {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
+                                                {#each supervisors as supervisor}
                                                     {@const {
+                                                        supervisor_id:
+                                                            companySupervisorId,
                                                         first_name,
                                                         last_name,
-                                                    } = companySupervisor}
+                                                    } = supervisor}
                                                     <Select.Item
                                                         value={companySupervisorId}
                                                         >{last_name}, {first_name}</Select.Item
@@ -383,21 +439,6 @@
                                                 {/each}
                                             </Select.Group>
                                         {/each}
-                                        <Select.Group>
-                                            <Select.Label
-                                                >No Company</Select.Label
-                                            >
-                                            {#each Object.entries(companySupervisors[0]) as [companySupervisorId, companySupervisor]}
-                                                {@const {
-                                                    first_name,
-                                                    last_name,
-                                                } = companySupervisor}
-                                                <Select.Item
-                                                    value={companySupervisorId}
-                                                    >{last_name}, {first_name}</Select.Item
-                                                >
-                                            {/each}
-                                        </Select.Group>
                                     </Select.Content>
                                 </Select.Root>
                                 {#if $userForm.errors.supervisor_id}
@@ -534,10 +575,18 @@
             >
                 Wordpress Email
             </TableColumnHeader>
-            {#each Object.entries(form_infos) as [_, form_info]}
-                {@const { form_name } = form_info}
-                <TableColumnHeader>{form_name}</TableColumnHeader>
-            {/each}
+            {#if !isAdmin && phase === 'pre'}
+                {#each requirements as requirement}
+                    {@const { requirement_name } = requirement}
+                    <TableColumnHeader>{requirement_name}</TableColumnHeader>
+                {/each}
+            {/if}
+            {#if !isAdmin && phase !== 'pre'}
+                {#each formIdNames as formIdName}
+                    {@const { form_name } = formIdName}
+                    <TableColumnHeader>{form_name}</TableColumnHeader>
+                {/each}
+            {/if}
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
         {#each students as student (student.student_id)}
@@ -546,16 +595,18 @@
                 student_number,
                 first_name,
                 last_name,
-                section: student_section,
-                supervisor_id,
-                company_id: student_company_id,
-                company,
                 email,
                 wordpress_name,
                 wordpress_email,
-                form_statuses,
+                // faculty_id,
+                section,
+                supervisor_id,
+                // company_id,
+                company_name,
                 has_dropped,
                 is_disabled,
+                form_id_statuses,
+                submission_id_statuses,
             } = student}
             <TableRow disabled={is_disabled}>
                 <TableCell>{student_number}</TableCell>
@@ -565,11 +616,11 @@
                     <Select.Root
                         selected={has_dropped
                             ? { label: 'DRP', value: 'DRP' }
-                            : !student_section
+                            : !section
                               ? { label: '-', value: '' }
                               : {
-                                    label: student_section,
-                                    value: student_section,
+                                    label: section,
+                                    value: section,
                                 }}
                         onSelectedChange={(v) => {
                             v && setSection(student_id, v.value);
@@ -580,9 +631,10 @@
                         </Select.Trigger>
                         <Select.Content>
                             <Select.Item value="">-</Select.Item>
-                            {#each sections as section}
-                                <Select.Item value={section}
-                                    >{section}</Select.Item
+                            {#each faculties as faculty}
+                                {@const { section: facultySection } = faculty}
+                                <Select.Item value={facultySection}
+                                    >{facultySection}</Select.Item
                                 >
                             {/each}
                             <Select.Item value="DRP">DRP</Select.Item>
@@ -592,9 +644,9 @@
                 <TableCell>
                     <Select.Root
                         selected={!supervisor_id
-                            ? { label: '-', value: '' }
+                            ? { label: '-', value: null }
                             : {
-                                  label: `${supervisors[supervisor_id].last_name}, ${supervisors[supervisor_id].first_name}`,
+                                  label: getSupervisorNameFromId(supervisor_id),
                                   value: supervisor_id,
                               }}
                         onSelectedChange={(v) => {
@@ -605,15 +657,21 @@
                             <Select.Value placeholder="Supervisor Name" />
                         </Select.Trigger>
                         <Select.Content>
-                            <Select.Item value="">-</Select.Item>
-                            {#each companies as company}
-                                {@const { id: company_id, company_name } =
-                                    company}
+                            <Select.Item value={null}>-</Select.Item>
+                            {#each companiesSupervisors as companySupervisors}
+                                {@const { company_name, supervisors } =
+                                    companySupervisors}
                                 <Select.Group>
-                                    <Select.Label>{company_name}</Select.Label>
-                                    {#each Object.entries(companySupervisors[company_id]) as [companySupervisorId, companySupervisor]}
-                                        {@const { first_name, last_name } =
-                                            companySupervisor}
+                                    <Select.Label
+                                        >{company_name ??
+                                            'No Company'}</Select.Label
+                                    >
+                                    {#each supervisors as supervisor}
+                                        {@const {
+                                            supervisor_id: companySupervisorId,
+                                            first_name,
+                                            last_name,
+                                        } = supervisor}
                                         <Select.Item value={companySupervisorId}
                                             >{last_name}, {first_name}</Select.Item
                                         >
@@ -623,19 +681,45 @@
                         </Select.Content>
                     </Select.Root>
                 </TableCell>
-                <TableCell>{company ?? ''}</TableCell>
+                <TableCell>{company_name ?? ''}</TableCell>
                 <TableCell>{email}</TableCell>
                 <TableCell>{wordpress_name}</TableCell>
                 <TableCell>{wordpress_email}</TableCell>
-                {#each Object.entries(form_statuses) as [form_id, form_status]}
-                    <TableCell center
-                        ><StatusCell
-                            status={form_status}
-                            href="/form/{form_infos[form_id]
-                                .short_name}/view/{student_id}"
-                        />
-                    </TableCell>
-                {/each}
+                {#if !isAdmin && phase === 'pre'}
+                    {#each submission_id_statuses as submission_id_status}
+                        {@const { requirement_id, status } =
+                            submission_id_status}
+                        <TableCell center>
+                            <StatusCell
+                                {isAdmin}
+                                {status}
+                                href="/requirement/{requirement_id}/view/{student_id}"
+                            />
+                        </TableCell>
+                    {/each}
+                {/if}
+                {#if !isAdmin && phase !== 'pre'}
+                    {#each form_id_statuses as form_id_status}
+                        {@const { form_id, status } = form_id_status}
+                        <TableCell center>
+                            {#if isAdmin}
+                                <StatusCell
+                                    {isAdmin}
+                                    {status}
+                                    href="/form/{getFormFromId(form_id)
+                                        .short_name}/answer/{student_id}"
+                                />
+                            {:else}
+                                <StatusCell
+                                    {isAdmin}
+                                    {status}
+                                    href="/form/{getFormFromId(form_id)
+                                        .short_name}/view/{student_id}"
+                                />
+                            {/if}
+                        </TableCell>
+                    {/each}
+                {/if}
                 <TableCell
                     ><div class="flex flex-row gap-2">
                         <Button

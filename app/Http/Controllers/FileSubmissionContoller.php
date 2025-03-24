@@ -189,7 +189,7 @@ class FileSubmissionContoller extends Controller
 
             $success_message = 'Successfully accepted the requirement submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
+                return redirect('/dashboard/students')->with('success', $success_message);
             } else {
                 return redirect('/dashboard/students')->with('success', $success_message);
             }
@@ -217,7 +217,7 @@ class FileSubmissionContoller extends Controller
 
             $success_message = 'Successfully invalidated the requirement submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
+                return redirect('/dashboard/students')->with('success', $success_message);
             } else {
                 return redirect('/dashboard/students')->with('success', $success_message);
             }
@@ -250,7 +250,7 @@ class FileSubmissionContoller extends Controller
 
             $success_message = 'Successfully returned the requirement submission. This tab may now be closed.';
             if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
+                return redirect('/dashboard/students')->with('success', $success_message);
             } else {
                 return redirect('/dashboard/students')->with('success', $success_message);
             }

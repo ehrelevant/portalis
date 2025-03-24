@@ -59,7 +59,7 @@
                 />
 
                 <Link
-                    href="/dashboard/admin/students"
+                    href="/dashboard/students"
                     class="w-fit cursor-pointer border-2 px-3 py-2 text-2xl text-dark-primary-text hover:opacity-90"
                 >
                     Cancel

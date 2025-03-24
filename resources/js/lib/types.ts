@@ -5,6 +5,12 @@ export enum Status {
     Accepted = 'Accepted',
 }
 
+export enum Phase {
+    Pre = 'pre',
+    During = 'during',
+    Post = 'post',
+}
+
 interface SubmissionIdStatus {
     requirement_id: number;
     status: Status;

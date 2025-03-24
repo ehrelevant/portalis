@@ -479,7 +479,7 @@ class FormController extends Controller
             $this->updateSupervisorForm($form_values, $short_name, $supervisor_user);
 
             if (Auth::user()->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+                return redirect('/dashboard/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
             } else {
                 return redirect('/dashboard')->with('success', 'Successfully drafted the form. This tab may now be closed.');
             }
@@ -520,7 +520,7 @@ class FormController extends Controller
                 ->update(['status' => 'For Review']);
 
             if (Auth::user()->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+                return redirect('/dashboard/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
             } else {
                 return redirect('/dashboard')->with('success', 'Successfully submitted the form. This tab may now be closed.');
             }
@@ -688,7 +688,7 @@ class FormController extends Controller
             $this->updateStudentForm($form_values, $short_name, $student_user);
 
             if (Auth::user()->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
+                return redirect('/dashboard/students')->with('success', 'Successfully drafted the form. This tab may now be closed.');
             } else {
                 return redirect('/dashboard')->with('success', 'Successfully drafted the form. This tab may now be closed.');
             }
@@ -727,7 +727,7 @@ class FormController extends Controller
                 ->update(['status' => 'For Review']);
 
             if (Auth::user()->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
+                return redirect('/dashboard/students')->with('success', 'Successfully submitted the form. This tab may now be closed.');
             } else {
                 return redirect('/dashboard')->with('success', 'Successfully submitted the form. This tab may now be closed.');
             }
@@ -760,9 +760,7 @@ class FormController extends Controller
             }
 
             $success_message = 'Successfully accepted the form submission. This tab may now be closed.';
-            if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else if ($validator_user->role === User::ROLE_FACULTY) {
+            if ($validator_user->role === User::ROLE_ADMIN || $validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully accepted the form submission.');
@@ -796,9 +794,7 @@ class FormController extends Controller
             }
 
             $success_message = 'Successfully invalidated the form submission. This tab may now be closed.';
-            if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else if ($validator_user->role === User::ROLE_FACULTY) {
+            if ($validator_user->role === User::ROLE_ADMIN || $validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully invalidated the form submission.');
@@ -839,9 +835,7 @@ class FormController extends Controller
             }
 
             $success_message = 'Successfully returned the form submission. This tab may now be closed.';
-            if ($validator_user->role === User::ROLE_ADMIN) {
-                return redirect('/dashboard/admin/students')->with('success', $success_message);
-            } else if ($validator_user->role === User::ROLE_FACULTY) {
+            if ($validator_user->role === User::ROLE_ADMIN || $validator_user->role === User::ROLE_FACULTY) {
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully returned the form submission.');

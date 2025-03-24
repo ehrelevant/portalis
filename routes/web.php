@@ -122,17 +122,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/api/disable/company/{company_id}', [AdminController::class, 'disableCompany']);
     });
 
-    Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
-        Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
-        Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-        Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
-    });
+    // Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
+    //     Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
+    //     Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
+    //     Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
+    // });
 
-    Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
-        Route::get('/dashboard/admin/students', [AdminController::class, 'showStudents']);
-        Route::get('/dashboard/admin/supervisors', [AdminController::class, 'showSupervisors']);
-        Route::get('/dashboard/admin/companies', [AdminController::class, 'showCompanies']);
-        Route::get('/dashboard/admin/faculties', [AdminController::class, 'showFaculties']);
+    Route::middleware([EnsureUserHasRole::class . ':admin,faculty'])->group(function () {
+        Route::get('/dashboard/students', [AdminController::class, 'showStudents']);
+        Route::get('/dashboard/supervisors', [AdminController::class, 'showSupervisors']);
+        Route::get('/dashboard/companies', [AdminController::class, 'showCompanies']);
+        Route::get('/dashboard/faculties', [AdminController::class, 'showFaculties']);
     });
 
     // View submitted file (Role checking is done in function)

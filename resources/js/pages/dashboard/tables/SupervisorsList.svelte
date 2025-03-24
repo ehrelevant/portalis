@@ -1,13 +1,15 @@
 <script lang="ts">
-    import type { FacultyProps } from '$lib/types';
+    import type { Company, FormIdName, SupervisorProps } from '$lib/types';
 
     import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
+    import StatusCell from '$lib/components/StatusCell.svelte';
     import Required from '$lib/components/Required.svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
     import TableColumnHeader from '$lib/components/table/TableColumnHeader.svelte';
+    import Table from '$lib/components/table/Table.svelte';
     import TableRow from '$lib/components/table/TableRow.svelte';
     import TableCell from '$lib/components/table/TableCell.svelte';
     import { Button } from '$lib/components/ui/button';
@@ -15,15 +17,22 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import * as Dialog from '$lib/components/ui/dialog/index';
-    import Table from '$lib/components/table/Table.svelte';
+    import * as Select from '$lib/components/ui/select';
     import Icon from '@iconify/svelte';
 
-    export let faculties: FacultyProps[];
+    export let supervisors: SupervisorProps[];
+    export let formIdNames: FormIdName[];
+    export let companies: Company[];
+    export let isAdmin: boolean;
+
+    function getFormFromId(targetFormId: number) {
+        return formIdNames.find(({ form_id }) => form_id === targetFormId);
+    }
 
     let searchQuery: string;
     function search() {
         router.get(
-            '/dashboard/admin/faculties',
+            '/dashboard/supervisors',
             {
                 search: searchQuery,
                 sort: sortColumn,
@@ -47,12 +56,23 @@
         sortColumn = newSortColumn;
 
         router.get(
-            `/dashboard/admin/faculties`,
+            `/dashboard/supervisors`,
             {
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
             },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
+
+    function setCompany(supervisorId: number, companyId: number) {
+        router.put(
+            `/supervisors/${supervisorId}/assign/company/${companyId}`,
+            {},
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -68,7 +88,7 @@
         middle_name: null,
         last_name: null,
         email: null,
-        section: null,
+        company_id: null,
     });
 
     function addUser() {
@@ -76,7 +96,7 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post('/api/add/faculty', {
+        $userForm.post('/api/add/supervisor', {
             preserveScroll: true,
         });
     }
@@ -86,24 +106,24 @@
         $userForm.middle_name = null;
         $userForm.last_name = null;
         $userForm.email = null;
-        $userForm.section = null;
+        $userForm.company_id = null;
 
         isModalOpen = true;
     }
 
     let formUserRoleId = null;
-    function openUpdateForm(facultyId: number) {
-        const faculty = faculties.find(
-            (faculty) => faculty.faculty_id === facultyId,
+    function openUpdateForm(supervisorId: number) {
+        const supervisor = supervisors.find(
+            (supervisor) => supervisor.supervisor_id === supervisorId,
         );
 
-        $userForm.first_name = faculty.first_name;
-        $userForm.middle_name = faculty.middle_name;
-        $userForm.last_name = faculty.last_name;
-        $userForm.email = faculty.email;
-        $userForm.section = faculty.section;
+        $userForm.first_name = supervisor.first_name;
+        $userForm.middle_name = supervisor.middle_name;
+        $userForm.last_name = supervisor.last_name;
+        $userForm.email = supervisor.email;
+        $userForm.company_id = supervisor.company_id;
 
-        formUserRoleId = facultyId;
+        formUserRoleId = supervisorId;
         isModalOpen = true;
     }
 
@@ -115,7 +135,7 @@
             userFormElement.reportValidity();
             return;
         }
-        $userForm.post(`/api/update/faculty/${formUserRoleId}`, {
+        $userForm.post(`/api/update/supervisor/${formUserRoleId}`, {
             preserveScroll: true,
         });
     }
@@ -126,7 +146,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Faculties List" />
+    <Header txt="Supervisor List" />
 
     <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
@@ -139,27 +159,27 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
-            <Link href="/list/faculties/upload"
+            <Link href="/list/supervisors/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
                     variant="outline"><Icon icon="uil:import" />Import</Button
                 ></Link
             >
             <Button
-                href="/export/faculties/list"
+                href="/export/supervisors/list"
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 target="_blank"
-                variant="outline">Export Faculties</Button
+                variant="outline">Export Supervisors</Button
             >
             <Dialog.Root bind:open={isModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
                     on:click={openAddForm}
-                    ><Icon icon="material-symbols:add" />Add Faculty</Button
+                    ><Icon icon="material-symbols:add" />Add Supervisor</Button
                 >
                 <Dialog.Content>
                     <Dialog.Header>
-                        <Dialog.Title>Add Faculty</Dialog.Title>
+                        <Dialog.Title>Add Supervisor</Dialog.Title>
                     </Dialog.Header>
                     <form
                         bind:this={userFormElement}
@@ -232,18 +252,39 @@
                                 {/if}
                             </div>
 
-                            <Label for="section">Section</Label>
+                            <Label for="company">Company</Label>
                             <div class="flex flex-col">
-                                <Input
-                                    name="section"
-                                    type="text"
-                                    bind:value={$userForm.section}
-                                />
-                                {#if $userForm.errors.section}
-                                    <ErrorText>
-                                        {$userForm.errors.section}
-                                    </ErrorText>
-                                {/if}
+                                <Select.Root
+                                    selected={!$userForm.company_id
+                                        ? { label: '-', value: '' }
+                                        : {
+                                              label: companies.find(
+                                                  (company) =>
+                                                      company.company_id ===
+                                                      $userForm.company_id,
+                                              ).company_name,
+                                              value: $userForm.company_id,
+                                          }}
+                                    onSelectedChange={(v) => {
+                                        v && ($userForm.company_id = v.value);
+                                    }}
+                                >
+                                    <Select.Trigger>
+                                        <Select.Value placeholder="Company" />
+                                    </Select.Trigger>
+                                    <Select.Content>
+                                        <Select.Item value="">-</Select.Item>
+                                        {#each companies as company}
+                                            {@const {
+                                                company_id,
+                                                company_name,
+                                            } = company}
+                                            <Select.Item value={company_id}
+                                                >{company_name}</Select.Item
+                                            >
+                                        {/each}
+                                    </Select.Content>
+                                </Select.Root>
                             </div>
                         </div>
                         <Dialog.Footer>
@@ -252,8 +293,8 @@
                             </Dialog.Close>
                             <Button type="submit"
                                 >{formUserRoleId
-                                    ? 'Update Faculty'
-                                    : 'Add Faculty'}</Button
+                                    ? 'Update Supervisor'
+                                    : 'Add Supervisor'}</Button
                             >
                         </Dialog.Footer>
                     </form>
@@ -272,7 +313,7 @@
         />
     </div>
 
-    <!-- List of Faculties -->
+    <!-- List of Supervisors -->
     <Table>
         <TableRow header>
             <TableColumnHeader
@@ -290,57 +331,98 @@
                 First Name
             </TableColumnHeader>
             <TableColumnHeader
+                isActive={sortColumn === 'company_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('company_name')}
+            >
+                Company
+            </TableColumnHeader>
+            <TableColumnHeader
                 isActive={sortColumn === 'email'}
                 isAscending={sortIsAscending}
                 clickHandler={() => sortByColumn('email')}
             >
                 Email
             </TableColumnHeader>
-            <TableColumnHeader
-                isActive={sortColumn === 'section'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('section')}
-            >
-                Section
-            </TableColumnHeader>
+            {#each formIdNames as formIdName}
+                {@const { form_name } = formIdName}
+                <TableColumnHeader>{form_name}</TableColumnHeader>
+            {/each}
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
-        {#each faculties as faculty (faculty.faculty_id)}
+        {#each supervisors as supervisor (supervisor.supervisor_id)}
             {@const {
-                faculty_id,
+                supervisor_id,
                 first_name,
                 last_name,
                 email,
-                section,
+                company_name: supervisor_company_name,
+                company_id: supervisor_company_id,
+                form_id_statuses,
                 is_disabled,
-            } = faculty}
+            } = supervisor}
             <TableRow disabled={is_disabled}>
                 <TableCell>{last_name}</TableCell>
                 <TableCell>{first_name}</TableCell>
-                <TableCell>{email}</TableCell>
-                <TableCell>{section ?? ''}</TableCell>
-                <TableCell
-                    ><div
-                        class="flex flex-row items-center justify-center gap-2"
+                <TableCell>
+                    <Select.Root
+                        selected={!supervisor_company_id
+                            ? { label: '-', value: null }
+                            : {
+                                  label: supervisor_company_name,
+                                  value: supervisor_company_id,
+                              }}
+                        onSelectedChange={(v) => {
+                            v && setCompany(supervisor_id, v.value);
+                        }}
                     >
+                        <Select.Trigger>
+                            <Select.Value placeholder="Company" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">-</Select.Item>
+                            {#each companies as company}
+                                {@const { company_id, company_name } = company}
+                                <Select.Item value={company_id}
+                                    >{company_name}</Select.Item
+                                >
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                </TableCell>
+                <TableCell>{email}</TableCell>
+                {#each form_id_statuses as form_id_status}
+                    {@const { form_id, status } = form_id_status}
+                    <TableCell center
+                        ><StatusCell
+                            {isAdmin}
+                            {status}
+                            href="/form/{getFormFromId(form_id)
+                                .short_name}/answer/{supervisor_id}"
+                        />
+                    </TableCell>
+                {/each}
+                <TableCell
+                    ><div class="flex flex-row gap-2">
                         <Button
                             class={colorVariants.blue}
-                            on:click={() => openUpdateForm(faculty_id)}
+                            on:click={() => openUpdateForm(supervisor_id)}
                             >Edit</Button
                         >
                         {#if is_disabled}
                             <Link
-                                href="/api/enable/faculty/{faculty_id}"
+                                href="/api/enable/supervisor/{supervisor_id}"
                                 as="button"
                                 preserveScroll
                                 method="put"
+                                class="grow"
                                 ><Button class="w-full {colorVariants.green}"
                                     >Enable</Button
                                 ></Link
                             >
                         {:else}
                             <Button
-                                class={colorVariants.red}
+                                class="w-full grow {colorVariants.red}"
                                 on:click={() => {
                                     if (
                                         confirm(
@@ -348,7 +430,7 @@
                                         )
                                     ) {
                                         router.put(
-                                            `/api/disable/faculty/${faculty_id}`,
+                                            `/api/disable/supervisor/${supervisor_id}`,
                                             {},
                                             { preserveScroll: true },
                                         );

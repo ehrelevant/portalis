@@ -177,7 +177,7 @@ class ImportsController extends Controller
         self::importStudents($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/students')->with('success', 'Successfully imported student list.');
+        return redirect('/dashboard/students')->with('success', 'Successfully imported student list.');
     }
 
     // todo: possibly move to AdminController?
@@ -271,7 +271,7 @@ class ImportsController extends Controller
         self::importSupervisors($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/supervisors')->with('success', 'Successfully imported supervisor list.');
+        return redirect('/dashboard/supervisors')->with('success', 'Successfully imported supervisor list.');
     }
 
     // todo: possibly move to AdminController?
@@ -363,7 +363,7 @@ class ImportsController extends Controller
         self::importFaculties($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/faculties')->with('success', 'Successfully imported faculty list.');
+        return redirect('/dashboard/faculties')->with('success', 'Successfully imported faculty list.');
     }
 
     // todo: possibly move to AdminController?
@@ -451,7 +451,7 @@ class ImportsController extends Controller
         self::importCompanies($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/admin/companies')->with('success', 'Successfully imported company list.');
+        return redirect('/dashboard/companies')->with('success', 'Successfully imported company list.');
     }
 
     // todo: possibly move to AdminController?
