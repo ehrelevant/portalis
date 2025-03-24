@@ -242,16 +242,18 @@
                         target="_blank"
                         >Export Student Section</DropdownMenu.Item
                     >
-                    <DropdownMenu.Item
-                        href="/export/students/company-evaluations"
-                        target="_blank"
-                        >Export Company Evaluations</DropdownMenu.Item
-                    >
-                    <DropdownMenu.Item
-                        href="/export/students/student-assessments"
-                        target="_blank"
-                        >Export Student Assessments</DropdownMenu.Item
-                    >
+                    {#if isAdmin || phase !== 'pre'}
+                        <DropdownMenu.Item
+                            href="/export/students/company-evaluations"
+                            target="_blank"
+                            >Export Company Evaluations</DropdownMenu.Item
+                        >
+                        <DropdownMenu.Item
+                            href="/export/students/student-assessments"
+                            target="_blank"
+                            >Export Student Assessments</DropdownMenu.Item
+                        >
+                    {/if}
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
 
