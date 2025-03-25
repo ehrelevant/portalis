@@ -14,6 +14,7 @@
     import { colorVariants } from '$lib/customVariants';
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
+    import { Checkbox } from '$lib/components/ui/checkbox/index';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import Icon from '@iconify/svelte';
 
@@ -33,6 +34,38 @@
                 preserveState: true,
             },
         );
+    }
+
+    let selected: { [x: number]: boolean | 'indeterminate' } = companies.reduce(
+        (selectedRecordAcc, { company_id }) => {
+            return { ...selectedRecordAcc, [company_id]: false };
+        },
+        {},
+    );
+    $: hasSelected = Object.values(selected).some((val) => val);
+
+    function bulkDisable() {
+        if (confirm('Do you really want to disable the selected users?')) {
+            const selectedRoleIds = Object.entries(selected)
+                .filter(([_, isSelected]) => isSelected)
+                .map(([index, _]) => Number(index));
+
+            router.put(
+                '/api/disable/companies',
+                {
+                    selectedRoleIds,
+                },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        for (const selectedRoleId of selectedRoleIds) {
+                            selected[selectedRoleId] = false;
+                        }
+                    },
+                },
+            );
+        }
     }
 
     let sortColumn = 'company_name';
@@ -130,6 +163,12 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
+            <Button
+                on:click={bulkDisable}
+                class="flex w-full flex-row gap-2 sm:w-auto"
+                variant="destructive"
+                disabled={!hasSelected}>Disable Selected</Button
+            >
             <Link href="/list/companies/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
@@ -203,6 +242,7 @@
     <!-- List of Companies -->
     <Table>
         <TableRow header>
+            <TableColumnHeader />
             <TableColumnHeader
                 isActive={sortColumn === 'company_name'}
                 isAscending={sortIsAscending}
@@ -214,7 +254,13 @@
         </TableRow>
         {#each companies as company (company.company_id)}
             {@const { company_id, company_name, is_disabled } = company}
-            <TableRow disabled={is_disabled}>
+            <TableRow
+                disabled={is_disabled}
+                selected={Boolean(selected[company_id])}
+            >
+                <TableCell
+                    ><Checkbox bind:checked={selected[company_id]} /></TableCell
+                >
                 <TableCell>{company_name}</TableCell>
                 <TableCell
                     ><div
