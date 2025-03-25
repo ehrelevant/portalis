@@ -71,13 +71,6 @@
     body {
         @apply bg-background text-foreground;
     }
-
-    @font-face {
-        font-family: 'FiraSans';
-        font-style: normal;
-        font-weight: 400;
-        src: url($assets/fonts/FiraSans-Regular.ttf);
-    }
 }
 
 @layer components {
