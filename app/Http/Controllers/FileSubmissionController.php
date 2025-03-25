@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class FileSubmissionContoller extends Controller
+class FileSubmissionController extends Controller
 {
     public function showUploadForm(int $requirement_id, ?int $student_id = null): Response
     {

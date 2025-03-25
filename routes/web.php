@@ -5,7 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\FacultyController;
-use App\Http\Controllers\FileSubmissionContoller;
+use App\Http\Controllers\FileSubmissionController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\ImportsController;
 use App\Http\Controllers\LoginController;
@@ -42,8 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'show']);
 
     // Requirement Upload/Submission (Role checking is done in function)
-    Route::get('/requirement/{requirement_id}/upload/{student_id?}', [FileSubmissionContoller::class, 'showUploadForm']);
-    Route::post('/requirement/{requirement_id}/submit/{student_id?}', [FileSubmissionContoller::class, 'submitDocument']);
+    Route::get('/requirement/{requirement_id}/upload/{student_id?}', [FileSubmissionController::class, 'showUploadForm']);
+    Route::post('/requirement/{requirement_id}/submit/{student_id?}', [FileSubmissionController::class, 'submitDocument']);
 
     // Form Answering/Viewing (Role checking is done in function)
     Route::get('/form/{short_name}/answer/{role_id?}', [FormController::class, 'answerForm']);
@@ -91,12 +91,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/companies/list', [ExportsController::class, 'exportCompanyList']);
 
         // Requirement Viewing
-        Route::get('/requirement/{requirement_id}/view/{student_id}', [FileSubmissionContoller::class, 'showStudentSubmission']);
+        Route::get('/requirement/{requirement_id}/view/{student_id}', [FileSubmissionController::class, 'showStudentSubmission']);
 
         // Requirement Validation
-        Route::post('/requirement/{requirement_id}/view/{student_id}/validate', [FileSubmissionContoller::class, 'validateStudentSubmission']);
-        Route::post('/requirement/{requirement_id}/view/{student_id}/invalidate', [FileSubmissionContoller::class, 'invalidateStudentSubmission']);
-        Route::post('/requirement/{requirement_id}/view/{student_id}/reject', [FileSubmissionContoller::class, 'rejectStudentSubmission']);
+        Route::post('/requirement/{requirement_id}/view/{student_id}/validate', [FileSubmissionController::class, 'validateStudentSubmission']);
+        Route::post('/requirement/{requirement_id}/view/{student_id}/invalidate', [FileSubmissionController::class, 'invalidateStudentSubmission']);
+        Route::post('/requirement/{requirement_id}/view/{student_id}/reject', [FileSubmissionController::class, 'rejectStudentSubmission']);
 
         // Update Settings
         Route::put('/globals/settings/update', [WebsiteStateController::class, 'updateSettings']);
@@ -126,23 +126,24 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/api/disable/supervisor/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
         Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
         Route::put('/api/disable/company/{company_id}', [AdminController::class, 'disableCompany']);
-    });
 
-    // Route::middleware([EnsureUserHasRole::class . ':faculty'])->group(function () {
-    //     Route::get('/dashboard/students', [FacultyController::class, 'showStudents']);
-    //     Route::get('/dashboard/supervisors', [FacultyController::class, 'showSupervisors']);
-    //     Route::get('/dashboard/companies', [FacultyController::class, 'showCompanies']);
-    // });
+        Route::put('/api/disable/students', [AdminController::class, 'disableStudents']);
+        Route::put('/api/disable/supervisors', [AdminController::class, 'disableSupervisors']);
+        Route::put('/api/disable/faculties', [AdminController::class, 'disableFaculties']);
+        Route::put('/api/disable/companies', [AdminController::class, 'disableCompanies']);
 
-    Route::middleware([EnsureUserHasRole::class . ':admin,faculty'])->group(function () {
         Route::get('/dashboard/students', [AdminController::class, 'showStudents']);
         Route::get('/dashboard/supervisors', [AdminController::class, 'showSupervisors']);
         Route::get('/dashboard/companies', [AdminController::class, 'showCompanies']);
+    });
+
+    Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
         Route::get('/dashboard/faculties', [AdminController::class, 'showFaculties']);
     });
 
+
     // View submitted file (Role checking is done in function)
-    Route::get('/file/submission/{student_id}/{requirement_id}', [FileSubmissionContoller::class, 'showStudentDocument']);
+    Route::get('/file/submission/{student_id}/{requirement_id}', [FileSubmissionController::class, 'showStudentDocument']);
 
     Route::post('/logout', [LoginController::class, 'logout']);
 });

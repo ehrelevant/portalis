@@ -4,7 +4,9 @@
     import * as Tooltip from '$lib/components/ui/tooltip';
 
     export let href = '#';
+    export let method = 'get';
     export let icon_handle;
+    export let side = 'right';
 
     $: isActive =
         '/' + $page.url.split('/')[1] === href
@@ -16,11 +18,13 @@
     <Tooltip.Trigger>
         <Link
             {href}
+            {method}
+            as={method === 'get' ? 'a' : 'button'}
             class="{isActive} flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
         >
             <Icon icon={icon_handle} class="text-2xl" />
             <span class="sr-only"> <slot /> </span>
         </Link>
     </Tooltip.Trigger>
-    <Tooltip.Content side="right"><slot /></Tooltip.Content>
+    <Tooltip.Content {side}><slot /></Tooltip.Content>
 </Tooltip.Root>

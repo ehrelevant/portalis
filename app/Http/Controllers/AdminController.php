@@ -891,4 +891,99 @@ class AdminController extends Controller
             return back()->with('error', 'Failed to disable company.');
         }
     }
+
+    public function disableStudents(Request $request)
+    {
+        try {
+            $selected_role_ids = $request->validate([
+                'selectedRoleIds' => ['required', 'array'],
+                'selectedRoleIds.*' => ['integer', 'numeric'],
+            ])['selectedRoleIds'];
+
+            foreach ($selected_role_ids as $student_id) {
+                User::where('role', User::ROLE_STUDENT)
+                    ->where('role_id', $student_id)
+                    ->update(['is_disabled' => true]);
+            }
+
+            return back()->with('success', 'Successfully disabled students.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable students.');
+        }
+    }
+    public function disableSupervisors(Request $request)
+    {
+        try {
+            $selected_role_ids = $request->validate([
+                'selectedRoleIds' => ['required', 'array'],
+                'selectedRoleIds.*' => ['integer', 'numeric'],
+            ])['selectedRoleIds'];
+
+            foreach ($selected_role_ids as $supervisor_id) {
+                Student::where('supervisor_id', $supervisor_id)
+                    ->update(['supervisor_id' => null]);
+
+                User::where('role', User::ROLE_SUPERVISOR)
+                    ->where('role_id', $supervisor_id)
+                    ->update(['is_disabled' => true]);
+            }
+
+            return back()->with('success', 'Successfully disabled supervisors.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable supervisors.');
+        }
+    }
+
+    public function disableFaculties(Request $request)
+    {
+        try {
+            $selected_role_ids = $request->validate([
+                'selectedRoleIds' => ['required', 'array'],
+                'selectedRoleIds.*' => ['integer', 'numeric'],
+            ])['selectedRoleIds'];
+
+            foreach ($selected_role_ids as $faculty_id) {
+                Student::where('faculty_id', $faculty_id)
+                    ->update(['faculty_id' => null]);
+
+                User::where('role', User::ROLE_FACULTY)
+                    ->where('role_id', $faculty_id)
+                    ->update(['is_disabled' => true]);
+            }
+
+            return back()->with('success', 'Successfully disabled faculty users.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable faculty users.');
+        }
+    }
+
+    public function disableCompanies(Request $request)
+    {
+        try {
+            $selected_role_ids = $request->validate([
+                'selectedRoleIds' => ['required', 'array'],
+                'selectedRoleIds.*' => ['integer', 'numeric'],
+            ])['selectedRoleIds'];
+
+            foreach ($selected_role_ids as $company_id) {
+                Supervisor::where('company_id', $company_id)
+                    ->update(['company_id' => null]);
+
+                Company::where('id', $company_id)
+                    ->update(['is_disabled' => true]);
+            }
+
+            return back()->with('success', 'Successfully disabled companies.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to disable companies.');
+        }
+    }
 }
