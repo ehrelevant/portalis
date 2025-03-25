@@ -14,7 +14,7 @@
                 'This action may replace all existing students. Are you sure you want to proceed?',
             )
         ) {
-            $form.post(`/list/students/submit`);
+            $form.post(`/import/students/submit`);
         }
     }
 </script>

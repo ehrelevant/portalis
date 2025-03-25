@@ -14,7 +14,7 @@
                 'This action may replace all existing companies. Are you sure you want to proceed?',
             )
         ) {
-            $form.post(`/list/companies/submit`);
+            $form.post(`/import/companies/submit`);
         }
     }
 </script>

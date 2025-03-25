@@ -14,7 +14,7 @@
                 'This action may replace all existing supervisors. Are you sure you want to proceed?',
             )
         ) {
-            $form.post(`/list/supervisors/submit`);
+            $form.post(`/import/supervisors/submit`);
         }
     }
 </script>

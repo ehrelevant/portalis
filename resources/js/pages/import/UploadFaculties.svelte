@@ -14,7 +14,7 @@
                 'This action may replace all existing faculty users. Are you sure you want to proceed?',
             )
         ) {
-            $form.post(`/list/faculties/submit`);
+            $form.post(`/import/faculties/submit`);
         }
     }
 </script>
