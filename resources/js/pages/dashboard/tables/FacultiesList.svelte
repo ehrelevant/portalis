@@ -139,10 +139,16 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
-            <Link href="/list/faculties/upload"
+            <Link href="/import/faculties/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
                     variant="outline"><Icon icon="uil:import" />Import</Button
+                ></Link
+            >
+            <Link href="/add-multiple/faculties/upload"
+                ><Button
+                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    variant="outline"><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
             <Button
