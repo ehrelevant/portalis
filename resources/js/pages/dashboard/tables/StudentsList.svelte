@@ -67,25 +67,27 @@
     $: hasSelected = Object.values(selected).some((val) => val);
 
     function bulkDisable() {
-        const selectedStudentIds = Object.entries(selected)
-            .filter(([_, isSelected]) => isSelected)
-            .map(([index, _]) => Number(index));
+        if (confirm('Do you really want to disable the selected users?')) {
+            const selectedRoleIds = Object.entries(selected)
+                .filter(([_, isSelected]) => isSelected)
+                .map(([index, _]) => Number(index));
 
-        router.put(
-            '/api/disable/students',
-            {
-                selectedStudentIds,
-            },
-            {
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-                    for (const { student_id } of students) {
-                        selected[student_id] = false;
-                    }
+            router.put(
+                '/api/disable/students',
+                {
+                    selectedRoleIds,
                 },
-            },
-        );
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        for (const selectedRoleId of selectedRoleIds) {
+                            selected[selectedRoleId] = false;
+                        }
+                    },
+                },
+            );
+        }
     }
 
     function getFormFromId(targetFormId: number) {
