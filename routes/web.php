@@ -61,17 +61,23 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/students/{student_id}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
         Route::put('/supervisors/{supervisor_id}/assign/company/{company_id?}', [FacultyController::class, 'assignSupervisorCompany']);
 
-        Route::get('/list/students/upload', [ImportsController::class, 'showStudentCsvUploadForm']);
-        Route::get('/list/supervisors/upload', [ImportsController::class, 'showSupervisorCsvUploadForm']);
-        Route::get('/list/faculties/upload', [ImportsController::class, 'showFacultyCsvUploadForm']);
-        Route::get('/list/companies/upload', [ImportsController::class, 'showCompanyCsvUploadForm']);
-        Route::post('/list/students/submit', [ImportsController::class, 'submitStudentCsv']);
-        Route::post('/list/supervisors/submit', [ImportsController::class, 'submitSupervisorCsv']);
-        Route::post('/list/faculties/submit', [ImportsController::class, 'submitFacultyCsv']);
-        Route::post('/list/companies/submit', [ImportsController::class, 'submitCompanyCsv']);
+        Route::get('/import/students/upload', [ImportsController::class, 'showImportStudents']);
+        Route::get('/import/supervisors/upload', [ImportsController::class, 'showImportSupervisors']);
+        Route::get('/import/faculties/upload', [ImportsController::class, 'showImportFaculties']);
+        Route::get('/import/companies/upload', [ImportsController::class, 'showImportCompanies']);
+        Route::post('/import/students/submit', [ImportsController::class, 'importStudents']);
+        Route::post('/import/supervisors/submit', [ImportsController::class, 'importSupervisors']);
+        Route::post('/import/faculties/submit', [ImportsController::class, 'importFaculties']);
+        Route::post('/import/companies/submit', [ImportsController::class, 'importCompanies']);
 
-        Route::post('/import/students', [FacultyController::class, 'importStudents']);
-        Route::post('/import/supervisors', [FacultyController::class, 'importSupervisors']);
+        Route::get('/add-multiple/students/upload', [ImportsController::class, 'showAddMultipleStudents']);
+        Route::get('/add-multiple/supervisors/upload', [ImportsController::class, 'showAddMultipleSupervisors']);
+        Route::get('/add-multiple/faculties/upload', [ImportsController::class, 'showAddMultipleFaculties']);
+        Route::get('/add-multiple/companies/upload', [ImportsController::class, 'showAddMultipleCompanies']);
+        Route::post('/add-multiple/students/submit', [ImportsController::class, 'addMultipleStudents']);
+        Route::post('/add-multiple/supervisors/submit', [ImportsController::class, 'addMultipleSupervisors']);
+        Route::post('/add-multiple/faculties/submit', [ImportsController::class, 'addMultipleFaculties']);
+        Route::post('/add-multiple/companies/submit', [ImportsController::class, 'addMultipleCompanies']);
 
         Route::get('/export/students/sections', [ExportsController::class, 'exportStudentSections']);
         Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReportStudents']);
