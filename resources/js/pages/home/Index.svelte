@@ -15,7 +15,7 @@
                 class="flex w-full flex-col-reverse items-start gap-2 md:flex-row md:items-center md:justify-between"
             >
                 <h1 class="text-4xl font-bold">
-                    <i>Portalis:</i> CS195 Internship Portal
+                    <em>Portalis:</em> CS195 Internship Portal
                 </h1>
                 <!-- Temporary spot for logos-->
                 <div
@@ -27,10 +27,14 @@
             </div>
         </Header>
         <p class="text-lg leading-7 [&:not(:first-child)]:mt-6">
-            Welcome and thank you for diving into Portalis. Portalis is the
-            dedicated portal for your CS 195 experience, granted to you by the
-            University of the Philippines Diliman - Department of Computer
-            Science.
+            Welcome and thank you for diving into <strong>Portalis</strong>.
+            <strong>Portalis</strong>
+            is the dedicated portal for your <em>CS 195 experience</em>, granted
+            to you by the
+            <strong
+                >University of the Philippines Diliman - Department of Computer
+                Science</strong
+            >.
         </p>
         <p class="text-lg leading-7 [&:not(:first-child)]:mt-6">
             This portal was created to ensure a streamlined CS195 Internship
@@ -43,9 +47,9 @@
         </h2>
         <p class="text-lg leading-7 [&:not(:first-child)]:mt-6">
             The CS 195 experience can be informally divided into three main
-            phases, Pre-Internship, During Internship, and Post-internship. The
-            layout of the website slightly differs for each phase, depending on
-            what is expected from its users.
+            phases, <em>Pre-Internship</em>, <em>During Internship</em>, and
+            <em>Post-internship</em>. The layout of the website slightly differs
+            for each phase, depending on what is expected from its users.
         </p>
         <Accordion.Root class="mt-6 w-full" multiple>
             <Accordion.Item value="pre">
@@ -119,11 +123,17 @@
             Acknowledgements
         </h2>
         <p class="text-lg leading-7 [&:not(:first-child)]:mt-6">
-            Portalis: CS 195 Portal was originally developed by Clyde Ambroz S.
-            Acyatan, Dominic Lawrence R. Bermudez, Ehren A. Castillo, and
-            Eoghaine Czeriel L. Saavedra as their CS 191/192 project under Prof.
-            Ligaya Leah Figueroa for the University of the Philippines Diliman -
-            Department of Computer Science.
+            <strong>Portalis: CS 195 Portal</strong> was originally developed by
+            <em>Clyde Ambroz S. Acyatan</em>,
+            <em>Dominic Lawrence R. Bermudez</em>, <em>Ehren A. Castillo</em>,
+            and
+            <em>Eoghaine Czeriel L. Saavedra</em> for the accomplishment of
+            their CS 191/192 course under <em>Prof. Ligaya Leah Figueroa</em>
+            for
+            <em
+                >the University of the Philippines Diliman - Department of
+                Computer Science</em
+            >.
         </p>
     </section>
 
