@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -125,12 +126,27 @@ class ImportsController extends Controller
 
     // ---
 
-    public function showStudentCsvUploadForm(): Response
+    public function showImportStudents(): Response
     {
-        return Inertia::render('list/UploadStudents');
+        return Inertia::render('import/UploadStudents');
+    }
+    
+    public function showAddMultipleStudents(): Response
+    {
+        return Inertia::render('add-multiple/UploadStudents');
     }
 
-    public function submitStudentCsv(Request $request): RedirectResponse
+    public function importStudents(Request $request): RedirectResponse
+    {
+        return self::submitStudentCsv($request, true);
+    }
+
+    public function addMultipleStudents(Request $request): RedirectResponse
+    {
+        return self::submitStudentCsv($request, true);
+    }
+
+    public function submitStudentCsv(Request $request, bool $clearStudents): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
@@ -144,7 +160,7 @@ class ImportsController extends Controller
             'file' => ['required', 'mimes:csv,txt'],
         ]);
 
-        $filepath = $request->file('file')->store('list/students');
+        $filepath = $request->file('file')->store('import/students');
 
         // ---
 
@@ -171,10 +187,13 @@ class ImportsController extends Controller
         $foreign_keys = ['section', 'supervisor_name'];
 
         // ---
-
+        
         // replace current database with CSV if valid
-        self::deleteAllStudents();
-        self::importStudents($filepath);
+        if ($clearStudents) {
+            self::deleteAllStudents();
+        }
+
+        self::addStudentsFromCsv($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
         return redirect('/dashboard/students')->with('success', 'Successfully imported student list.');
@@ -193,7 +212,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function importStudents($csvPath): void
+    public function addStudentsFromCsv($csvPath): void
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $studentsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
@@ -222,12 +241,27 @@ class ImportsController extends Controller
 
     // ---
 
-    public function showSupervisorCsvUploadForm(): Response
+    public function showImportSupervisors(): Response
     {
-        return Inertia::render('list/UploadSupervisors');
+        return Inertia::render('import/UploadSupervisors');
+    }
+    
+    public function showAddMultipleSupervisors(): Response
+    {
+        return Inertia::render('add-multiple/UploadSupervisors');
     }
 
-    public function submitSupervisorCsv(Request $request): RedirectResponse
+    public function importSupervisors(Request $request): RedirectResponse
+    {
+        return self::submitSupervisorCsv($request, true);
+    }
+
+    public function addMultipleSupervisors(Request $request): RedirectResponse
+    {
+        return self::submitSupervisorCsv($request, true);
+    }
+
+    public function submitSupervisorCsv(Request $request, bool $clearSupervisors): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
@@ -241,7 +275,7 @@ class ImportsController extends Controller
             'file' => ['required', 'mimes:csv,txt'],
         ]);
 
-        $filepath = $request->file('file')->store('list/supervisors');
+        $filepath = $request->file('file')->store('import/supervisors');
 
         // ---
 
@@ -267,8 +301,11 @@ class ImportsController extends Controller
         // ---
 
         // replace current database with CSV if valid
-        self::deleteAllSupervisors();
-        self::importSupervisors($filepath);
+        if ($clearSupervisors) {  
+            self::deleteAllSupervisors();
+        }
+
+        self::addSupervisorsFromCsv($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
         return redirect('/dashboard/supervisors')->with('success', 'Successfully imported supervisor list.');
@@ -287,7 +324,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function importSupervisors(string $csvPath): void
+    public function addSupervisorsFromCsv(string $csvPath): void
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $supervisorsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
@@ -311,13 +348,28 @@ class ImportsController extends Controller
 
     // ---
 
-    public function showFacultyCsvUploadForm(): Response
+    public function showImportFaculties(): Response
     {
-        // todo: make UploadFaculties page
-        return Inertia::render('list/UploadFaculties');
+        return Inertia::render('import/UploadFaculties');
+    }
+    
+    public function showAddMultipleFaculties(): Response
+    {
+        return Inertia::render('add-multiple/UploadFaculties');
     }
 
-    public function submitFacultyCsv(Request $request): RedirectResponse
+    public function importFaculties(Request $request): RedirectResponse
+    {
+        return self::submitFacultyCsv($request, true);
+    }
+
+    public function addMultipleFaculties(Request $request): RedirectResponse
+    {
+        return self::submitFacultyCsv($request, true);
+    }
+
+
+    public function submitFacultyCsv(Request $request, bool $clearFaculties): RedirectResponse
     {
         // todo: confirm if faculty should be allowed to add other faculty
         $user = Auth::user();
@@ -332,7 +384,7 @@ class ImportsController extends Controller
             'file' => ['required', 'mimes:csv,txt'],
         ]);
 
-        $filepath = $request->file('file')->store('list/faculties');
+        $filepath = $request->file('file')->store('import/faculties');
 
         // ---
 
@@ -359,8 +411,11 @@ class ImportsController extends Controller
         // ---
 
         // replace current database with CSV if valid
-        self::deleteAllFaculties();
-        self::importFaculties($filepath);
+        if ($clearFaculties) {
+            self::deleteAllFaculties();
+        }
+
+        self::addFacultiesFromCsv($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
         return redirect('/dashboard/faculties')->with('success', 'Successfully imported faculty list.');
@@ -379,7 +434,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function importFaculties(string $csvPath): void
+    public function addFacultiesFromCsv(string $csvPath): void
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $facultiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
@@ -404,13 +459,27 @@ class ImportsController extends Controller
 
     // ---
 
-    public function showCompanyCsvUploadForm(): Response
+    public function showImportCompanies(): Response
     {
-        // todo: make UploadCompanies page
-        return Inertia::render('list/UploadCompanies');
+        return Inertia::render('import/UploadCompanies');
+    }
+    
+    public function showAddMultipleCompanies(): Response
+    {
+        return Inertia::render('add-multiple/UploadCompanies');
     }
 
-    public function submitCompanyCsv(Request $request): RedirectResponse
+    public function importCompanies(Request $request): RedirectResponse
+    {
+        return self::submitCompanyCsv($request, true);
+    }
+
+    public function addMultipleCompanies(Request $request): RedirectResponse
+    {
+        return self::submitCompanyCsv($request, true);
+    }
+
+    public function submitCompanyCsv(Request $request, bool $clearCompanies): RedirectResponse
     {
         $user = Auth::user();
         if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
@@ -424,7 +493,7 @@ class ImportsController extends Controller
             'file' => ['required', 'mimes:csv,txt'],
         ]);
 
-        $filepath = $request->file('file')->store('list/companies');
+        $filepath = $request->file('file')->store('import/companies');
 
         // ---
 
@@ -447,8 +516,11 @@ class ImportsController extends Controller
         // ---
 
         // replace current database with CSV if valid
-        self::deleteAllCompanies();
-        self::importCompanies($filepath);
+        if ($clearCompanies) {
+            self::deleteAllCompanies();
+        }
+        
+        self::addCompaniesFromCsv($filepath);
 
         // todo: add confirmation? view csv before proceeding with upload?
         return redirect('/dashboard/companies')->with('success', 'Successfully imported company list.');
@@ -466,7 +538,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function importCompanies(string $csvPath): void
+    public function addCompaniesFromCsv(string $csvPath): void
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $companiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
