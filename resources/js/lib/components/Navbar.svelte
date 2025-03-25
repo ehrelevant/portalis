@@ -2,22 +2,28 @@
     import * as Tooltip from '$lib/components/ui/tooltip';
     import NavBtn from './NavBtn.svelte';
     import Toggle from './ThemeSwitch.svelte';
-
-    let isMenuOpen = false;
+    import { page } from '@inertiajs/svelte';
 </script>
 
-<aside
+<nav
     class="sticky inset-y-0 left-0 z-30 hidden max-h-screen min-h-full w-14 shrink-0 bg-dark-primary sm:flex sm:flex-col"
 >
-    <nav class="flex flex-col items-center gap-4 px-2 sm:py-5">
+    <div class="flex flex-col items-center gap-4 px-2 sm:py-5">
         <NavBtn href="/" icon_handle="tabler:home">Home</NavBtn>
         <NavBtn href="/dashboard" icon_handle="ic:outline-dashboard"
             >Dashboard</NavBtn
         >
         <NavBtn href="/privacy" icon_handle="uil:lock">Privacy</NavBtn>
         <NavBtn href="/account" icon_handle="octicon:person-16">Account</NavBtn>
-    </nav>
-    <nav class="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+        {#if $page.props.auth.user}
+            <NavBtn
+                href="/logout"
+                method="post"
+                icon_handle="material-symbols:logout-rounded">Logout</NavBtn
+            >
+        {/if}
+    </div>
+    <div class="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip.Root>
             <Tooltip.Trigger>
                 <div
@@ -29,20 +35,35 @@
             </Tooltip.Trigger>
             <Tooltip.Content side="right">Toggle Theme</Tooltip.Content>
         </Tooltip.Root>
-    </nav>
-</aside>
+    </div>
+</nav>
 
-<aside
-    class="sticky inset-y-0 left-0 z-30 flex flex-row max-w-screen min-w-full h-14 items-center shrink-0 bg-dark-primary sm:hidden"
+<nav
+    class="max-w-screen sticky inset-y-0 left-0 z-30 flex h-14 min-w-full shrink-0 flex-row items-center bg-dark-primary sm:hidden"
 >
-    <nav class="flex flex-row items-center gap-4 px-2">
-        <NavBtn href="/" icon_handle="tabler:home">Home</NavBtn>
-        <NavBtn href="/dashboard" icon_handle="ic:outline-dashboard">Dashboard</NavBtn>
-        <NavBtn href="/privacy" icon_handle="uil:lock">Privacy</NavBtn>
-        <NavBtn href="/account" icon_handle="octicon:person-16">Account</NavBtn>
-    </nav>
+    <div class="flex flex-row items-center gap-4 px-2">
+        <NavBtn href="/" side="bottom" icon_handle="tabler:home">Home</NavBtn>
+        <NavBtn
+            href="/dashboard"
+            side="bottom"
+            icon_handle="ic:outline-dashboard">Dashboard</NavBtn
+        >
+        <NavBtn href="/privacy" side="bottom" icon_handle="uil:lock"
+            >Privacy</NavBtn
+        >
+        <NavBtn href="/account" side="bottom" icon_handle="octicon:person-16"
+            >Account</NavBtn
+        >
+        {#if $page.props.auth.user}
+            <NavBtn
+                href="/logout"
+                side="bottom"
+                icon_handle="material-symbols:logout-rounded">Logout</NavBtn
+            >
+        {/if}
+    </div>
 
-    <nav class="ml-auto flex flex-col items-center gap-4 px-2">
+    <div class="ml-auto flex flex-col items-center gap-4 px-2">
         <Tooltip.Root>
             <Tooltip.Trigger>
                 <div
@@ -54,5 +75,5 @@
             </Tooltip.Trigger>
             <Tooltip.Content side="right">Toggle Theme</Tooltip.Content>
         </Tooltip.Root>
-    </nav>
-</aside>
+    </div>
+</nav>
