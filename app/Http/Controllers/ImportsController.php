@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
+enum CsvRowStatus {
+    case SUCCESSFUL;
+    case DUPLICATE;
+    case ERROR;
+}
 class ImportsController extends Controller
 {
     public function getCsvHeaders($csv)
@@ -34,9 +39,12 @@ class ImportsController extends Controller
 
         // loop through every row in CSV
         $collection = [];
+        $errors = 0;
         while (($csv_row = fgetcsv($csv)) !== FALSE) {
             // skip CSV row if it is shorter than the header row
             if (count($csv_row) < count($headers)) {
+                // count the number of skipped rows
+                $errors++;
                 continue;
             }
 
@@ -51,77 +59,126 @@ class ImportsController extends Controller
             array_push($collection, $collection_row);
         }
 
-        return collect($collection);
+        return [
+            'collection'=>collect($collection),
+            'errors'=>$errors
+        ];
     }
 
-    public function validateCsv($csvPath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional): bool
+    // todo: this can be simplified once Tagged Unions are added to PHP one day, similar to the Result type in Rust
+    public function validateCsvHeaders(string $csvPath, $keys): bool
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $importedCsvHeaders = self::getCsvHeaders($importedCsv);
         //error_log($importedCsvHeaders[0]);
 
-        $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-        $importedCollection = self::csvToCollection($importedCsv);
-
-        // check if primary keys are:
-        // present in CSV headers
-        // not null
-        // unique
-        foreach ($primary_keys as $primary_key) {
-            if (!array_key_exists($primary_key, $importedCsvHeaders)) {
-                return false;
-            }
-
-            foreach ($importedCollection as $importedRow) {
-                if ($importedRow[$primary_key] == NULL) {
-                    return false;
-                }
-            }
-
-            if (count($importedCollection->duplicatesStrict($primary_key)) > 0) {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $importedCsvHeaders)) {
                 return false;
             }
         }
 
-        // check if unique keys are:
-        // present in CSV headers
-        // unique
-        foreach ($unique_keys as $unique_key) {
-            if (!array_key_exists($unique_key, $importedCsvHeaders)) {
-                return false;
-            }
-
-            if (count($importedCollection->duplicatesStrict($unique_key)) > 0) {
-                return false;
-            }
-        }
-
-        // check if other required keys are:
-        // present in CSV headers
-        // not null
-        foreach ($other_keys_required as $other_key) {
-            if (!array_key_exists($other_key, $importedCsvHeaders)) {
-                return false;
-            }
-
-            foreach ($importedCollection as $importedRow) {
-                if ($importedRow[$other_key] == NULL) {
-                    return false;
-                }
-            }
-        }
-
-        // check if other optional keys are
-        // present in CSV headers
-        foreach ($other_keys_optional as $other_key) {
-            if (!array_key_exists($other_key, $importedCsvHeaders)) {
-                return false;
-            }
-        }
-
-        // CSV is valid if none of the above guard clauses are hit
         return true;
+    }
+
+    public function validateCsv(string $csvPath, $primary_keys, $unique_keys, $other_keys_required, $existingDatabase = [])
+    {
+        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
+        $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
+        $importedCollectionRaw = self::csvToCollection($importedCsv);
+        $importedCollection = $importedCollectionRaw['collection'];
+
+        $csvLog = [
+            'successful'=>collect(),
+            'num_duplicates'=>0,
+            'num_errors'=>0//self::csvToCollection($importedCsv)['errors']
+        ];
+
+        foreach ($importedCollection as $importedRow) {
+            $csvRowStatus = CsvRowStatus::SUCCESSFUL;
+            
+            // check if primary keys are:
+            // not null
+            // unique
+            foreach ($primary_keys as $primary_key) {
+                if ($importedRow[$primary_key] == NULL) {
+                    $csvRowStatus = CsvRowStatus::ERROR;
+                    goto tallyCsvRowStatus;
+                }
+
+                foreach ($existingDatabase as $existingRow) {
+                    if ($existingRow->$primary_key == $importedRow[$primary_key]) {
+                        $csvRowStatus = CsvRowStatus::DUPLICATE;
+                        goto tallyCsvRowStatus;
+                    }
+                }
+                
+                foreach ($csvLog['successful'] as $successfulRow) {
+                    if ($successfulRow[$primary_key] == $importedRow[$primary_key]) {
+                        $csvRowStatus = CsvRowStatus::DUPLICATE;
+                        goto tallyCsvRowStatus;
+                    }
+                }
+
+                /*
+                if (count($importedCollection->duplicatesStrict($primary_key)) > 0) {
+                    $csvRowStatus = CsvRowStatus::DUPLICATE;
+                    goto tallyCsvRowStatus;
+                }
+                */
+            }
+
+            // check if unique keys are:
+            // unique
+            foreach ($unique_keys as $unique_key) {
+                foreach ($existingDatabase as $existingRow) {
+                    if ($existingRow->$unique_key == $importedRow[$unique_key]) {
+                        $csvRowStatus = CsvRowStatus::DUPLICATE;
+                        goto tallyCsvRowStatus;
+                    }
+                }
+
+                foreach ($csvLog['successful'] as $successfulRow) {
+                    if ($successfulRow[$unique_key] == $importedRow[$unique_key]) {
+                        $csvRowStatus = CsvRowStatus::DUPLICATE;
+                        goto tallyCsvRowStatus;
+                    }
+                }
+
+                /*
+                if (count($importedCollection->duplicatesStrict($unique_key)) > 0) {
+                    $csvRowStatus = CsvRowStatus::DUPLICATE;
+                    goto tallyCsvRowStatus;
+                }
+                */
+            }
+            
+            // check if other required keys are:
+            // not null
+            foreach ($other_keys_required as $other_key) {
+                if ($importedRow[$other_key] == NULL) {
+                    $csvRowStatus = CsvRowStatus::ERROR;
+                    goto tallyCsvRowStatus;
+                }
+            }
+
+            // tally status of CSV row into csvLog
+            tallyCsvRowStatus:
+            switch ($csvRowStatus) {
+                case CsvRowStatus::SUCCESSFUL:
+                    $csvLog['successful']->push($importedRow);
+                    break;
+                case CsvRowStatus::DUPLICATE:
+                    $csvLog['num_duplicates']++;
+                    break;
+                case CsvRowStatus::ERROR:
+                    $csvLog['num_errors']++;
+                    break;
+            }
+        }
+
+        return $csvLog;
     }
 
     // ---
@@ -143,7 +200,7 @@ class ImportsController extends Controller
 
     public function addMultipleStudents(Request $request): RedirectResponse
     {
-        return self::submitStudentCsv($request, true);
+        return self::submitStudentCsv($request, false);
     }
 
     public function submitStudentCsv(Request $request, bool $clearStudents): RedirectResponse
@@ -167,19 +224,34 @@ class ImportsController extends Controller
         /*
             student_number      primary
             first_name          other_reqd
-            middle_name         other_opt
+            middle_name         other_null
             last_name           other_reqd
             email               unique
             wordpress_name      other_reqd
             wordpress_email     unique
         */
 
-        // check CSV for validity of values under primary/unique keys
+        // relevant keys for importing students
         $primary_keys = ['student_number'];
         $unique_keys = ['email', 'wordpress_email'];
         $other_keys_required = ['first_name', 'last_name', 'wordpress_name'];
-        $other_keys_optional = ['middle_name'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
+        $other_keys_nullable = ['middle_name'];
+
+        // get existing primary/unique keys from database
+        $existingStudents = DB::table('users')
+            ->where('role', 'student')
+            ->join('students', 'users.role_id', '=', 'students.id')
+            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+            ->select(
+                'students.student_number',
+                'users.email',
+                'students.wordpress_email',
+            )
+            ->get();
+        
+        // check if all primary/unique/other keys are present in CSV headers
+        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+        if (!self::validateCsvHeaders($filepath, $keys)) {
             return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
@@ -188,15 +260,25 @@ class ImportsController extends Controller
 
         // ---
         
-        // replace current database with CSV if valid
+        // replace current database with CSV if valid, ignoring existing values
         if ($clearStudents) {
             self::deleteAllStudents();
+            $existingStudents = collect();
         }
 
-        self::addStudentsFromCsv($filepath);
+        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
+        self::addStudentsFromCollection($csvStats['successful']);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/students')->with('success', 'Successfully imported student list.');
+        if ($clearStudents) {
+            return redirect('/dashboard/students')
+                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' students.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        } else {
+            return redirect('/dashboard/students')
+                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' students.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        }
     }
 
     // todo: possibly move to AdminController?
@@ -212,12 +294,8 @@ class ImportsController extends Controller
         }
     }
 
-    public function addStudentsFromCsv($csvPath): void
+    public function addStudentsFromCollection($studentsCollection): void
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
-        $studentsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-        $studentsCollection = self::csvToCollection($studentsCsv);
-
         // loop through every student in row
         foreach ($studentsCollection as $studentRow) {
             $new_student = new Student();
@@ -258,7 +336,7 @@ class ImportsController extends Controller
 
     public function addMultipleSupervisors(Request $request): RedirectResponse
     {
-        return self::submitSupervisorCsv($request, true);
+        return self::submitSupervisorCsv($request, false);
     }
 
     public function submitSupervisorCsv(Request $request, bool $clearSupervisors): RedirectResponse
@@ -281,17 +359,28 @@ class ImportsController extends Controller
 
         /*
             first_name      other_reqd
-            middle_name     other_opt
+            middle_name     other_null
             last_name       other_reqd
             email           unique
         */
 
-        // check CSV for validity of values under primary/unique keys
+        // relevant keys for importing supervisors
         $primary_keys = [];
         $unique_keys = ['email'];
         $other_keys_required = ['first_name', 'last_name'];
-        $other_keys_optional = ['middle_name'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
+        $other_keys_nullable = ['middle_name'];
+
+        // get existing primary/unique keys from database
+        $existingSupervisors = DB::table('users')
+            ->where('role', 'supervisor')
+            ->select(
+                'users.email',
+            )
+            ->get();
+
+        // check if all primary/unique/other keys are present in CSV headers
+        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+        if (!self::validateCsvHeaders($filepath, $keys)) {
             return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
@@ -300,15 +389,25 @@ class ImportsController extends Controller
 
         // ---
 
-        // replace current database with CSV if valid
+        // replace current database with CSV if valid, ignoring existing values
         if ($clearSupervisors) {  
             self::deleteAllSupervisors();
+            $existingSupervisors = collect();
         }
 
-        self::addSupervisorsFromCsv($filepath);
+        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
+        self::addSupervisorsFromCollection($csvStats['successful']);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/supervisors')->with('success', 'Successfully imported supervisor list.');
+        if ($clearSupervisors) {
+            return redirect('/dashboard/supervisors')
+                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' supervisors.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        } else {
+            return redirect('/dashboard/supervisors')
+                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' supervisors.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        }
     }
 
     // todo: possibly move to AdminController?
@@ -324,12 +423,8 @@ class ImportsController extends Controller
         }
     }
 
-    public function addSupervisorsFromCsv(string $csvPath): void
+    public function addSupervisorsFromCollection($supervisorsCollection): void
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
-        $supervisorsCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-        $supervisorsCollection = self::csvToCollection($supervisorsCsv);
-
         // loop through every supervisor in CSV
         foreach ($supervisorsCollection as $supervisorRow) {
             $new_supervisor = new Supervisor();
@@ -365,7 +460,7 @@ class ImportsController extends Controller
 
     public function addMultipleFaculties(Request $request): RedirectResponse
     {
-        return self::submitFacultyCsv($request, true);
+        return self::submitFacultyCsv($request, false);
     }
 
 
@@ -390,18 +485,29 @@ class ImportsController extends Controller
 
         /*
             first_name      other_reqd
-            middle_name     other_opt
+            middle_name     other_null
             last_name       other_reqd
             section         foreign
             email           unique
         */
 
-        // check CSV for validity of values under primary/unique keys
+        // relevant keys for importing faculties
         $primary_keys = [];
         $unique_keys = ['email'];
         $other_keys_required = ['first_name', 'last_name'];
-        $other_keys_optional = ['middle_name', 'section'];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
+        $other_keys_nullable = ['middle_name', 'section'];
+
+        // get existing primary/unique keys from database
+        $existingFaculties = DB::table('users')
+            ->where('role', 'supervisor')
+            ->select(
+                'users.email',
+            )
+            ->get();
+
+        // check if all primary/unique/other keys are present in CSV headers
+        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+        if (!self::validateCsvHeaders($filepath, $keys)) {
             return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
@@ -410,15 +516,25 @@ class ImportsController extends Controller
 
         // ---
 
-        // replace current database with CSV if valid
+        // replace current database with CSV if valid, ignoring existing values
         if ($clearFaculties) {
             self::deleteAllFaculties();
+            $existingFaculties = collect();
         }
 
-        self::addFacultiesFromCsv($filepath);
+        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
+        self::addFacultiesFromCollection($csvStats['successful']);
 
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/faculties')->with('success', 'Successfully imported faculty list.');
+        if ($clearFaculties) {
+            return redirect('/dashboard/faculties')
+                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' faculties.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        } else {
+            return redirect('/dashboard/faculties')
+                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' faculties.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        }
     }
 
     // todo: possibly move to AdminController?
@@ -434,12 +550,8 @@ class ImportsController extends Controller
         }
     }
 
-    public function addFacultiesFromCsv(string $csvPath): void
+    public function addFacultiesFromCollection($facultiesCollection): void
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
-        $facultiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-        $facultiesCollection = self::csvToCollection($facultiesCsv);
-
         // loop through every faculty in row
         foreach ($facultiesCollection as $facultyRow) {
             $new_faculty = new Faculty();
@@ -476,7 +588,7 @@ class ImportsController extends Controller
 
     public function addMultipleCompanies(Request $request): RedirectResponse
     {
-        return self::submitCompanyCsv($request, true);
+        return self::submitCompanyCsv($request, false);
     }
 
     public function submitCompanyCsv(Request $request, bool $clearCompanies): RedirectResponse
@@ -501,12 +613,22 @@ class ImportsController extends Controller
             company_name    unique
         */
 
-        // check CSV for validity of values under primary/unique keys
+        // relevant keys for importing companies
         $primary_keys = [];
         $unique_keys = ['company_name'];
         $other_keys_required = [];
-        $other_keys_optional = [];
-        if (!self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $other_keys_optional)) {
+        $other_keys_nullable = [];
+
+        // get existing primary/unique keys from database
+        $existingCompanies = DB::table('companies')
+            ->select(
+                'companies.company_name',
+            )
+            ->get();
+
+        // check if all primary/unique/other keys are present in CSV headers
+        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable, $existingCompanies);
+        if (!self::validateCsvHeaders($filepath, $keys)) {
             return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
 
@@ -515,15 +637,25 @@ class ImportsController extends Controller
 
         // ---
 
-        // replace current database with CSV if valid
+        // replace current database with CSV if valid, ignoring existing values
         if ($clearCompanies) {
             self::deleteAllCompanies();
+            $existingCompanies = collect();
         }
         
-        self::addCompaniesFromCsv($filepath);
-
+        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
+        self::addCompaniesFromCollection($csvStats['successful']);
+        
         // todo: add confirmation? view csv before proceeding with upload?
-        return redirect('/dashboard/companies')->with('success', 'Successfully imported company list.');
+        if ($clearCompanies) {
+            return redirect('/dashboard/companies')
+                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' companies.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        } else {
+            return redirect('/dashboard/companies')
+                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' companies.
+                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+        }
     }
 
     // todo: possibly move to AdminController?
@@ -538,12 +670,8 @@ class ImportsController extends Controller
         }
     }
 
-    public function addCompaniesFromCsv(string $csvPath): void
+    public function addCompaniesFromCollection($companiesCollection): void
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
-        $companiesCsv = fopen('../storage/app/private/' . $csvPath, 'r');
-        $companiesCollection = self::csvToCollection($companiesCsv);
-
         // loop through every company in CSV
         foreach ($companiesCollection as $companyRow) {
             $new_company = new Company();
