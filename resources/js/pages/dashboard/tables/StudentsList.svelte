@@ -622,13 +622,13 @@
             >
                 Wordpress Email
             </TableColumnHeader>
-            {#if !isAdmin && phase === 'pre'}
+            {#if isAdmin || phase === 'pre'}
                 {#each requirements as requirement}
                     {@const { requirement_name } = requirement}
                     <TableColumnHeader>{requirement_name}</TableColumnHeader>
                 {/each}
             {/if}
-            {#if !isAdmin && phase !== 'pre'}
+            {#if isAdmin || phase !== 'pre'}
                 {#each formIdNames as formIdName}
                     {@const { form_name } = formIdName}
                     <TableColumnHeader>{form_name}</TableColumnHeader>
@@ -738,7 +738,7 @@
                 <TableCell>{email}</TableCell>
                 <TableCell>{wordpress_name}</TableCell>
                 <TableCell>{wordpress_email}</TableCell>
-                {#if !isAdmin && phase === 'pre'}
+                {#if isAdmin || phase === 'pre'}
                     {#each submission_id_statuses as submission_id_status}
                         {@const { requirement_id, status } =
                             submission_id_status}
@@ -751,7 +751,7 @@
                         </TableCell>
                     {/each}
                 {/if}
-                {#if !isAdmin && phase !== 'pre'}
+                {#if isAdmin || phase !== 'pre'}
                     {#each form_id_statuses as form_id_status}
                         {@const { form_id, status } = form_id_status}
                         <TableCell center>
