@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -32,19 +33,19 @@ class ImportsController extends Controller
         return $headers;
     }
 
-    public function csvToCollection($csv)
+    public function csvToCollection($csv): array
     {
         // get headers of CSV
         $headers = self::getCsvHeaders($csv);
 
         // loop through every row in CSV
         $collection = [];
-        $errors = 0;
+        $num_errors = 0;
         while (($csv_row = fgetcsv($csv)) !== FALSE) {
             // skip CSV row if it is shorter than the header row
             if (count($csv_row) < count($headers)) {
                 // count the number of skipped rows
-                $errors++;
+                $num_errors++;
                 continue;
             }
 
@@ -61,17 +62,16 @@ class ImportsController extends Controller
 
         return [
             'collection'=>collect($collection),
-            'errors'=>$errors
+            'num_errors'=>$num_errors
         ];
     }
 
     // todo: this can be simplified once Tagged Unions are added to PHP one day, similar to the Result type in Rust
-    public function validateCsvHeaders(string $csvPath, $keys): bool
+    public function validateCsvHeaders(string $csvPath, array $keys): bool
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $importedCsvHeaders = self::getCsvHeaders($importedCsv);
-        //error_log($importedCsvHeaders[0]);
 
         foreach ($keys as $key) {
             if (!array_key_exists($key, $importedCsvHeaders)) {
@@ -82,7 +82,7 @@ class ImportsController extends Controller
         return true;
     }
 
-    public function validateCsv(string $csvPath, $primary_keys, $unique_keys, $other_keys_required, $existingDatabase = [])
+    public function validateCsv(string $csvPath, array $primary_keys, array $unique_keys, array $other_keys_required, Collection $existingDatabase)
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
@@ -92,7 +92,7 @@ class ImportsController extends Controller
         $csvLog = [
             'successful'=>collect(),
             'num_duplicates'=>0,
-            'num_errors'=>$importedCollectionRaw['errors']
+            'num_errors'=>$importedCollectionRaw['num_errors']
         ];
 
         foreach ($importedCollection as $importedRow) {
@@ -294,7 +294,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addStudentsFromCollection($studentsCollection): void
+    public function addStudentsFromCollection(Collection $studentsCollection): void
     {
         // loop through every student in row
         foreach ($studentsCollection as $studentRow) {
@@ -423,7 +423,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addSupervisorsFromCollection($supervisorsCollection): void
+    public function addSupervisorsFromCollection(Collection $supervisorsCollection): void
     {
         // loop through every supervisor in CSV
         foreach ($supervisorsCollection as $supervisorRow) {
@@ -466,7 +466,6 @@ class ImportsController extends Controller
 
     public function submitFacultyCsv(Request $request, bool $clearFaculties): RedirectResponse
     {
-        // todo: confirm if faculty should be allowed to add other faculty
         $user = Auth::user();
         if ($user->role !== User::ROLE_ADMIN) {
             abort(401);
@@ -550,7 +549,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addFacultiesFromCollection($facultiesCollection): void
+    public function addFacultiesFromCollection(Collection $facultiesCollection): void
     {
         // loop through every faculty in row
         foreach ($facultiesCollection as $facultyRow) {
@@ -670,7 +669,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addCompaniesFromCollection($companiesCollection): void
+    public function addCompaniesFromCollection(Collection $companiesCollection): void
     {
         // loop through every company in CSV
         foreach ($companiesCollection as $companyRow) {
