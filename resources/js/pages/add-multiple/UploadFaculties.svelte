@@ -12,7 +12,7 @@
         if (
             // todo: change message
             confirm(
-                'This action may replace all existing faculty users. Are you sure you want to proceed?',
+                'This action will add multiple faculty users. Are you sure you want to proceed?',
             )
         ) {
             $form.post(`/add-multiple/faculties/submit`);
