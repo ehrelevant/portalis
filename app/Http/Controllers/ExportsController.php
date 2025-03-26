@@ -86,7 +86,6 @@ class ExportsController extends Controller
             'Pragma'                => 'public'
         ];
 
-        // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
 
@@ -149,7 +148,6 @@ class ExportsController extends Controller
             'Pragma'                => 'public'
         ];
 
-        // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
 
@@ -211,7 +209,6 @@ class ExportsController extends Controller
             'Pragma'                => 'public'
         ];
 
-        // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
 
@@ -257,7 +254,6 @@ class ExportsController extends Controller
             'Pragma'                => 'public'
         ];
 
-        // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
 
@@ -398,7 +394,6 @@ class ExportsController extends Controller
             'Pragma'                => 'public'
         ];
 
-        // todo: show user prompt to download from public folder to actual local filesystem
         return response()->stream($callback, 200, $content_headers);
     }
 
