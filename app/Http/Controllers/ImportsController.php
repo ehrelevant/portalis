@@ -92,7 +92,7 @@ class ImportsController extends Controller
         $csvLog = [
             'successful'=>collect(),
             'num_duplicates'=>0,
-            'num_errors'=>0//self::csvToCollection($importedCsv)['errors']
+            'num_errors'=>$importedCollectionRaw['errors']
         ];
 
         foreach ($importedCollection as $importedRow) {
