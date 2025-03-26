@@ -8,7 +8,6 @@
         Company,
     } from '$lib/types';
 
-    import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
@@ -184,6 +183,9 @@
         }
         $userForm.post('/api/add/student', {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
 
@@ -231,12 +233,11 @@
         }
         $userForm.post(`/api/update/student/${formUserRoleId}`, {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
-
-    Inertia.on('success', () => {
-        isModalOpen = false;
-    });
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -268,7 +269,8 @@
             <Link href="/add-multiple/students/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
-                    variant="outline"><Icon icon="uil:import" />Add Multiple</Button
+                    variant="outline"
+                    ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
             <DropdownMenu.Root>

@@ -1,6 +1,7 @@
 <script>
+    import { Link, useForm, usePoll } from '@inertiajs/svelte';
+
     import AccordionLocal from '$lib/components/Accordion.svelte';
-    import { Link, useForm } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
     import Status from '$lib/components/Status.svelte';
@@ -30,6 +31,8 @@
             },
         });
     }
+
+    usePoll(5000);
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">

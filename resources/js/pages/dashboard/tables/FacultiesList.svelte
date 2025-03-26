@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { FacultyProps } from '$lib/types';
 
-    import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
@@ -111,6 +110,9 @@
         }
         $userForm.post('/api/add/faculty', {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
 
@@ -150,12 +152,11 @@
         }
         $userForm.post(`/api/update/faculty/${formUserRoleId}`, {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
-
-    Inertia.on('success', () => {
-        isModalOpen = false;
-    });
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -187,7 +188,8 @@
             <Link href="/add-multiple/faculties/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
-                    variant="outline"><Icon icon="uil:import" />Add Multiple</Button
+                    variant="outline"
+                    ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
             <Button

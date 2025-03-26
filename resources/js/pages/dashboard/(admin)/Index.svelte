@@ -7,8 +7,6 @@
     import { Input } from '$lib/components/ui/input';
     import * as Select from '$lib/components/ui/select';
 
-    import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
-
     const phases = ['pre', 'during', 'post'];
 
     export let currentPhase;
@@ -28,10 +26,6 @@
             $settingsForm.put('/globals/settings/update');
         }
     }
-
-    const df = new DateFormatter('en-US', {
-        dateStyle: 'long',
-    });
 </script>
 
 <div class="main-screen flex w-full flex-col gap-2 p-4">

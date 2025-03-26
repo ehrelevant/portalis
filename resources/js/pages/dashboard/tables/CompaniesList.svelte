@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { Company } from '$lib/types';
 
-    import { Inertia } from '@inertiajs/inertia';
     import { router, Link, useForm } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
@@ -106,6 +105,9 @@
         }
         $companyForm.post('/api/add/company', {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
 
@@ -137,16 +139,11 @@
         }
         $companyForm.post(`/api/update/company/${formCompanyId}`, {
             preserveScroll: true,
+            onSuccess: () => {
+                isModalOpen = false;
+            },
         });
     }
-
-    Inertia.on('success', () => {
-        isModalOpen = false;
-    });
-
-    Inertia.on('success', () => {
-        isModalOpen = false;
-    });
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -178,7 +175,8 @@
             <Link href="/add-multiple/companies/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
-                    variant="outline"><Icon icon="uil:import" />Add Multiple</Button
+                    variant="outline"
+                    ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
             <Button

@@ -1,4 +1,6 @@
 <script>
+    import { usePoll } from '@inertiajs/svelte';
+
     import Header from '$lib/components/InternshipHeader.svelte';
     import AccordionLocal from '$lib/components/Accordion.svelte';
 
@@ -16,6 +18,8 @@
     $: governmentIdSubmissions = submissions.filter((submission) => {
         return [4, 5, 6].includes(submission.requirement_id);
     });
+
+    usePoll(5000);
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 p-4">
