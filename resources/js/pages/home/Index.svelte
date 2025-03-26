@@ -156,7 +156,7 @@
             Bug Report
         </Button>
 
-        <Link href="/piracy" class="w-full md:w-auto">
+        <Link href="/privacy" class="w-full md:w-auto">
             <Button
                 class="flex h-16 w-full flex-row gap-2 text-xl md:w-auto {colorVariants.yellow}"
             >
