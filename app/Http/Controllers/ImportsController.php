@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Faculty;
+use App\Models\FormStatus;
 use App\Models\Student;
+use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -302,6 +303,17 @@ class ImportsController extends Controller
             $new_student->student_number = $studentRow['student_number'];
             $new_student->supervisor_id = null;
             $new_student->faculty_id = null;
+            /*
+            $new_student->supervisor_id = $values['supervisor_id'];
+            if ($values['section']) {
+                $new_student->faculty_id = DB::table('faculties')
+                    ->where('section', $values['section'])
+                    ->firstOrFail()
+                    ->id;
+            } else {
+                $new_student->faculty_id = null;
+            }
+            */
             $new_student->wordpress_name = $studentRow['wordpress_name'];
             $new_student->wordpress_email = $studentRow['wordpress_email'];
             $new_student->save();
@@ -314,6 +326,27 @@ class ImportsController extends Controller
             $new_user->last_name = $studentRow['last_name'];
             $new_user->email = $studentRow['email'];
             $new_user->save();
+
+            $requirements = DB::table('requirements')->get();
+            foreach ($requirements as $requirement) {
+                $new_submission_status = new SubmissionStatus();
+                $new_submission_status->student_id = $new_student->id;
+                $new_submission_status->requirement_id = $requirement->id;
+                $new_submission_status->status = 'None';
+                $new_submission_status->save();
+            }
+
+            $forms = DB::table('forms')
+                ->where('short_name', 'company-evaluation')
+                ->orWhere('short_name', 'self-evaluation')
+                ->get();
+            foreach ($forms as $form) {
+                $new_form_status = new FormStatus();
+                $new_form_status->user_id = $new_user->id;
+                $new_form_status->form_id = $form->id;
+                $new_form_status->status = 'None';
+                $new_form_status->save();
+            }
         }
     }
 
@@ -428,6 +461,7 @@ class ImportsController extends Controller
         // loop through every supervisor in CSV
         foreach ($supervisorsCollection as $supervisorRow) {
             $new_supervisor = new Supervisor();
+            //$new_supervisor->company_id = $supervisorRow['company_id'];
             $new_supervisor->save();
 
             $new_user = new User();
@@ -438,6 +472,19 @@ class ImportsController extends Controller
             $new_user->last_name = $supervisorRow['last_name'];
             $new_user->email = $supervisorRow['email'];
             $new_user->save();
+            
+            $forms = DB::table('forms')
+                ->where('short_name', 'midsem')
+                ->orWhere('short_name', 'final')
+                ->orWhere('short_name', 'intern-evaluation')
+                ->get();
+            foreach ($forms as $form) {
+                $new_form_status = new FormStatus();
+                $new_form_status->user_id = $new_user->id;
+                $new_form_status->form_id = $form->id;
+                $new_form_status->status = 'None';
+                $new_form_status->save();
+            }
         }
     }
 
