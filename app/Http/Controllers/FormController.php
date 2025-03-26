@@ -764,6 +764,9 @@ class FormController extends Controller
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully accepted the form submission.');
+            } else {
+                // this shouldn't ever be reached, but this technically counts as an uncaught conditional path otherwise
+                abort(401);
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -798,6 +801,9 @@ class FormController extends Controller
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully invalidated the form submission.');
+            } else {
+                // this shouldn't ever be reached, but this technically counts as an uncaught conditional path otherwise
+                abort(401);
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -839,6 +845,9 @@ class FormController extends Controller
                 return redirect('/dashboard/students')->with('success', $success_message);
             } else if ($validator_user->role === User::ROLE_SUPERVISOR) {
                 return redirect('/dashboard')->with('success', 'Successfully returned the form submission.');
+            } else {
+                // this shouldn't ever be reached, but this technically counts as an uncaught conditional path otherwise
+                abort(401);
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());

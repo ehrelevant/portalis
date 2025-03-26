@@ -261,6 +261,11 @@ class FacultyController extends Controller
                     'companySupervisors' => $company_supervisors,
                     'supervisors' => $supervisors,
                 ]);
+            default:
+                // todo: address this case
+                    // this shouldn't ever be reached unless the website state is somehow invalid,
+                    // but this technically counts as an uncaught conditional path otherwise
+                return Inertia::render('dashboard');
         }
     }
 
