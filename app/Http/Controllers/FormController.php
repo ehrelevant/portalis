@@ -96,13 +96,18 @@ class FormController extends Controller
             ->select('form_statuses.form_id', 'form_statuses.id AS form_status_id', 'form_statuses.status');
     }
 
-    private function queryFormAnswers(int $user_id, string $form_short_name)
+    private function queryFormAnswers(int $user_id, string $form_short_name, array $evaluated_user_ids = null)
     {
         return DB::table('form_statuses')
             ->where('form_statuses.user_id', $user_id)
             ->join('forms', 'forms.id', '=', 'form_statuses.form_id')
-            ->where('short_name', $form_short_name)
+            ->where('forms.short_name', $form_short_name)
             ->join('form_answers', 'form_answers.form_status_id', '=', 'form_statuses.id')
+            ->where(function ($query) use ($evaluated_user_ids) {
+                if ($evaluated_user_ids) {
+                    return $query->whereIn('form_answers.evaluated_user_id', $evaluated_user_ids);
+                }
+            })
             ->select(
                 'form_statuses.form_id',
                 'form_statuses.id AS form_status_id',
@@ -347,18 +352,28 @@ class FormController extends Controller
                 ->firstOrFail();
         }
 
+        $supervised_student_user_ids = DB::table('users')
+            ->where('role', 'student')
+            ->join('students', 'students.id', '=', 'users.role_id')
+            ->where('supervisor_id', $supervisor_user->role_id)
+            ->pluck('users.id')
+            ->toArray();
+
         $form_status = $this->queryFormStatus($supervisor_user->id, $short_name)->firstOrFail();
-        $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
+        $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name, $supervised_student_user_ids)->get();
 
-        if ($form_answers->isEmpty()) {
-            $supervised_student_user_ids = DB::table('users')
-                ->where('role', 'student')
-                ->join('students', 'students.id', '=', 'users.role_id')
-                ->where('supervisor_id', $supervisor_user->role_id)
-                ->pluck('users.id');
+        $generated_forms_student_user_ids = [];
+        foreach ($form_answers as $form_answer) {
+            array_push($generated_forms_student_user_ids, $form_answer->evaluated_user_id);
+        }
 
-            $this->createForm($form_status, $supervised_student_user_ids);
-            $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name)->get();
+        $missing_forms_student_user_ids = array_filter($supervised_student_user_ids, function ($v) use ($generated_forms_student_user_ids) {
+            return !in_array($v, $generated_forms_student_user_ids);
+        });
+
+        if ($missing_forms_student_user_ids) {
+            $this->createForm($form_status, $missing_forms_student_user_ids);
+            $form_answers = $this->queryFormAnswers($supervisor_user->id, $short_name, $supervised_student_user_ids)->get();
         }
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);
@@ -391,8 +406,15 @@ class FormController extends Controller
 
         $user_id = $supervisor_user->id;
 
+        $supervised_student_user_ids = DB::table('users')
+            ->where('role', 'student')
+            ->join('students', 'students.id', '=', 'users.role_id')
+            ->where('supervisor_id', $supervisor_user->role_id)
+            ->pluck('users.id')
+            ->toArray();
+
         $form_status = $this->queryFormStatus($user_id, $short_name)->firstOrFail();
-        $form_answers = $this->queryFormAnswers($user_id, $short_name)->get();
+        $form_answers = $this->queryFormAnswers($user_id, $short_name, $supervised_student_user_ids)->get();
 
         $rating_categories = $this->getRatingCategories($form_status->form_id);
         $students = $this->getSavedSupervisorFormValues($form_answers, $rating_categories);
