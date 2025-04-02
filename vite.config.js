@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import typescript from '@rollup/plugin-typescript';
 
 export default defineConfig({
     plugins: [
@@ -10,9 +9,6 @@ export default defineConfig({
             refresh: true,
         }),
         svelte(),
-        typescript({
-            tsconfig: './tsconfig.json',
-        }),
     ],
     resolve: {
         alias: {
