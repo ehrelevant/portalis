@@ -184,6 +184,42 @@ class ImportsController extends Controller
         return $csvLog;
     }
 
+    public function validateCollectionValues(array $inputCsvLog, array $email_keys)
+    {
+        $csvLog = [
+            'successful'=>collect(),
+            'num_duplicates'=>$inputCsvLog['num_duplicates'],
+            'num_errors'=>$inputCsvLog['num_errors']
+        ];
+
+        foreach ($inputCsvLog['successful'] as $importedRow) {
+            $csvRowStatus = CsvRowStatus::SUCCESSFUL;
+
+            // check if email keys are valid emails
+            foreach ($email_keys as $email_key) {
+                if (!filter_var($importedRow[$email_key], FILTER_VALIDATE_EMAIL)) {
+                    $csvRowStatus = CsvRowStatus::ERROR;
+                    goto tallyCsvRowStatus;
+                }
+            }
+
+            tallyCsvRowStatus:
+            switch ($csvRowStatus) {
+                case CsvRowStatus::SUCCESSFUL:
+                    $csvLog['successful']->push($importedRow);
+                    break;
+                case CsvRowStatus::DUPLICATE:
+                    $csvLog['num_duplicates']++;
+                    break;
+                case CsvRowStatus::ERROR:
+                    $csvLog['num_errors']++;
+                    break;
+            }
+        }
+
+        return $csvLog;
+    }
+
     // ---
 
     public function showImportStudents(): Response
@@ -261,6 +297,9 @@ class ImportsController extends Controller
             
             // todo: check foreign keys
             $foreign_keys = ['section', 'supervisor_name'];
+
+            // relevant keys for value validation
+            $email_keys = ['email', 'wordpress_email'];
             
             // ---
             
@@ -271,6 +310,7 @@ class ImportsController extends Controller
             }
             
             $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
+            $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addStudentsFromCollection($csvStats['successful']);
             
             // todo: add confirmation? view csv before proceeding with upload?
@@ -429,6 +469,9 @@ class ImportsController extends Controller
             // todo: check foreign keys
             $foreign_keys = ['company_name'];
 
+            // relevant keys for value validation
+            $email_keys = ['email'];
+
             // ---
 
             // replace current database with CSV if valid, ignoring existing values
@@ -438,6 +481,7 @@ class ImportsController extends Controller
             }
 
             $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
+            $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addSupervisorsFromCollection($csvStats['successful']);
 
             // todo: add confirmation? view csv before proceeding with upload?
@@ -575,6 +619,9 @@ class ImportsController extends Controller
             // faculty list has no foreign keys
             //$foreign_keys = [];
 
+            // relevant keys for value validation
+            $email_keys = ['email'];
+
             // ---
 
             // replace current database with CSV if valid, ignoring existing values
@@ -584,6 +631,7 @@ class ImportsController extends Controller
             }
 
             $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
+            $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addFacultiesFromCollection($csvStats['successful']);
 
             // todo: add confirmation? view csv before proceeding with upload?
@@ -702,6 +750,9 @@ class ImportsController extends Controller
             // company list has no foreign keys
             //$foreign_keys = [];
 
+            // relevant keys for value validation
+            $email_keys = ['email'];
+
             // ---
 
             // replace current database with CSV if valid, ignoring existing values
@@ -711,6 +762,7 @@ class ImportsController extends Controller
             }
             
             $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
+            $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addCompaniesFromCollection($csvStats['successful']);
             
             // todo: add confirmation? view csv before proceeding with upload?
