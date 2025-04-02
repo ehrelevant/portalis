@@ -111,13 +111,6 @@ class DashboardController extends Controller
                 $supervisor_user_id = $supervisor->id;
                 $supervisor_id = $supervisor->role_id;
 
-                $company_name = DB::table('supervisors')
-                    ->where('supervisors.id', $supervisor_id)
-                    ->join('companies', 'supervisors.company_id', '=', 'companies.id')
-                    ->select('companies.company_name')
-                    ->firstOrFail()
-                    ->company_name;
-
                 $form_statuses = DB::table('form_statuses')
                     ->where('user_id', $supervisor_user_id)
                     ->join(
@@ -134,7 +127,6 @@ class DashboardController extends Controller
                 $props = [
                     'phase' => $phase,
                     'students' => null,
-                    'company_name' => $company_name,
                     'form_statuses' => $form_statuses,
                 ];
 
