@@ -448,13 +448,22 @@
                 <TableCell>{email}</TableCell>
                 {#each form_id_statuses as form_id_status}
                     {@const { form_id, status } = form_id_status}
-                    <TableCell center
-                        ><StatusCell
-                            {isAdmin}
-                            {status}
-                            href="/form/{getFormFromId(form_id)
-                                .short_name}/answer/{supervisor_id}"
-                        />
+                    <TableCell center>
+                        {#if isAdmin}
+                            <StatusCell
+                                {isAdmin}
+                                {status}
+                                href="/form/{getFormFromId(form_id)
+                                    .short_name}/answer/{supervisor_id}"
+                            />
+                        {:else}
+                            <StatusCell
+                                {isAdmin}
+                                {status}
+                                href="/form/{getFormFromId(form_id)
+                                    .short_name}/view/{supervisor_id}"
+                            />
+                        {/if}
                     </TableCell>
                 {/each}
                 <TableCell
