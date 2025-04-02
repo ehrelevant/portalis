@@ -161,7 +161,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
-    <Header txt="Faculties List" />
+    <Header txt="Faculty List" />
 
     <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div class="flex w-full flex-row items-center gap-4 sm:w-auto">

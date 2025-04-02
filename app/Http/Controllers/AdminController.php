@@ -129,7 +129,7 @@ class AdminController extends Controller
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
         $phase = DB::table('website_states')->firstOrFail()->phase;
 
-        return Inertia::render('dashboard/tables/StudentsList', [
+        return Inertia::render('dashboard/tables/StudentList', [
             'students' => $students,
             'requirements' => $requirements,
             'faculties' => $faculties,
@@ -202,7 +202,7 @@ class AdminController extends Controller
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
 
-        return Inertia::render('dashboard/tables/SupervisorsList', [
+        return Inertia::render('dashboard/tables/SupervisorList', [
             'supervisors' => $supervisors,
             'formIdNames' => $form_id_names,
             'companies' => $companies,
@@ -242,7 +242,7 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/tables/FacultiesList', [
+        return Inertia::render('dashboard/tables/FacultyList', [
             'faculties' => $faculties,
         ]);
     }
@@ -267,7 +267,7 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/tables/CompaniesList', [
+        return Inertia::render('dashboard/tables/CompanyList', [
             'companies' => $companies,
         ]);
     }

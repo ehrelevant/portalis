@@ -263,8 +263,8 @@ class FacultyController extends Controller
                 ]);
             default:
                 // todo: address this case
-                    // this shouldn't ever be reached unless the website state is somehow invalid,
-                    // but this technically counts as an uncaught conditional path otherwise
+                // this shouldn't ever be reached unless the website state is somehow invalid,
+                // but this technically counts as an uncaught conditional path otherwise
                 return Inertia::render('dashboard');
         }
     }
@@ -386,7 +386,7 @@ class FacultyController extends Controller
 
         $companies = DB::table('companies')->get();
 
-        return Inertia::render('dashboard/(faculty)/supervisors/SupervisorsList', [
+        return Inertia::render('dashboard/(faculty)/supervisors/SupervisorList', [
             'supervisors' => $supervisors,
             'form_infos' => $form_infos,
             'companies' => $companies,
@@ -413,7 +413,7 @@ class FacultyController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
-        return Inertia::render('dashboard/(faculty)/companies/CompaniesList', [
+        return Inertia::render('dashboard/(faculty)/companies/CompanyList', [
             'companies' => $companies,
         ]);
     }
