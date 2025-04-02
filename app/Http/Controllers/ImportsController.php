@@ -9,11 +9,13 @@ use App\Models\Student;
 use App\Models\SubmissionStatus;
 use App\Models\Supervisor;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -206,79 +208,85 @@ class ImportsController extends Controller
 
     public function submitStudentCsv(Request $request, bool $clearStudents): RedirectResponse
     {
-        $user = Auth::user();
-        if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
-            abort(401);
-        }
+        try {
+            $user = Auth::user();
+            if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
+                abort(401);
+            }
+            
+            // validate CSV MIME type
+            // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
+            // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
+            $request->validate([
+                'file' => ['required', 'mimes:csv,txt'],
+            ]);
+            
+            $filepath = $request->file('file')->store('import/students');
+            
+            // ---
+            
+            /*
+                student_number      primary
+                first_name          other_reqd
+                middle_name         other_null
+                last_name           other_reqd
+                email               unique
+                wordpress_name      other_reqd
+                wordpress_email     unique
+            */
+            
+            // relevant keys for importing students
+            $primary_keys = ['student_number'];
+            $unique_keys = ['email', 'wordpress_email'];
+            $other_keys_required = ['first_name', 'last_name', 'wordpress_name'];
+            $other_keys_nullable = ['middle_name'];
+            
+            // get existing primary/unique keys from database
+            $existingStudents = DB::table('users')
+                ->where('role', 'student')
+                ->join('students', 'users.role_id', '=', 'students.id')
+                ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
+                ->select(
+                    'students.student_number',
+                    'users.email',
+                    'students.wordpress_email',
+                )
+                ->get();
+            
+            // check if all primary/unique/other keys are present in CSV headers
+            $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+            if (!self::validateCsvHeaders($filepath, $keys)) {
+                return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
+            }
+            
+            // todo: check foreign keys
+            $foreign_keys = ['section', 'supervisor_name'];
+            
+            // ---
+            
+            // replace current database with CSV if valid, ignoring existing values
+            if ($clearStudents) {
+                self::deleteAllStudents();
+                $existingStudents = collect();
+            }
+            
+            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
+            self::addStudentsFromCollection($csvStats['successful']);
+            
+            // todo: add confirmation? view csv before proceeding with upload?
+            if ($clearStudents) {
+                return redirect('/dashboard/students')
+                    ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' students.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            } else {
+                return redirect('/dashboard/students')
+                    ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' students.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
 
-        // validate CSV MIME type
-        // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
-        // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
-        $request->validate([
-            'file' => ['required', 'mimes:csv,txt'],
-        ]);
-
-        $filepath = $request->file('file')->store('import/students');
-
-        // ---
-
-        /*
-            student_number      primary
-            first_name          other_reqd
-            middle_name         other_null
-            last_name           other_reqd
-            email               unique
-            wordpress_name      other_reqd
-            wordpress_email     unique
-        */
-
-        // relevant keys for importing students
-        $primary_keys = ['student_number'];
-        $unique_keys = ['email', 'wordpress_email'];
-        $other_keys_required = ['first_name', 'last_name', 'wordpress_name'];
-        $other_keys_nullable = ['middle_name'];
-
-        // get existing primary/unique keys from database
-        $existingStudents = DB::table('users')
-            ->where('role', 'student')
-            ->join('students', 'users.role_id', '=', 'students.id')
-            ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
-            ->select(
-                'students.student_number',
-                'users.email',
-                'students.wordpress_email',
-            )
-            ->get();
-        
-        // check if all primary/unique/other keys are present in CSV headers
-        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
-        if (!self::validateCsvHeaders($filepath, $keys)) {
-            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
-        }
-
-        // todo: check foreign keys
-        $foreign_keys = ['section', 'supervisor_name'];
-
-        // ---
-        
-        // replace current database with CSV if valid, ignoring existing values
-        if ($clearStudents) {
-            self::deleteAllStudents();
-            $existingStudents = collect();
-        }
-
-        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
-        self::addStudentsFromCollection($csvStats['successful']);
-
-        // todo: add confirmation? view csv before proceeding with upload?
-        if ($clearStudents) {
-            return redirect('/dashboard/students')
-                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' students.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
-        } else {
-            return redirect('/dashboard/students')
-                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' students.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            return back()->with('error', 'Failed to import students from CSV file.');
         }
     }
 
@@ -374,72 +382,78 @@ class ImportsController extends Controller
 
     public function submitSupervisorCsv(Request $request, bool $clearSupervisors): RedirectResponse
     {
-        $user = Auth::user();
-        if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
-            abort(401);
-        }
+        try {
+            $user = Auth::user();
+            if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
+                abort(401);
+            }
 
-        // validate CSV MIME type
-        // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
-        // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
-        $request->validate([
-            'file' => ['required', 'mimes:csv,txt'],
-        ]);
+            // validate CSV MIME type
+            // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
+            // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
+            $request->validate([
+                'file' => ['required', 'mimes:csv,txt'],
+            ]);
 
-        $filepath = $request->file('file')->store('import/supervisors');
+            $filepath = $request->file('file')->store('import/supervisors');
 
-        // ---
+            // ---
 
-        /*
-            first_name      other_reqd
-            middle_name     other_null
-            last_name       other_reqd
-            email           unique
-        */
+            /*
+                first_name      other_reqd
+                middle_name     other_null
+                last_name       other_reqd
+                email           unique
+            */
 
-        // relevant keys for importing supervisors
-        $primary_keys = [];
-        $unique_keys = ['email'];
-        $other_keys_required = ['first_name', 'last_name'];
-        $other_keys_nullable = ['middle_name'];
+            // relevant keys for importing supervisors
+            $primary_keys = [];
+            $unique_keys = ['email'];
+            $other_keys_required = ['first_name', 'last_name'];
+            $other_keys_nullable = ['middle_name'];
 
-        // get existing primary/unique keys from database
-        $existingSupervisors = DB::table('users')
-            ->where('role', 'supervisor')
-            ->select(
-                'users.email',
-            )
-            ->get();
+            // get existing primary/unique keys from database
+            $existingSupervisors = DB::table('users')
+                ->where('role', 'supervisor')
+                ->select(
+                    'users.email',
+                )
+                ->get();
 
-        // check if all primary/unique/other keys are present in CSV headers
-        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
-        if (!self::validateCsvHeaders($filepath, $keys)) {
-            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
-        }
+            // check if all primary/unique/other keys are present in CSV headers
+            $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+            if (!self::validateCsvHeaders($filepath, $keys)) {
+                return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
+            }
 
-        // todo: check foreign keys
-        $foreign_keys = ['company_name'];
+            // todo: check foreign keys
+            $foreign_keys = ['company_name'];
 
-        // ---
+            // ---
 
-        // replace current database with CSV if valid, ignoring existing values
-        if ($clearSupervisors) {  
-            self::deleteAllSupervisors();
-            $existingSupervisors = collect();
-        }
+            // replace current database with CSV if valid, ignoring existing values
+            if ($clearSupervisors) {  
+                self::deleteAllSupervisors();
+                $existingSupervisors = collect();
+            }
 
-        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
-        self::addSupervisorsFromCollection($csvStats['successful']);
+            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
+            self::addSupervisorsFromCollection($csvStats['successful']);
 
-        // todo: add confirmation? view csv before proceeding with upload?
-        if ($clearSupervisors) {
-            return redirect('/dashboard/supervisors')
-                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' supervisors.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
-        } else {
-            return redirect('/dashboard/supervisors')
-                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' supervisors.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            // todo: add confirmation? view csv before proceeding with upload?
+            if ($clearSupervisors) {
+                return redirect('/dashboard/supervisors')
+                    ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' supervisors.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            } else {
+                return redirect('/dashboard/supervisors')
+                    ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' supervisors.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to import supervisors from CSV file.');
         }
     }
 
@@ -513,73 +527,79 @@ class ImportsController extends Controller
 
     public function submitFacultyCsv(Request $request, bool $clearFaculties): RedirectResponse
     {
-        $user = Auth::user();
-        if ($user->role !== User::ROLE_ADMIN) {
-            abort(401);
-        }
+        try {
+            $user = Auth::user();
+            if ($user->role !== User::ROLE_ADMIN) {
+                abort(401);
+            }
 
-        // validate CSV MIME type
-        // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
-        // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
-        $request->validate([
-            'file' => ['required', 'mimes:csv,txt'],
-        ]);
+            // validate CSV MIME type
+            // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
+            // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
+            $request->validate([
+                'file' => ['required', 'mimes:csv,txt'],
+            ]);
 
-        $filepath = $request->file('file')->store('import/faculties');
+            $filepath = $request->file('file')->store('import/faculties');
 
-        // ---
+            // ---
 
-        /*
-            first_name      other_reqd
-            middle_name     other_null
-            last_name       other_reqd
-            section         foreign
-            email           unique
-        */
+            /*
+                first_name      other_reqd
+                middle_name     other_null
+                last_name       other_reqd
+                section         foreign
+                email           unique
+            */
 
-        // relevant keys for importing faculties
-        $primary_keys = [];
-        $unique_keys = ['email'];
-        $other_keys_required = ['first_name', 'last_name'];
-        $other_keys_nullable = ['middle_name', 'section'];
+            // relevant keys for importing faculties
+            $primary_keys = [];
+            $unique_keys = ['email'];
+            $other_keys_required = ['first_name', 'last_name'];
+            $other_keys_nullable = ['middle_name', 'section'];
 
-        // get existing primary/unique keys from database
-        $existingFaculties = DB::table('users')
-            ->where('role', 'supervisor')
-            ->select(
-                'users.email',
-            )
-            ->get();
+            // get existing primary/unique keys from database
+            $existingFaculties = DB::table('users')
+                ->where('role', 'supervisor')
+                ->select(
+                    'users.email',
+                )
+                ->get();
 
-        // check if all primary/unique/other keys are present in CSV headers
-        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
-        if (!self::validateCsvHeaders($filepath, $keys)) {
-            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
-        }
+            // check if all primary/unique/other keys are present in CSV headers
+            $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+            if (!self::validateCsvHeaders($filepath, $keys)) {
+                return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
+            }
 
-        // faculty list has no foreign keys
-        //$foreign_keys = [];
+            // faculty list has no foreign keys
+            //$foreign_keys = [];
 
-        // ---
+            // ---
 
-        // replace current database with CSV if valid, ignoring existing values
-        if ($clearFaculties) {
-            self::deleteAllFaculties();
-            $existingFaculties = collect();
-        }
+            // replace current database with CSV if valid, ignoring existing values
+            if ($clearFaculties) {
+                self::deleteAllFaculties();
+                $existingFaculties = collect();
+            }
 
-        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
-        self::addFacultiesFromCollection($csvStats['successful']);
+            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
+            self::addFacultiesFromCollection($csvStats['successful']);
 
-        // todo: add confirmation? view csv before proceeding with upload?
-        if ($clearFaculties) {
-            return redirect('/dashboard/faculties')
-                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' faculties.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
-        } else {
-            return redirect('/dashboard/faculties')
-                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' faculties.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            // todo: add confirmation? view csv before proceeding with upload?
+            if ($clearFaculties) {
+                return redirect('/dashboard/faculties')
+                    ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' faculties.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            } else {
+                return redirect('/dashboard/faculties')
+                    ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' faculties.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to import faculties from CSV file.');
         }
     }
 
@@ -639,68 +659,74 @@ class ImportsController extends Controller
 
     public function submitCompanyCsv(Request $request, bool $clearCompanies): RedirectResponse
     {
-        $user = Auth::user();
-        if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
-            abort(401);
-        }
+        try {
+            $user = Auth::user();
+            if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
+                abort(401);
+            }
 
-        // validate CSV MIME type
-        // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
-        // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
-        $request->validate([
-            'file' => ['required', 'mimes:csv,txt'],
-        ]);
+            // validate CSV MIME type
+            // worst case, CSV has MIME type text/plain, which is basically the same as a regular .txt file
+            // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
+            $request->validate([
+                'file' => ['required', 'mimes:csv,txt'],
+            ]);
 
-        $filepath = $request->file('file')->store('import/companies');
+            $filepath = $request->file('file')->store('import/companies');
 
-        // ---
+            // ---
 
-        /*
-            company_name    unique
-        */
+            /*
+                company_name    unique
+            */
 
-        // relevant keys for importing companies
-        $primary_keys = [];
-        $unique_keys = ['company_name'];
-        $other_keys_required = [];
-        $other_keys_nullable = [];
+            // relevant keys for importing companies
+            $primary_keys = [];
+            $unique_keys = ['company_name'];
+            $other_keys_required = [];
+            $other_keys_nullable = [];
 
-        // get existing primary/unique keys from database
-        $existingCompanies = DB::table('companies')
-            ->select(
-                'companies.company_name',
-            )
-            ->get();
+            // get existing primary/unique keys from database
+            $existingCompanies = DB::table('companies')
+                ->select(
+                    'companies.company_name',
+                )
+                ->get();
 
-        // check if all primary/unique/other keys are present in CSV headers
-        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
-        if (!self::validateCsvHeaders($filepath, $keys)) {
-            return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
-        }
+            // check if all primary/unique/other keys are present in CSV headers
+            $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
+            if (!self::validateCsvHeaders($filepath, $keys)) {
+                return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
+            }
 
-        // company list has no foreign keys
-        //$foreign_keys = [];
+            // company list has no foreign keys
+            //$foreign_keys = [];
 
-        // ---
+            // ---
 
-        // replace current database with CSV if valid, ignoring existing values
-        if ($clearCompanies) {
-            self::deleteAllCompanies();
-            $existingCompanies = collect();
-        }
-        
-        $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
-        self::addCompaniesFromCollection($csvStats['successful']);
-        
-        // todo: add confirmation? view csv before proceeding with upload?
-        if ($clearCompanies) {
-            return redirect('/dashboard/companies')
-                ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' companies.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
-        } else {
-            return redirect('/dashboard/companies')
-                ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' companies.
-                The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            // replace current database with CSV if valid, ignoring existing values
+            if ($clearCompanies) {
+                self::deleteAllCompanies();
+                $existingCompanies = collect();
+            }
+            
+            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
+            self::addCompaniesFromCollection($csvStats['successful']);
+            
+            // todo: add confirmation? view csv before proceeding with upload?
+            if ($clearCompanies) {
+                return redirect('/dashboard/companies')
+                    ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' companies.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            } else {
+                return redirect('/dashboard/companies')
+                    ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' companies.
+                    The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return back()->with('error', 'Failed to import companies from CSV file.');
         }
     }
 
