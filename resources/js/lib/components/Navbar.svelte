@@ -57,6 +57,7 @@
         {#if $page.props.auth.user}
             <NavBtn
                 href="/logout"
+                method="post"
                 side="bottom"
                 icon_handle="material-symbols:logout-rounded">Logout</NavBtn
             >
