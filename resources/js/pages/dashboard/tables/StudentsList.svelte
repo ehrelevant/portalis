@@ -189,6 +189,7 @@
         });
     }
 
+    let formUserRoleId = null;
     function openAddForm() {
         $userForm.student_number = null;
         $userForm.first_name = null;
@@ -200,10 +201,10 @@
         $userForm.wordpress_name = null;
         $userForm.wordpress_email = null;
 
+        formUserRoleId = null;
         isModalOpen = true;
     }
 
-    let formUserRoleId = null;
     function openUpdateForm(studentId: number) {
         const student = students.find(
             (student) => student.student_id === studentId,

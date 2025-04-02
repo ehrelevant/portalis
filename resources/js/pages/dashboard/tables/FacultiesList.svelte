@@ -116,6 +116,7 @@
         });
     }
 
+    let formUserRoleId = null;
     function openAddForm() {
         $userForm.first_name = null;
         $userForm.middle_name = null;
@@ -123,10 +124,10 @@
         $userForm.email = null;
         $userForm.section = null;
 
+        formUserRoleId = null;
         isModalOpen = true;
     }
 
-    let formUserRoleId = null;
     function openUpdateForm(facultyId: number) {
         const faculty = faculties.find(
             (faculty) => faculty.faculty_id === facultyId,

@@ -134,6 +134,7 @@
         });
     }
 
+    let formUserRoleId = null;
     function openAddForm() {
         $userForm.first_name = null;
         $userForm.middle_name = null;
@@ -141,10 +142,10 @@
         $userForm.email = null;
         $userForm.company_id = null;
 
+        formUserRoleId = null;
         isModalOpen = true;
     }
 
-    let formUserRoleId = null;
     function openUpdateForm(supervisorId: number) {
         const supervisor = supervisors.find(
             (supervisor) => supervisor.supervisor_id === supervisorId,

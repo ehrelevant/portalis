@@ -111,13 +111,14 @@
         });
     }
 
+    let formCompanyId = null;
     function openAddForm() {
         $companyForm.company_name = null;
 
+        formCompanyId = null;
         isModalOpen = true;
     }
 
-    let formCompanyId = null;
     function openUpdateForm(companyId: number) {
         const company = companies.find(
             (company) => company.company_id === companyId,
