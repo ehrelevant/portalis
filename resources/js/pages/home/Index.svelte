@@ -139,7 +139,7 @@
 
     <div class="flex flex-col items-center justify-center gap-2 md:flex-row">
         <Button
-            href="https://github.com/ehrelevant/cs195-portal"
+            href="https://github.com/ehrelevant/portalis"
             target="_blank"
             class="flex h-16 w-full flex-row gap-2 text-xl md:w-auto"
         >
@@ -148,7 +148,7 @@
         </Button>
 
         <Button
-            href="https://github.com/ehrelevant/cs195-portal/issues/new"
+            href="https://github.com/ehrelevant/portalis/issues/new"
             target="_blank"
             class="flex h-16 w-full flex-row gap-2 text-xl md:w-auto {colorVariants.red}"
         >
