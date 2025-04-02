@@ -52,7 +52,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'pin' => 'The provided pin does not match the given email.',
+            'pin' => 'The provided pin has either expired or does not match the given email.',
         ]);
     }
 
