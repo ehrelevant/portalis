@@ -104,8 +104,11 @@ class AdminController extends Controller
         $requirements = DB::table('requirements')
             ->get();
 
-        $faculties = DB::table('faculties')
-            ->select('id AS faculty_id', 'section')
+        $faculties = DB::table('users')
+            ->where('users.role', User::ROLE_FACULTY)
+            ->join('faculties', 'faculties.id', '=', 'users.role_id')
+            ->where('users.is_disabled', false)
+            ->select('faculties.id AS faculty_id', 'faculties.section')
             ->get();
 
         $form_id_names = DB::table('users')
@@ -121,8 +124,9 @@ class AdminController extends Controller
             ->get();
 
         $supervisor_company_id_names = DB::table('users')
-            ->where('role', 'supervisor')
+            ->where('role', User::ROLE_SUPERVISOR)
             ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
+            ->where('users.is_disabled', false)
             ->select('supervisors.id AS supervisor_id', 'supervisors.company_id', 'users.first_name', 'users.middle_name', 'users.last_name')
             ->get();
 
@@ -198,6 +202,7 @@ class AdminController extends Controller
 
         $companies = DB::table('companies')
             ->select('id AS company_id', 'company_name', 'is_disabled')
+            ->where('is_disabled', false)
             ->get();
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
