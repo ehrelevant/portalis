@@ -11,8 +11,8 @@ use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -673,7 +673,7 @@ class ImportsController extends Controller
             ->get();
 
         // check if all primary/unique/other keys are present in CSV headers
-        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable, $existingCompanies);
+        $keys = array_merge($primary_keys, $unique_keys, $other_keys_required, $other_keys_nullable);
         if (!self::validateCsvHeaders($filepath, $keys)) {
             return back()->withErrors(['file' => 'Cannot read file. Please check its formatting.'])->with('error', 'Cannot read file. Please check its formatting.');
         }
