@@ -247,8 +247,11 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
+        $is_admin = Auth::user()->role === User::ROLE_ADMIN;
+
         return Inertia::render('dashboard/tables/FacultyList', [
             'faculties' => $faculties,
+            'isAdmin' => $is_admin
         ]);
     }
 
@@ -272,8 +275,11 @@ class AdminController extends Controller
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
+        $is_admin = Auth::user()->role === User::ROLE_ADMIN;
+
         return Inertia::render('dashboard/tables/CompanyList', [
             'companies' => $companies,
+            'isAdmin' => $is_admin
         ]);
     }
 
