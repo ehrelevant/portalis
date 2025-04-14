@@ -22,6 +22,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'role' => fake()->randomElement(['student', 'supervisor', 'faculty', 'admin']),
             'is_disabled' => false,
+            'year' => 2025,
         ];
     }
 

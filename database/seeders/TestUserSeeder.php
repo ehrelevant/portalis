@@ -25,6 +25,7 @@ class TestUserSeeder extends Seeder
             'first_name' => 'First',
             'middle_name' => 'Middle',
             'last_name' => 'Supervisor',
+            'year' => 2025,
         ]);
 
         Supervisor::factory()->create([
@@ -37,6 +38,7 @@ class TestUserSeeder extends Seeder
             'first_name' => 'Second',
             'middle_name' => 'Middle',
             'last_name' => 'Supervisor',
+            'year' => 2025,
         ]);
 
         Faculty::factory()->create([
@@ -49,6 +51,7 @@ class TestUserSeeder extends Seeder
             'first_name' => 'First',
             'middle_name' => 'Middle',
             'last_name' => 'Faculty',
+            'year' => 2025,
         ]);
 
         Faculty::factory()->create([
@@ -61,6 +64,7 @@ class TestUserSeeder extends Seeder
             'first_name' => 'Second',
             'middle_name' => 'Middle',
             'last_name' => 'Faculty',
+            'year' => 2025,
         ]);
 
         User::factory()->create([
@@ -70,6 +74,7 @@ class TestUserSeeder extends Seeder
             'first_name' => 'First',
             'middle_name' => 'Middle',
             'last_name' => 'Last',
+            'year' => 2025,
         ]);
 
         $this->call([

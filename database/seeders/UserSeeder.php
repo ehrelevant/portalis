@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Portalis',
             'middle_name' => '',
             'last_name' => 'Admin',
+            'year' => 2025,
         ]);
     }
 }

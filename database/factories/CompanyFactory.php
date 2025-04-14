@@ -19,6 +19,7 @@ class CompanyFactory extends Factory
     {
         return [
             'company_name' => Str::random(10),
+            'year' => 2025,
         ];
     }
 }

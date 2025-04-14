@@ -16,9 +16,11 @@ class TestSeeder extends Seeder
     {
         Company::factory()->create([
             'company_name' => 'Company 1',
+            'year' => 2025,
         ]);
         Company::factory()->create([
             'company_name' => 'Company 2',
+            'year' => 2025,
         ]);
 
         $this->call([
