@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/form/{short_name}/invalidate/{user_id}', [FormController::class, 'invalidateForm']);
     Route::post('/form/{short_name}/reject/{user_id}', [FormController::class, 'rejectForm']);
 
+    // Admin/Faculty Dashboard (both Admin and Faculty permitted)
     Route::middleware([EnsureUserHasRole::class . ':faculty,admin'])->group(function () {
         Route::put('/students/{student_id}/assign/section/{new_section?}', [FacultyController::class, 'assignStudentSection']);
         Route::put('/students/{student_id}/assign/supervisor/{supervisor_id?}', [FacultyController::class, 'assignStudentSupervisor']);
@@ -63,11 +64,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/import/students/upload', [ImportsController::class, 'showImportStudents']);
         Route::get('/import/supervisors/upload', [ImportsController::class, 'showImportSupervisors']);
-        Route::get('/import/faculties/upload', [ImportsController::class, 'showImportFaculties']);
+        //Route::get('/import/faculties/upload', [ImportsController::class, 'showImportFaculties']);
         Route::get('/import/companies/upload', [ImportsController::class, 'showImportCompanies']);
         Route::post('/import/students/submit', [ImportsController::class, 'importStudents']);
         Route::post('/import/supervisors/submit', [ImportsController::class, 'importSupervisors']);
-        Route::post('/import/faculties/submit', [ImportsController::class, 'importFaculties']);
+        //Route::post('/import/faculties/submit', [ImportsController::class, 'importFaculties']);
         Route::post('/import/companies/submit', [ImportsController::class, 'importCompanies']);
 
         Route::get('/add-multiple/students/upload', [ImportsController::class, 'showAddMultipleStudents']);
@@ -104,43 +105,49 @@ Route::middleware(['auth'])->group(function () {
         // Add/Update/Delete Routes
         Route::post('/api/add/student', [AdminController::class, 'addStudent']);
         Route::post('/api/add/supervisor', [AdminController::class, 'addSupervisor']);
-        Route::post('/api/add/company', [AdminController::class, 'addCompany']);
         Route::post('/api/add/faculty', [AdminController::class, 'addFaculty']);
+        Route::post('/api/add/company', [AdminController::class, 'addCompany']);
 
         Route::post('/api/update/student/{student_id}', [AdminController::class, 'updateStudent']);
         Route::post('/api/update/supervisor/{supervisor_id}', [AdminController::class, 'updateSupervisor']);
-        Route::post('/api/update/company/{company_id}', [AdminController::class, 'updateCompany']);
         Route::post('/api/update/faculty/{faculty_id}', [AdminController::class, 'updateFaculty']);
+        Route::post('/api/update/company/{company_id}', [AdminController::class, 'updateCompany']);
 
         Route::delete('/api/delete/student/{student_id}', [AdminController::class, 'deleteStudent']);
         Route::delete('/api/delete/supervisor/{supervisor_id}', [AdminController::class, 'deleteSupervisor']);
+        //Route::delete('/api/delete/faculty/{faculty_id}', [AdminController::class, 'deleteFaculty']);
         Route::delete('/api/delete/company/{company_id}', [AdminController::class, 'deleteCompany']);
-        Route::delete('/api/delete/faculty/{faculty_id}', [AdminController::class, 'deleteFaculty']);
 
         Route::put('/api/enable/student/{student_id}', [AdminController::class, 'enableStudent']);
         Route::put('/api/enable/supervisor/{supervisor_id}', [AdminController::class, 'enableSupervisor']);
-        Route::put('/api/enable/faculty/{faculty_id}', [AdminController::class, 'enableFaculty']);
+        //Route::put('/api/enable/faculty/{faculty_id}', [AdminController::class, 'enableFaculty']);
         Route::put('/api/enable/company/{company_id}', [AdminController::class, 'enableCompany']);
 
         Route::put('/api/disable/student/{student_id}', [AdminController::class, 'disableStudent']);
         Route::put('/api/disable/supervisor/{supervisor_id}', [AdminController::class, 'disableSupervisor']);
-        Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
+        //Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
         Route::put('/api/disable/company/{company_id}', [AdminController::class, 'disableCompany']);
 
         Route::put('/api/disable/students', [AdminController::class, 'disableStudents']);
         Route::put('/api/disable/supervisors', [AdminController::class, 'disableSupervisors']);
-        Route::put('/api/disable/faculties', [AdminController::class, 'disableFaculties']);
+        //Route::put('/api/disable/faculties', [AdminController::class, 'disableFaculties']);
         Route::put('/api/disable/companies', [AdminController::class, 'disableCompanies']);
 
         Route::get('/dashboard/students', [AdminController::class, 'showStudents']);
         Route::get('/dashboard/supervisors', [AdminController::class, 'showSupervisors']);
+        Route::get('/dashboard/faculties', [AdminController::class, 'showFaculties']);
         Route::get('/dashboard/companies', [AdminController::class, 'showCompanies']);
     });
 
+    // Admin/Faculty Dashboard (only Admin permitted)
     Route::middleware([EnsureUserHasRole::class . ':admin'])->group(function () {
-        Route::get('/dashboard/faculties', [AdminController::class, 'showFaculties']);
+        Route::get('/import/faculties/upload', [ImportsController::class, 'showImportFaculties']);
+        Route::post('/import/faculties/submit', [ImportsController::class, 'importFaculties']);
+        Route::delete('/api/delete/faculty/{faculty_id}', [AdminController::class, 'deleteFaculty']);
+        Route::put('/api/enable/faculty/{faculty_id}', [AdminController::class, 'enableFaculty']);
+        Route::put('/api/disable/faculty/{faculty_id}', [AdminController::class, 'disableFaculty']);
+        Route::put('/api/disable/faculties', [AdminController::class, 'disableFaculties']);
     });
-
 
     // View submitted file (Role checking is done in function)
     Route::get('/file/submission/{student_id}/{requirement_id}', [FileSubmissionController::class, 'showStudentDocument']);
