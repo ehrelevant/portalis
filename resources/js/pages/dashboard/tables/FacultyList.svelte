@@ -19,6 +19,7 @@
     import Icon from '@iconify/svelte';
 
     export let faculties: FacultyProps[];
+    export let isAdmin: boolean;
 
     let selected: { [x: number]: boolean | 'indeterminate' } = faculties.reduce(
         (selectedRecordAcc, { faculty_id }) => {
@@ -174,6 +175,7 @@
         <div
             class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
         >
+            {#if isAdmin}
             <Button
                 on:click={bulkDisable}
                 class="flex w-full flex-row gap-2 sm:w-auto"
@@ -186,6 +188,7 @@
                     variant="outline"><Icon icon="uil:import" />Import</Button
                 ></Link
             >
+            {/if}
             <Link href="/add-multiple/faculties/upload"
                 ><Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
@@ -323,7 +326,9 @@
     <!-- List of Faculties -->
     <Table>
         <TableRow header>
+            {#if isAdmin}
             <TableColumnHeader />
+            {/if}
             <TableColumnHeader
                 isActive={sortColumn === 'last_name'}
                 isAscending={sortIsAscending}
@@ -367,9 +372,11 @@
                 disabled={is_disabled}
                 selected={Boolean(selected[faculty_id])}
             >
+                {#if isAdmin}
                 <TableCell
                     ><Checkbox bind:checked={selected[faculty_id]} /></TableCell
                 >
+                {/if}
                 <TableCell>{last_name}</TableCell>
                 <TableCell>{first_name}</TableCell>
                 <TableCell>{email}</TableCell>
@@ -383,6 +390,7 @@
                             on:click={() => openUpdateForm(faculty_id)}
                             >Edit</Button
                         >
+                        {#if isAdmin}
                         {#if is_disabled}
                             <Link
                                 href="/api/enable/faculty/{faculty_id}"
@@ -410,6 +418,7 @@
                                     }
                                 }}>Disable</Button
                             >
+                        {/if}
                         {/if}
                     </div></TableCell
                 >
