@@ -30,7 +30,7 @@
 <div class="main-screen flex w-full flex-col gap-2 p-4">
     <Header txt="Faculty Dashboard" />
 
-    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-3">
+    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-4">
         <Link href="/dashboard/students">
             <Button
                 class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
@@ -51,6 +51,18 @@
                 <div class="flex flex-col items-center justify-center">
                     <Icon icon="mdi:account-tie-outline" class="text-4xl" />
                     <Label class="text-2xl">Supervisor List</Label>
+                </div>
+            </Button>
+        </Link>
+
+        <Link href="/dashboard/faculties">
+            <Button
+                class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
+                variant="outline"
+            >
+                <div class="flex flex-col items-center justify-center">
+                    <Icon icon="mdi:company" class="text-4xl" />
+                    <Label class="text-2xl">Faculty List</Label>
                 </div>
             </Button>
         </Link>
