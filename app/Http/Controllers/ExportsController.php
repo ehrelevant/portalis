@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportsController extends Controller
 {
-    public function exportStudentSections(): StreamedResponse
+    public function exportStudentList(): StreamedResponse
     {
-        $csvFileName = 'student_sections';
+        $csvFileName = 'student_list';
 
         $dbTable = DB::table('users')
             ->where('role', 'student')
@@ -28,6 +28,9 @@ class ExportsController extends Controller
                 'users.last_name',
                 'faculties.section',
                 //'students.has_dropped',
+                'users.email',
+                'students.wordpress_name',
+                'students.wordpress_email',
             )
             ->orderBy('students.student_number')
             ->get();
@@ -44,6 +47,9 @@ class ExportsController extends Controller
                 'last_name',
                 'section',
                 //'has_dropped',
+                'email',
+                'wordpress_name',
+                'wordpress_email'
             ];
 
         // ---

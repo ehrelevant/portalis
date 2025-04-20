@@ -285,9 +285,9 @@
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
-                        href="/export/students/sections"
+                        href="/export/students/list"
                         target="_blank"
-                        >Export Student Section</DropdownMenu.Item
+                        >Export Student List</DropdownMenu.Item
                     >
                     {#if isAdmin || phase !== 'pre'}
                         <DropdownMenu.Item

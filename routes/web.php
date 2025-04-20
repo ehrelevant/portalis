@@ -80,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/add-multiple/faculties/submit', [ImportsController::class, 'addMultipleFaculties']);
         Route::post('/add-multiple/companies/submit', [ImportsController::class, 'addMultipleCompanies']);
 
-        Route::get('/export/students/sections', [ExportsController::class, 'exportStudentSections']);
+        Route::get('/export/students/list', [ExportsController::class, 'exportStudentList']);
         Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReportStudents']);
         Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
         Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
