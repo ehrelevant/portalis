@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Company } from '$lib/types';
 
-    import { router, Link, useForm } from '@inertiajs/svelte';
+    import { router, Link, useForm, usePoll } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
     import Required from '$lib/components/Required.svelte';
@@ -19,11 +19,16 @@
     import Icon from '@iconify/svelte';
     import ErrorText from '$lib/components/ErrorText.svelte';
 
+    const { start, stop } = usePoll(2000);
+
     export let companies: Company[];
     export let years: number[];
 
     let searchQuery: string;
     function search() {
+        // Pause Polling
+        stop()
+
         router.get(
             '/dashboard/companies',
             {
@@ -37,6 +42,9 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let selected: { [x: number]: boolean | 'indeterminate' } = companies.reduce(
@@ -73,6 +81,9 @@
 
     let filterYear: number = (new Date()).getFullYear();
     function filterByYear(newYear) {
+        // Pause Polling
+        stop()
+
         filterYear = newYear;
 
         router.get(
@@ -88,12 +99,18 @@
                 preserveState: true,
             },
         )
+
+        // Resume Polling
+        start();
     }
 
 
     let sortColumn = 'company_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
+        // Pause Polling
+        stop()
+
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -114,6 +131,9 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let companyFormElement;

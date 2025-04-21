@@ -8,7 +8,7 @@
         Company,
     } from '$lib/types';
 
-    import { router, Link, useForm } from '@inertiajs/svelte';
+    import { router, Link, useForm, usePoll } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
     import StatusCell from '$lib/components/StatusCell.svelte';
@@ -27,6 +27,8 @@
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import Icon from '@iconify/svelte';
+
+    const { start, stop } = usePoll(2000);
 
     export let students: StudentProps[];
     export let requirements: Requirement[];
@@ -104,6 +106,9 @@
 
     let searchQuery: string;
     function search() {
+        // Pause Polling
+        stop()
+
         router.get(
             '/dashboard/students',
             {
@@ -117,10 +122,16 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let filterYear: number = (new Date()).getFullYear();
     function filterByYear(newYear) {
+        // Pause Polling
+        stop()
+
         filterYear = newYear;
 
         router.get(
@@ -136,11 +147,17 @@
                 preserveState: true,
             },
         )
+
+        // Resume Polling
+        start();
     }
 
     let sortColumn = 'student_number';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
+        // Pause Polling
+        stop()
+
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -161,9 +178,15 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     function setSection(studentId: number, sectionName: string) {
+        // Pause Polling
+        stop()
+
         router.put(
             `/students/${studentId}/assign/section/${sectionName}`,
             {},
@@ -171,9 +194,15 @@
                 preserveScroll: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     function setSupervisor(studentId: number, supervisorId: number) {
+        // Pause Polling
+        stop()
+
         router.put(
             `/students/${studentId}/assign/supervisor/${supervisorId}`,
             {},
@@ -181,6 +210,9 @@
                 preserveScroll: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let userFormElement;

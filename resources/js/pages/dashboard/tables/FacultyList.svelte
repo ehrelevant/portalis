@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { FacultyProps } from '$lib/types';
 
-    import { router, Link, useForm } from '@inertiajs/svelte';
+    import { router, Link, useForm, usePoll } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
     import Required from '$lib/components/Required.svelte';
@@ -18,6 +18,8 @@
     import * as Dialog from '$lib/components/ui/dialog/index';
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
+
+    const { start, stop } = usePoll(2000);
 
     export let faculties: FacultyProps[];
     export let years: number[];
@@ -57,6 +59,9 @@
 
     let searchQuery: string;
     function search() {
+        // Pause Polling
+        stop()
+
         router.get(
             '/dashboard/faculties',
             {
@@ -70,10 +75,16 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let filterYear: number = (new Date()).getFullYear();
     function filterByYear(newYear) {
+        // Pause Polling
+        stop()
+
         filterYear = newYear;
 
         router.get(
@@ -89,12 +100,18 @@
                 preserveState: true,
             },
         )
+
+        // Resume Polling
+        start();
     }
 
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
+        // Pause Polling
+        stop()
+
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -115,6 +132,9 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let userFormElement;

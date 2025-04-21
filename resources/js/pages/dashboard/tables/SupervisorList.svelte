@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Company, FormIdName, SupervisorProps } from '$lib/types';
 
-    import { router, Link, useForm } from '@inertiajs/svelte';
+    import { router, Link, useForm, usePoll } from '@inertiajs/svelte';
 
     import Header from '$lib/components/InternshipHeader.svelte';
     import StatusCell from '$lib/components/StatusCell.svelte';
@@ -19,6 +19,8 @@
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import Icon from '@iconify/svelte';
+
+    const { start, stop } = usePoll(2000);
 
     export let supervisors: SupervisorProps[];
     export let formIdNames: FormIdName[];
@@ -62,6 +64,9 @@
 
     let searchQuery: string;
     function search() {
+        // Pause Polling
+        stop()
+
         router.get(
             '/dashboard/supervisors',
             {
@@ -75,10 +80,16 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let filterYear: number = (new Date()).getFullYear();
     function filterByYear(newYear) {
+        // Pause Polling
+        stop()
+
         filterYear = newYear;
 
         router.get(
@@ -94,11 +105,17 @@
                 preserveState: true,
             },
         )
+
+        // Resume Polling
+        start();
     }
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
+        // Pause Polling
+        stop()
+
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
         } else {
@@ -119,9 +136,15 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     function setCompany(supervisorId: number, companyId: number) {
+        // Pause Polling
+        stop()
+
         router.put(
             `/supervisors/${supervisorId}/assign/company/${companyId}`,
             {},
@@ -130,6 +153,9 @@
                 preserveState: true,
             },
         );
+
+        // Resume Polling
+        start();
     }
 
     let userFormElement;
