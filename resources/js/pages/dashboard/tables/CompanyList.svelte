@@ -212,7 +212,7 @@
                 href="/export/companies/list"
                 class="flex w-full flex-row gap-2 sm:w-auto"
                 target="_blank"
-                variant="outline">Export Companies</Button
+                variant="outline"><Icon icon="uil:export" /> Export</Button
             >
             <Dialog.Root bind:open={isModalOpen}>
                 <Dialog.Trigger>
