@@ -459,7 +459,7 @@
                                         v && ($userForm.section = v.value);
                                     }}
                                 >
-                                    <Select.Trigger>
+                                    <Select.Trigger class="px-4">
                                         <Select.Value placeholder="Section" />
                                     </Select.Trigger>
                                     <Select.Content>
@@ -498,7 +498,7 @@
                                             ($userForm.supervisor_id = v.value);
                                     }}
                                 >
-                                    <Select.Trigger>
+                                    <Select.Trigger class="px-4">
                                         <Select.Value
                                             placeholder="Supervisor Name"
                                         />
@@ -597,7 +597,7 @@
                 v && filterByYear(v.value);
             }}
         >
-            <Select.Trigger class="w-fit px-4">
+            <Select.Trigger class="px-4 w-fit">
                 <Select.Value placeholder="Year" />
             </Select.Trigger>
             <Select.Content>
@@ -745,7 +745,7 @@
                             v && setSection(student_id, v.value);
                         }}
                     >
-                        <Select.Trigger>
+                        <Select.Trigger class="px-4">
                             <Select.Value placeholder="Section" />
                         </Select.Trigger>
                         <Select.Content>
@@ -772,7 +772,7 @@
                             v && setSupervisor(student_id, v.value);
                         }}
                     >
-                        <Select.Trigger>
+                        <Select.Trigger class="px-4">
                             <Select.Value placeholder="Supervisor Name" />
                         </Select.Trigger>
                         <Select.Content>
