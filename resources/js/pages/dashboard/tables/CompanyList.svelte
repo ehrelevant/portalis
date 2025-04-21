@@ -222,7 +222,7 @@
                         ><Icon icon="material-symbols:add" />Add Company</Button
                     >
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>Add Company</Dialog.Title>
                     </Dialog.Header>

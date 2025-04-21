@@ -335,7 +335,7 @@
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Student</Button
                 >
-                <Dialog.Content>
+                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>Add Student</Dialog.Title>
                     </Dialog.Header>
