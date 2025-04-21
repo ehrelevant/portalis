@@ -141,6 +141,7 @@
         last_name: null,
         email: null,
         company_id: null,
+        year: null,
     });
 
     function addUser() {
@@ -163,6 +164,7 @@
         $userForm.last_name = null;
         $userForm.email = null;
         $userForm.company_id = null;
+        $userForm.year = null;
 
         formUserRoleId = null;
         isModalOpen = true;
@@ -178,6 +180,7 @@
         $userForm.last_name = supervisor.last_name;
         $userForm.email = supervisor.email;
         $userForm.company_id = supervisor.company_id;
+        $userForm.year = supervisor.year;
 
         formUserRoleId = supervisorId;
         isModalOpen = true;
@@ -259,6 +262,23 @@
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
                         >
+                            <Label for="year">
+                                <Required />Year
+                            </Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="year"
+                                    type="number"
+                                    bind:value={$userForm.year}
+                                    required
+                                />
+                                {#if $userForm.errors.year}
+                                    <ErrorText>
+                                        {$userForm.errors.year}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
                             <Label for="first_name"
                                 ><Required />First Name</Label
                             >

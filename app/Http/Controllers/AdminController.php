@@ -419,6 +419,7 @@ class AdminController extends Controller
                 'last_name' => ['required', 'string'],
                 'email' => ['required', 'email:rfc'],
                 'company_id' => ['nullable', 'numeric', 'integer'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $user_email_exists = User::where('email', $values['email'])->exists();
@@ -440,6 +441,7 @@ class AdminController extends Controller
             $new_user->middle_name = $values['middle_name'] ?? '';
             $new_user->last_name = $values['last_name'];
             $new_user->email = $values['email'];
+            $new_user->year = $values['year'];
             $new_user->save();
 
             $forms = DB::table('forms')
@@ -474,6 +476,7 @@ class AdminController extends Controller
                 'last_name' => ['required', 'string'],
                 'email' => ['required', 'email:rfc'],
                 'section' => ['nullable', 'string'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $user_email_exists = User::where('email', $values['email'])->exists();
@@ -500,6 +503,7 @@ class AdminController extends Controller
             $new_user->middle_name = $values['middle_name'] ?? '';
             $new_user->last_name = $values['last_name'];
             $new_user->email = $values['email'];
+            $new_user->year = $values['year'];
             $new_user->save();
 
             return back()->with('success', 'Successfully added faculty.');
@@ -517,6 +521,7 @@ class AdminController extends Controller
         try {
             $values = $request->validate([
                 'company_name' => ['required', 'string'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $new_company = new Company();
@@ -607,6 +612,7 @@ class AdminController extends Controller
                 'last_name' => ['required', 'string'],
                 'email' => ['required', 'email:rfc'],
                 'company_id' => ['nullable', 'numeric', 'integer'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $user = User::where('role', User::ROLE_SUPERVISOR)->where('role_id', $supervisor_id)->firstOrFail();
@@ -624,6 +630,7 @@ class AdminController extends Controller
             $user->middle_name = $values['middle_name'] ?? '';
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
+            $user->year = $values['year'];
             $user->save();
 
             $supervisor = Supervisor::find($supervisor_id);
@@ -649,6 +656,7 @@ class AdminController extends Controller
                 'last_name' => ['required', 'string'],
                 'email' => ['required', 'email:rfc'],
                 'section' => ['nullable', 'string'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $user = User::where('role', User::ROLE_FACULTY)->where('role_id', $faculty_id)->firstOrFail();
@@ -678,6 +686,7 @@ class AdminController extends Controller
             $user->middle_name = $values['middle_name'] ?? '';
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
+            $user->year = $values['year'];
             $user->save();
 
             return back()->with('success', 'Successfully updated faculty.');
@@ -695,10 +704,12 @@ class AdminController extends Controller
         try {
             $values = $request->validate([
                 'company_name' => ['required', 'string'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $new_company = Company::find($company_id);
             $new_company->company_name = $values['company_name'];
+            $new_company->year = $values['year'];
             $new_company->save();
 
             return back()->with('success', 'Successfully updated company.');

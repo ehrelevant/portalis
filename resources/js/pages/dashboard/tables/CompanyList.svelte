@@ -17,6 +17,7 @@
     import * as Select from '$lib/components/ui/select';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import Icon from '@iconify/svelte';
+    import ErrorText from '$lib/components/ErrorText.svelte';
 
     export let companies: Company[];
     export let years: number[];
@@ -120,6 +121,7 @@
 
     let companyForm = useForm({
         company_name: null,
+        year: null,
     });
 
     function addCompany() {
@@ -138,6 +140,7 @@
     let formCompanyId = null;
     function openAddForm() {
         $companyForm.company_name = null;
+        $companyForm.year = null;
 
         formCompanyId = null;
         isModalOpen = true;
@@ -149,6 +152,7 @@
         );
 
         $companyForm.company_name = company.company_name;
+        $companyForm.year = company.year;
 
         formCompanyId = companyId;
         isModalOpen = true;
@@ -232,6 +236,23 @@
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
                         >
+                            <Label for="year">
+                                <Required />Year
+                            </Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="year"
+                                    type="number"
+                                    bind:value={$companyForm.year}
+                                    required
+                                />
+                                {#if $companyForm.errors.year}
+                                    <ErrorText>
+                                        {$companyForm.errors.year}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
                             <Label for="company_name"><Required />Company</Label
                             >
                             <Input
@@ -240,6 +261,11 @@
                                 bind:value={$companyForm.company_name}
                                 required
                             />
+                            {#if $companyForm.errors.company_name}
+                                <ErrorText>
+                                    {$companyForm.errors.company_name}
+                                </ErrorText>
+                            {/if}
                         </div>
 
                         <Dialog.Footer>
