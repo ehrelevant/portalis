@@ -451,7 +451,7 @@
                         class="flex flex-row items-center justify-center gap-2"
                     >
                         <Button
-                            class={colorVariants.blue}
+                            class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(faculty_id)}
                             >Edit</Button
                         >
@@ -462,13 +462,13 @@
                                 as="button"
                                 preserveScroll
                                 method="put"
-                                ><Button class="w-full {colorVariants.green}"
+                                ><Button class="w-20 {colorVariants.green}"
                                     >Enable</Button
                                 ></Link
                             >
                         {:else}
                             <Button
-                                class={colorVariants.red}
+                                class="w-20 {colorVariants.red}"
                                 on:click={() => {
                                     if (
                                         confirm(

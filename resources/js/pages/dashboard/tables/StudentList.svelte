@@ -842,7 +842,7 @@
                 <TableCell
                     ><div class="flex flex-row gap-2">
                         <Button
-                            class={colorVariants.blue}
+                            class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(student_id)}
                             >Edit</Button
                         >
@@ -852,14 +852,14 @@
                                 as="button"
                                 preserveScroll
                                 method="put"
-                                class="grow"
+                                class="w-20"
                                 ><Button class="w-full {colorVariants.green}"
                                     >Enable</Button
                                 ></Link
                             >
                         {:else}
                             <Button
-                                class="w-full grow {colorVariants.red}"
+                                class="w-20 {colorVariants.red}"
                                 on:click={() => {
                                     if (
                                         confirm(

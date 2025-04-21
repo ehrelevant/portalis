@@ -343,7 +343,7 @@
                         class="flex flex-row items-center justify-center gap-2"
                     >
                         <Button
-                            class={colorVariants.blue}
+                            class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(company_id)}
                             >Edit</Button
                         >
@@ -359,7 +359,7 @@
                             >
                         {:else}
                             <Button
-                                class={colorVariants.red}
+                                class="w-20 {colorVariants.red}"
                                 on:click={() => {
                                     if (
                                         confirm(
