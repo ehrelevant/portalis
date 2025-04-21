@@ -196,6 +196,7 @@
         supervisor_id: null,
         wordpress_name: null,
         wordpress_email: null,
+        year: null,
     });
 
     function addUser() {
@@ -222,6 +223,7 @@
         $userForm.supervisor_id = null;
         $userForm.wordpress_name = null;
         $userForm.wordpress_email = null;
+        $userForm.year = null;
 
         formUserRoleId = null;
         isModalOpen = true;
@@ -241,6 +243,7 @@
         $userForm.supervisor_id = student.supervisor_id;
         $userForm.wordpress_name = student.wordpress_name;
         $userForm.wordpress_email = student.wordpress_email;
+        $userForm.year = student.year;
 
         formUserRoleId = studentId;
         isModalOpen = true;
@@ -359,6 +362,23 @@
                                 {#if $userForm.errors.student_number}
                                     <ErrorText>
                                         {$userForm.errors.student_number}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="year">
+                                <Required />Year
+                            </Label>
+                            <div class="flex flex-col">
+                                <Input
+                                    name="year"
+                                    type="number"
+                                    bind:value={$userForm.year}
+                                    required
+                                />
+                                {#if $userForm.errors.year}
+                                    <ErrorText>
+                                        {$userForm.errors.year}
                                     </ErrorText>
                                 {/if}
                             </div>

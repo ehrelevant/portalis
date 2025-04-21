@@ -338,6 +338,7 @@ class AdminController extends Controller
                 'supervisor_id' => ['nullable', 'numeric', 'integer'],
                 'wordpress_name' => ['required', 'string'],
                 'wordpress_email' => ['required', 'email:rfc'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
@@ -375,6 +376,7 @@ class AdminController extends Controller
             $new_user->middle_name = $values['middle_name'] ?? '';
             $new_user->last_name = $values['last_name'];
             $new_user->email = $values['email'];
+            $new_user->year = $values['year'];
             $new_user->save();
 
             $requirements = DB::table('requirements')->get();
@@ -544,6 +546,7 @@ class AdminController extends Controller
                 'supervisor_id' => ['nullable', 'numeric', 'integer'],
                 'wordpress_name' => ['required', 'string'],
                 'wordpress_email' => ['required', 'email:rfc'],
+                'year' => ['required', 'numeric', 'integer'],
             ]);
 
             $student_number_exists = Student::where('student_number', $values['student_number'])
@@ -569,6 +572,7 @@ class AdminController extends Controller
             $user->middle_name = $values['middle_name'] ?? '';
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
+            $user->year = $values['year'];
             $user->save();
 
             $student = Student::find($student_id);
