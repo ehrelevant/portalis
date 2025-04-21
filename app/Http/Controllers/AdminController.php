@@ -138,6 +138,7 @@ class AdminController extends Controller
             ->where('role', User::ROLE_STUDENT)
             ->select('year')
             ->distinct()
+            ->orderByDesc('year')
             ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
@@ -224,6 +225,7 @@ class AdminController extends Controller
             ->where('role', User::ROLE_SUPERVISOR)
             ->select('year')
             ->distinct()
+            ->orderByDesc('year')
             ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
@@ -277,6 +279,7 @@ class AdminController extends Controller
             ->where('role', User::ROLE_FACULTY)
             ->select('year')
             ->distinct()
+            ->orderByDesc('year')
             ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
@@ -314,6 +317,7 @@ class AdminController extends Controller
         $years = DB::table('companies')
             ->select('year')
             ->distinct()
+            ->orderByDesc('year')
             ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
