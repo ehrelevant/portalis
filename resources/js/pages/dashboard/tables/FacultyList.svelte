@@ -149,7 +149,7 @@
         $userForm.last_name = null;
         $userForm.email = null;
         $userForm.section = null;
-        $userForm.year = null;
+        $userForm.year = filterYear;
 
         formUserRoleId = null;
         isModalOpen = true;

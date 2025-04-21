@@ -223,7 +223,7 @@
         $userForm.supervisor_id = null;
         $userForm.wordpress_name = null;
         $userForm.wordpress_email = null;
-        $userForm.year = null;
+        $userForm.year = filterYear;
 
         formUserRoleId = null;
         isModalOpen = true;

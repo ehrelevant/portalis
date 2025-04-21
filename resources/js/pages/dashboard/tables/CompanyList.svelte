@@ -140,7 +140,7 @@
     let formCompanyId = null;
     function openAddForm() {
         $companyForm.company_name = null;
-        $companyForm.year = null;
+        $companyForm.year = filterYear;
 
         formCompanyId = null;
         isModalOpen = true;
