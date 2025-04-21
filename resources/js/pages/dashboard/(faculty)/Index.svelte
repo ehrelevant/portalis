@@ -38,7 +38,7 @@
             >
                 <div class="flex flex-col items-center justify-center">
                     <Icon icon="ph:student" class="text-4xl" />
-                    <Label class="text-2xl">Student List</Label>
+                    <p class="text-2xl">Student List</p>
                 </div>
             </Button>
         </Link>
@@ -50,7 +50,7 @@
             >
                 <div class="flex flex-col items-center justify-center">
                     <Icon icon="mdi:account-tie-outline" class="text-4xl" />
-                    <Label class="text-2xl">Supervisor List</Label>
+                    <p class="text-2xl">Supervisor List</p>
                 </div>
             </Button>
         </Link>
@@ -62,7 +62,7 @@
             >
                 <div class="flex flex-col items-center justify-center">
                     <Icon icon="mdi:company" class="text-4xl" />
-                    <Label class="text-2xl">Faculty List</Label>
+                    <p class="text-2xl">Faculty List</p>
                 </div>
             </Button>
         </Link>
@@ -74,7 +74,7 @@
             >
                 <div class="flex flex-col items-center justify-center">
                     <Icon icon="mdi:company" class="text-4xl" />
-                    <Label class="text-2xl">Company List</Label>
+                    <p class="text-2xl">Company List</p>
                 </div>
             </Button>
         </Link>
