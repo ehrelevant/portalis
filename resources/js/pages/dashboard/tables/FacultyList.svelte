@@ -384,8 +384,8 @@
                 v && filterByYear(v.value);
             }}
         >
-            <Select.Trigger class="w-fit px-4">
-                <Select.Value placeholder="Year" />
+            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
+                <strong>Year:</strong> <Select.Value placeholder="Year" />
             </Select.Trigger>
             <Select.Content>
                 {#each years as year}
