@@ -14,10 +14,12 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
+    import * as Select from '$lib/components/ui/select';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import Icon from '@iconify/svelte';
 
     export let companies: Company[];
+    export let years: number[];
 
     let searchQuery: string;
     function search() {
@@ -27,6 +29,7 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
+                year: filterYear,
             },
             {
                 preserveScroll: true,
@@ -67,6 +70,26 @@
         }
     }
 
+    let filterYear: number = (new Date()).getFullYear();
+    function filterByYear(newYear) {
+        filterYear = newYear;
+
+        router.get(
+            '/dashboard/companies',
+            {
+                year: filterYear,
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        )
+    }
+
+
     let sortColumn = 'company_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
@@ -83,6 +106,7 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
+                year: filterYear,
             },
             {
                 preserveScroll: true,
@@ -232,6 +256,27 @@
                 </Dialog.Content>
             </Dialog.Root>
         </div>
+    </div>
+
+    <div class="flex flex-row items-center justify-end">
+        <Select.Root
+            selected={{label: filterYear.toString(), value: filterYear}}
+            onSelectedChange={(v) => {
+                v && filterByYear(v.value);
+            }}
+        >
+            <Select.Trigger class="w-fit px-4">
+                <Select.Value placeholder="Year" />
+            </Select.Trigger>
+            <Select.Content>
+                {#each years as year}
+                    <Select.Item
+                        value={year}
+                        >{year}</Select.Item
+                    >
+                {/each}
+            </Select.Content>
+        </Select.Root>
     </div>
 
     <!-- Name Search Bar -->

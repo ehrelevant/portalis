@@ -27,6 +27,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'student_number';
+        $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         // TODO: Add student number search
@@ -48,6 +49,7 @@ class AdminController extends Controller
                 $query->where('supervisor_users.role', User::ROLE_SUPERVISOR)
                     ->orWhereNull('supervisor_users.id');
             })
+            ->where('users.year', $year_query)
             ->leftJoin('companies', 'companies.id', '=', 'supervisors.company_id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->select(
@@ -75,6 +77,8 @@ class AdminController extends Controller
 
                 'companies.id AS company_id',
                 'companies.company_name',
+
+                'users.year'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -130,6 +134,12 @@ class AdminController extends Controller
             ->select('supervisors.id AS supervisor_id', 'supervisors.company_id', 'users.first_name', 'users.middle_name', 'users.last_name')
             ->get();
 
+        $years = DB::table('users')
+            ->where('role', User::ROLE_STUDENT)
+            ->select('year')
+            ->distinct()
+            ->pluck('year');
+
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
         $phase = DB::table('website_states')->firstOrFail()->phase;
 
@@ -140,6 +150,7 @@ class AdminController extends Controller
             'formIdNames' => $form_id_names,
             'companies' => $companies,
             'supervisorCompanyIdNames' => $supervisor_company_id_names,
+            'years' => $years,
             'isAdmin' => $is_admin,
             'phase' => $phase,
         ]);
@@ -149,6 +160,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'last_name';
+        $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
 
         $users_partial = DB::table('users')
@@ -162,6 +174,7 @@ class AdminController extends Controller
         $supervisors_info = $users_partial
             ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
             ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->where('users.year', $year_query)
             ->select(
                 'users.id AS user_id',
                 'supervisors.id AS supervisor_id',
@@ -176,6 +189,8 @@ class AdminController extends Controller
 
                 'companies.id AS company_id',
                 'companies.company_name',
+
+                'users.year'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
@@ -205,12 +220,19 @@ class AdminController extends Controller
             ->where('is_disabled', false)
             ->get();
 
+        $years = DB::table('users')
+            ->where('role', User::ROLE_SUPERVISOR)
+            ->select('year')
+            ->distinct()
+            ->pluck('year');
+
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
 
         return Inertia::render('dashboard/tables/SupervisorList', [
             'supervisors' => $supervisors,
             'formIdNames' => $form_id_names,
             'companies' => $companies,
+            'years' => $years,
             'isAdmin' => $is_admin,
         ]);
     }
@@ -219,6 +241,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'last_name';
+        $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $users_partial = DB::table('users')
@@ -231,6 +254,7 @@ class AdminController extends Controller
 
         $faculties = $users_partial
             ->join('faculties', 'users.role_id', '=', 'faculties.id')
+            ->where('users.year', $year_query)
             ->select(
                 'users.id AS user_id',
                 'faculties.id AS faculty_id',
@@ -242,15 +266,24 @@ class AdminController extends Controller
                 'users.email',
                 'faculties.section',
 
-                'users.is_disabled'
+                'users.is_disabled',
+
+                'users.year'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
+
+        $years = DB::table('users')
+            ->where('role', User::ROLE_FACULTY)
+            ->select('year')
+            ->distinct()
+            ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
 
         return Inertia::render('dashboard/tables/FacultyList', [
             'faculties' => $faculties,
+            'years' => $years,
             'isAdmin' => $is_admin
         ]);
     }
@@ -259,6 +292,7 @@ class AdminController extends Controller
     {
         $search_text = $request->query('search') ?? '';
         $sort_query = $request->query('sort') ?? 'company_name';
+        $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
         $companies_partial = DB::table('companies')
@@ -267,18 +301,26 @@ class AdminController extends Controller
             });
 
         $companies = $companies_partial
+            ->where('companies.year', $year_query)
             ->select(
                 'companies.id AS company_id',
                 'companies.company_name',
-                'companies.is_disabled'
+                'companies.is_disabled',
+                'companies.year'
             )
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
+
+        $years = DB::table('companies')
+            ->select('year')
+            ->distinct()
+            ->pluck('year');
 
         $is_admin = Auth::user()->role === User::ROLE_ADMIN;
 
         return Inertia::render('dashboard/tables/CompanyList', [
             'companies' => $companies,
+            'years' => $years,
             'isAdmin' => $is_admin
         ]);
     }

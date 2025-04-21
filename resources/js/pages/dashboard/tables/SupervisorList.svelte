@@ -23,6 +23,7 @@
     export let supervisors: SupervisorProps[];
     export let formIdNames: FormIdName[];
     export let companies: Company[];
+    export let years: number[];
     export let isAdmin: boolean;
 
     let selected: { [x: number]: boolean | 'indeterminate' } =
@@ -67,12 +68,32 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
+                year: filterYear,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
         );
+    }
+
+    let filterYear: number = (new Date()).getFullYear();
+    function filterByYear(newYear) {
+        filterYear = newYear;
+
+        router.get(
+            '/dashboard/supervisors',
+            {
+                year: filterYear,
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        )
     }
 
     let sortColumn = 'last_name';
@@ -91,6 +112,7 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
+                year: filterYear,
             },
             {
                 preserveScroll: true,
@@ -347,6 +369,27 @@
                 </Dialog.Content>
             </Dialog.Root>
         </div>
+    </div>
+
+    <div class="flex flex-row items-center justify-end">
+        <Select.Root
+            selected={{label: filterYear.toString(), value: filterYear}}
+            onSelectedChange={(v) => {
+                v && filterByYear(v.value);
+            }}
+        >
+            <Select.Trigger class="w-fit px-4">
+                <Select.Value placeholder="Year" />
+            </Select.Trigger>
+            <Select.Content>
+                {#each years as year}
+                    <Select.Item
+                        value={year}
+                        >{year}</Select.Item
+                    >
+                {/each}
+            </Select.Content>
+        </Select.Root>
     </div>
 
     <!-- Name Search Bar -->
