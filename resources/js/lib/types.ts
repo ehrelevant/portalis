@@ -37,6 +37,8 @@ export interface StudentProps {
     has_dropped: boolean;
     is_disabled: boolean;
 
+    year: number;
+
     // Foreign information
     faculty_id?: number;
     section?: string;
@@ -68,6 +70,8 @@ export interface Company {
     company_id: number;
     company_name: string;
     is_disabled: boolean;
+
+    year: number;
 }
 
 export interface SupervisorCompanyIdName {
@@ -96,6 +100,8 @@ export interface SupervisorProps {
 
     is_disabled: boolean;
 
+    year: number;
+
     company_id?: number;
     company_name?: string;
 
@@ -114,4 +120,6 @@ export interface FacultyProps {
     section?: string;
 
     is_disabled: boolean;
+
+    year: number;
 }
