@@ -85,7 +85,7 @@ class ImportsController extends Controller
         return true;
     }
 
-    public function validateCsv(string $csvPath, array $primary_keys, array $unique_keys, array $other_keys_required, Collection $existingDatabase)
+    public function validateCsv(string $csvPath, int $year, array $primary_keys, array $unique_keys, array $other_keys_required, Collection $existingDatabase)
     {
         // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
@@ -123,13 +123,6 @@ class ImportsController extends Controller
                         goto tallyCsvRowStatus;
                     }
                 }
-
-                /*
-                if (count($importedCollection->duplicatesStrict($primary_key)) > 0) {
-                    $csvRowStatus = CsvRowStatus::DUPLICATE;
-                    goto tallyCsvRowStatus;
-                }
-                */
             }
 
             // check if unique keys are:
@@ -255,9 +248,11 @@ class ImportsController extends Controller
             // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
             $request->validate([
                 'file' => ['required', 'mimes:csv,txt'],
+                'year' => ['required', 'integer'],
             ]);
             
             $filepath = $request->file('file')->store('import/students');
+            $year = $request->input('year', date("Y"));
             
             // ---
             
@@ -279,6 +274,7 @@ class ImportsController extends Controller
             
             // get existing primary/unique keys from database
             $existingStudents = DB::table('users')
+                ->where('year', $year)
                 ->where('role', 'student')
                 ->join('students', 'users.role_id', '=', 'students.id')
                 ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
@@ -305,13 +301,13 @@ class ImportsController extends Controller
             
             // replace current database with CSV if valid, ignoring existing values
             if ($clearStudents) {
-                self::deleteAllStudents();
+                self::deleteAllStudents($year);
                 $existingStudents = collect();
             }
             
-            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
+            $csvStats = self::validateCsv($filepath, $year, $primary_keys, $unique_keys, $other_keys_required, $existingStudents);
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
-            self::addStudentsFromCollection($csvStats['successful']);
+            self::addStudentsFromCollection($csvStats['successful'], $year);
             
             // todo: add confirmation? view csv before proceeding with upload?
             if ($clearStudents) {
@@ -331,9 +327,10 @@ class ImportsController extends Controller
     }
 
     // todo: possibly move to AdminController?
-    public function deleteAllStudents(): void
+    public function deleteAllStudents(int $year): void
     {
         $student_ids = DB::table('users')
+            ->where('year', $year)
             ->where('role', 'student')
             ->pluck('role_id');
 
@@ -343,7 +340,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addStudentsFromCollection(Collection $studentsCollection): void
+    public function addStudentsFromCollection(Collection $studentsCollection, int $year): void
     {
         // loop through every student in row
         foreach ($studentsCollection as $studentRow) {
@@ -367,6 +364,7 @@ class ImportsController extends Controller
             $new_student->save();
 
             $new_user = new User();
+            $new_user->year = $year;
             $new_user->role = User::ROLE_STUDENT;
             $new_user->role_id = $new_student->id;
             $new_user->first_name = $studentRow['first_name'];
@@ -433,9 +431,11 @@ class ImportsController extends Controller
             // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
             $request->validate([
                 'file' => ['required', 'mimes:csv,txt'],
+                'year' => ['required', 'integer'],
             ]);
 
             $filepath = $request->file('file')->store('import/supervisors');
+            $year = $request->input('year', date("Y"));
 
             // ---
 
@@ -454,6 +454,7 @@ class ImportsController extends Controller
 
             // get existing primary/unique keys from database
             $existingSupervisors = DB::table('users')
+                ->where('year', $year)
                 ->where('role', 'supervisor')
                 ->select(
                     'users.email',
@@ -476,13 +477,13 @@ class ImportsController extends Controller
 
             // replace current database with CSV if valid, ignoring existing values
             if ($clearSupervisors) {  
-                self::deleteAllSupervisors();
+                self::deleteAllSupervisors($year);
                 $existingSupervisors = collect();
             }
 
-            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
+            $csvStats = self::validateCsv($filepath, $year, $primary_keys, $unique_keys, $other_keys_required, $existingSupervisors);
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
-            self::addSupervisorsFromCollection($csvStats['successful']);
+            self::addSupervisorsFromCollection($csvStats['successful'], $year);
 
             // todo: add confirmation? view csv before proceeding with upload?
             if ($clearSupervisors) {
@@ -502,9 +503,10 @@ class ImportsController extends Controller
     }
 
     // todo: possibly move to AdminController?
-    public function deleteAllSupervisors(): void
+    public function deleteAllSupervisors(int $year): void
     {
         $supervisor_ids = DB::table('users')
+            ->where('year', $year)
             ->where('role', 'supervisor')
             ->pluck('role_id');
 
@@ -514,7 +516,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addSupervisorsFromCollection(Collection $supervisorsCollection): void
+    public function addSupervisorsFromCollection(Collection $supervisorsCollection, int $year): void
     {
         // loop through every supervisor in CSV
         foreach ($supervisorsCollection as $supervisorRow) {
@@ -523,6 +525,7 @@ class ImportsController extends Controller
             $new_supervisor->save();
 
             $new_user = new User();
+            $new_user->year = $year;
             $new_user->role = User::ROLE_SUPERVISOR;
             $new_user->role_id = $new_supervisor->id;
             $new_user->first_name = $supervisorRow['first_name'];
@@ -582,9 +585,11 @@ class ImportsController extends Controller
             // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
             $request->validate([
                 'file' => ['required', 'mimes:csv,txt'],
+                'year' => ['required', 'integer'],
             ]);
 
             $filepath = $request->file('file')->store('import/faculties');
+            $year = $request->input('year', date("Y"));
 
             // ---
 
@@ -604,6 +609,7 @@ class ImportsController extends Controller
 
             // get existing primary/unique keys from database
             $existingFaculties = DB::table('users')
+                ->where('year', $year)
                 ->where('role', 'supervisor')
                 ->select(
                     'users.email',
@@ -626,13 +632,13 @@ class ImportsController extends Controller
 
             // replace current database with CSV if valid, ignoring existing values
             if ($clearFaculties) {
-                self::deleteAllFaculties();
+                self::deleteAllFaculties($year);
                 $existingFaculties = collect();
             }
 
-            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
+            $csvStats = self::validateCsv($filepath, $year, $primary_keys, $unique_keys, $other_keys_required, $existingFaculties);
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
-            self::addFacultiesFromCollection($csvStats['successful']);
+            self::addFacultiesFromCollection($csvStats['successful'], $year);
 
             // todo: add confirmation? view csv before proceeding with upload?
             if ($clearFaculties) {
@@ -652,9 +658,10 @@ class ImportsController extends Controller
     }
 
     // todo: possibly move to AdminController?
-    public function deleteAllFaculties(): void
+    public function deleteAllFaculties(int $year): void
     {
         $faculty_ids = DB::table('users')
+            ->where('year', $year)
             ->where('role', 'faculty')
             ->pluck('role_id');
 
@@ -664,7 +671,7 @@ class ImportsController extends Controller
         }
     }
 
-    public function addFacultiesFromCollection(Collection $facultiesCollection): void
+    public function addFacultiesFromCollection(Collection $facultiesCollection, int $year): void
     {
         // loop through every faculty in row
         foreach ($facultiesCollection as $facultyRow) {
@@ -673,6 +680,7 @@ class ImportsController extends Controller
             $new_faculty->save();
 
             $new_user = new User();
+            $new_user->year = $year;
             $new_user->role = User::ROLE_FACULTY;
             $new_user->role_id = $new_faculty->id;
             $new_user->first_name = $facultyRow['first_name'];
@@ -707,7 +715,6 @@ class ImportsController extends Controller
 
     public function submitCompanyCsv(Request $request, bool $clearCompanies): RedirectResponse
     {
-        try {
             $user = Auth::user();
             if ($user->role !== User::ROLE_FACULTY && $user->role !== User::ROLE_ADMIN) {
                 abort(401);
@@ -718,9 +725,11 @@ class ImportsController extends Controller
             // given a CSV file 1.csv, if it is renamed to 1.txt with no changes in data, then it would still be acceptable
             $request->validate([
                 'file' => ['required', 'mimes:csv,txt'],
+                'year' => ['required', 'integer'],
             ]);
 
             $filepath = $request->file('file')->store('import/companies');
+            $year = $request->input('year', date("Y"));
 
             // ---
 
@@ -736,6 +745,7 @@ class ImportsController extends Controller
 
             // get existing primary/unique keys from database
             $existingCompanies = DB::table('companies')
+                ->where('year', $year)
                 ->select(
                     'companies.company_name',
                 )
@@ -751,19 +761,19 @@ class ImportsController extends Controller
             //$foreign_keys = [];
 
             // relevant keys for value validation
-            $email_keys = ['email'];
+            $email_keys = [];
 
             // ---
 
             // replace current database with CSV if valid, ignoring existing values
             if ($clearCompanies) {
-                self::deleteAllCompanies();
+                self::deleteAllCompanies($year);
                 $existingCompanies = collect();
             }
             
-            $csvStats = self::validateCsv($filepath, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
-            $csvStats = self::validateCollectionValues($csvStats, $email_keys);
-            self::addCompaniesFromCollection($csvStats['successful']);
+            $csvStats = self::validateCsv($filepath, $year, $primary_keys, $unique_keys, $other_keys_required, $existingCompanies);
+            //$csvStats = self::validateCollectionValues($csvStats, $email_keys);
+            self::addCompaniesFromCollection($csvStats['successful'], $year);
             
             // todo: add confirmation? view csv before proceeding with upload?
             if ($clearCompanies) {
@@ -775,17 +785,13 @@ class ImportsController extends Controller
                     ->with('success', 'Successfully added ' . $csvStats['successful']->count() . ' companies.
                     The CSV contained ' . $csvStats['num_duplicates'] . ' duplicate entries and ' . $csvStats['num_errors'] . ' errors.');
             }
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            return back()->with('error', 'Failed to import companies from CSV file.');
-        }
     }
 
     // todo: possibly move to AdminController?
-    public function deleteAllCompanies(): void
+    public function deleteAllCompanies(int $year): void
     {
         $company_ids = DB::table('companies')
+            ->where('year', $year)
             ->pluck('id');
 
         $admin_controller = new AdminController();
@@ -794,11 +800,12 @@ class ImportsController extends Controller
         }
     }
 
-    public function addCompaniesFromCollection(Collection $companiesCollection): void
+    public function addCompaniesFromCollection(Collection $companiesCollection, int $year): void
     {
         // loop through every company in CSV
         foreach ($companiesCollection as $companyRow) {
             $new_company = new Company();
+            $new_company->year = $year;
             $new_company->company_name = $companyRow['company_name'];
             $new_company->save();
         }
