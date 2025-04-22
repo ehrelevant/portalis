@@ -2,10 +2,14 @@
     import { useForm, Link } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
+    import { Label } from '$lib/components/ui/label/index';
+    import { Input } from '$lib/components/ui/input/index';
+
     export let errors = {};
 
     let form = useForm({
         file: null,
+        year: null,
     });
 
     function handleSubmit() {
@@ -42,6 +46,17 @@
                     </progress>
                 {/if}
             </label>
+
+            <Label> Year </Label>
+            <Input
+                type="number"
+                max=2025
+                min=0
+                required
+                bind:value={
+                    $form.year
+                }
+            />
 
             {#if errors.file}
                 <div class="dark:text-floating-red-dark pb-1 text-floating-red">
