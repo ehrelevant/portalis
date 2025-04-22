@@ -9,7 +9,7 @@
 
     let form = useForm({
         file: null,
-        year: null,
+        year: new Date().getUTCFullYear(),
     });
 
     function handleSubmit() {
