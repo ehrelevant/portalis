@@ -2,6 +2,7 @@
     import { useForm, Link } from '@inertiajs/svelte';
     import Header from '$lib/components/InternshipHeader.svelte';
 
+    import Required from '$lib/components/Required.svelte';
     import { Label } from '$lib/components/ui/label/index';
     import { Input } from '$lib/components/ui/input/index';
 
@@ -26,6 +27,24 @@
 <div class="main-screen flex w-full flex-col justify-center p-4">
     <Header txt="Import Supervisor List" />
     <div class="flex grow flex-col items-center justify-center">
+        <div>
+            <div class="text-xl">
+                These column names must be present when importing the <strong>.csv</strong> file:
+            </div>
+            <p class="flex justify-end italic">
+                (column names marked with [<Required />] must have a value for every row)
+            </p>
+
+            <ul class="list-disc pl-6 text-xl">
+                <li> <Required />first_name </li>
+                <li> middle_name </li>
+                <li> <Required />last_name </li>
+                <li> <Required />email </li>
+            </ul>
+        </div>
+
+        <br />
+
         <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
             <div class="flex w-full flex-row justify-between">
                 <div class="text-xl">
