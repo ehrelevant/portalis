@@ -8,9 +8,11 @@
 
     export let errors = {};
 
+    let currentYear = new Date().getUTCFullYear();
+
     let form = useForm({
         file: null,
-        year: new Date().getUTCFullYear(),
+        year: currentYear,
     });
 
     function handleSubmit() {
@@ -69,7 +71,7 @@
             <Label> Year </Label>
             <Input
                 type="number"
-                max=2025
+                max={currentYear+1}
                 min=0
                 required
                 bind:value={
