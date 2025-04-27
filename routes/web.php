@@ -81,13 +81,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/add-multiple/companies/submit', [ImportsController::class, 'addMultipleCompanies']);
 
         Route::get('/export/students/list', [ExportsController::class, 'exportStudentList']);
-        Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReportStudents']);
-        Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReportStudents']);
+        Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReports']);
+        Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReports']);
         Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
         Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
         Route::get('/export/supervisors/list', [ExportsController::class, 'exportSupervisorList']);
-        Route::get('/export/supervisors/midsem-reports', [ExportsController::class, 'exportMidsemReportSupervisors']);
-        Route::get('/export/supervisors/final-reports', [ExportsController::class, 'exportFinalReportSupervisors']);
         Route::get('/export/faculties/list', [ExportsController::class, 'exportFacultyList']);
         Route::get('/export/companies/list', [ExportsController::class, 'exportCompanyList']);
 
