@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/students/midsem-reports', [ExportsController::class, 'exportMidsemReports']);
         Route::get('/export/students/final-reports', [ExportsController::class, 'exportFinalReports']);
         Route::get('/export/students/company-evaluations', [ExportsController::class, 'exportCompanyEvaluations']);
+        Route::get('/export/students/self-evaluations', [ExportsController::class, 'exportStudentSelfEvaluations']);
         Route::get('/export/students/student-assessments', [ExportsController::class, 'exportStudentAssessments']);
         Route::get('/export/supervisors/list', [ExportsController::class, 'exportSupervisorList']);
         Route::get('/export/faculties/list', [ExportsController::class, 'exportFacultyList']);
