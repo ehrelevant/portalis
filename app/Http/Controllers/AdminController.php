@@ -112,6 +112,7 @@ class AdminController extends Controller
             ->where('users.role', User::ROLE_FACULTY)
             ->join('faculties', 'faculties.id', '=', 'users.role_id')
             ->where('users.is_disabled', false)
+            ->where('users.year', $year_query)
             ->select('faculties.id AS faculty_id', 'faculties.section')
             ->get();
 
@@ -124,6 +125,7 @@ class AdminController extends Controller
             ->get();
 
         $companies = DB::table('companies')
+            ->where('year', $year_query)
             ->select('id AS company_id', 'company_name', 'is_disabled')
             ->get();
 
@@ -131,6 +133,7 @@ class AdminController extends Controller
             ->where('role', User::ROLE_SUPERVISOR)
             ->join('supervisors', 'supervisors.id', '=', 'users.role_id')
             ->where('users.is_disabled', false)
+            ->where('users.year', $year_query)
             ->select('supervisors.id AS supervisor_id', 'supervisors.company_id', 'users.first_name', 'users.middle_name', 'users.last_name')
             ->get();
 
@@ -219,6 +222,7 @@ class AdminController extends Controller
         $companies = DB::table('companies')
             ->select('id AS company_id', 'company_name', 'is_disabled')
             ->where('is_disabled', false)
+            ->where('year', $year_query)
             ->get();
 
         $years = DB::table('users')
@@ -582,6 +586,7 @@ class AdminController extends Controller
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
             $user->year = $values['year'];
+
             $user->save();
 
             $student = Student::find($student_id);
@@ -634,7 +639,13 @@ class AdminController extends Controller
             $user->middle_name = $values['middle_name'] ?? '';
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
+
+            if ($user->year != $values['year']) {
+                Student::where('supervisor_id', $supervisor_id)
+                    ->update(['supervisor_id' => null]);
+            }
             $user->year = $values['year'];
+
             $user->save();
 
             $supervisor = Supervisor::find($supervisor_id);
@@ -690,7 +701,13 @@ class AdminController extends Controller
             $user->middle_name = $values['middle_name'] ?? '';
             $user->last_name = $values['last_name'];
             $user->email = $values['email'];
+
+            if ($user->year != $values['year']) {
+                Student::where('faculty_id', $faculty_id)
+                    ->update(['faculty_id' => null]);
+            }
             $user->year = $values['year'];
+
             $user->save();
 
             return back()->with('success', 'Successfully updated faculty.');
@@ -713,7 +730,13 @@ class AdminController extends Controller
 
             $new_company = Company::find($company_id);
             $new_company->company_name = $values['company_name'];
+
+            if ($new_company->year != $values['year']) {
+                Supervisor::where('company_id', $company_id)
+                    ->update(['company_id' => null]);
+            }
             $new_company->year = $values['year'];
+
             $new_company->save();
 
             return back()->with('success', 'Successfully updated company.');
