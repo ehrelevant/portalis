@@ -23,7 +23,12 @@ class LoginController extends Controller
             'pin' => ['required'],
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        // Do not allow logins from users registered under a previous year
+        $user = User::where('email', $credentials['email'])->where(function ($query) {
+            $query->where('role', User::ROLE_ADMIN)
+                ->orWhere('year', idate('Y'));
+        })->first();
+
         if (!$user) {
             return back()->withErrors([
                 'pin' => 'The provided pin has either expired or does not match the given email.',
