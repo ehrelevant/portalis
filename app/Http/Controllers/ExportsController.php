@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -27,7 +28,7 @@ class ExportsController extends Controller
                 'users.middle_name',
                 'users.last_name',
                 'faculties.section',
-                //'students.has_dropped',
+                'students.has_dropped',
                 'users.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
@@ -46,7 +47,7 @@ class ExportsController extends Controller
                 'middle_name',
                 'last_name',
                 'section',
-                //'has_dropped',
+                'has_dropped',
                 'email',
                 'wordpress_name',
                 'wordpress_email'
@@ -67,20 +68,6 @@ class ExportsController extends Controller
 
             fclose($csvFile);
         };
-
-        // store headers of DB query
-        if (count($dbTable) > 0)
-            // overwrite headers to be safe, though this *should* just be a redundancy
-            $headers = array_keys((array) $dbTable[0]);
-        else
-            $headers = [
-                'student_number',
-                'first_name',
-                'middle_name',
-                'last_name',
-                'section',
-                //'has_dropped',
-            ];
 
         // ---
 
@@ -265,8 +252,27 @@ class ExportsController extends Controller
 
     // ---
 
-    public function exportFormsAsCsv(string $shortName, string $csvFileName, ?int $year = null, array $statuses = ['For Review', 'Accepted'], bool $includeEnabled = true, bool $includeDisabled = false, bool $includeWithSection = true, bool $includeWithoutSection = true, bool $includeDropped = false): StreamedResponse
+    public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName): StreamedResponse
     {
+        $filters = $request->validate([
+            'year' => ['numeric|nullable'],
+            'statuses' => ['array'],
+            'include_enabled' => ['boolean'],
+            'include_disabled' => ['boolean'],
+            'include_with_section' => ['boolean'],
+            'include_without_section' => ['boolean'],
+            'include_drp' => ['boolean'],
+        ]);
+        $year = $filters['year'] ?? null;
+        $statuses = $filters['statuses'] ?? ['For Review', 'Accepted'];
+        $includeEnabled = $filters['include_enabled'] ?? true;
+        $includeDisabled = $filters['include_disabled'] ?? false;
+        $includeWithSection = $filters['include_with_section'] ?? true;
+        $includeWithoutSection = $filters['include_without_section'] ?? true;
+        $includeDropped = $filters['include_drp'] ?? false;
+
+        // ---
+
         if (empty($statuses)) {
             // todo: redirect with error?
         }
@@ -479,23 +485,28 @@ class ExportsController extends Controller
         return response()->stream($callback, 200, $content_headers);
     }
 
-    public function exportMidsemReports(): StreamedResponse
+    public function exportMidsemReports(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv('midsem', 'midsem_reports');
+        return self::exportFormsAsCsv($request, 'midsem', 'midsem_reports');
     }
 
-    public function exportFinalReports(): StreamedResponse
+    public function exportFinalReports(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv('final', 'final_reports');
+        return self::exportFormsAsCsv($request, 'final', 'final_reports');
     }
 
-    public function exportCompanyEvaluations(): StreamedResponse
+    public function exportCompanyEvaluations(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv('company-evaluation', 'company_evaluations');
+        return self::exportFormsAsCsv($request, 'company-evaluation', 'company_evaluations');
     }
 
-    public function exportStudentAssessments(): StreamedResponse
+    public function exportStudentSelfEvaluations(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv('self-evaluation', 'student_assessments');
+        return self::exportFormsAsCsv($request, 'self-evaluation', 'self_evaluations');
+    }
+
+    public function exportStudentAssessments(Request $request): StreamedResponse
+    {
+        return self::exportFormsAsCsv($request, 'intern-evaluation', 'student_assessments');
     }
 }
