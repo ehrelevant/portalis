@@ -276,7 +276,7 @@
                 >
                 <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
                     <Dialog.Header>
-                        <Dialog.Title>Add Supervisor</Dialog.Title>
+                        <Dialog.Title>{formUserRoleId ? 'Edit Supervisor' : 'Add Supervisor'}</Dialog.Title>
                     </Dialog.Header>
                     <form
                         bind:this={userFormElement}

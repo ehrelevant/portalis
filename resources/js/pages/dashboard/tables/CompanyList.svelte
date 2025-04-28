@@ -244,7 +244,7 @@
                 </Dialog.Trigger>
                 <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
                     <Dialog.Header>
-                        <Dialog.Title>Add Company</Dialog.Title>
+                        <Dialog.Title>{formCompanyId ? 'Edit Company' : 'Add Company'}</Dialog.Title>
                     </Dialog.Header>
                     <form
                         bind:this={companyFormElement}
