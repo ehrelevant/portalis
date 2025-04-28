@@ -349,8 +349,8 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $student_number_exists = Student::where('student_number', $values['student_number'])->exists();
-            $user_email_exists = User::where('email', $values['email'])->exists();
+            $student_number_exists = Student::where('student_number', $values['student_number'])->where('year', $values['year'])->exists();
+            $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
 
             if ($student_number_exists) {
                 return back()->withErrors([
@@ -430,7 +430,7 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $user_email_exists = User::where('email', $values['email'])->exists();
+            $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
 
             if ($user_email_exists) {
                 return back()->withErrors([
@@ -487,8 +487,8 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $user_email_exists = User::where('email', $values['email'])->exists();
-            $section_exists = Faculty::where('section', $values['section'])->exists();
+            $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
+            $section_exists = Faculty::where('section', $values['section'])->where('year', $values['year'])->exists();
 
             if ($user_email_exists) {
                 return back()->withErrors([
@@ -532,8 +532,19 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
+            $company_exists = Company::where('company_name', $values['company_name'])
+                ->where('year', $values['year'])
+                ->exists();
+
+            if ($company_exists) {
+                return back()->withErrors([
+                    'company_name' => 'This company name already exists for this year.',
+                ])->with('error', 'Failed to update company.');
+            }
+
             $new_company = new Company();
             $new_company->company_name = $values['company_name'];
+            $new_company->year = $values['year'];
             $new_company->save();
 
             return back()->with('success', 'Successfully added company.');
@@ -563,11 +574,13 @@ class AdminController extends Controller
             ]);
 
             $student_number_exists = Student::where('student_number', $values['student_number'])
+                ->where('year', $values['year'])
                 ->whereNot('id', $student_id)
                 ->exists();
 
             $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
             $user_email_exists = User::where('email', $values['email'])
+                ->where('year', $values['year'])
                 ->whereNot('id', $user->id)
                 ->exists();
 
@@ -626,6 +639,7 @@ class AdminController extends Controller
 
             $user = User::where('role', User::ROLE_SUPERVISOR)->where('role_id', $supervisor_id)->firstOrFail();
             $user_email_exists = User::where('email', $values['email'])
+                ->where('year', $values['year'])
                 ->whereNot('id', $user->id)
                 ->exists();
 
@@ -676,10 +690,12 @@ class AdminController extends Controller
 
             $user = User::where('role', User::ROLE_FACULTY)->where('role_id', $faculty_id)->firstOrFail();
             $user_email_exists = User::where('email', $values['email'])
+                ->where('year', $values['year'])
                 ->whereNot('id', $user->id)
                 ->exists();
 
             $section_exists = Faculty::where('section', $values['section'])
+                ->where('year', $values['year'])
                 ->whereNot('id', $faculty_id)
                 ->exists();
 
@@ -727,6 +743,17 @@ class AdminController extends Controller
                 'company_name' => ['required', 'string'],
                 'year' => ['required', 'numeric', 'integer'],
             ]);
+
+            $company_exists = Company::where('company_name', $values['company_name'])
+                ->where('year', $values['year'])
+                ->whereNot('id', $company_id)
+                ->exists();
+
+            if ($company_exists) {
+                return back()->withErrors([
+                    'company_name' => 'This company name already exists for this year.',
+                ])->with('error', 'Failed to update company.');
+            }
 
             $new_company = Company::find($company_id);
             $new_company->company_name = $values['company_name'];
