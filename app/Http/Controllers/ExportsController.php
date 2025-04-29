@@ -8,21 +8,47 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportsController extends Controller
 {
-    public function exportStudentList(): StreamedResponse
+    public function exportStudentList(Request $request): StreamedResponse
     {
         $csvFileName = 'student_list';
 
-        $dbTable = DB::table('users')
+        // ---
+
+        $filters = $request->validate([
+            'year' => ['numeric', 'nullable'],
+            'include_enabled' => ['boolean'],
+            'include_disabled' => ['boolean'],
+            'include_with_section' => ['boolean'],
+            'include_without_section' => ['boolean'],
+            'include_drp' => ['boolean'],
+        ]);
+        $year = $filters['year'] ?? null;
+        $includeEnabled = $filters['include_enabled'] ?? null;
+        $includeDisabled = $filters['include_disabled'] ?? null;
+        $includeWithSection = $filters['include_with_section'] ?? null;
+        $includeWithoutSection = $filters['include_without_section'] ?? null;
+        $includeDropped = $filters['include_drp'] ?? null;
+
+        // ---
+
+        if (is_null($includeEnabled) && is_null($includeDisabled)) {
+            // todo: redirect with error?
+        }
+
+        if (is_null($includeWithSection) && is_null($includeWithoutSection) && is_null($includeDropped)) {
+            // todo: redirect with error?
+        }
+
+        // ---
+
+        $dbTableRaw = DB::table('users')
             ->where('role', 'student')
-            // todo: confirm if dropped students (section="DRP") should be included in CSV
-            ->where('students.has_dropped', '0')
-            // todo: confirm if sectionless students (section=null) should be included in CSV
-            ->where('faculties.section', '!=', 'null')
 
             ->join('students', 'users.role_id', '=', 'students.id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
 
             ->select(
+                'users.year',
                 'students.student_number',
                 'users.first_name',
                 'users.middle_name',
@@ -32,9 +58,47 @@ class ExportsController extends Controller
                 'users.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
+                'users.is_disabled AS is_account_disabled',
             )
-            ->orderBy('students.student_number')
-            ->get();
+            ->orderBy('students.student_number');
+
+        // ---
+
+        // if year is set, only include queries for given year
+        if (!is_null($year))
+            $dbTableRaw = $dbTableRaw->where('users.year', $year);
+
+        // ---
+
+        // exclude enabled student accounts
+        if (!$includeEnabled)
+            $dbTableRaw = $dbTableRaw->whereNot('users.is_disabled', 0);
+
+        // exclude disabled student accounts
+        if (!$includeDisabled)
+            $dbTableRaw = $dbTableRaw->whereNot('users.is_disabled', 1);
+
+        // ---
+
+        // exclude students with section
+        if (!$includeWithSection)
+            $dbTableRaw = $dbTableRaw->where('faculties.section', null);
+
+        // exclude students without section (but didn't drop)
+        if (!$includeWithoutSection)
+            $dbTableRaw = $dbTableRaw->whereNot(function($query) {
+                $query
+                    ->where('faculties.section', null)
+                    ->where('students.has_dropped', 0);
+            });
+
+        // exclude students who dropped
+        if (!$includeDropped)
+            $dbTableRaw = $dbTableRaw->whereNot('students.has_dropped', 1);
+
+        // ---
+
+        $dbTable = $dbTableRaw->get();
 
         // store headers of DB query
         if (count($dbTable) > 0)
@@ -42,6 +106,7 @@ class ExportsController extends Controller
             $headers = array_keys((array) $dbTable[0]);
         else
             $headers = [
+                'year',
                 'student_number',
                 'first_name',
                 'middle_name',
@@ -50,7 +115,8 @@ class ExportsController extends Controller
                 'has_dropped',
                 'email',
                 'wordpress_name',
-                'wordpress_email'
+                'wordpress_email',
+                'is_account_disabled',
             ];
 
         // ---
@@ -93,6 +159,7 @@ class ExportsController extends Controller
             ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
 
             ->select(
+                'users.year',
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
@@ -108,6 +175,7 @@ class ExportsController extends Controller
             $headers = array_keys((array) $dbTable[0]);
         else
             $headers = [
+                'year',
                 'first_name',
                 'middle_name',
                 'last_name',
@@ -154,6 +222,7 @@ class ExportsController extends Controller
             ->join('faculties', 'users.role_id', '=', 'faculties.id')
 
             ->select(
+                'users.year',
                 'users.first_name',
                 'users.middle_name',
                 'users.last_name',
@@ -169,6 +238,7 @@ class ExportsController extends Controller
             $headers = array_keys((array) $dbTable[0]);
         else
             $headers = [
+                'year',
                 'first_name',
                 'middle_name',
                 'last_name',
@@ -211,6 +281,7 @@ class ExportsController extends Controller
 
         $dbTable = DB::table('companies')
             ->select(
+                'companies.year',
                 'companies.company_name',
             )
             ->orderBy('companies.company_name')
@@ -218,6 +289,7 @@ class ExportsController extends Controller
 
         // store headers of DB query
         $headers = [
+            'year',
             'company_name',
         ];
 
@@ -255,7 +327,7 @@ class ExportsController extends Controller
     public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName): StreamedResponse
     {
         $filters = $request->validate([
-            'year' => ['numeric|nullable'],
+            'year' => ['numeric', 'nullable'],
             'statuses' => ['array'],
             'include_enabled' => ['boolean'],
             'include_disabled' => ['boolean'],
@@ -265,11 +337,11 @@ class ExportsController extends Controller
         ]);
         $year = $filters['year'] ?? null;
         $statuses = $filters['statuses'] ?? ['For Review', 'Accepted'];
-        $includeEnabled = $filters['include_enabled'] ?? true;
-        $includeDisabled = $filters['include_disabled'] ?? false;
-        $includeWithSection = $filters['include_with_section'] ?? true;
-        $includeWithoutSection = $filters['include_without_section'] ?? true;
-        $includeDropped = $filters['include_drp'] ?? false;
+        $includeEnabled = $filters['include_enabled'] ?? null;
+        $includeDisabled = $filters['include_disabled'] ?? null;
+        $includeWithSection = $filters['include_with_section'] ?? null;
+        $includeWithoutSection = $filters['include_without_section'] ?? null;
+        $includeDropped = $filters['include_drp'] ?? null;
 
         // ---
 
@@ -304,6 +376,8 @@ class ExportsController extends Controller
 
             ->leftJoin('rating_scores', 'form_answers.id', '=', 'rating_scores.form_answer_id')
             ->leftJoin('rating_questions', 'rating_scores.rating_question_id', '=', 'rating_questions.id')
+            ->leftJoin('open_answers', 'form_answers.id', '=', 'open_answers.form_answer_id')
+            ->leftJoin('open_questions', 'open_answers.open_question_id', '=', 'open_questions.id')
 
             ->select(
                 'users_students.year',
@@ -313,6 +387,7 @@ class ExportsController extends Controller
                 'users_students.last_name',
                 'faculties.section',
                 'students.has_dropped',
+                'users_students.is_disabled AS is_student_account_disabled',
                 'users_faculties.first_name AS faculty_first_name',
                 'users_faculties.middle_name AS faculty_middle_name',
                 'users_faculties.last_name AS faculty_last_name',
@@ -321,9 +396,12 @@ class ExportsController extends Controller
                 'users_supervisors.middle_name AS supervisor_middle_name',
                 'users_supervisors.last_name AS supervisor_last_name',
                 'form_statuses.status',
-                'rating_questions.id',
+                'rating_questions.id AS rating_question_id',
                 'rating_questions.criterion',
-                'rating_scores.score'
+                'rating_scores.score',
+                'open_questions.id AS open_question_id',
+                'open_questions.question',
+                'open_answers.answer',
             )
             ->orderBy('students.student_number');
 
@@ -342,11 +420,11 @@ class ExportsController extends Controller
 
         // exclude enabled student accounts
         if (!$includeEnabled)
-            $dbTable1Raw = $dbTable1Raw->whereNot('students.has_dropped', 0);
+            $dbTable1Raw = $dbTable1Raw->whereNot('users_students.is_disabled', 0);
 
         // exclude disabled student accounts
         if (!$includeDisabled)
-            $dbTable1Raw = $dbTable1Raw->whereNot('students.has_dropped', 1);
+            $dbTable1Raw = $dbTable1Raw->whereNot('users_students.is_disabled', 1);
 
         // ---
 
@@ -364,7 +442,7 @@ class ExportsController extends Controller
 
         // exclude students who dropped
         if (!$includeDropped)
-            $dbTable1Raw = $dbTable1Raw->where('students.has_dropped', 0);
+            $dbTable1Raw = $dbTable1Raw->whereNot('students.has_dropped', 1);
 
         // ---
 
@@ -391,9 +469,12 @@ class ExportsController extends Controller
                 'supervisor_middle_name',
                 'supervisor_last_name',
                 'status',
-                'id',
+                'rating_question_id',
                 'criterion',
-                'score'
+                'score',
+                'open_question_id',
+                'question',
+                'answer',
             ];
 
         $dbTable2 = DB::table('form_rating_questions')
@@ -408,23 +489,39 @@ class ExportsController extends Controller
             )
             ->get();
 
+        $dbTable3 = DB::table('form_open_questions')
+            ->where('forms.short_name', $shortName)
+
+            ->join('forms', 'form_open_questions.form_id', '=', 'forms.id')
+            ->join('open_questions', 'form_open_questions.open_question_id', '=', 'open_questions.id')
+
+            ->select(
+                'open_questions.id',
+                'open_questions.question',
+            )
+            ->get();
+
         // number of last columns to remove from $dbTable1
         /*
-            'rating_questions.id',
+            'rating_questions.id AS rating_question_id',
             'rating_questions.criterion',
-            'rating_scores.score'
+            'rating_scores.score',
+            'open_questions.id AS open_question_id',
+            'open_questions.question',
+            'open_answers.answer'
         */
-        $numExtraRows = 3;
+        $numExtraRows = 6;
 
         // ---
 
-        $callback = function() use ($headers, $numExtraRows, $dbTable1, $dbTable2) {
+        $callback = function() use ($headers, $numExtraRows, $dbTable1, $dbTable2, $dbTable3) {
             $csvFile = fopen('php://output', 'w');
 
             // add header row to CSV
-            $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);    // remove rating question id, criterion and score from headers
-            $ratingCriteria = $dbTable2->pluck('criterion');                                // get only criterion from [rating_questions.criterion, rating_questions.id]
-            $actualHeaders = array_merge($reducedHeaders, $ratingCriteria->toArray());      // produce actual headers from reduced headers ++ rating criteria
+            $reducedHeaders = array_slice($headers, 0, count($headers) - $numExtraRows);                            // remove rating question id, criterion and score from headers
+            $ratingCriteria = $dbTable2->pluck('criterion');                                                        // get only criterion from [rating_questions.criterion, rating_questions.id]
+            $openQuestions = $dbTable3->pluck('question');                                                          // get only question from [open_questions.question, open_questions.id]
+            $actualHeaders = array_merge($reducedHeaders, $ratingCriteria->toArray(), $openQuestions->toArray());   // produce actual headers from reduced headers ++ rating criteria
             fputcsv($csvFile, $actualHeaders);
 
             // add entry rows to CSV
@@ -437,8 +534,14 @@ class ExportsController extends Controller
                 // get array of scores
                 $ratingScores = [];
                 foreach ($dbTable2 as $ratingCriterionId) {
-                    if ($ratingCriterionId->id == $row->id) array_push($ratingScores, $row->score);
+                    if ($ratingCriterionId->id == $row->rating_question_id) array_push($ratingScores, $row->score);
                     else array_push($ratingScores, null);
+                }
+
+                $openAnswers = [];
+                foreach ($dbTable3 as $openQuestionId) {
+                    if ($openQuestionId->id == $row->open_question_id) array_push($openAnswers, $row->answer);
+                    else array_push($openAnswers, null);
                 }
 
                 // if the next row has the same student number (same student, score for next question),
@@ -455,18 +558,28 @@ class ExportsController extends Controller
 
                     $currentRatingScores = [];
                     foreach ($dbTable2 as $ratingCriterionId) {
-                        if ($ratingCriterionId->id == $row->id) array_push($currentRatingScores, $row->score);
+                        if ($ratingCriterionId->id == $row->rating_question_id) array_push($currentRatingScores, $row->score);
                         else array_push($currentRatingScores, null);
                     }
 
                     for ($j = 0; $j < count($ratingScores); $j++) {
                         if ($ratingScores[$j] == null) $ratingScores[$j] = $currentRatingScores[$j];
                     }
+
+                    $currentOpenAnswers = [];
+                    foreach ($dbTable3 as $openQuestionId) {
+                        if ($openQuestionId->id == $row->open_question_id) array_push($currentOpenAnswers, $row->answer);
+                        else array_push($currentOpenAnswers, null);
+                    }
+
+                    for ($j = 0; $j < count($openAnswers); $j++) {
+                        if ($openAnswers[$j] == null) $openAnswers[$j] = $currentOpenAnswers[$j];
+                    }
                 }
 
                 // produce actual row from reduced row ++ rating scores
-                $actualRow = array_merge($reducedRow, $ratingScores);
-                fputcsv($csvFile, (array) $actualRow);
+                $actualRow = array_merge($reducedRow, $ratingScores, $openAnswers);
+                fputcsv($csvFile, $actualRow);
             }
 
             fclose($csvFile);
