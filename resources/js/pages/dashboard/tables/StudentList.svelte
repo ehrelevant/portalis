@@ -469,7 +469,8 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_year"
+                                    id="export_year"
+                                    name="year"
                                     type="number"
                                     bind:value={$exportForm.year}
                                 />
@@ -485,8 +486,10 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_include_enabled"
+                                    id="export_include_enabled"
+                                    name="include_enabled"
                                     type="checkbox"
+                                    value=1
                                     bind:checked={$exportForm.include_enabled}
                                 />
                                 {#if $exportForm.errors.include_enabled}
@@ -501,8 +504,10 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_include_disabled"
+                                    id="export_include_disabled"
+                                    name="include_disabled"
                                     type="checkbox"
+                                    value=1
                                     bind:checked={$exportForm.include_disabled}
                                 />
                                 {#if $exportForm.errors.include_disabled}
@@ -517,8 +522,10 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_include_with_section"
+                                    id="export_include_with_section"
+                                    name="include_with_section"
                                     type="checkbox"
+                                    value=1
                                     bind:checked={$exportForm.include_with_section}
                                 />
                                 {#if $exportForm.errors.include_with_section}
@@ -533,8 +540,10 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_include_without_section"
+                                    id="export_include_without_section"
+                                    name="include_without_section"
                                     type="checkbox"
+                                    value=1
                                     bind:checked={$exportForm.include_without_section}
                                 />
                                 {#if $exportForm.errors.include_without_section}
@@ -549,8 +558,10 @@
                             >
                             <div class="flex flex-col">
                                 <Input
-                                    name="export_include_dropped"
+                                    id="export_include_dropped"
+                                    name="include_drp"
                                     type="checkbox"
+                                    value=1
                                     bind:checked={$exportForm.include_drp}
                                 />
                                 {#if $exportForm.errors.include_drp}
