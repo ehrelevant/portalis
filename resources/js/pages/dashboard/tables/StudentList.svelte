@@ -296,6 +296,69 @@
             },
         });
     }
+
+    let isExportDropdownOpen;
+    let isExportModalOpen;
+
+    let exportForm = useForm({
+        year: null,
+        include_enabled: null,
+        include_disabled: null,
+        include_with_section: null,
+        include_without_section: null,
+        include_drp: null,
+    });
+
+    let exportFormRoute;
+    let exportFormText;
+    function openExportForm(exportFormName: string) {
+        switch (exportFormName) {
+            case "student-list":
+                exportFormRoute = 'list';
+                exportFormText = 'Student List';
+                break;
+            case "student-assessments":
+                exportFormRoute = 'student-assessments';
+                exportFormText = 'Student Assessments';
+                break;
+            case "self-evaluations":
+                exportFormRoute = 'self-evaluations';
+                exportFormText = 'Student Self-Evaluations';
+                break;
+            case "company-evaluations":
+                exportFormRoute = 'company-evaluations';
+                exportFormText = 'Company Evaluations';
+                break;
+            default:
+                return;
+        }
+
+        $exportForm.year = filterYear;
+        $exportForm.include_enabled = true;
+        $exportForm.include_disabled = false;
+        $exportForm.include_with_section = true;
+        $exportForm.include_without_section = true;
+        $exportForm.include_drp = false;
+
+        isExportDropdownOpen = false;
+        isExportModalOpen = true;
+    }
+
+    let exportFormElement;
+    function redirectExportForm() {
+        if (!exportFormElement.checkValidity()) {
+            exportFormElement.reportValidity();
+            return;
+        }
+
+        $exportForm.get(`/export/students/${exportFormRoute}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                isExportDropdownOpen = false;
+                isExportModalOpen = false;
+            },
+        });
+    }
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -331,7 +394,7 @@
                     ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
-            <DropdownMenu.Root>
+            <DropdownMenu.Root bind:open={isExportDropdownOpen}>
                 <DropdownMenu.Trigger asChild let:builder>
                     <Button
                         builders={[builder]}
@@ -342,15 +405,40 @@
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
+                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        on:click={() => openExportForm("student-list")}
+                        >(form) Export Student List</DropdownMenu.Item
+                    >
+                    <DropdownMenu.Item
                         href="/export/students/list"
                         target="_blank"
                         >Export Student List</DropdownMenu.Item
                     >
                     {#if isAdmin || phase !== 'pre'}
                         <DropdownMenu.Item
+                            class="flex w-full flex-row gap-2 sm:w-auto"
+                            on:click={() => openExportForm("company-evaluations")}
+                            >(form) Export Company Evaluations</DropdownMenu.Item
+                        >
+                        <DropdownMenu.Item
+                            class="flex w-full flex-row gap-2 sm:w-auto"
+                            on:click={() => openExportForm("self-evaluations")}
+                            >(form) Export Student Self-Evaluations</DropdownMenu.Item
+                        >
+                        <DropdownMenu.Item
+                            class="flex w-full flex-row gap-2 sm:w-auto"
+                            on:click={() => openExportForm("student-assessments")}
+                            >(form) Export Student Assessments</DropdownMenu.Item
+                        >
+                        <DropdownMenu.Item
                             href="/export/students/company-evaluations"
                             target="_blank"
                             >Export Company Evaluations</DropdownMenu.Item
+                        >
+                        <DropdownMenu.Item
+                            href="/export/students/self-evaluations"
+                            target="_blank"
+                            >Export Student Self-Evaluations</DropdownMenu.Item
                         >
                         <DropdownMenu.Item
                             href="/export/students/student-assessments"
@@ -360,6 +448,130 @@
                     {/if}
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
+
+            <Dialog.Root bind:open={isExportModalOpen}>
+                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
+                    <Dialog.Header>
+                        <Dialog.Title>Export {exportFormText}</Dialog.Title>
+                    </Dialog.Header>
+                    <form
+                        action="/export/students/{exportFormRoute}"
+                        bind:this={exportFormElement}
+                        class="flex flex-col gap-4"
+                        on:submit={redirectExportForm}
+                        target="_blank"
+                    >
+                        <div
+                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                        >
+                            <Label for="export_year"
+                                >Year</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_year"
+                                    type="number"
+                                    bind:value={$exportForm.year}
+                                />
+                                {#if $exportForm.errors.year}
+                                    <ErrorText>
+                                        {$exportForm.errors.year}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_enabled"
+                                >Include Enabled Student Accounts</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_include_enabled"
+                                    type="checkbox"
+                                    bind:checked={$exportForm.include_enabled}
+                                />
+                                {#if $exportForm.errors.include_enabled}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_enabled}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_disabled"
+                                >Include Disabled Student Accounts</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_include_disabled"
+                                    type="checkbox"
+                                    bind:checked={$exportForm.include_disabled}
+                                />
+                                {#if $exportForm.errors.include_disabled}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_disabled}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_with_section"
+                                >Include Students With Section</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_include_with_section"
+                                    type="checkbox"
+                                    bind:checked={$exportForm.include_with_section}
+                                />
+                                {#if $exportForm.errors.include_with_section}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_with_section}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_without_section"
+                                >Include Students Without Section</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_include_without_section"
+                                    type="checkbox"
+                                    bind:checked={$exportForm.include_without_section}
+                                />
+                                {#if $exportForm.errors.include_without_section}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_without_section}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_dropped"
+                                >Include Dropped Students</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    name="export_include_dropped"
+                                    type="checkbox"
+                                    bind:checked={$exportForm.include_drp}
+                                />
+                                {#if $exportForm.errors.include_drp}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_drp}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit"
+                                >Export {exportFormText}</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
 
             <Dialog.Root bind:open={isModalOpen}>
                 <Button
