@@ -407,42 +407,22 @@
                     <DropdownMenu.Item
                         class="flex w-full flex-row gap-2 sm:w-auto"
                         on:click={() => openExportForm("student-list")}
-                        >(form) Export Student List</DropdownMenu.Item
-                    >
-                    <DropdownMenu.Item
-                        href="/export/students/list"
-                        target="_blank"
                         >Export Student List</DropdownMenu.Item
                     >
                     {#if isAdmin || phase !== 'pre'}
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 sm:w-auto"
                             on:click={() => openExportForm("company-evaluations")}
-                            >(form) Export Company Evaluations</DropdownMenu.Item
+                            >Export Company Evaluations</DropdownMenu.Item
                         >
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 sm:w-auto"
                             on:click={() => openExportForm("self-evaluations")}
-                            >(form) Export Student Self-Evaluations</DropdownMenu.Item
+                            >Export Student Self-Evaluations</DropdownMenu.Item
                         >
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 sm:w-auto"
                             on:click={() => openExportForm("student-assessments")}
-                            >(form) Export Student Assessments</DropdownMenu.Item
-                        >
-                        <DropdownMenu.Item
-                            href="/export/students/company-evaluations"
-                            target="_blank"
-                            >Export Company Evaluations</DropdownMenu.Item
-                        >
-                        <DropdownMenu.Item
-                            href="/export/students/self-evaluations"
-                            target="_blank"
-                            >Export Student Self-Evaluations</DropdownMenu.Item
-                        >
-                        <DropdownMenu.Item
-                            href="/export/students/student-assessments"
-                            target="_blank"
                             >Export Student Assessments</DropdownMenu.Item
                         >
                     {/if}
@@ -456,10 +436,10 @@
                     </Dialog.Header>
                     <form
                         action="/export/students/{exportFormRoute}"
-                        bind:this={exportFormElement}
                         class="flex flex-col gap-4"
-                        on:submit={redirectExportForm}
                         target="_blank"
+                        bind:this={exportFormElement}
+                        on:submit={redirectExportForm}
                     >
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
