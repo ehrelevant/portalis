@@ -6,6 +6,7 @@ use App\Models\Requirement;
 use App\Models\User;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
+use App\Models\WebsiteState;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,9 +23,21 @@ class FileSubmissionController extends Controller
 {
     public function showUploadForm(int $requirement_id, ?int $student_id = null): Response
     {
+        $phase = WebsiteState::firstOrFail()->phase;
+        $requirement = Requirement::where('id', $requirement_id)->first();
         $user = Auth::user();
-        if ($user->role === User::ROLE_STUDENT) {
+        if (!$requirement) {
+            // Requirement doesn't exist
+            abort(404);
+        } elseif ($user->role === User::ROLE_STUDENT) {
+            if ($phase !== 'pre' || $requirement->deadline && $requirement->deadline < now()) {
+                // Deadline has passed
+                abort(401);
+            }
+
             if ($student_id && $student_id !== $user->role_id) {
+                // Student ID is passed as an argument,
+                // but it isn't that student's actual ID
                 abort(401);
             } elseif (!$student_id) {
                 $student_id = $user->role_id;
@@ -34,15 +47,7 @@ class FileSubmissionController extends Controller
                 abort(404);
             }
         } else {
-            abort(401);
-        }
-
-        $requirement = Requirement::where('id', $requirement_id)->first();
-        if (!$requirement) {
-            // Requirement doesn't exist
-            abort(404);
-        } elseif ($user->role !== User::ROLE_ADMIN && $requirement->deadline && $requirement->deadline < now()) {
-            // Deadline has passed
+            // User does not have the correct permissions to view the upload form
             abort(401);
         }
 
@@ -75,27 +80,32 @@ class FileSubmissionController extends Controller
                 return back()->withErrors($validator);
             }
 
+            $phase = WebsiteState::firstOrFail()->phase;
+            $requirement = Requirement::where('id', $requirement_id)->first();
             $user = Auth::user();
-            if ($user->role === User::ROLE_STUDENT) {
-                if ($student_id && $student_id != $user->role_id) {
+            if (!$requirement) {
+                // Requirement doesn't exist
+                abort(404);
+            } elseif ($user->role === User::ROLE_STUDENT) {
+                if ($phase !== 'pre' || $requirement->deadline && $requirement->deadline < now()) {
+                    // Deadline has passed
+                    abort(401);
+                }
+
+                if ($student_id && $student_id !== $user->role_id) {
+                    // Student ID is passed as an argument,
+                    // but it isn't that student's actual ID
                     abort(401);
                 } elseif (!$student_id) {
                     $student_id = $user->role_id;
                 }
             } elseif ($user->role === User::ROLE_ADMIN) {
                 if (!$student_id) {
+                    // Student with the passed ID doesn't exist
                     abort(404);
                 }
             } else {
-                abort(401);
-            }
-
-            $requirement = Requirement::where('id', $requirement_id)->first();
-            if (!$requirement) {
-                // Requirement doesn't exist
-                abort(404);
-            } elseif ($user->role !== User::ROLE_ADMIN && $requirement->deadline && $requirement->deadline < now()) {
-                // Deadline has passed
+                // User does not have the correct permissions to submit the document
                 abort(401);
             }
 
