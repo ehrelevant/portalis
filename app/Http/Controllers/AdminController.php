@@ -29,11 +29,18 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'student_number';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         // TODO: Add student number search
         $users_partial = DB::table('users')
             ->where('users.role', 'student')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('users.first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('users.last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('users.middle_name', 'LIKE', '%' . $search_text . '%');
@@ -166,10 +173,17 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'last_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
+        $show_query = $request->query('show') ?? 'all';
 
         $users_partial = DB::table('users')
             ->where('role', 'supervisor')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
@@ -249,10 +263,17 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'last_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         $users_partial = DB::table('users')
             ->where('role', 'faculty')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
@@ -301,9 +322,16 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'company_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         $companies_partial = DB::table('companies')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('companies.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('companies.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('company_name', 'LIKE', '%' . $search_text . '%');
             });
 
