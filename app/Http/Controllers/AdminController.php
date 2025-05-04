@@ -581,9 +581,11 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $student_number_exists = Student::where('student_number', $values['student_number'])
+            $student_number_exists = User::where('role', User::ROLE_STUDENT)
                 ->where('year', $values['year'])
-                ->whereNot('id', $student_id)
+                ->join('students', 'users.role_id', '=', 'students.id')
+                ->whereNot('students.id', $student_id)
+                ->where('students.student_number', $values['student_number'])
                 ->exists();
 
             $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
@@ -701,10 +703,11 @@ class AdminController extends Controller
                 ->where('year', $values['year'])
                 ->whereNot('id', $user->id)
                 ->exists();
-
-            $section_exists = Faculty::where('section', $values['section'])
+            $section_exists = User::where('role', User::ROLE_FACULTY)
                 ->where('year', $values['year'])
-                ->whereNot('id', $faculty_id)
+                ->join('faculties', 'users.role_id', '=', 'faculties.id')
+                ->whereNot('faculties.id', $faculty_id)
+                ->where('faculties.section', $values['section'])
                 ->exists();
 
             if ($user_email_exists) {
