@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Requirement;
 use App\Models\User;
 use App\Models\Submission;
 use App\Models\SubmissionStatus;
@@ -36,13 +37,22 @@ class FileSubmissionController extends Controller
             abort(401);
         }
 
+        $requirement = Requirement::where('id', $requirement_id)->first();
+        if (!$requirement) {
+            // Requirement doesn't exist
+            abort(404);
+        } elseif ($user->role !== User::ROLE_ADMIN && $requirement->deadline && $requirement->deadline < now()) {
+            // Deadline has passed
+            abort(401);
+        }
+
         $student_name = DB::table('users')
             ->where('role', 'student')
             ->where('role_id', $student_id)
             ->select('first_name', 'last_name')
             ->firstOrFail();
 
-        // Fetch thw id, name, and due date of a requirement for displaying
+        // Fetch the id, name, and due date of a requirement for displaying
         $requirement = DB::table('requirements')
             ->find($requirement_id);
 
@@ -80,6 +90,15 @@ class FileSubmissionController extends Controller
                 abort(401);
             }
 
+            $requirement = Requirement::where('id', $requirement_id)->first();
+            if (!$requirement) {
+                // Requirement doesn't exist
+                abort(404);
+            } elseif ($user->role !== User::ROLE_ADMIN && $requirement->deadline && $requirement->deadline < now()) {
+                // Deadline has passed
+                abort(401);
+            }
+
             $submission_status = SubmissionStatus::where('student_id', $student_id)
                 ->where('requirement_id', $requirement_id)
                 ->firstOrFail();
@@ -106,7 +125,7 @@ class FileSubmissionController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return back()->with('success', 'Failed to submit document.');
+            return back()->with('error', 'Failed to submit document.');
         }
     }
 
