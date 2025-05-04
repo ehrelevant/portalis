@@ -188,7 +188,7 @@
     }
 
     let userFormElement;
-    let isModalOpen;
+    let isAddModalOpen;
 
     let userForm = useForm({
         first_name: null,
@@ -207,7 +207,7 @@
         $userForm.post('/api/add/supervisor', {
             preserveScroll: true,
             onSuccess: () => {
-                isModalOpen = false;
+                isAddModalOpen = false;
             },
         });
     }
@@ -222,7 +222,7 @@
         $userForm.year = filterYear;
 
         formUserRoleId = null;
-        isModalOpen = true;
+        isAddModalOpen = true;
     }
 
     function openUpdateForm(supervisorId: number) {
@@ -238,7 +238,7 @@
         $userForm.year = supervisor.year;
 
         formUserRoleId = supervisorId;
-        isModalOpen = true;
+        isAddModalOpen = true;
     }
 
     function updateUser() {
@@ -252,7 +252,7 @@
         $userForm.post(`/api/update/supervisor/${formUserRoleId}`, {
             preserveScroll: true,
             onSuccess: () => {
-                isModalOpen = false;
+                isAddModalOpen = false;
             },
         });
     }
@@ -297,7 +297,7 @@
                 target="_blank"
                 variant="outline"><Icon icon="uil:export" /> Export</Button
             >
-            <Dialog.Root bind:open={isModalOpen}>
+            <Dialog.Root bind:open={isAddModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
                     on:click={openAddForm}

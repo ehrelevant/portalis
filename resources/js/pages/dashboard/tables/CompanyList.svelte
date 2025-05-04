@@ -165,7 +165,7 @@
     }
 
     let companyFormElement;
-    let isModalOpen;
+    let isAddModalOpen;
 
     let companyForm = useForm({
         company_name: null,
@@ -180,7 +180,7 @@
         $companyForm.post('/api/add/company', {
             preserveScroll: true,
             onSuccess: () => {
-                isModalOpen = false;
+                isAddModalOpen = false;
             },
         });
     }
@@ -191,7 +191,7 @@
         $companyForm.year = filterYear;
 
         formCompanyId = null;
-        isModalOpen = true;
+        isAddModalOpen = true;
     }
 
     function openUpdateForm(companyId: number) {
@@ -203,7 +203,7 @@
         $companyForm.year = company.year;
 
         formCompanyId = companyId;
-        isModalOpen = true;
+        isAddModalOpen = true;
     }
 
     function updateCompany() {
@@ -217,7 +217,7 @@
         $companyForm.post(`/api/update/company/${formCompanyId}`, {
             preserveScroll: true,
             onSuccess: () => {
-                isModalOpen = false;
+                isAddModalOpen = false;
             },
         });
     }
@@ -262,7 +262,7 @@
                 target="_blank"
                 variant="outline"><Icon icon="uil:export" /> Export</Button
             >
-            <Dialog.Root bind:open={isModalOpen}>
+            <Dialog.Root bind:open={isAddModalOpen}>
                 <Dialog.Trigger>
                     <Button
                         class="flex w-full flex-row gap-2 sm:w-auto"
