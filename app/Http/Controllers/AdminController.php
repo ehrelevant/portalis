@@ -87,6 +87,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -210,6 +211,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -297,6 +299,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -343,6 +346,7 @@ class AdminController extends Controller
                 'companies.is_disabled',
                 'companies.year'
             )
+            ->orderBy('companies.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
