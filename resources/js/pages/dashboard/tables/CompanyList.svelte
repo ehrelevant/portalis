@@ -36,6 +36,7 @@
                 sort: sortColumn,
                 ascending: sortIsAscending,
                 year: filterYear,
+                show: filterCompany
             },
             {
                 preserveScroll: true,
@@ -93,6 +94,33 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
+                show: filterCompany
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        )
+
+        // Resume Polling
+        start();
+    }
+
+    let filterCompany = 'all';
+    function filterByCompany(newFilterCompany) {
+        // Pause Polling
+        stop()
+
+        filterCompany = newFilterCompany;
+
+        router.get(
+            '/dashboard/companies',
+            {
+                year: filterYear,
+                search: searchQuery,
+                sort: sortColumn,
+                ascending: sortIsAscending,
+                show: filterCompany
             },
             {
                 preserveScroll: true,
@@ -304,7 +332,22 @@
         </div>
     </div>
 
-    <div class="flex flex-row items-center justify-end">
+    <div class="flex flex-row items-center justify-end gap-4">
+        <Select.Root
+            selected={{label: "All", value: "all"}}
+            onSelectedChange={(v) => {
+                v && filterByCompany(v.value);
+            }}
+        >
+            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
+                <strong>Show:</strong> <Select.Value />
+            </Select.Trigger>
+            <Select.Content>
+                <Select.Item value="all">All</Select.Item>
+                <Select.Item value="enabled">Enabled</Select.Item>
+                <Select.Item value="disabled">Disabled</Select.Item>
+            </Select.Content>
+        </Select.Root>
         <Select.Root
             selected={{label: filterYear.toString(), value: filterYear}}
             onSelectedChange={(v) => {

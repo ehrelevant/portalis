@@ -8,6 +8,7 @@ use App\Models\FormStatus;
 use App\Models\OpenAnswer;
 use App\Models\RatingScore;
 use App\Models\User;
+use App\Models\WebsiteState;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -156,6 +157,13 @@ class FormController extends Controller
     {
         $user = Auth::user();
 
+        $phase = WebsiteState::firstOrFail()->phase;
+        $form = Form::where('short_name', $short_name)->first();
+        if ($user->role !== User::ROLE_ADMIN && ($phase !== $form->phase || $form->deadline && $form->deadline < now())) {
+            // Incorrect phase or deadline has passed
+            abort(401);
+        }
+
         switch ($short_name) {
             case 'midsem':
             case 'final':
@@ -200,6 +208,13 @@ class FormController extends Controller
     {
         $user = Auth::user();
 
+        $phase = WebsiteState::firstOrFail()->phase;
+        $form = Form::where('short_name', $short_name)->first();
+        if ($user->role !== User::ROLE_ADMIN && ($phase !== $form->phase || $form->deadline && $form->deadline < now())) {
+            // Incorrect phase or deadline has passed
+            abort(401);
+        }
+
         switch ($short_name) {
             case 'midsem':
             case 'final':
@@ -243,6 +258,13 @@ class FormController extends Controller
     public function submitForm(Request $request, string $short_name, ?int $role_id = null)
     {
         $user = Auth::user();
+
+        $phase = WebsiteState::firstOrFail()->phase;
+        $form = Form::where('short_name', $short_name)->first();
+        if ($user->role !== User::ROLE_ADMIN && ($phase !== $form->phase || $form->deadline && $form->deadline < now())) {
+            // Incorrect phase or deadline has passed
+            abort(401);
+        }
 
         switch ($short_name) {
             case 'midsem':
@@ -355,6 +377,7 @@ class FormController extends Controller
         $supervised_student_user_ids = DB::table('users')
             ->where('role', 'student')
             ->join('students', 'students.id', '=', 'users.role_id')
+            ->whereNotNull('students.faculty_id')
             ->where('supervisor_id', $supervisor_user->role_id)
             ->pluck('users.id')
             ->toArray();
@@ -409,6 +432,7 @@ class FormController extends Controller
         $supervised_student_user_ids = DB::table('users')
             ->where('role', 'student')
             ->join('students', 'students.id', '=', 'users.role_id')
+            ->whereNotNull('students.faculty_id')
             ->where('supervisor_id', $supervisor_user->role_id)
             ->pluck('users.id')
             ->toArray();

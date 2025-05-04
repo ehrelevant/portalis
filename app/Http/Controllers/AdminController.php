@@ -29,11 +29,18 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'student_number';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         // TODO: Add student number search
         $users_partial = DB::table('users')
             ->where('users.role', 'student')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('users.first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('users.last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('users.middle_name', 'LIKE', '%' . $search_text . '%');
@@ -80,6 +87,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -166,10 +174,17 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'last_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending'), FILTER_VALIDATE_BOOL, [FILTER_NULL_ON_FAILURE]) ?? true;
+        $show_query = $request->query('show') ?? 'all';
 
         $users_partial = DB::table('users')
             ->where('role', 'supervisor')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
@@ -196,6 +211,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -249,10 +265,17 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'last_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         $users_partial = DB::table('users')
             ->where('role', 'faculty')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('users.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('users.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('middle_name', 'LIKE', '%' . $search_text . '%');
@@ -276,6 +299,7 @@ class AdminController extends Controller
 
                 'users.year'
             )
+            ->orderBy('users.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -301,9 +325,16 @@ class AdminController extends Controller
         $sort_query = $request->query('sort') ?? 'company_name';
         $year_query = $request->query('year') ?? idate('Y');
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
+        $show_query = $request->query('show') ?? 'all';
 
         $companies_partial = DB::table('companies')
-            ->where(function ($query) use ($search_text) {
+            ->where(function ($query) use ($show_query) {
+                if ($show_query === 'enabled') {
+                    $query->where('companies.is_disabled', False);
+                } elseif ($show_query === 'disabled') {
+                    $query->where('companies.is_disabled', True);
+                }
+            })->where(function ($query) use ($search_text) {
                 $query->where('company_name', 'LIKE', '%' . $search_text . '%');
             });
 
@@ -315,6 +346,7 @@ class AdminController extends Controller
                 'companies.is_disabled',
                 'companies.year'
             )
+            ->orderBy('companies.is_disabled')
             ->orderBy($sort_query, $is_ascending_query ? 'asc' : 'desc')
             ->get();
 
@@ -349,7 +381,11 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $student_number_exists = Student::where('student_number', $values['student_number'])->where('year', $values['year'])->exists();
+            $student_number_exists = User::where('role', User::ROLE_STUDENT)
+                ->where('year', $values['year'])
+                ->join('students', 'users.role_id', '=', 'students.id')
+                ->where('students.student_number', $values['student_number'])
+                ->exists();
             $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
 
             if ($student_number_exists) {
@@ -488,7 +524,11 @@ class AdminController extends Controller
             ]);
 
             $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
-            $section_exists = Faculty::where('section', $values['section'])->where('year', $values['year'])->exists();
+            $section_exists = User::where('role', User::ROLE_FACULTY)
+                ->where('year', $values['year'])
+                ->join('faculties', 'users.role_id', '=', 'faculties.id')
+                ->where('faculties.section', $values['section'])
+                ->exists();
 
             if ($user_email_exists) {
                 return back()->withErrors([
@@ -573,9 +613,11 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $student_number_exists = Student::where('student_number', $values['student_number'])
+            $student_number_exists = User::where('role', User::ROLE_STUDENT)
                 ->where('year', $values['year'])
-                ->whereNot('id', $student_id)
+                ->join('students', 'users.role_id', '=', 'students.id')
+                ->whereNot('students.id', $student_id)
+                ->where('students.student_number', $values['student_number'])
                 ->exists();
 
             $user = User::where('role', User::ROLE_STUDENT)->where('role_id', $student_id)->firstOrFail();
@@ -693,10 +735,11 @@ class AdminController extends Controller
                 ->where('year', $values['year'])
                 ->whereNot('id', $user->id)
                 ->exists();
-
-            $section_exists = Faculty::where('section', $values['section'])
+            $section_exists = User::where('role', User::ROLE_FACULTY)
                 ->where('year', $values['year'])
-                ->whereNot('id', $faculty_id)
+                ->join('faculties', 'users.role_id', '=', 'faculties.id')
+                ->whereNot('faculties.id', $faculty_id)
+                ->where('faculties.section', $values['section'])
                 ->exists();
 
             if ($user_email_exists) {
