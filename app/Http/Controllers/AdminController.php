@@ -349,7 +349,11 @@ class AdminController extends Controller
                 'year' => ['required', 'numeric', 'integer'],
             ]);
 
-            $student_number_exists = Student::where('student_number', $values['student_number'])->where('year', $values['year'])->exists();
+            $student_number_exists = User::where('role', User::ROLE_STUDENT)
+                ->where('year', $values['year'])
+                ->join('students', 'users.role_id', '=', 'students.id')
+                ->where('students.student_number', $values['student_number'])
+                ->exists();
             $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
 
             if ($student_number_exists) {
@@ -488,7 +492,11 @@ class AdminController extends Controller
             ]);
 
             $user_email_exists = User::where('email', $values['email'])->where('year', $values['year'])->exists();
-            $section_exists = Faculty::where('section', $values['section'])->where('year', $values['year'])->exists();
+            $section_exists = User::where('role', User::ROLE_FACULTY)
+                ->where('year', $values['year'])
+                ->join('faculties', 'users.role_id', '=', 'faculties.id')
+                ->where('faculties.section', $values['section'])
+                ->exists();
 
             if ($user_email_exists) {
                 return back()->withErrors([
