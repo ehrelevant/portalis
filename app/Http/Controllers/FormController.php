@@ -355,6 +355,7 @@ class FormController extends Controller
         $supervised_student_user_ids = DB::table('users')
             ->where('role', 'student')
             ->join('students', 'students.id', '=', 'users.role_id')
+            ->whereNotNull('students.faculty_id')
             ->where('supervisor_id', $supervisor_user->role_id)
             ->pluck('users.id')
             ->toArray();
@@ -409,6 +410,7 @@ class FormController extends Controller
         $supervised_student_user_ids = DB::table('users')
             ->where('role', 'student')
             ->join('students', 'students.id', '=', 'users.role_id')
+            ->whereNotNull('students.faculty_id')
             ->where('supervisor_id', $supervisor_user->role_id)
             ->pluck('users.id')
             ->toArray();
