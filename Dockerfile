@@ -9,6 +9,9 @@ COPY pnpm-lock.yaml package.json /var/www/
 RUN npm i -g pnpm
 RUN pnpm install
 
+# Copy frontend files
+COPY . /var/www
+
 RUN pnpm build
 RUN pnpm prune --prod
 
