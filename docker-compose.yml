@@ -1,32 +1,43 @@
 services:
-    laravel.app:
+    app:
         build:
-            context: './vendor/laravel/sail/runtimes/8.3'
+            context: .
             dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.3/app'
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        image: digitalocean.com/php8.3
+        container_name: app
+        restart: unless-stopped
+        tty: true
         environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+            SERVICE_NAME: app
+            SERVICE_TAGS: dev
+        working_dir: /var/www
         volumes:
-            - '.:/var/www/html'
+            - ./:/var/www
+            - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
         networks:
-            - sail
-        depends_on:
-            - mysql
+            - app-network
+
+    nginx:
+        image: nginx:alpine
+        container_name: nginx
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - app-network
+
     mysql:
         image: 'mysql/mysql-server:8.0'
+        container_name: mysql
+        restart: unless-stopped
+        tty: true
         ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
+            - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ROOT_HOST: '%'
@@ -34,22 +45,17 @@ services:
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            SERVICE_NAME: mysql
+            SERVICE_TAGS: dev
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
-            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - mysql-data:/var/lib/mysql/
+            - ./docker-compose/mysql/my.cnf:/etc/mysql/my.cnf
         networks:
-            - sail
-        healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD}'
-            retries: 3
-            timeout: 5s
+            - app-network
+
 networks:
-    sail:
+    app-network:
         driver: bridge
 volumes:
-    sail-mysql:
+    mysql-data:
         driver: local
