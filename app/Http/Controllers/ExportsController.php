@@ -4,101 +4,155 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\QueryException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportsController extends Controller
 {
+    public function getExportFilters(Request $request): array
+    {
+        $filters = $request->validate([
+            'year' => ['numeric', 'nullable'],
+            'include_enabled' => ['boolean', 'nullable'],
+            'include_disabled' => ['boolean', 'nullable'],
+
+            'statuses' => ['array', 'nullable'],
+
+            'include_with_section' => ['boolean', 'nullable'],
+            'include_without_section' => ['boolean', 'nullable'],
+            'include_drp' => ['boolean', 'nullable'],
+
+            'include_with_company' => ['boolean', 'nullable'],
+            'include_without_company' => ['boolean', 'nullable'],
+        ]);
+
+        return $filters;
+    }
+
+    public function applyGenericExportFilters(array $filters, Builder $dbTableRaw, array $tableNames): Builder
+    {
+        // for all users/companies
+        $year = $filters['year'] ?? null;
+        $includeEnabled = $filters['include_enabled'] ?? false;
+        $includeDisabled = $filters['include_disabled'] ?? false;
+
+        // ---
+
+        foreach ($tableNames as $tableName) {
+            // if year is set, only include queries for given year
+            if (!is_null($year))
+                $dbTableRaw = $dbTableRaw->where($tableName . '.year', $year);
+
+            // exclude enabled user accounts/companies
+            if (!$includeEnabled)
+                $dbTableRaw = $dbTableRaw->whereNot($tableName . '.is_disabled', 0);
+
+            // exclude disabled user accounts/companies
+            if (!$includeDisabled)
+                $dbTableRaw = $dbTableRaw->whereNot($tableName . '.is_disabled', 1);
+        }
+
+        return $dbTableRaw;
+    }
+
+    public function applySpecificExportFilters(array $filters, Builder $dbTableRaw, bool $hasStatusFilters, bool $hasStudentFilters, bool $hasSupervisorFilters, bool $hasFacultyFilters, bool $hasCompanyFilters): Builder
+    {
+        // for form statuses
+        $statuses = $filters['statuses'] ?? ['For Review', 'Accepted'];
+
+        // for students
+        $includeWithSection = $filters['include_with_section'] ?? false;
+        $includeWithoutSection = $filters['include_without_section'] ?? false;
+        $includeDropped = $filters['include_drp'] ?? false;
+
+        // for supervisors
+        $includeWithCompany = $filters['include_with_company'] ?? false;
+        $includeWithoutCompany = $filters['include_without_company'] ?? false;
+
+        // ---
+
+        if ($hasStatusFilters) {
+            // only include form statuses from array
+            $dbTableRaw = $dbTableRaw->whereIn('form_statuses.status', $statuses);
+        }
+
+        if ($hasStudentFilters) {
+            // exclude students with section
+            if (!$includeWithSection)
+                $dbTableRaw = $dbTableRaw->where('faculties.section', null);
+
+            // exclude students without section (but didn't drop)
+            if (!$includeWithoutSection)
+                $dbTableRaw = $dbTableRaw->whereNot(function($query) {
+                    $query
+                        ->where('faculties.section', null)
+                        ->where('students.has_dropped', 0);
+                });
+
+            // exclude students who dropped
+            if (!$includeDropped)
+                $dbTableRaw = $dbTableRaw->whereNot('students.has_dropped', 1);
+        }
+
+        if ($hasSupervisorFilters) {
+            // exclude supervisors with a company
+            if (!$includeWithCompany)
+                $dbTableRaw = $dbTableRaw->where('companies.company_name', null);
+
+            // exclude supervisors without a company
+            if (!$includeWithoutCompany)
+                $dbTableRaw = $dbTableRaw->whereNot('companies.company_name', null);
+        }
+
+        if ($hasFacultyFilters) {}
+
+        if ($hasCompanyFilters) {}
+
+        // ---
+
+        return $dbTableRaw;
+    }
+
     public function exportStudentList(Request $request): StreamedResponse
     {
         $csvFileName = 'student_list';
 
         // ---
 
-        $filters = $request->validate([
-            'year' => ['numeric', 'nullable'],
-            'include_enabled' => ['boolean'],
-            'include_disabled' => ['boolean'],
-            'include_with_section' => ['boolean'],
-            'include_without_section' => ['boolean'],
-            'include_drp' => ['boolean'],
-        ]);
-        $year = $filters['year'] ?? null;
-        $includeEnabled = $filters['include_enabled'] ?? null;
-        $includeDisabled = $filters['include_disabled'] ?? null;
-        $includeWithSection = $filters['include_with_section'] ?? null;
-        $includeWithoutSection = $filters['include_without_section'] ?? null;
-        $includeDropped = $filters['include_drp'] ?? null;
-
-        // ---
-
-        if (is_null($includeEnabled) && is_null($includeDisabled)) {
-            // todo: redirect with error?
-        }
-
-        if (is_null($includeWithSection) && is_null($includeWithoutSection) && is_null($includeDropped)) {
-            // todo: redirect with error?
-        }
-
-        // ---
-
-        $dbTableRaw = DB::table('users')
+        $dbTableRaw = DB::table('users AS users_students')
             ->where('role', 'student')
 
-            ->join('students', 'users.role_id', '=', 'students.id')
+            ->join('students', 'users_students.role_id', '=', 'students.id')
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
 
             ->select(
-                'users.year',
+                'users_students.year',
                 'students.student_number',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
+                'users_students.first_name',
+                'users_students.middle_name',
+                'users_students.last_name',
                 'faculties.section',
                 'students.has_dropped',
-                'users.email',
+                'users_students.email',
                 'students.wordpress_name',
                 'students.wordpress_email',
-                'users.is_disabled AS is_account_disabled',
+                'users_students.is_disabled AS is_account_disabled',
             )
             ->orderBy('students.student_number');
 
-        // ---
+        // get export filters from request
+        $filters = self::getExportFilters($request);
+        $tableNames = [
+            'users_students',
+        ];
 
-        // if year is set, only include queries for given year
-        if (!is_null($year))
-            $dbTableRaw = $dbTableRaw->where('users.year', $year);
-
-        // ---
-
-        // exclude enabled student accounts
-        if (!$includeEnabled)
-            $dbTableRaw = $dbTableRaw->whereNot('users.is_disabled', 0);
-
-        // exclude disabled student accounts
-        if (!$includeDisabled)
-            $dbTableRaw = $dbTableRaw->whereNot('users.is_disabled', 1);
-
-        // ---
-
-        // exclude students with section
-        if (!$includeWithSection)
-            $dbTableRaw = $dbTableRaw->where('faculties.section', null);
-
-        // exclude students without section (but didn't drop)
-        if (!$includeWithoutSection)
-            $dbTableRaw = $dbTableRaw->whereNot(function($query) {
-                $query
-                    ->where('faculties.section', null)
-                    ->where('students.has_dropped', 0);
-            });
-
-        // exclude students who dropped
-        if (!$includeDropped)
-            $dbTableRaw = $dbTableRaw->whereNot('students.has_dropped', 1);
-
-        // ---
-
+        // apply filters to query
+        $dbTableRaw = self::applyGenericExportFilters($filters, $dbTableRaw, $tableNames);
+        $dbTableRaw = self::applySpecificExportFilters($filters, $dbTableRaw, false, true, false, false, false);
         $dbTable = $dbTableRaw->get();
+
+        // ---
 
         // store headers of DB query
         if (count($dbTable) > 0)
@@ -148,26 +202,40 @@ class ExportsController extends Controller
         return response()->stream($callback, 200, $content_headers);
     }
 
-    public function exportSupervisorList(): StreamedResponse
+    public function exportSupervisorList(Request $request): StreamedResponse
     {
         $csvFileName = 'supervisor_list';
 
-        $dbTable = DB::table('users')
+        // ---
+
+        $dbTableRaw = DB::table('users AS users_supervisors')
             ->where('role', 'supervisor')
 
-            ->join('supervisors', 'users.role_id', '=', 'supervisors.id')
+            ->join('supervisors', 'users_supervisors.role_id', '=', 'supervisors.id')
             ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
 
             ->select(
-                'users.year',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                'users.email',
+                'users_supervisors.year',
+                'users_supervisors.first_name',
+                'users_supervisors.middle_name',
+                'users_supervisors.last_name',
+                'users_supervisors.email',
                 'companies.company_name',
             )
-            ->orderBy('users.last_name', 'ASC', 'users.first_name', 'ASC')
-            ->get();
+            ->orderBy('users_supervisors.last_name', 'ASC', 'users_supervisors.first_name', 'ASC');
+
+        // get export filters from request
+        $filters = self::getExportFilters($request);
+        $tableNames = [
+            'users_supervisors',
+        ];
+
+        // apply filters to query
+        $dbTableRaw = self::applyGenericExportFilters($filters, $dbTableRaw, $tableNames);
+        $dbTableRaw = self::applySpecificExportFilters($filters, $dbTableRaw, false, false, true, false, false);
+        $dbTable = $dbTableRaw->get();
+
+        // ---
 
         // store headers of DB query
         if (count($dbTable) > 0)
@@ -212,25 +280,39 @@ class ExportsController extends Controller
         return response()->stream($callback, 200, $content_headers);
     }
 
-    public function exportFacultyList(): StreamedResponse
+    public function exportFacultyList(Request $request): StreamedResponse
     {
         $csvFileName = 'faculty_list';
 
-        $dbTable = DB::table('users')
+        // ---
+
+        $dbTableRaw = DB::table('users AS users_faculties')
             ->where('role', 'faculty')
 
-            ->join('faculties', 'users.role_id', '=', 'faculties.id')
+            ->join('faculties', 'users_faculties.role_id', '=', 'faculties.id')
 
             ->select(
-                'users.year',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                'users.email',
+                'users_faculties.year',
+                'users_faculties.first_name',
+                'users_faculties.middle_name',
+                'users_faculties.last_name',
+                'users_faculties.email',
                 'faculties.section'
             )
-            ->orderBy('users.last_name', 'ASC', 'users.first_name', 'ASC')
-            ->get();
+            ->orderBy('users_faculties.last_name', 'ASC', 'users_faculties.first_name', 'ASC');
+
+        // get export filters from request
+        $filters = self::getExportFilters($request);
+        $tableNames = [
+            'users_faculties',
+        ];
+
+        // apply filters to query
+        $dbTableRaw = self::applyGenericExportFilters($filters, $dbTableRaw, $tableNames);
+        $dbTableRaw = self::applySpecificExportFilters($filters, $dbTableRaw, false, false, false, true, false);
+        $dbTable = $dbTableRaw->get();
+
+        // ---
 
         // store headers of DB query
         if (count($dbTable) > 0)
@@ -275,17 +357,31 @@ class ExportsController extends Controller
         return response()->stream($callback, 200, $content_headers);
     }
 
-    public function exportCompanyList(): StreamedResponse
+    public function exportCompanyList(Request $request): StreamedResponse
     {
         $csvFileName = 'company_list';
 
-        $dbTable = DB::table('companies')
+        // ---
+
+        $dbTableRaw = DB::table('companies')
             ->select(
                 'companies.year',
                 'companies.company_name',
             )
-            ->orderBy('companies.company_name')
-            ->get();
+            ->orderBy('companies.company_name');
+
+        // get export filters from request
+        $filters = self::getExportFilters($request);
+        $tableNames = [
+            'companies',
+        ];
+
+        // apply filters to query
+        $dbTableRaw = self::applyGenericExportFilters($filters, $dbTableRaw, $tableNames);
+        $dbTableRaw = self::applySpecificExportFilters($filters, $dbTableRaw, false, false, false, false, true);
+        $dbTable = $dbTableRaw->get();
+
+        // ---
 
         // store headers of DB query
         $headers = [
@@ -324,41 +420,8 @@ class ExportsController extends Controller
 
     // ---
 
-    public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName): StreamedResponse
+    public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName, array $tableNames, bool $hasStudentFilters, bool $hasSupervisorFilters, bool $hasFacultyFilters, bool $hasCompanyFilters): StreamedResponse
     {
-        $filters = $request->validate([
-            'year' => ['numeric', 'nullable'],
-            'statuses' => ['array'],
-            'include_enabled' => ['boolean'],
-            'include_disabled' => ['boolean'],
-            'include_with_section' => ['boolean'],
-            'include_without_section' => ['boolean'],
-            'include_drp' => ['boolean'],
-        ]);
-        $year = $filters['year'] ?? null;
-        $statuses = $filters['statuses'] ?? ['For Review', 'Accepted'];
-        $includeEnabled = $filters['include_enabled'] ?? null;
-        $includeDisabled = $filters['include_disabled'] ?? null;
-        $includeWithSection = $filters['include_with_section'] ?? null;
-        $includeWithoutSection = $filters['include_without_section'] ?? null;
-        $includeDropped = $filters['include_drp'] ?? null;
-
-        // ---
-
-        if (empty($statuses)) {
-            // todo: redirect with error?
-        }
-
-        if (!$includeEnabled && !$includeDisabled) {
-            // todo: redirect with error?
-        }
-
-        if (!$includeWithSection && !$includeWithoutSection && !$includeDropped) {
-            // todo: redirect with error?
-        }
-
-        // ---
-
         $dbTable1Raw = DB::table('users AS users_students')
             ->where('users_students.role', 'student')
             ->where('forms.short_name', $shortName)
@@ -405,48 +468,16 @@ class ExportsController extends Controller
             )
             ->orderBy('students.student_number');
 
-        // ---
+        // get export filters from request
+        $filters = self::getExportFilters($request);
 
-        // if year is set, only include queries for given year
-        if (!is_null($year))
-            $dbTable1Raw = $dbTable1Raw->where('users_students.year', $year);
-
-        // ---
-
-        // only include form statuses from array
-        $dbTable1Raw = $dbTable1Raw->whereIn('form_statuses.status', $statuses);
-
-        // ---
-
-        // exclude enabled student accounts
-        if (!$includeEnabled)
-            $dbTable1Raw = $dbTable1Raw->whereNot('users_students.is_disabled', 0);
-
-        // exclude disabled student accounts
-        if (!$includeDisabled)
-            $dbTable1Raw = $dbTable1Raw->whereNot('users_students.is_disabled', 1);
-
-        // ---
-
-        // exclude students with section
-        if (!$includeWithSection)
-            $dbTable1Raw = $dbTable1Raw->where('faculties.section', null);
-
-        // exclude students without section (but didn't drop)
-        if (!$includeWithoutSection)
-            $dbTable1Raw = $dbTable1Raw->whereNot(function($query) {
-                $query
-                    ->where('faculties.section', null)
-                    ->where('students.has_dropped', 0);
-            });
-
-        // exclude students who dropped
-        if (!$includeDropped)
-            $dbTable1Raw = $dbTable1Raw->whereNot('students.has_dropped', 1);
-
-        // ---
-
+        // apply filters to query
+        $dbTable1Raw = self::applyGenericExportFilters($filters, $dbTable1Raw, $tableNames);
+        $dbTable1Raw = self::applySpecificExportFilters($filters, $dbTable1Raw, true, $hasStudentFilters, $hasSupervisorFilters, $hasFacultyFilters, $hasCompanyFilters);
         $dbTable1 = $dbTable1Raw->get();
+
+
+        // ---
 
         // store headers of DB query
         if (count($dbTable1) > 0)
@@ -600,26 +631,46 @@ class ExportsController extends Controller
 
     public function exportMidsemReports(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv($request, 'midsem', 'midsem_reports');
+        $tableNames = [
+            'users_students',
+        ];
+
+        return self::exportFormsAsCsv($request, 'midsem', 'midsem_reports', $tableNames, true, false, false, false);
     }
 
     public function exportFinalReports(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv($request, 'final', 'final_reports');
+        $tableNames = [
+            'users_students',
+        ];
+
+        return self::exportFormsAsCsv($request, 'final', 'final_reports', $tableNames,  true, false, false, false);
     }
 
     public function exportCompanyEvaluations(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv($request, 'company-evaluation', 'company_evaluations');
+        $tableNames = [
+            'users_students',
+        ];
+
+        return self::exportFormsAsCsv($request, 'company-evaluation', 'company_evaluations', $tableNames, true, false, false, false);
     }
 
     public function exportStudentSelfEvaluations(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv($request, 'self-evaluation', 'self_evaluations');
+        $tableNames = [
+            'users_students',
+        ];
+
+        return self::exportFormsAsCsv($request, 'self-evaluation', 'self_evaluations', $tableNames, true, false, false, false);
     }
 
     public function exportStudentAssessments(Request $request): StreamedResponse
     {
-        return self::exportFormsAsCsv($request, 'intern-evaluation', 'student_assessments');
+        $tableNames = [
+            'users_students',
+        ];
+
+        return self::exportFormsAsCsv($request, 'intern-evaluation', 'student_assessments', $tableNames, true, false, false, false);
     }
 }
