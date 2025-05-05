@@ -35,7 +35,7 @@ class FileSubmissionController extends Controller
                 abort(401);
             }
 
-            if ($student_id && $student_id !== $user->role_id) {
+            if ($student_id && $student_id != $user->role_id) {
                 // Student ID is passed as an argument,
                 // but it isn't that student's actual ID
                 abort(401);
@@ -92,7 +92,7 @@ class FileSubmissionController extends Controller
                     abort(401);
                 }
 
-                if ($student_id && $student_id !== $user->role_id) {
+                if ($student_id && $student_id != $user->role_id) {
                     // Student ID is passed as an argument,
                     // but it isn't that student's actual ID
                     abort(401);
