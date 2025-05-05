@@ -1,28 +1,8 @@
-# Build node frontend
-FROM node:lts AS builder
-
-WORKDIR /var/www
-
-# Copy lockfiles
-COPY pnpm-lock.yaml package.json /var/www/
-
-RUN npm i -g pnpm
-RUN pnpm install
-
-# Copy frontend files
-COPY . /var/www
-
-RUN pnpm build
-RUN pnpm prune --prod
-
 # PHP Deployment Setup
 FROM php:8.3-fpm
 
 # Copy lockfiles
 COPY composer.lock composer.json /var/www/
-
-# Copy Node build files
-COPY --from=builder ./public/build ./public/build
 
 # Set working directory
 WORKDIR /var/www
