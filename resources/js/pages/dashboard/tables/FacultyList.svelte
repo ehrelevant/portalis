@@ -16,6 +16,7 @@
     import { Checkbox } from '$lib/components/ui/checkbox/index';
     import * as Select from '$lib/components/ui/select';
     import * as Dialog from '$lib/components/ui/dialog/index';
+    import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
 
@@ -235,6 +236,51 @@
             },
         });
     }
+
+    let isExportDropdownOpen;
+    let isExportModalOpen;
+
+    let exportForm = useForm({
+        year: null,
+        include_enabled: null,
+        include_disabled: null,
+    });
+
+    let exportFormRoute;
+    let exportFormText;
+    function openExportForm(exportFormName: string) {
+        switch (exportFormName) {
+            case "faculty-list":
+                exportFormRoute = 'list';
+                exportFormText = 'Faculty List';
+                break;
+            default:
+                return;
+        }
+
+        $exportForm.year = filterYear;
+        $exportForm.include_enabled = true;
+        $exportForm.include_disabled = false;
+
+        isExportDropdownOpen = false;
+        isExportModalOpen = true;
+    }
+
+    let exportFormElement;
+    function redirectExportForm() {
+        if (!exportFormElement.checkValidity()) {
+            exportFormElement.reportValidity();
+            return;
+        }
+
+        $exportForm.get(`/export/faculties/${exportFormRoute}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                isExportDropdownOpen = false;
+                isExportModalOpen = false;
+            },
+        });
+    }
 </script>
 
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
@@ -272,12 +318,104 @@
                     ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
-            <Button
-                href="/export/faculties/list"
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                target="_blank"
-                variant="outline"><Icon icon="uil:export" /> Export</Button
-            >
+            <DropdownMenu.Root bind:open={isExportDropdownOpen}>
+                <DropdownMenu.Trigger asChild let:builder>
+                    <Button
+                        builders={[builder]}
+                        variant="outline"
+                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        ><Icon icon="uil:export" />Export</Button
+                    >
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                    <DropdownMenu.Item
+                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        on:click={() => openExportForm("faculty-list")}
+                        >Export Faculty List</DropdownMenu.Item
+                    >
+                </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            <Dialog.Root bind:open={isExportModalOpen}>
+                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
+                    <Dialog.Header>
+                        <Dialog.Title>Export {exportFormText}</Dialog.Title>
+                    </Dialog.Header>
+                    <form
+                        action="/export/faculties/{exportFormRoute}"
+                        class="flex flex-col gap-4"
+                        target="_blank"
+                        bind:this={exportFormElement}
+                        on:submit={redirectExportForm}
+                    >
+                        <div
+                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                        >
+                            <Label for="export_year"
+                                >Year</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    id="export_year"
+                                    name="year"
+                                    type="number"
+                                    bind:value={$exportForm.year}
+                                />
+                                {#if $exportForm.errors.year}
+                                    <ErrorText>
+                                        {$exportForm.errors.year}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_enabled"
+                                >Include Enabled Faculty Accounts</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    id="export_include_enabled"
+                                    name="include_enabled"
+                                    type="checkbox"
+                                    value=1
+                                    bind:checked={$exportForm.include_enabled}
+                                />
+                                {#if $exportForm.errors.include_enabled}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_enabled}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+
+                            <Label for="export_include_disabled"
+                                >Include Disabled Faculty Accounts</Label
+                            >
+                            <div class="flex flex-col">
+                                <Input
+                                    id="export_include_disabled"
+                                    name="include_disabled"
+                                    type="checkbox"
+                                    value=1
+                                    bind:checked={$exportForm.include_disabled}
+                                />
+                                {#if $exportForm.errors.include_disabled}
+                                    <ErrorText>
+                                        {$exportForm.errors.include_disabled}
+                                    </ErrorText>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit"
+                                >Export {exportFormText}</Button
+                            >
+                        </Dialog.Footer>
+                    </form>
+                </Dialog.Content>
+            </Dialog.Root>
+
             <Dialog.Root bind:open={isAddModalOpen}>
                 <Button
                     class="flex w-full flex-row gap-2 sm:w-auto"
