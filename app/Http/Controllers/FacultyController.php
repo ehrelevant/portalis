@@ -20,7 +20,6 @@ class FacultyController extends Controller
         $sort_query = $request->query('sort') ?? 'student_number';
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
 
-        // TODO: Add student number search
         $users_partial = DB::table('users')
             ->where('users.role', 'student')
             ->where(function ($query) use ($search_text) {
@@ -262,7 +261,6 @@ class FacultyController extends Controller
                     'supervisors' => $supervisors,
                 ]);
             default:
-                // todo: address this case
                 // this shouldn't ever be reached unless the website state is somehow invalid,
                 // but this technically counts as an uncaught conditional path otherwise
                 return Inertia::render('dashboard');

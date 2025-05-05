@@ -25,7 +25,6 @@ return new class extends Migration {
             $table->id('supervisor_number');
 
             // foreign keys
-            // todo: try to use constrained() instead of references()->on()
             $table->foreignId('company_id')->references('company_id')->on('company');
 
             // other keys
@@ -53,7 +52,6 @@ return new class extends Migration {
             $table->integer('student_number')->primary();
 
             // foreign keys
-            // todo: try to use constrained() instead of references()->on()
             $table->foreignId('supervisor_number')->references('supervisor_number')->on('supervisor');
             $table->foreignId('class_id')->references('class_id')->on('faculty');
 

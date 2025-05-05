@@ -31,7 +31,6 @@ class AdminController extends Controller
         $is_ascending_query = filter_var($request->query('ascending') ?? true, FILTER_VALIDATE_BOOLEAN);
         $show_query = $request->query('show') ?? 'all';
 
-        // TODO: Add student number search
         $users_partial = DB::table('users')
             ->where('users.role', 'student')
             ->where(function ($query) use ($show_query) {

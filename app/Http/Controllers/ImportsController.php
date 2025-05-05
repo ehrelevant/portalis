@@ -72,7 +72,6 @@ class ImportsController extends Controller
     // todo: this can be simplified once Tagged Unions are added to PHP one day, similar to the Result type in Rust
     public function validateCsvHeaders(string $csvPath, array $keys): bool
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $importedCsvHeaders = self::getCsvHeaders($importedCsv);
 
@@ -87,7 +86,6 @@ class ImportsController extends Controller
 
     public function validateCsv(string $csvPath, int $year, array $primary_keys, array $unique_keys, array $other_keys_required, Collection $existingDatabase)
     {
-        // todo: clean up CSV importing (esp for non-local) (this path is not very good)
         $importedCsv = fopen('../storage/app/private/' . $csvPath, 'r');
         $importedCollectionRaw = self::csvToCollection($importedCsv);
         $importedCollection = $importedCollectionRaw['collection'];
@@ -141,13 +139,6 @@ class ImportsController extends Controller
                         goto tallyCsvRowStatus;
                     }
                 }
-
-                /*
-                if (count($importedCollection->duplicatesStrict($unique_key)) > 0) {
-                    $csvRowStatus = CsvRowStatus::DUPLICATE;
-                    goto tallyCsvRowStatus;
-                }
-                */
             }
             
             // check if other required keys are:
@@ -309,7 +300,6 @@ class ImportsController extends Controller
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addStudentsFromCollection($csvStats['successful'], $year);
             
-            // todo: add confirmation? view csv before proceeding with upload?
             if ($clearStudents) {
                 return redirect('/dashboard/students')
                     ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' students.
@@ -485,7 +475,6 @@ class ImportsController extends Controller
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addSupervisorsFromCollection($csvStats['successful'], $year);
 
-            // todo: add confirmation? view csv before proceeding with upload?
             if ($clearSupervisors) {
                 return redirect('/dashboard/supervisors')
                     ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' supervisors.
@@ -640,7 +629,6 @@ class ImportsController extends Controller
             $csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addFacultiesFromCollection($csvStats['successful'], $year);
 
-            // todo: add confirmation? view csv before proceeding with upload?
             if ($clearFaculties) {
                 return redirect('/dashboard/faculties')
                     ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' faculties.
@@ -775,7 +763,6 @@ class ImportsController extends Controller
             //$csvStats = self::validateCollectionValues($csvStats, $email_keys);
             self::addCompaniesFromCollection($csvStats['successful'], $year);
             
-            // todo: add confirmation? view csv before proceeding with upload?
             if ($clearCompanies) {
                 return redirect('/dashboard/companies')
                     ->with('success', 'Successfully imported ' . $csvStats['successful']->count() . ' companies.
