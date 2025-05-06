@@ -6,7 +6,7 @@
 </script>
 
 <nav
-    class="sticky inset-y-0 left-0 z-30 hidden max-h-screen min-h-full w-14 shrink-0 bg-dark-primary sm:flex sm:flex-col"
+    class="sticky inset-y-0 left-0 z-50 hidden max-h-screen min-h-full w-14 shrink-0 bg-dark-primary sm:flex sm:flex-col"
 >
     <div class="flex flex-col items-center gap-4 px-2 sm:py-5">
         <NavBtn href="/" icon_handle="tabler:home">Home</NavBtn>
@@ -39,7 +39,7 @@
 </nav>
 
 <nav
-    class="max-w-screen sticky inset-y-0 left-0 z-30 flex h-14 min-w-full shrink-0 flex-row items-center bg-dark-primary sm:hidden"
+    class="max-w-screen sticky inset-y-0 left-0 z-40 flex h-14 min-w-full shrink-0 flex-row items-center bg-dark-primary sm:hidden"
 >
     <div class="flex flex-row items-center gap-4 px-2">
         <NavBtn href="/" side="bottom" icon_handle="tabler:home">Home</NavBtn>
