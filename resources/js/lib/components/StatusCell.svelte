@@ -17,7 +17,7 @@
 </script>
 
 {#if status !== 'None' || isAdmin}
-    <Button {href} class={colors} target="_blank">
+    <Button {href} class="w-24 {colors}" target="_blank">
         {status}
     </Button>
 {/if}
