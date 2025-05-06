@@ -1,6 +1,7 @@
 <script>
     import Header from '$lib/components/InternshipHeader.svelte';
 </script>
+
 <div class="main-screen flex w-full flex-col gap-4 p-4">
     <Header txt="Privacy Policy" />
     <div class="text-lg">

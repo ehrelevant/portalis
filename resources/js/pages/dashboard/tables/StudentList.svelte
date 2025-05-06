@@ -23,11 +23,11 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
-    import { Toggle } from "$lib/components/ui/toggle";
+    import { Toggle } from '$lib/components/ui/toggle';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-    import * as Popover from "$lib/components/ui/popover/index.js";
+    import * as Popover from '$lib/components/ui/popover/index.js';
     import Icon from '@iconify/svelte';
 
     const { start, stop } = usePoll(2000);
@@ -109,7 +109,7 @@
     let searchQuery: string;
     function search() {
         // Pause Polling
-        stop()
+        stop();
 
         router.get(
             '/dashboard/students',
@@ -118,7 +118,7 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
@@ -130,10 +130,10 @@
         start();
     }
 
-    let filterYear: number = (new Date()).getFullYear();
+    let filterYear: number = new Date().getFullYear();
     function filterByYear(newYear) {
         // Pause Polling
-        stop()
+        stop();
 
         filterYear = newYear;
 
@@ -144,13 +144,13 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
@@ -159,7 +159,7 @@
     let filterUser = 'all';
     function filterByUser(newFilterUser) {
         // Pause Polling
-        stop()
+        stop();
 
         filterUser = newFilterUser;
 
@@ -170,13 +170,13 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
@@ -195,13 +195,13 @@
         wordpressEmail: true,
         submissions: true,
         forms: true,
-    }
+    };
 
     let sortColumn = 'student_number';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
         // Pause Polling
-        stop()
+        stop();
 
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
@@ -217,7 +217,7 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
@@ -231,7 +231,7 @@
 
     function setSection(studentId: number, sectionName: string) {
         // Pause Polling
-        stop()
+        stop();
 
         router.put(
             `/students/${studentId}/assign/section/${sectionName}`,
@@ -247,7 +247,7 @@
 
     function setSupervisor(studentId: number, supervisorId: number) {
         // Pause Polling
-        stop()
+        stop();
 
         router.put(
             `/students/${studentId}/assign/supervisor/${supervisorId}`,
@@ -359,19 +359,19 @@
     let exportFormText;
     function openExportForm(exportFormName: string) {
         switch (exportFormName) {
-            case "student-list":
+            case 'student-list':
                 exportFormRoute = 'list';
                 exportFormText = 'Student List';
                 break;
-            case "student-assessments":
+            case 'student-assessments':
                 exportFormRoute = 'student-assessments';
                 exportFormText = 'Student Assessments';
                 break;
-            case "self-evaluations":
+            case 'self-evaluations':
                 exportFormRoute = 'self-evaluations';
                 exportFormText = 'Student Self-Evaluations';
                 break;
-            case "company-evaluations":
+            case 'company-evaluations':
                 exportFormRoute = 'company-evaluations';
                 exportFormText = 'Company Evaluations';
                 break;
@@ -444,23 +444,25 @@
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
                         class="flex w-full flex-row gap-2 md:w-auto"
-                        on:click={() => openExportForm("student-list")}
+                        on:click={() => openExportForm('student-list')}
                         >Export Student List</DropdownMenu.Item
                     >
                     {#if isAdmin || phase !== 'pre'}
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 md:w-auto"
-                            on:click={() => openExportForm("company-evaluations")}
+                            on:click={() =>
+                                openExportForm('company-evaluations')}
                             >Export Company Evaluations</DropdownMenu.Item
                         >
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 md:w-auto"
-                            on:click={() => openExportForm("self-evaluations")}
+                            on:click={() => openExportForm('self-evaluations')}
                             >Export Student Self-Evaluations</DropdownMenu.Item
                         >
                         <DropdownMenu.Item
                             class="flex w-full flex-row gap-2 md:w-auto"
-                            on:click={() => openExportForm("student-assessments")}
+                            on:click={() =>
+                                openExportForm('student-assessments')}
                             >Export Student Assessments</DropdownMenu.Item
                         >
                     {/if}
@@ -468,7 +470,9 @@
             </DropdownMenu.Root>
 
             <Dialog.Root bind:open={isExportModalOpen}>
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
                         <Dialog.Title>Export {exportFormText}</Dialog.Title>
                     </Dialog.Header>
@@ -482,9 +486,7 @@
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
                         >
-                            <Label for="export_year"
-                                >Year</Label
-                            >
+                            <Label for="export_year">Year</Label>
                             <div class="flex flex-col">
                                 <Input
                                     id="export_year"
@@ -506,7 +508,7 @@
                                 <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_enabled}
                                 />
                                 {#if $exportForm.errors.include_enabled}
@@ -523,7 +525,7 @@
                                 <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_disabled}
                                 />
                                 {#if $exportForm.errors.include_disabled}
@@ -540,12 +542,15 @@
                                 <Checkbox
                                     id="export_include_with_section"
                                     name="include_with_section"
-                                    value=1
-                                    bind:checked={$exportForm.include_with_section}
+                                    value="1"
+                                    bind:checked={
+                                        $exportForm.include_with_section
+                                    }
                                 />
                                 {#if $exportForm.errors.include_with_section}
                                     <ErrorText>
-                                        {$exportForm.errors.include_with_section}
+                                        {$exportForm.errors
+                                            .include_with_section}
                                     </ErrorText>
                                 {/if}
                             </div>
@@ -557,12 +562,15 @@
                                 <Checkbox
                                     id="export_include_without_section"
                                     name="include_without_section"
-                                    value=1
-                                    bind:checked={$exportForm.include_without_section}
+                                    value="1"
+                                    bind:checked={
+                                        $exportForm.include_without_section
+                                    }
                                 />
                                 {#if $exportForm.errors.include_without_section}
                                     <ErrorText>
-                                        {$exportForm.errors.include_without_section}
+                                        {$exportForm.errors
+                                            .include_without_section}
                                     </ErrorText>
                                 {/if}
                             </div>
@@ -574,7 +582,7 @@
                                 <Checkbox
                                     id="export_include_dropped"
                                     name="include_drp"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_drp}
                                 />
                                 {#if $exportForm.errors.include_drp}
@@ -587,7 +595,9 @@
 
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >Export {exportFormText}</Button
@@ -603,9 +613,15 @@
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Student</Button
                 >
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
-                        <Dialog.Title>{formUserRoleId ? 'Edit Student' : 'Add Student'}</Dialog.Title>
+                        <Dialog.Title
+                            >{formUserRoleId
+                                ? 'Edit Student'
+                                : 'Add Student'}</Dialog.Title
+                        >
                     </Dialog.Header>
                     <form
                         bind:this={userFormElement}
@@ -844,7 +860,9 @@
 
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >{formUserRoleId
@@ -858,7 +876,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
         <Button
             on:click={bulkDisable}
             class="flex w-full flex-row gap-2 md:w-auto"
@@ -867,40 +885,85 @@
         >
 
         <div
-            class="flex flex-row flex-wrap justify-center items-center gap-2 md:gap-4"
+            class="flex flex-row flex-wrap items-center justify-center gap-2 md:gap-4"
         >
             <Popover.Root>
                 <Popover.Trigger asChild let:builder>
-                    <Button
-                        builders={[builder]}
-                        variant="outline"
+                    <Button builders={[builder]} variant="outline"
                         >Filter Columns</Button
                     >
                 </Popover.Trigger>
-                <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.studentNumber}>Student Number</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.middleName}>Middle Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.supervisorName}>Supervisor Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.companyInterned}>Company Interned</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.wordpressName}>Wordpress Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.wordpressEmail}>Wordpress Email</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.submissions}>Document Submissions</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.forms}>Form Submissions</Toggle>
+                <Popover.Content
+                    class="flex max-h-80 w-fit flex-col gap-1 overflow-auto"
+                >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.studentNumber}
+                        >Student Number</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.firstName}>First Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.middleName}
+                        >Middle Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.lastName}>Last Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.section}>Section</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.supervisorName}
+                        >Supervisor Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.companyInterned}
+                        >Company Interned</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.email}>Email</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.wordpressName}
+                        >Wordpress Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.wordpressEmail}
+                        >Wordpress Email</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.submissions}
+                        >Document Submissions</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.forms}
+                        >Form Submissions</Toggle
+                    >
                 </Popover.Content>
             </Popover.Root>
 
             <Select.Root
-                selected={{label: "All", value: "all"}}
+                selected={{ label: 'All', value: 'all' }}
                 onSelectedChange={(v) => {
                     v && filterByUser(v.value);
                 }}
             >
-                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                    <strong>Show:</strong> <Select.Value />
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Show:</strong>
+                    <Select.Value />
                 </Select.Trigger>
                 <Select.Content>
                     <Select.Item value="all">All</Select.Item>
@@ -909,20 +972,18 @@
                 </Select.Content>
             </Select.Root>
             <Select.Root
-                selected={{label: filterYear.toString(), value: filterYear}}
+                selected={{ label: filterYear.toString(), value: filterYear }}
                 onSelectedChange={(v) => {
                     v && filterByYear(v.value);
                 }}
             >
-                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                    <strong>Year:</strong> <Select.Value placeholder="Year" />
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Year:</strong>
+                    <Select.Value placeholder="Year" />
                 </Select.Trigger>
                 <Select.Content>
                     {#each years as year}
-                        <Select.Item
-                            value={year}
-                            >{year}</Select.Item
-                        >
+                        <Select.Item value={year}>{year}</Select.Item>
                     {/each}
                 </Select.Content>
             </Select.Root>
@@ -944,94 +1005,94 @@
         <TableRow header>
             <TableColumnHeader />
             {#if showColumns.studentNumber}
-            <TableColumnHeader
-                isActive={sortColumn === 'student_number'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('student_number')}
-            >
-                SN
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'student_number'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('student_number')}
+                >
+                    SN
+                </TableColumnHeader>
             {/if}
             {#if showColumns.firstName}
-            <TableColumnHeader
-            isActive={sortColumn === 'first_name'}
-            isAscending={sortIsAscending}
-            clickHandler={() => sortByColumn('first_name')}
-            >
-            First Name
-        </TableColumnHeader>
-        {/if}
-        {#if showColumns.middleName}
-        <TableColumnHeader
-            isActive={sortColumn === 'middle_name'}
-            isAscending={sortIsAscending}
-            clickHandler={() => sortByColumn('middle_name')}
-        >
-            Middle Name
-        </TableColumnHeader>
-        {/if}
-        {#if showColumns.lastName}
-        <TableColumnHeader
-            isActive={sortColumn === 'last_name'}
-            isAscending={sortIsAscending}
-            clickHandler={() => sortByColumn('last_name')}
-        >
-            Last Name
-        </TableColumnHeader>
-        {/if}
+                <TableColumnHeader
+                    isActive={sortColumn === 'first_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('first_name')}
+                >
+                    First Name
+                </TableColumnHeader>
+            {/if}
+            {#if showColumns.middleName}
+                <TableColumnHeader
+                    isActive={sortColumn === 'middle_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('middle_name')}
+                >
+                    Middle Name
+                </TableColumnHeader>
+            {/if}
+            {#if showColumns.lastName}
+                <TableColumnHeader
+                    isActive={sortColumn === 'last_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('last_name')}
+                >
+                    Last Name
+                </TableColumnHeader>
+            {/if}
             {#if showColumns.section}
-            <TableColumnHeader
-                isActive={sortColumn === 'section'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('section')}
-            >
-                Section
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'section'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('section')}
+                >
+                    Section
+                </TableColumnHeader>
             {/if}
             {#if showColumns.supervisorName}
-            <TableColumnHeader
-                isActive={sortColumn === 'supervisor_last_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('supervisor_last_name')}
-            >
-                Supervisor Name
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'supervisor_last_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('supervisor_last_name')}
+                >
+                    Supervisor Name
+                </TableColumnHeader>
             {/if}
             {#if showColumns.companyInterned}
-            <TableColumnHeader
-                isActive={sortColumn === 'company_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('company_name')}
-            >
-                Company Interned
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'company_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('company_name')}
+                >
+                    Company Interned
+                </TableColumnHeader>
             {/if}
             {#if showColumns.email}
-            <TableColumnHeader
-                isActive={sortColumn === 'email'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('email')}
-            >
-                Email
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'email'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('email')}
+                >
+                    Email
+                </TableColumnHeader>
             {/if}
             {#if showColumns.wordpressName}
-            <TableColumnHeader
-                isActive={sortColumn === 'wordpress_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('wordpress_name')}
-            >
-                Wordpress Name
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'wordpress_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('wordpress_name')}
+                >
+                    Wordpress Name
+                </TableColumnHeader>
             {/if}
             {#if showColumns.wordpressEmail}
-            <TableColumnHeader
-                isActive={sortColumn === 'wordpress_email'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('wordpress_email')}
-            >
-                Wordpress Email
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'wordpress_email'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('wordpress_email')}
+                >
+                    Wordpress Email
+                </TableColumnHeader>
             {/if}
             {#if showColumns.submissions && (isAdmin || phase === 'pre')}
                 {#each requirements as requirement}
@@ -1075,102 +1136,107 @@
                     ><Checkbox bind:checked={selected[student_id]} /></TableCell
                 >
                 {#if showColumns.studentNumber}
-                <TableCell>{student_number}</TableCell>
-            {/if}
-            {#if showColumns.firstName}
-                <TableCell>{first_name}</TableCell>
-            {/if}
-            {#if showColumns.middleName}
-                <TableCell>{middle_name}</TableCell>
-            {/if}
-            {#if showColumns.lastName}
-                <TableCell>{last_name}</TableCell>
-            {/if}
-            {#if showColumns.section}
-                <TableCell>
-                    <Select.Root
-                        selected={has_dropped
-                            ? { label: 'DRP', value: 'DRP' }
-                            : !section
-                              ? { label: '-', value: '' }
-                              : {
-                                    label: section,
-                                    value: section,
-                                }}
-                        onSelectedChange={(v) => {
-                            v && setSection(student_id, v.value);
-                        }}
-                    >
-                        <Select.Trigger class="px-4">
-                            <Select.Value placeholder="Section" />
-                        </Select.Trigger>
-                        <Select.Content>
-                            <Select.Item value="">-</Select.Item>
-                            {#each faculties as faculty}
-                                {@const { section: facultySection } = faculty}
-                                <Select.Item value={facultySection}
-                                    >{facultySection}</Select.Item
-                                >
-                            {/each}
-                            <Select.Item value="DRP">DRP</Select.Item>
-                        </Select.Content>
-                    </Select.Root>
-                </TableCell>
-            {/if}
-            {#if showColumns.supervisorName}
-                <TableCell>
-                    <Select.Root
-                        selected={!supervisor_id
-                            ? { label: '-', value: null }
-                            : {
-                                  label: getSupervisorNameFromId(supervisor_id),
-                                  value: supervisor_id,
-                              }}
-                        onSelectedChange={(v) => {
-                            v && setSupervisor(student_id, v.value);
-                        }}
-                    >
-                        <Select.Trigger class="px-4">
-                            <Select.Value placeholder="Supervisor Name" />
-                        </Select.Trigger>
-                        <Select.Content>
-                            <Select.Item value={null}>-</Select.Item>
-                            {#each companiesSupervisors as companySupervisors}
-                                {@const { company_name, supervisors } =
-                                    companySupervisors}
-                                <Select.Group>
-                                    <Select.Label
-                                        >{company_name ??
-                                            'No Company'}</Select.Label
+                    <TableCell>{student_number}</TableCell>
+                {/if}
+                {#if showColumns.firstName}
+                    <TableCell>{first_name}</TableCell>
+                {/if}
+                {#if showColumns.middleName}
+                    <TableCell>{middle_name}</TableCell>
+                {/if}
+                {#if showColumns.lastName}
+                    <TableCell>{last_name}</TableCell>
+                {/if}
+                {#if showColumns.section}
+                    <TableCell>
+                        <Select.Root
+                            selected={has_dropped
+                                ? { label: 'DRP', value: 'DRP' }
+                                : !section
+                                  ? { label: '-', value: '' }
+                                  : {
+                                        label: section,
+                                        value: section,
+                                    }}
+                            onSelectedChange={(v) => {
+                                v && setSection(student_id, v.value);
+                            }}
+                        >
+                            <Select.Trigger class="px-4">
+                                <Select.Value placeholder="Section" />
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="">-</Select.Item>
+                                {#each faculties as faculty}
+                                    {@const { section: facultySection } =
+                                        faculty}
+                                    <Select.Item value={facultySection}
+                                        >{facultySection}</Select.Item
                                     >
-                                    {#each supervisors as supervisor}
-                                        {@const {
-                                            supervisor_id: companySupervisorId,
-                                            first_name,
-                                            last_name,
-                                        } = supervisor}
-                                        <Select.Item value={companySupervisorId}
-                                            >{last_name}, {first_name}</Select.Item
+                                {/each}
+                                <Select.Item value="DRP">DRP</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </TableCell>
+                {/if}
+                {#if showColumns.supervisorName}
+                    <TableCell>
+                        <Select.Root
+                            selected={!supervisor_id
+                                ? { label: '-', value: null }
+                                : {
+                                      label: getSupervisorNameFromId(
+                                          supervisor_id,
+                                      ),
+                                      value: supervisor_id,
+                                  }}
+                            onSelectedChange={(v) => {
+                                v && setSupervisor(student_id, v.value);
+                            }}
+                        >
+                            <Select.Trigger class="px-4">
+                                <Select.Value placeholder="Supervisor Name" />
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value={null}>-</Select.Item>
+                                {#each companiesSupervisors as companySupervisors}
+                                    {@const { company_name, supervisors } =
+                                        companySupervisors}
+                                    <Select.Group>
+                                        <Select.Label
+                                            >{company_name ??
+                                                'No Company'}</Select.Label
                                         >
-                                    {/each}
-                                </Select.Group>
-                            {/each}
-                        </Select.Content>
-                    </Select.Root>
-                </TableCell>
-            {/if}
-            {#if showColumns.companyInterned}
-                <TableCell>{company_name ?? ''}</TableCell>
-            {/if}
-            {#if showColumns.email}
-                <TableCell>{email}</TableCell>
-            {/if}
-            {#if showColumns.wordpressName}
-                <TableCell>{wordpress_name}</TableCell>
-            {/if}
-            {#if showColumns.wordpressEmail}
-                <TableCell>{wordpress_email}</TableCell>
-            {/if}
+                                        {#each supervisors as supervisor}
+                                            {@const {
+                                                supervisor_id:
+                                                    companySupervisorId,
+                                                first_name,
+                                                last_name,
+                                            } = supervisor}
+                                            <Select.Item
+                                                value={companySupervisorId}
+                                                >{last_name}, {first_name}</Select.Item
+                                            >
+                                        {/each}
+                                    </Select.Group>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </TableCell>
+                {/if}
+                {#if showColumns.companyInterned}
+                    <TableCell>{company_name ?? ''}</TableCell>
+                {/if}
+                {#if showColumns.email}
+                    <TableCell>{email}</TableCell>
+                {/if}
+                {#if showColumns.wordpressName}
+                    <TableCell>{wordpress_name}</TableCell>
+                {/if}
+                {#if showColumns.wordpressEmail}
+                    <TableCell>{wordpress_email}</TableCell>
+                {/if}
                 {#if showColumns.submissions && (isAdmin || phase === 'pre')}
                     {#each submission_id_statuses as submission_id_status}
                         {@const { requirement_id, status } =
@@ -1207,7 +1273,7 @@
                     {/each}
                 {/if}
                 <TableCell
-                    ><div class="flex flex-row gap-2 justify-center">
+                    ><div class="flex flex-row justify-center gap-2">
                         <Button
                             class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(student_id)}

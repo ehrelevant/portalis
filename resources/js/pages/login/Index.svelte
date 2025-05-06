@@ -44,7 +44,7 @@
 </script>
 
 <div class="main-screen flex w-full flex-col items-center justify-center">
-    <Card.Root class="w-4/5 sm:w-96 border-2">
+    <Card.Root class="w-4/5 border-2 sm:w-96">
         <Card.Header>
             <Card.Title class="flex content-end py-2 text-3xl"
                 >Account Login</Card.Title

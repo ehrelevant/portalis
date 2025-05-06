@@ -32,18 +32,21 @@
         <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
             <div>
                 <div class="text-xl">
-                    These column names must be present when importing the <strong>.csv</strong> file:
+                    These column names must be present when importing the <strong
+                        >.csv</strong
+                    > file:
                 </div>
                 <p class="flex justify-end italic">
-                    (column names marked with [<Required />] must have a value for every row)
+                    (column names marked with [<Required />] must have a value
+                    for every row)
                 </p>
 
                 <ul class="list-disc pl-6 text-xl">
-                    <li> <Required />first_name </li>
-                    <li> middle_name </li>
-                    <li> <Required />last_name </li>
-                    <li> <Required />email </li>
-                    <li> section </li>
+                    <li><Required />first_name</li>
+                    <li>middle_name</li>
+                    <li><Required />last_name</li>
+                    <li><Required />email</li>
+                    <li>section</li>
                 </ul>
             </div>
 
@@ -69,15 +72,13 @@
                 {/if}
             </label>
 
-            <Label> Year </Label>
+            <Label>Year</Label>
             <Input
                 type="number"
-                max={currentYear+1}
-                min=0
+                max={currentYear + 1}
+                min="0"
                 required
-                bind:value={
-                    $form.year
-                }
+                bind:value={$form.year}
             />
 
             {#if errors.file}

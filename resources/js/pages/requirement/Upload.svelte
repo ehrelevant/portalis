@@ -29,7 +29,7 @@
             class="flex flex-col"
         >
             <div class="flex w-full flex-row justify-between">
-                <div class="text-xl pb-4">
+                <div class="pb-4 text-xl">
                     Upload <strong>.pdf</strong> file below:
                 </div>
             </div>
@@ -37,7 +37,7 @@
             <label class="text-xl">
                 <input
                     type="file"
-                    class="block w-full text-l border border-black rounded-lg cursor-pointer bg-gray-50 dark:text-dark-primary-text focus:outline-none dark:bg-gray-800"
+                    class="text-l block w-full cursor-pointer rounded-lg border border-black bg-gray-50 focus:outline-none dark:bg-gray-800 dark:text-dark-primary-text"
                     on:input={(e) => ($form.file = e.currentTarget.files[0])}
                 />
                 <p class="flex justify-end italic">(2MB max)</p>
@@ -60,12 +60,12 @@
                     type="submit"
                     value="Submit Document"
                     disabled={$form.processing}
-                    class="my-1 w-fit cursor-pointer border-2 rounded-lg bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    class="my-1 w-fit cursor-pointer rounded-lg border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
                 />
 
                 <Link
                     href="/dashboard"
-                    class="w-fit cursor-pointer border-2 rounded-lg px-3 py-2 text-2xl hover:opacity-90"
+                    class="w-fit cursor-pointer rounded-lg border-2 px-3 py-2 text-2xl hover:opacity-90"
                 >
                     Cancel
                 </Link>

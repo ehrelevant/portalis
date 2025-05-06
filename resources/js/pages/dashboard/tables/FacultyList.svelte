@@ -14,11 +14,11 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
-    import { Toggle } from "$lib/components/ui/toggle";
+    import { Toggle } from '$lib/components/ui/toggle';
     import * as Select from '$lib/components/ui/select';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-    import * as Popover from "$lib/components/ui/popover/index.js";
+    import * as Popover from '$lib/components/ui/popover/index.js';
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
 
@@ -63,7 +63,7 @@
     let searchQuery: string;
     function search() {
         // Pause Polling
-        stop()
+        stop();
 
         router.get(
             '/dashboard/faculties',
@@ -72,7 +72,7 @@
                 sort: sortColumn,
                 ascending: sortIsAscending,
                 year: filterYear,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
@@ -84,10 +84,10 @@
         start();
     }
 
-    let filterYear: number = (new Date()).getFullYear();
+    let filterYear: number = new Date().getFullYear();
     function filterByYear(newYear) {
         // Pause Polling
-        stop()
+        stop();
 
         filterYear = newYear;
 
@@ -98,13 +98,13 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
@@ -113,7 +113,7 @@
     let filterUser = 'all';
     function filterByUser(newFilterUser) {
         // Pause Polling
-        stop()
+        stop();
 
         filterUser = newFilterUser;
 
@@ -124,13 +124,13 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
@@ -142,13 +142,13 @@
         lastName: true,
         email: true,
         section: true,
-    }
+    };
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
         // Pause Polling
-        stop()
+        stop();
 
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
@@ -164,7 +164,7 @@
                 sort: sortColumn,
                 ascending: sortIsAscending,
                 year: filterYear,
-                show: filterUser
+                show: filterUser,
             },
             {
                 preserveScroll: true,
@@ -259,7 +259,7 @@
     let exportFormText;
     function openExportForm(exportFormName: string) {
         switch (exportFormName) {
-            case "faculty-list":
+            case 'faculty-list':
                 exportFormRoute = 'list';
                 exportFormText = 'Faculty List';
                 break;
@@ -305,12 +305,13 @@
             class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
         >
             {#if isAdmin}
-            <Link class="w-full md:w-auto"href="/import/faculties/upload"
-                ><Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"><Icon icon="uil:import" />Import</Button
-                ></Link
-            >
+                <Link class="w-full md:w-auto" href="/import/faculties/upload"
+                    ><Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        variant="outline"
+                        ><Icon icon="uil:import" />Import</Button
+                    ></Link
+                >
             {/if}
             <Link class="w-full md:w-auto" href="/add-multiple/faculties/upload"
                 ><Button
@@ -323,10 +324,12 @@
                 <Button
                     class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"
-                    on:click={() => openExportForm("faculty-list")}
+                    on:click={() => openExportForm('faculty-list')}
                     ><Icon icon="uil:export" />Export</Button
                 >
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
                         <Dialog.Title>Export {exportFormText}</Dialog.Title>
                     </Dialog.Header>
@@ -340,9 +343,7 @@
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
                         >
-                            <Label for="export_year"
-                                >Year</Label
-                            >
+                            <Label for="export_year">Year</Label>
                             <div class="flex flex-col">
                                 <Input
                                     id="export_year"
@@ -364,7 +365,7 @@
                                 <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_enabled}
                                 />
                                 {#if $exportForm.errors.include_enabled}
@@ -381,7 +382,7 @@
                                 <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_disabled}
                                 />
                                 {#if $exportForm.errors.include_disabled}
@@ -394,7 +395,9 @@
 
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >Export {exportFormText}</Button
@@ -410,9 +413,15 @@
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Faculty</Button
                 >
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
-                        <Dialog.Title>{formUserRoleId ? 'Edit Faculty' : 'Add Faculty'}</Dialog.Title>
+                        <Dialog.Title
+                            >{formUserRoleId
+                                ? 'Edit Faculty'
+                                : 'Add Faculty'}</Dialog.Title
+                        >
                     </Dialog.Header>
                     <form
                         bind:this={userFormElement}
@@ -518,7 +527,9 @@
                         </div>
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >{formUserRoleId
@@ -532,44 +543,61 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
         {#if isAdmin}
-        <Button
-            on:click={bulkDisable}
-            class="flex w-full flex-row gap-2 md:w-auto"
-            variant="destructive"
-            disabled={!hasSelected}>Disable Selected</Button
-        >
+            <Button
+                on:click={bulkDisable}
+                class="flex w-full flex-row gap-2 md:w-auto"
+                variant="destructive"
+                disabled={!hasSelected}>Disable Selected</Button
+            >
         {/if}
 
         <div
-            class="flex flex-row flex-wrap justify-center items-center gap-2 md:gap-4"
+            class="flex flex-row flex-wrap items-center justify-center gap-2 md:gap-4"
         >
             <Popover.Root>
                 <Popover.Trigger asChild let:builder>
-                    <Button
-                        builders={[builder]}
-                        variant="outline"
+                    <Button builders={[builder]} variant="outline"
                         >Filter Columns</Button
                     >
                 </Popover.Trigger>
-                <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.middleName}>Middle Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
-                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
+                <Popover.Content
+                    class="flex max-h-80 w-fit flex-col gap-1 overflow-auto"
+                >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.firstName}>First Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.middleName}
+                        >Middle Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.lastName}>Last Name</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.email}>Email</Toggle
+                    >
+                    <Toggle
+                        class="justify-start py-2"
+                        bind:pressed={showColumns.section}>Section</Toggle
+                    >
                 </Popover.Content>
             </Popover.Root>
 
             <Select.Root
-                selected={{label: "All", value: "all"}}
+                selected={{ label: 'All', value: 'all' }}
                 onSelectedChange={(v) => {
                     v && filterByUser(v.value);
                 }}
             >
-                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                    <strong>Show:</strong> <Select.Value />
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Show:</strong>
+                    <Select.Value />
                 </Select.Trigger>
                 <Select.Content>
                     <Select.Item value="all">All</Select.Item>
@@ -578,20 +606,18 @@
                 </Select.Content>
             </Select.Root>
             <Select.Root
-                selected={{label: filterYear.toString(), value: filterYear}}
+                selected={{ label: filterYear.toString(), value: filterYear }}
                 onSelectedChange={(v) => {
                     v && filterByYear(v.value);
                 }}
             >
-                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                    <strong>Year:</strong> <Select.Value placeholder="Year" />
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Year:</strong>
+                    <Select.Value placeholder="Year" />
                 </Select.Trigger>
                 <Select.Content>
                     {#each years as year}
-                        <Select.Item
-                            value={year}
-                            >{year}</Select.Item
-                        >
+                        <Select.Item value={year}>{year}</Select.Item>
                     {/each}
                 </Select.Content>
             </Select.Root>
@@ -612,52 +638,52 @@
     <Table>
         <TableRow header>
             {#if isAdmin}
-            <TableColumnHeader />
+                <TableColumnHeader />
             {/if}
             {#if showColumns.firstName}
-            <TableColumnHeader
-                isActive={sortColumn === 'first_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('first_name')}
-            >
-                First Name
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'first_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('first_name')}
+                >
+                    First Name
+                </TableColumnHeader>
             {/if}
             {#if showColumns.middleName}
-            <TableColumnHeader
-                isActive={sortColumn === 'middle_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('middle_name')}
-            >
-                Middle Name
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'middle_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('middle_name')}
+                >
+                    Middle Name
+                </TableColumnHeader>
             {/if}
             {#if showColumns.lastName}
-            <TableColumnHeader
-                isActive={sortColumn === 'last_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('last_name')}
-            >
-                Last Name
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'last_name'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('last_name')}
+                >
+                    Last Name
+                </TableColumnHeader>
             {/if}
             {#if showColumns.email}
-            <TableColumnHeader
-                isActive={sortColumn === 'email'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('email')}
-            >
-                Email
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'email'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('email')}
+                >
+                    Email
+                </TableColumnHeader>
             {/if}
             {#if showColumns.section}
-            <TableColumnHeader
-                isActive={sortColumn === 'section'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('section')}
-            >
-                Section
-            </TableColumnHeader>
+                <TableColumnHeader
+                    isActive={sortColumn === 'section'}
+                    isAscending={sortIsAscending}
+                    clickHandler={() => sortByColumn('section')}
+                >
+                    Section
+                </TableColumnHeader>
             {/if}
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
@@ -676,25 +702,27 @@
                 selected={Boolean(selected[faculty_id])}
             >
                 {#if isAdmin}
-                <TableCell
-                    ><Checkbox bind:checked={selected[faculty_id]} /></TableCell
-                >
+                    <TableCell
+                        ><Checkbox
+                            bind:checked={selected[faculty_id]}
+                        /></TableCell
+                    >
                 {/if}
-            {#if showColumns.firstName}
-                <TableCell>{first_name}</TableCell>
-            {/if}
-            {#if showColumns.middleName}
-                <TableCell>{middle_name}</TableCell>
-            {/if}
-            {#if showColumns.lastName}
-                <TableCell>{last_name}</TableCell>
-            {/if}
-            {#if showColumns.email}
-                <TableCell>{email}</TableCell>
-            {/if}
-            {#if showColumns.section}
-                <TableCell>{section ?? ''}</TableCell>
-            {/if}
+                {#if showColumns.firstName}
+                    <TableCell>{first_name}</TableCell>
+                {/if}
+                {#if showColumns.middleName}
+                    <TableCell>{middle_name}</TableCell>
+                {/if}
+                {#if showColumns.lastName}
+                    <TableCell>{last_name}</TableCell>
+                {/if}
+                {#if showColumns.email}
+                    <TableCell>{email}</TableCell>
+                {/if}
+                {#if showColumns.section}
+                    <TableCell>{section ?? ''}</TableCell>
+                {/if}
                 <TableCell
                     ><div
                         class="flex flex-row items-center justify-center gap-2"
@@ -705,34 +733,34 @@
                             >Edit</Button
                         >
                         {#if isAdmin}
-                        {#if is_disabled}
-                            <Link
-                                href="/api/enable/faculty/{faculty_id}"
-                                as="button"
-                                preserveScroll
-                                method="put"
-                                ><Button class="w-20 {colorVariants.green}"
-                                    >Enable</Button
-                                ></Link
-                            >
-                        {:else}
-                            <Button
-                                class="w-20 {colorVariants.red}"
-                                on:click={() => {
-                                    if (
-                                        confirm(
-                                            'Do you really want to disable this user?',
-                                        )
-                                    ) {
-                                        router.put(
-                                            `/api/disable/faculty/${faculty_id}`,
-                                            {},
-                                            { preserveScroll: true },
-                                        );
-                                    }
-                                }}>Disable</Button
-                            >
-                        {/if}
+                            {#if is_disabled}
+                                <Link
+                                    href="/api/enable/faculty/{faculty_id}"
+                                    as="button"
+                                    preserveScroll
+                                    method="put"
+                                    ><Button class="w-20 {colorVariants.green}"
+                                        >Enable</Button
+                                    ></Link
+                                >
+                            {:else}
+                                <Button
+                                    class="w-20 {colorVariants.red}"
+                                    on:click={() => {
+                                        if (
+                                            confirm(
+                                                'Do you really want to disable this user?',
+                                            )
+                                        ) {
+                                            router.put(
+                                                `/api/disable/faculty/${faculty_id}`,
+                                                {},
+                                                { preserveScroll: true },
+                                            );
+                                        }
+                                    }}>Disable</Button
+                                >
+                            {/if}
                         {/if}
                     </div></TableCell
                 >

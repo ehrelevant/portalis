@@ -28,7 +28,7 @@
     let searchQuery: string;
     function search() {
         // Pause Polling
-        stop()
+        stop();
 
         router.get(
             '/dashboard/companies',
@@ -37,7 +37,7 @@
                 sort: sortColumn,
                 ascending: sortIsAscending,
                 year: filterYear,
-                show: filterCompany
+                show: filterCompany,
             },
             {
                 preserveScroll: true,
@@ -81,10 +81,10 @@
         }
     }
 
-    let filterYear: number = (new Date()).getFullYear();
+    let filterYear: number = new Date().getFullYear();
     function filterByYear(newYear) {
         // Pause Polling
-        stop()
+        stop();
 
         filterYear = newYear;
 
@@ -95,13 +95,13 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterCompany
+                show: filterCompany,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
@@ -110,7 +110,7 @@
     let filterCompany = 'all';
     function filterByCompany(newFilterCompany) {
         // Pause Polling
-        stop()
+        stop();
 
         filterCompany = newFilterCompany;
 
@@ -121,24 +121,23 @@
                 search: searchQuery,
                 sort: sortColumn,
                 ascending: sortIsAscending,
-                show: filterCompany
+                show: filterCompany,
             },
             {
                 preserveScroll: true,
                 preserveState: true,
             },
-        )
+        );
 
         // Resume Polling
         start();
     }
 
-
     let sortColumn = 'company_name';
     let sortIsAscending = true;
     function sortByColumn(newSortColumn: string) {
         // Pause Polling
-        stop()
+        stop();
 
         if (sortColumn === newSortColumn) {
             sortIsAscending = !sortIsAscending;
@@ -236,7 +235,7 @@
     let exportFormText;
     function openExportForm(exportFormName: string) {
         switch (exportFormName) {
-            case "company-list":
+            case 'company-list':
                 exportFormRoute = 'list';
                 exportFormText = 'Company List';
                 break;
@@ -298,10 +297,12 @@
                 <Button
                     class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"
-                    on:click={() => openExportForm("company-list")}
+                    on:click={() => openExportForm('company-list')}
                     ><Icon icon="uil:export" />Export</Button
                 >
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
                         <Dialog.Title>Export {exportFormText}</Dialog.Title>
                     </Dialog.Header>
@@ -315,9 +316,7 @@
                         <div
                             class="grid grid-cols-[auto,1fr] items-center gap-4"
                         >
-                            <Label for="export_year"
-                                >Year</Label
-                            >
+                            <Label for="export_year">Year</Label>
                             <div class="flex flex-col">
                                 <Input
                                     id="export_year"
@@ -339,7 +338,7 @@
                                 <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_enabled}
                                 />
                                 {#if $exportForm.errors.include_enabled}
@@ -356,7 +355,7 @@
                                 <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    value=1
+                                    value="1"
                                     bind:checked={$exportForm.include_disabled}
                                 />
                                 {#if $exportForm.errors.include_disabled}
@@ -369,7 +368,9 @@
 
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >Export {exportFormText}</Button
@@ -385,9 +386,15 @@
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Company</Button
                 >
-                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
+                <Dialog.Content
+                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                >
                     <Dialog.Header>
-                        <Dialog.Title>{formCompanyId ? 'Edit Company' : 'Add Company'}</Dialog.Title>
+                        <Dialog.Title
+                            >{formCompanyId
+                                ? 'Edit Company'
+                                : 'Add Company'}</Dialog.Title
+                        >
                     </Dialog.Header>
                     <form
                         bind:this={companyFormElement}
@@ -433,7 +440,9 @@
 
                         <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button class="w-full" variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline"
+                                    >Cancel</Button
+                                >
                             </Dialog.Close>
                             <Button type="submit"
                                 >{formCompanyId
@@ -447,7 +456,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
         <Button
             on:click={bulkDisable}
             class="flex w-full flex-row gap-2 md:w-auto"
@@ -456,41 +465,40 @@
         >
 
         <div
-            class="flex flex-row flex-wrap justify-center items-center gap-2 md:gap-4"
+            class="flex flex-row flex-wrap items-center justify-center gap-2 md:gap-4"
         >
-        <Select.Root
-            selected={{label: "All", value: "all"}}
-            onSelectedChange={(v) => {
-                v && filterByCompany(v.value);
-            }}
-        >
-            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                <strong>Show:</strong> <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-                <Select.Item value="all">All</Select.Item>
-                <Select.Item value="enabled">Enabled</Select.Item>
-                <Select.Item value="disabled">Disabled</Select.Item>
-            </Select.Content>
-        </Select.Root>
-        <Select.Root
-            selected={{label: filterYear.toString(), value: filterYear}}
-            onSelectedChange={(v) => {
-                v && filterByYear(v.value);
-            }}
-        >
-            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                <strong>Year:</strong> <Select.Value placeholder="Year" />
-            </Select.Trigger>
-            <Select.Content>
-                {#each years as year}
-                    <Select.Item
-                        value={year}
-                        >{year}</Select.Item
-                    >
-                {/each}
-            </Select.Content>
-        </Select.Root>
+            <Select.Root
+                selected={{ label: 'All', value: 'all' }}
+                onSelectedChange={(v) => {
+                    v && filterByCompany(v.value);
+                }}
+            >
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Show:</strong>
+                    <Select.Value />
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Item value="all">All</Select.Item>
+                    <Select.Item value="enabled">Enabled</Select.Item>
+                    <Select.Item value="disabled">Disabled</Select.Item>
+                </Select.Content>
+            </Select.Root>
+            <Select.Root
+                selected={{ label: filterYear.toString(), value: filterYear }}
+                onSelectedChange={(v) => {
+                    v && filterByYear(v.value);
+                }}
+            >
+                <Select.Trigger class="flex w-fit flex-row gap-2 px-4">
+                    <strong>Year:</strong>
+                    <Select.Value placeholder="Year" />
+                </Select.Trigger>
+                <Select.Content>
+                    {#each years as year}
+                        <Select.Item value={year}>{year}</Select.Item>
+                    {/each}
+                </Select.Content>
+            </Select.Root>
         </div>
     </div>
 

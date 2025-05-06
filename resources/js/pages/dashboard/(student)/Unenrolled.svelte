@@ -8,8 +8,8 @@
     <div class="p-4">
         <p class="text-2xl">
             You are currently registered as NOT ENROLLED to this course. This is
-            likely due to a missing requirement. To resolve this, please contact the
-            faculty or admin.
+            likely due to a missing requirement. To resolve this, please contact
+            the faculty or admin.
         </p>
     </div>
 </div>
