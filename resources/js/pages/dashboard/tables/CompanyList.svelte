@@ -335,11 +335,10 @@
                             <Label for="export_include_enabled"
                                 >Include Enabled Companies</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_enabled}
                                 />
@@ -353,11 +352,10 @@
                             <Label for="export_include_disabled"
                                 >Include Disabled Companies</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_disabled}
                                 />

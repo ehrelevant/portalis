@@ -385,11 +385,10 @@
                             <Label for="export_include_enabled"
                                 >Include Enabled Supervisor Accounts</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_enabled}
                                 />
@@ -403,11 +402,10 @@
                             <Label for="export_include_disabled"
                                 >Include Disabled Supervisor Accounts</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_disabled}
                                 />
@@ -421,11 +419,10 @@
                             <Label for="export_include_with_company"
                                 >Include Supervisors With Company</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_with_company"
                                     name="include_with_company"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_with_company}
                                 />
@@ -439,11 +436,10 @@
                             <Label for="export_include_without_company"
                                 >Include Supervisors Without Company</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_without_company"
                                     name="include_without_company"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_without_company}
                                 />

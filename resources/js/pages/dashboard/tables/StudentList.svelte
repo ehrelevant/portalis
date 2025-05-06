@@ -502,11 +502,10 @@
                             <Label for="export_include_enabled"
                                 >Include Enabled Student Accounts</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_enabled"
                                     name="include_enabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_enabled}
                                 />
@@ -520,11 +519,10 @@
                             <Label for="export_include_disabled"
                                 >Include Disabled Student Accounts</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_disabled"
                                     name="include_disabled"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_disabled}
                                 />
@@ -538,11 +536,10 @@
                             <Label for="export_include_with_section"
                                 >Include Students With Section</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_with_section"
                                     name="include_with_section"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_with_section}
                                 />
@@ -556,11 +553,10 @@
                             <Label for="export_include_without_section"
                                 >Include Students Without Section</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_without_section"
                                     name="include_without_section"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_without_section}
                                 />
@@ -574,11 +570,10 @@
                             <Label for="export_include_dropped"
                                 >Include Dropped Students</Label
                             >
-                            <div class="flex flex-col">
-                                <Input
+                            <div class="flex flex-col items-center">
+                                <Checkbox
                                     id="export_include_dropped"
                                     name="include_drp"
-                                    type="checkbox"
                                     value=1
                                     bind:checked={$exportForm.include_drp}
                                 />
