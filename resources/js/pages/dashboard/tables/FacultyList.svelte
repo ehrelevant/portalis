@@ -21,6 +21,7 @@
     import * as Popover from '$lib/components/ui/popover/index.js';
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
+    import { onMount } from 'svelte';
 
     const { start, stop } = usePoll(2000);
 
@@ -136,13 +137,27 @@
         start();
     }
 
-    let showColumns = {
-        firstName: true,
-        middleName: false,
-        lastName: true,
-        email: true,
-        section: true,
-    };
+    onMount(() => {
+        const facultyListColumns = localStorage.getItem('facultyListColumns')
+        if (facultyListColumns) {
+            showColumns = JSON.parse(facultyListColumns);
+        } else {
+            showColumns = {
+                firstName: true,
+                middleName: false,
+                lastName: true,
+                email: true,
+                section: true,
+            };
+            localStorage.setItem('facultyListColumns', JSON.stringify(showColumns));
+        }
+    });
+
+    let showColumns = {};
+
+    $: if (Object.keys(showColumns).length !== 0) {
+        localStorage.setItem('facultyListColumns', JSON.stringify(showColumns));
+    }
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;

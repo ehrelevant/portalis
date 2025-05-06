@@ -29,6 +29,7 @@
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import * as Popover from '$lib/components/ui/popover/index.js';
     import Icon from '@iconify/svelte';
+    import { afterUpdate, onMount } from 'svelte';
 
     const { start, stop } = usePoll(2000);
 
@@ -182,20 +183,34 @@
         start();
     }
 
-    let showColumns = {
-        studentNumber: true,
-        firstName: true,
-        middleName: false,
-        lastName: true,
-        section: true,
-        supervisorName: true,
-        companyInterned: true,
-        email: true,
-        wordpressName: true,
-        wordpressEmail: true,
-        submissions: true,
-        forms: true,
-    };
+    onMount(() => {
+        const studentListColumns = localStorage.getItem('studentListColumns')
+        if (studentListColumns) {
+            showColumns = JSON.parse(studentListColumns);
+        } else {
+            showColumns = {
+                studentNumber: true,
+                firstName: true,
+                middleName: false,
+                lastName: true,
+                section: true,
+                supervisorName: true,
+                companyInterned: true,
+                email: true,
+                wordpressName: true,
+                wordpressEmail: true,
+                submissions: true,
+                forms: true,
+            };
+            localStorage.setItem('studentListColumns', JSON.stringify(showColumns));
+        }
+    });
+
+    let showColumns = {};
+
+    $: if (Object.keys(showColumns).length !== 0) {
+        localStorage.setItem('studentListColumns', JSON.stringify(showColumns));
+    }
 
     let sortColumn = 'student_number';
     let sortIsAscending = true;
