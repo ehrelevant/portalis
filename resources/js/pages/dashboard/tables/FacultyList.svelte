@@ -319,24 +319,13 @@
                     ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
             >
-            <DropdownMenu.Root bind:open={isExportDropdownOpen}>
-                <DropdownMenu.Trigger asChild let:builder>
-                    <Button
-                        builders={[builder]}
-                        variant="outline"
-                        class="flex w-full flex-row gap-2 md:w-auto"
-                        ><Icon icon="uil:export" />Export</Button
-                    >
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                    <DropdownMenu.Item
-                        class="flex w-full flex-row gap-2 md:w-auto"
-                        on:click={() => openExportForm("faculty-list")}
-                        >Export Faculty List</DropdownMenu.Item
-                    >
-                </DropdownMenu.Content>
-            </DropdownMenu.Root>
             <Dialog.Root bind:open={isExportModalOpen}>
+                <Button
+                    class="flex w-full flex-row gap-2 md:w-auto"
+                    variant="outline"
+                    on:click={() => openExportForm("faculty-list")}
+                    ><Icon icon="uil:export" />Export</Button
+                >
                 <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>Export {exportFormText}</Dialog.Title>
