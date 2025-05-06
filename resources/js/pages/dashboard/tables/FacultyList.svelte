@@ -137,8 +137,9 @@
     }
 
     let showColumns = {
-        lastName: true,
         firstName: true,
+        middleName: false,
+        lastName: true,
         email: true,
         section: true,
     }
@@ -562,8 +563,9 @@
                 >
             </Popover.Trigger>
             <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
                 <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.middleName}>Middle Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
                 <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
                 <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
             </Popover.Content>
@@ -620,15 +622,6 @@
             {#if isAdmin}
             <TableColumnHeader />
             {/if}
-            {#if showColumns.lastName}
-            <TableColumnHeader
-                isActive={sortColumn === 'last_name'}
-                isAscending={sortIsAscending}
-                clickHandler={() => sortByColumn('last_name')}
-            >
-                Last Name
-            </TableColumnHeader>
-            {/if}
             {#if showColumns.firstName}
             <TableColumnHeader
                 isActive={sortColumn === 'first_name'}
@@ -636,6 +629,24 @@
                 clickHandler={() => sortByColumn('first_name')}
             >
                 First Name
+            </TableColumnHeader>
+            {/if}
+            {#if showColumns.middleName}
+            <TableColumnHeader
+                isActive={sortColumn === 'middle_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('middle_name')}
+            >
+                Middle Name
+            </TableColumnHeader>
+            {/if}
+            {#if showColumns.lastName}
+            <TableColumnHeader
+                isActive={sortColumn === 'last_name'}
+                isAscending={sortIsAscending}
+                clickHandler={() => sortByColumn('last_name')}
+            >
+                Last Name
             </TableColumnHeader>
             {/if}
             {#if showColumns.email}
@@ -662,6 +673,7 @@
             {@const {
                 faculty_id,
                 first_name,
+                middle_name,
                 last_name,
                 email,
                 section,
@@ -676,11 +688,14 @@
                     ><Checkbox bind:checked={selected[faculty_id]} /></TableCell
                 >
                 {/if}
-            {#if showColumns.lastName}
-                <TableCell>{last_name}</TableCell>
-            {/if}
             {#if showColumns.firstName}
                 <TableCell>{first_name}</TableCell>
+            {/if}
+            {#if showColumns.middleName}
+                <TableCell>{middle_name}</TableCell>
+            {/if}
+            {#if showColumns.lastName}
+                <TableCell>{last_name}</TableCell>
             {/if}
             {#if showColumns.email}
                 <TableCell>{email}</TableCell>
