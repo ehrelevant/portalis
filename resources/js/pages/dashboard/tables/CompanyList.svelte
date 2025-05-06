@@ -312,7 +312,7 @@
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
             <Dialog.Root bind:open={isExportModalOpen}>
-                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
+                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>Export {exportFormText}</Dialog.Title>
                     </Dialog.Header>
@@ -380,9 +380,9 @@
                             </div>
                         </div>
 
-                        <Dialog.Footer>
+                        <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline">Cancel</Button>
                             </Dialog.Close>
                             <Button type="submit"
                                 >Export {exportFormText}</Button
@@ -398,7 +398,7 @@
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Company</Button
                 >
-                <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
+                <Dialog.Content class="max-h-full h-full max-w-full sm:max-w-lg sm:max-h-[80vh] sm:h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>{formCompanyId ? 'Edit Company' : 'Add Company'}</Dialog.Title>
                     </Dialog.Header>
@@ -444,9 +444,9 @@
                             {/if}
                         </div>
 
-                        <Dialog.Footer>
+                        <Dialog.Footer class="flex flex-col-reverse gap-2">
                             <Dialog.Close>
-                                <Button variant="outline">Cancel</Button>
+                                <Button class="w-full" variant="outline">Cancel</Button>
                             </Dialog.Close>
                             <Button type="submit"
                                 >{formCompanyId
