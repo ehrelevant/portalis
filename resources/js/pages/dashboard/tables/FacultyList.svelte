@@ -295,34 +295,26 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Faculty List" />
 
-    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
-            <Link href="/dashboard" method="get">
-                <Button class="flex flex-row gap-2"
-                    ><Icon icon="lets-icons:back" />Back to Dashboard</Button
-                ></Link
-            >
-        </div>
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <Link class="w-full md:w-auto" href="/dashboard" method="get">
+            <Button class="flex w-full flex-row gap-2"
+                ><Icon icon="lets-icons:back" />Back to Dashboard</Button
+            ></Link
+        >
         <div
-            class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
+            class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
         >
             {#if isAdmin}
-            <Button
-                on:click={bulkDisable}
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                variant="destructive"
-                disabled={!hasSelected}>Disable Selected</Button
-            >
-            <Link href="/import/faculties/upload"
+            <Link class="w-full md:w-auto"href="/import/faculties/upload"
                 ><Button
-                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"><Icon icon="uil:import" />Import</Button
                 ></Link
             >
             {/if}
-            <Link href="/add-multiple/faculties/upload"
+            <Link class="w-full md:w-auto" href="/add-multiple/faculties/upload"
                 ><Button
-                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"
                     ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
@@ -332,13 +324,13 @@
                     <Button
                         builders={[builder]}
                         variant="outline"
-                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        class="flex w-full flex-row gap-2 md:w-auto"
                         ><Icon icon="uil:export" />Export</Button
                     >
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
-                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        class="flex w-full flex-row gap-2 md:w-auto"
                         on:click={() => openExportForm("faculty-list")}
                         >Export Faculty List</DropdownMenu.Item
                     >
@@ -427,7 +419,7 @@
 
             <Dialog.Root bind:open={isAddModalOpen}>
                 <Button
-                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    class="flex w-full flex-row gap-2 md:w-auto"
                     on:click={openAddForm}
                     ><Icon icon="material-symbols:add" />Add Faculty</Button
                 >
@@ -553,57 +545,70 @@
         </div>
     </div>
 
-    <div class="flex flex-row items-center justify-end gap-4">
-        <Popover.Root>
-            <Popover.Trigger asChild let:builder>
-                <Button
-                    builders={[builder]}
-                    variant="outline"
-                    >Filter Columns</Button
-                >
-            </Popover.Trigger>
-            <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.middleName}>Middle Name</Toggle>
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
-                <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
-            </Popover.Content>
-        </Popover.Root>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        {#if isAdmin}
+        <Button
+            on:click={bulkDisable}
+            class="flex w-full flex-row gap-2 md:w-auto"
+            variant="destructive"
+            disabled={!hasSelected}>Disable Selected</Button
+        >
+        {/if}
 
-        <Select.Root
-            selected={{label: "All", value: "all"}}
-            onSelectedChange={(v) => {
-                v && filterByUser(v.value);
-            }}
+        <div
+            class="flex flex-row flex-wrap justify-center items-center gap-2 md:gap-4"
         >
-            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                <strong>Show:</strong> <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-                <Select.Item value="all">All</Select.Item>
-                <Select.Item value="enabled">Enabled</Select.Item>
-                <Select.Item value="disabled">Disabled</Select.Item>
-            </Select.Content>
-        </Select.Root>
-        <Select.Root
-            selected={{label: filterYear.toString(), value: filterYear}}
-            onSelectedChange={(v) => {
-                v && filterByYear(v.value);
-            }}
-        >
-            <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
-                <strong>Year:</strong> <Select.Value placeholder="Year" />
-            </Select.Trigger>
-            <Select.Content>
-                {#each years as year}
-                    <Select.Item
-                        value={year}
-                        >{year}</Select.Item
+            <Popover.Root>
+                <Popover.Trigger asChild let:builder>
+                    <Button
+                        builders={[builder]}
+                        variant="outline"
+                        >Filter Columns</Button
                     >
-                {/each}
-            </Select.Content>
-        </Select.Root>
+                </Popover.Trigger>
+                <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
+                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
+                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.middleName}>Middle Name</Toggle>
+                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
+                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
+                    <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
+                </Popover.Content>
+            </Popover.Root>
+
+            <Select.Root
+                selected={{label: "All", value: "all"}}
+                onSelectedChange={(v) => {
+                    v && filterByUser(v.value);
+                }}
+            >
+                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
+                    <strong>Show:</strong> <Select.Value />
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Item value="all">All</Select.Item>
+                    <Select.Item value="enabled">Enabled</Select.Item>
+                    <Select.Item value="disabled">Disabled</Select.Item>
+                </Select.Content>
+            </Select.Root>
+            <Select.Root
+                selected={{label: filterYear.toString(), value: filterYear}}
+                onSelectedChange={(v) => {
+                    v && filterByYear(v.value);
+                }}
+            >
+                <Select.Trigger class="px-4 w-fit flex flex-row gap-2">
+                    <strong>Year:</strong> <Select.Value placeholder="Year" />
+                </Select.Trigger>
+                <Select.Content>
+                    {#each years as year}
+                        <Select.Item
+                            value={year}
+                            >{year}</Select.Item
+                        >
+                    {/each}
+                </Select.Content>
+            </Select.Root>
+        </div>
     </div>
 
     <!-- Name Search Bar -->

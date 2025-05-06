@@ -272,32 +272,24 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Company List" />
 
-    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div class="flex w-full flex-row items-center gap-4 sm:w-auto">
-            <Link href="/dashboard" method="get">
-                <Button class="flex flex-row gap-2"
-                    ><Icon icon="lets-icons:back" />Back to Dashboard</Button
-                ></Link
-            >
-        </div>
-        <div
-            class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <Link class="w-full md:w-auto" href="/dashboard" method="get">
+            <Button class="flex w-full flex-row gap-2"
+                ><Icon icon="lets-icons:back" />Back to Dashboard</Button
+            ></Link
         >
-            <Button
-                on:click={bulkDisable}
-                class="flex w-full flex-row gap-2 sm:w-auto"
-                variant="destructive"
-                disabled={!hasSelected}>Disable Selected</Button
-            >
-            <Link href="/import/companies/upload"
+        <div
+            class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
+        >
+            <Link class="w-full md:w-auto" href="/import/companies/upload"
                 ><Button
-                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"><Icon icon="uil:import" />Import</Button
                 ></Link
             >
-            <Link href="/add-multiple/companies/upload"
+            <Link class="w-full md:w-auto" href="/add-multiple/companies/upload"
                 ><Button
-                    class="flex w-full flex-row gap-2 sm:w-auto"
+                    class="flex w-full flex-row gap-2 md:w-auto"
                     variant="outline"
                     ><Icon icon="uil:import" />Add Multiple</Button
                 ></Link
@@ -307,13 +299,13 @@
                     <Button
                         builders={[builder]}
                         variant="outline"
-                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        class="flex w-full flex-row gap-2 md:w-auto"
                         ><Icon icon="uil:export" />Export</Button
                     >
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
-                        class="flex w-full flex-row gap-2 sm:w-auto"
+                        class="flex w-full flex-row gap-2 md:w-auto"
                         on:click={() => openExportForm("company-list")}
                         >Export Company List</DropdownMenu.Item
                     >
@@ -401,13 +393,11 @@
             </Dialog.Root>
 
             <Dialog.Root bind:open={isAddModalOpen}>
-                <Dialog.Trigger>
-                    <Button
-                        class="flex w-full flex-row gap-2 sm:w-auto"
-                        on:click={openAddForm}
-                        ><Icon icon="material-symbols:add" />Add Company</Button
-                    >
-                </Dialog.Trigger>
+                <Button
+                    class="flex w-full flex-row gap-2 md:w-auto"
+                    on:click={openAddForm}
+                    ><Icon icon="material-symbols:add" />Add Company</Button
+                >
                 <Dialog.Content class="max-h-[80vh] h-auto overflow-auto">
                     <Dialog.Header>
                         <Dialog.Title>{formCompanyId ? 'Edit Company' : 'Add Company'}</Dialog.Title>
@@ -470,7 +460,17 @@
         </div>
     </div>
 
-    <div class="flex flex-row items-center justify-end gap-4">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <Button
+            on:click={bulkDisable}
+            class="flex w-full flex-row gap-2 md:w-auto"
+            variant="destructive"
+            disabled={!hasSelected}>Disable Selected</Button
+        >
+
+        <div
+            class="flex flex-row flex-wrap justify-center items-center gap-2 md:gap-4"
+        >
         <Select.Root
             selected={{label: "All", value: "all"}}
             onSelectedChange={(v) => {
@@ -504,6 +504,7 @@
                 {/each}
             </Select.Content>
         </Select.Root>
+        </div>
     </div>
 
     <!-- Name Search Bar -->
