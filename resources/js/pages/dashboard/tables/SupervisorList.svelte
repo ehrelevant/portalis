@@ -16,9 +16,11 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
+    import { Toggle } from "$lib/components/ui/toggle";
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+    import * as Popover from "$lib/components/ui/popover/index.js";
     import Icon from '@iconify/svelte';
 
     const { start, stop } = usePoll(2000);
@@ -137,6 +139,14 @@
 
         // Resume Polling
         start();
+    }
+
+    let showColumns = {
+        lastName: true,
+        firstName: true,
+        company: true,
+        email: true,
+        forms: true,
     }
 
     let sortColumn = 'last_name';
@@ -625,6 +635,23 @@
     </div>
 
     <div class="flex flex-row items-center justify-end gap-4">
+        <Popover.Root>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    >Filter Columns</Button
+                >
+            </Popover.Trigger>
+            <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.company}>Company</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.forms}>Form Submissions</Toggle>
+            </Popover.Content>
+        </Popover.Root>
+
         <Select.Root
             selected={{label: "All", value: "all"}}
             onSelectedChange={(v) => {
@@ -674,6 +701,7 @@
     <Table>
         <TableRow header>
             <TableColumnHeader />
+            {#if showColumns.lastName}
             <TableColumnHeader
                 isActive={sortColumn === 'last_name'}
                 isAscending={sortIsAscending}
@@ -681,6 +709,8 @@
             >
                 Last Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.firstName}
             <TableColumnHeader
                 isActive={sortColumn === 'first_name'}
                 isAscending={sortIsAscending}
@@ -688,6 +718,8 @@
             >
                 First Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.company}
             <TableColumnHeader
                 isActive={sortColumn === 'company_name'}
                 isAscending={sortIsAscending}
@@ -695,6 +727,8 @@
             >
                 Company
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.email}
             <TableColumnHeader
                 isActive={sortColumn === 'email'}
                 isAscending={sortIsAscending}
@@ -702,10 +736,13 @@
             >
                 Email
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.forms}
             {#each formIdNames as formIdName}
                 {@const { form_name } = formIdName}
                 <TableColumnHeader>{form_name}</TableColumnHeader>
             {/each}
+            {/if}
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
         {#each supervisors as supervisor (supervisor.supervisor_id)}
@@ -728,8 +765,13 @@
                         bind:checked={selected[supervisor_id]}
                     /></TableCell
                 >
+            {#if showColumns.lastName}
                 <TableCell>{last_name}</TableCell>
+            {/if}
+            {#if showColumns.firstName}
                 <TableCell>{first_name}</TableCell>
+            {/if}
+            {#if showColumns.company}
                 <TableCell>
                     <Select.Root
                         selected={!supervisor_company_id
@@ -756,7 +798,11 @@
                         </Select.Content>
                     </Select.Root>
                 </TableCell>
+            {/if}
+            {#if showColumns.email}
                 <TableCell>{email}</TableCell>
+            {/if}
+            {#if showColumns.forms}
                 {#each form_id_statuses as form_id_status}
                     {@const { form_id, status } = form_id_status}
                     <TableCell center>
@@ -777,8 +823,9 @@
                         {/if}
                     </TableCell>
                 {/each}
+            {/if}
                 <TableCell
-                    ><div class="flex flex-row gap-2">
+                    ><div class="flex flex-row justify-center gap-2">
                         <Button
                             class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(supervisor_id)}

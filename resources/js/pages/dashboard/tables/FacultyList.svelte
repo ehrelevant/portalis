@@ -14,9 +14,11 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
+    import { Toggle } from "$lib/components/ui/toggle";
     import * as Select from '$lib/components/ui/select';
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+    import * as Popover from "$lib/components/ui/popover/index.js";
     import Table from '$lib/components/table/Table.svelte';
     import Icon from '@iconify/svelte';
 
@@ -134,6 +136,12 @@
         start();
     }
 
+    let showColumns = {
+        lastName: true,
+        firstName: true,
+        email: true,
+        section: true,
+    }
 
     let sortColumn = 'last_name';
     let sortIsAscending = true;
@@ -545,6 +553,22 @@
     </div>
 
     <div class="flex flex-row items-center justify-end gap-4">
+        <Popover.Root>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    >Filter Columns</Button
+                >
+            </Popover.Trigger>
+            <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
+            </Popover.Content>
+        </Popover.Root>
+
         <Select.Root
             selected={{label: "All", value: "all"}}
             onSelectedChange={(v) => {
@@ -596,6 +620,7 @@
             {#if isAdmin}
             <TableColumnHeader />
             {/if}
+            {#if showColumns.lastName}
             <TableColumnHeader
                 isActive={sortColumn === 'last_name'}
                 isAscending={sortIsAscending}
@@ -603,6 +628,8 @@
             >
                 Last Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.firstName}
             <TableColumnHeader
                 isActive={sortColumn === 'first_name'}
                 isAscending={sortIsAscending}
@@ -610,6 +637,8 @@
             >
                 First Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.email}
             <TableColumnHeader
                 isActive={sortColumn === 'email'}
                 isAscending={sortIsAscending}
@@ -617,6 +646,8 @@
             >
                 Email
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.section}
             <TableColumnHeader
                 isActive={sortColumn === 'section'}
                 isAscending={sortIsAscending}
@@ -624,6 +655,7 @@
             >
                 Section
             </TableColumnHeader>
+            {/if}
             <TableColumnHeader>Actions</TableColumnHeader>
         </TableRow>
         {#each faculties as faculty (faculty.faculty_id)}
@@ -644,10 +676,18 @@
                     ><Checkbox bind:checked={selected[faculty_id]} /></TableCell
                 >
                 {/if}
+            {#if showColumns.lastName}
                 <TableCell>{last_name}</TableCell>
+            {/if}
+            {#if showColumns.firstName}
                 <TableCell>{first_name}</TableCell>
+            {/if}
+            {#if showColumns.email}
                 <TableCell>{email}</TableCell>
+            {/if}
+            {#if showColumns.section}
                 <TableCell>{section ?? ''}</TableCell>
+            {/if}
                 <TableCell
                     ><div
                         class="flex flex-row items-center justify-center gap-2"

@@ -23,9 +23,11 @@
     import { Input } from '$lib/components/ui/input/index';
     import { Label } from '$lib/components/ui/label/index';
     import { Checkbox } from '$lib/components/ui/checkbox/index';
+    import { Toggle } from "$lib/components/ui/toggle";
     import * as Dialog from '$lib/components/ui/dialog/index';
     import * as Select from '$lib/components/ui/select';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+    import * as Popover from "$lib/components/ui/popover/index.js";
     import Icon from '@iconify/svelte';
 
     const { start, stop } = usePoll(2000);
@@ -178,6 +180,20 @@
 
         // Resume Polling
         start();
+    }
+
+    let showColumns = {
+        studentNumber: true,
+        lastName: true,
+        firstName: true,
+        section: true,
+        supervisorName: true,
+        companyInterned: true,
+        email: true,
+        wordpressName: true,
+        wordpressEmail: true,
+        submissions: true,
+        forms: true,
     }
 
     let sortColumn = 'student_number';
@@ -855,6 +871,29 @@
     </div>
 
     <div class="flex flex-row items-center justify-end gap-4">
+        <Popover.Root>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    >Filter Columns</Button
+                >
+            </Popover.Trigger>
+            <Popover.Content class="w-fit max-h-80 flex flex-col gap-1 overflow-auto">
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.studentNumber}>Student Number</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.lastName}>Last Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.firstName}>First Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.section}>Section</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.supervisorName}>Supervisor Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.companyInterned}>Company Interned</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.email}>Email</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.wordpressName}>Wordpress Name</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.wordpressEmail}>Wordpress Email</Toggle>
+                <Toggle class="py-2 justify-start" bind:pressed={showColumns.submissions}>Document Submissions</Toggle>
+                <Toggle class="py-1 justify-start" bind:pressed={showColumns.forms}>Form Submissions</Toggle>
+            </Popover.Content>
+        </Popover.Root>
+
         <Select.Root
             selected={{label: "All", value: "all"}}
             onSelectedChange={(v) => {
@@ -904,6 +943,7 @@
     <Table>
         <TableRow header>
             <TableColumnHeader />
+            {#if showColumns.studentNumber}
             <TableColumnHeader
                 isActive={sortColumn === 'student_number'}
                 isAscending={sortIsAscending}
@@ -911,6 +951,8 @@
             >
                 SN
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.lastName}
             <TableColumnHeader
                 isActive={sortColumn === 'last_name'}
                 isAscending={sortIsAscending}
@@ -918,6 +960,8 @@
             >
                 Last Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.firstName}
             <TableColumnHeader
                 isActive={sortColumn === 'first_name'}
                 isAscending={sortIsAscending}
@@ -925,6 +969,8 @@
             >
                 First Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.section}
             <TableColumnHeader
                 isActive={sortColumn === 'section'}
                 isAscending={sortIsAscending}
@@ -932,6 +978,8 @@
             >
                 Section
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.supervisorName}
             <TableColumnHeader
                 isActive={sortColumn === 'supervisor_last_name'}
                 isAscending={sortIsAscending}
@@ -939,6 +987,8 @@
             >
                 Supervisor Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.companyInterned}
             <TableColumnHeader
                 isActive={sortColumn === 'company_name'}
                 isAscending={sortIsAscending}
@@ -946,6 +996,8 @@
             >
                 Company Interned
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.email}
             <TableColumnHeader
                 isActive={sortColumn === 'email'}
                 isAscending={sortIsAscending}
@@ -953,6 +1005,8 @@
             >
                 Email
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.wordpressName}
             <TableColumnHeader
                 isActive={sortColumn === 'wordpress_name'}
                 isAscending={sortIsAscending}
@@ -960,6 +1014,8 @@
             >
                 Wordpress Name
             </TableColumnHeader>
+            {/if}
+            {#if showColumns.wordpressEmail}
             <TableColumnHeader
                 isActive={sortColumn === 'wordpress_email'}
                 isAscending={sortIsAscending}
@@ -967,13 +1023,14 @@
             >
                 Wordpress Email
             </TableColumnHeader>
-            {#if isAdmin || phase === 'pre'}
+            {/if}
+            {#if showColumns.submissions && (isAdmin || phase === 'pre')}
                 {#each requirements as requirement}
                     {@const { requirement_name } = requirement}
                     <TableColumnHeader>{requirement_name}</TableColumnHeader>
                 {/each}
             {/if}
-            {#if isAdmin || phase !== 'pre'}
+            {#if showColumns.forms && (isAdmin || phase !== 'pre')}
                 {#each formIdNames as formIdName}
                     {@const { form_name } = formIdName}
                     <TableColumnHeader>{form_name}</TableColumnHeader>
@@ -1007,9 +1064,16 @@
                 <TableCell
                     ><Checkbox bind:checked={selected[student_id]} /></TableCell
                 >
+                {#if showColumns.studentNumber}
                 <TableCell>{student_number}</TableCell>
+            {/if}
+            {#if showColumns.lastName}
                 <TableCell>{last_name}</TableCell>
+            {/if}
+            {#if showColumns.firstName}
                 <TableCell>{first_name}</TableCell>
+            {/if}
+            {#if showColumns.section}
                 <TableCell>
                     <Select.Root
                         selected={has_dropped
@@ -1039,6 +1103,8 @@
                         </Select.Content>
                     </Select.Root>
                 </TableCell>
+            {/if}
+            {#if showColumns.supervisorName}
                 <TableCell>
                     <Select.Root
                         selected={!supervisor_id
@@ -1079,11 +1145,20 @@
                         </Select.Content>
                     </Select.Root>
                 </TableCell>
+            {/if}
+            {#if showColumns.companyInterned}
                 <TableCell>{company_name ?? ''}</TableCell>
+            {/if}
+            {#if showColumns.email}
                 <TableCell>{email}</TableCell>
+            {/if}
+            {#if showColumns.wordpressName}
                 <TableCell>{wordpress_name}</TableCell>
+            {/if}
+            {#if showColumns.wordpressEmail}
                 <TableCell>{wordpress_email}</TableCell>
-                {#if isAdmin || phase === 'pre'}
+            {/if}
+                {#if showColumns.submissions && (isAdmin || phase === 'pre')}
                     {#each submission_id_statuses as submission_id_status}
                         {@const { requirement_id, status } =
                             submission_id_status}
@@ -1096,7 +1171,7 @@
                         </TableCell>
                     {/each}
                 {/if}
-                {#if isAdmin || phase !== 'pre'}
+                {#if showColumns.forms && (isAdmin || phase !== 'pre')}
                     {#each form_id_statuses as form_id_status}
                         {@const { form_id, status } = form_id_status}
                         <TableCell center>
@@ -1119,7 +1194,7 @@
                     {/each}
                 {/if}
                 <TableCell
-                    ><div class="flex flex-row gap-2">
+                    ><div class="flex flex-row gap-2 justify-center">
                         <Button
                             class="w-20 {colorVariants.blue}"
                             on:click={() => openUpdateForm(student_id)}
