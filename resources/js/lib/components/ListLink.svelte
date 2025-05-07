@@ -20,7 +20,7 @@
 </script>
 
 <div
-    class="order-r my-2 flex flex-col justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 sm:flex-row
+    class="order-r my-2 flex flex-col gap-4 justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 lg:flex-row
         {isLate ? 'bg-red/30' : ''}"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
@@ -45,8 +45,8 @@
     >
         {#if remarks && ['Returned'].includes(status)}
             <Dialog.Root>
-                <Dialog.Trigger>
-                    <Button>View Remarks</Button>
+                <Dialog.Trigger class="w-full sm:w-auto">
+                    <Button class="w-full sm:w-auto">View Remarks</Button>
                 </Dialog.Trigger>
                 <Dialog.Content class="sm:max-w-[425px]">
                     <Dialog.Header>
@@ -59,12 +59,12 @@
             </Dialog.Root>
         {/if}
         {#if viewHref && status !== 'None'}
-            <Button href={viewHref} target="_blank" class={colorVariants.blue}
+            <Button href={viewHref} target="_blank" class="{colorVariants.blue} w-full sm:w-auto"
                 >View Submission</Button
             >
         {/if}
         {#if isLinkActive}
-        <Button href={submitHref} target="_blank" class="bg-dark-primary hover:bg-opacity-90 text-white"
+        <Button href={submitHref} target="_blank" class="bg-dark-primary hover:bg-opacity-90 text-white w-full sm:w-auto"
             >Submit</Button
         >
         {/if}
