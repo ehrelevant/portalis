@@ -17,13 +17,6 @@
                 <h1 class="text-4xl font-bold">
                     <em>Portalis:</em> CS195 Internship Portal
                 </h1>
-                <!-- Temporary spot for logos-->
-                <div
-                    class="flex flex-row justify-center gap-4 sm:justify-start"
-                >
-                    <Dashboard />
-                    <Dashboard />
-                </div>
             </div>
         </Header>
         <p class="text-lg leading-7 [&:not(:first-child)]:mt-6">
