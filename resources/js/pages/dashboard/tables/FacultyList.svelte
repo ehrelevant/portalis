@@ -316,7 +316,7 @@
             ></Link
         >
         <div
-            class="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row"
+            class="flex w-full flex-col items-start gap-2 md:w-auto md:flex-row"
         >
 
             <div class="flex flex-row md:flex-col gap-2 w-full">
