@@ -344,7 +344,7 @@
                                         id="export_include_enabled"
                                         name="include_enabled"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_enabled
                                         }
@@ -364,7 +364,7 @@
                                         id="export_include_disabled"
                                         name="include_disabled"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_disabled
                                         }

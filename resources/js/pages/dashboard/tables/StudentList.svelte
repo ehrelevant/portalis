@@ -486,8 +486,7 @@
                             >
                             <DropdownMenu.Item
                                 class="flex w-full flex-row gap-2 md:w-auto"
-                                on:click={() =>
-                                    openExportForm('final-reports')}
+                                on:click={() => openExportForm('final-reports')}
                                 >Export Final Reports</DropdownMenu.Item
                             >
                             <DropdownMenu.Item
@@ -555,7 +554,7 @@
                                         id="export_include_enabled"
                                         name="include_enabled"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_enabled
                                         }
@@ -575,7 +574,7 @@
                                         id="export_include_disabled"
                                         name="include_disabled"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_disabled
                                         }
@@ -596,7 +595,7 @@
                                         id="export_include_with_section"
                                         name="include_with_section"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_with_section
                                         }
@@ -617,7 +616,7 @@
                                         id="export_include_without_section"
                                         name="include_without_section"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={
                                             $exportForm.include_without_section
                                         }
@@ -638,7 +637,7 @@
                                         id="export_include_dropped"
                                         name="include_drp"
                                         type="checkbox"
-                                        value=1
+                                        value="1"
                                         bind:checked={$exportForm.include_drp}
                                     />
                                     {#if $exportForm.errors.include_drp}
@@ -1276,14 +1275,22 @@
                             }}
                         >
                             <Select.Trigger class="px-4">
-                                <Select.Value class="px-2" placeholder="Supervisor Name" />
+                                <Select.Value
+                                    class="px-2"
+                                    placeholder="Supervisor Name"
+                                />
                             </Select.Trigger>
-                            <Select.Content sameWidth={false} class="overflow-y-auto max-h-96 w-fit">
+                            <Select.Content
+                                sameWidth={false}
+                                class="max-h-96 w-fit overflow-y-auto"
+                            >
                                 <Select.Item value={null}>-</Select.Item>
                                 {#each companiesSupervisors as companySupervisors}
                                     {@const { company_name, supervisors } =
                                         companySupervisors}
-                                    <Select.Group class="border-t border-b border-collapse rounded-sm my-2">
+                                    <Select.Group
+                                        class="my-2 border-collapse rounded-sm border-b border-t"
+                                    >
                                         <Select.Label
                                             >{company_name ??
                                                 'No Company'}</Select.Label
@@ -1297,7 +1304,7 @@
                                             } = supervisor}
                                             <Select.Item
                                                 value={companySupervisorId}
-                                            class="pl-12 whitespace-nowrap"
+                                                class="whitespace-nowrap pl-12"
                                                 >{last_name}, {first_name}</Select.Item
                                             >
                                         {/each}
