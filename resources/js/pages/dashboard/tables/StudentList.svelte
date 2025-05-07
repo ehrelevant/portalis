@@ -393,6 +393,14 @@
                 exportFormRoute = 'company-evaluations';
                 exportFormText = 'Company Evaluations';
                 break;
+            case 'midsem-reports':
+                exportFormRoute = 'midsem-reports';
+                exportFormText = 'Midsem Reports';
+                break;
+            case 'final-reports':
+                exportFormRoute = 'final-reports';
+                exportFormText = 'Final Reports';
+                break;
             default:
                 return;
         }
@@ -461,6 +469,18 @@
                             >Export Student List</DropdownMenu.Item
                         >
                         {#if isAdmin || phase !== 'pre'}
+                            <DropdownMenu.Item
+                                class="flex w-full flex-row gap-2 md:w-auto"
+                                on:click={() =>
+                                    openExportForm('midsem-reports')}
+                                >Export Midsem Reports</DropdownMenu.Item
+                            >
+                            <DropdownMenu.Item
+                                class="flex w-full flex-row gap-2 md:w-auto"
+                                on:click={() =>
+                                    openExportForm('final-reports')}
+                                >Export Final Reports</DropdownMenu.Item
+                            >
                             <DropdownMenu.Item
                                 class="flex w-full flex-row gap-2 md:w-auto"
                                 on:click={() =>
