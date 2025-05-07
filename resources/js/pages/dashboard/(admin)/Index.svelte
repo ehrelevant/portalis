@@ -89,13 +89,16 @@
             <div
                 class="grid grid-cols-1 items-start gap-2 xl:grid-cols-[1fr,1fr,1fr]"
             >
-                <div class="grid grid-cols-1 items-center sm:grid-cols-2">
+                <div
+                    class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
+                >
                     <Label
                         class="col-span-2 mb-4 border-b-2 border-b-dark-primary text-xl font-bold"
                         >Phase</Label
                     >
 
-                    <Label class="text-md ml-4" for="phase">Website Phase</Label
+                    <Label class="text-md col-span-2 sm:col-span-1" for="phase"
+                        >Website Phase</Label
                     >
                     <Select.Root
                         selected={$settingsForm.phase
@@ -108,8 +111,9 @@
                             v && ($settingsForm.phase = v.value);
                         }}
                     >
-                        <Select.Trigger class="w-full">
+                        <Select.Trigger class="col-span-2 w-full sm:col-span-1">
                             <Select.Value
+                                class="px-2"
                                 placeholder="{currentPhase}-internship"
                             />
                         </Select.Trigger>
@@ -123,16 +127,18 @@
                     </Select.Root>
                 </div>
 
-                <div class="grid grid-cols-1 items-center sm:grid-cols-2">
+                <div
+                    class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
+                >
                     <Label
-                        class="col-span-2 mb-4 border-b-2 border-b-dark-primary text-xl font-bold"
+                        class="mb-4 border-b-2 border-b-dark-primary text-xl font-bold sm:col-span-2"
                     >
                         Requirement Deadlines
                     </Label>
                     {#each $settingsForm.requirements as requirement, i}
                         {@const { requirement_name } = requirement}
                         <Label
-                            class="text-md ml-4"
+                            class="text-md"
                             for="{requirement_name} deadline"
                         >
                             {requirement_name}
@@ -142,20 +148,22 @@
                             type="datetime-local"
                             step="1"
                             bind:value={$settingsForm.requirements[i].deadline}
-                            class="flex flex-col justify-between p-2"
+                            class="mb-2 flex flex-col justify-between p-2 sm:m-0"
                         />
                     {/each}
                 </div>
 
-                <div class="grid grid-cols-1 items-center sm:grid-cols-2">
+                <div
+                    class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
+                >
                     <Label
-                        class="col-span-2 mb-4 border-b-2 border-b-dark-primary text-xl font-bold"
+                        class="mb-4 border-b-2 border-b-dark-primary text-xl font-bold sm:col-span-2"
                     >
                         Form Deadlines
                     </Label>
                     {#each $settingsForm.forms as form, i}
                         {@const { form_name } = form}
-                        <Label class="text-md ml-4" for="{form_name} deadline">
+                        <Label class="text-md" for="{form_name} deadline">
                             {form_name}
                         </Label>
                         <Input
@@ -163,7 +171,7 @@
                             type="datetime-local"
                             step="1"
                             bind:value={$settingsForm.forms[i].deadline}
-                            class="flex flex-col justify-between p-2"
+                            class="mb-2 flex flex-col justify-between p-2 sm:m-0"
                         />
                     {/each}
                 </div>
