@@ -1,1 +1,1 @@
-<span class="text-floating-red-light dark:text-floating-red">*</span>
+<span class="text-floating-red">*</span>
