@@ -484,20 +484,22 @@
                             <DropdownMenu.Item
                                 class="flex w-full flex-row gap-2 md:w-auto"
                                 on:click={() =>
+                                    openExportForm('student-assessments')}
+                                >Export Student Assessments</DropdownMenu.Item
+                            >
+                            <DropdownMenu.Item
+                                class="flex w-full flex-row gap-2 md:w-auto"
+                                on:click={() =>
                                     openExportForm('company-evaluations')}
                                 >Export Company Evaluations</DropdownMenu.Item
                             >
+                        {/if}
+                        {#if isAdmin || phase === 'post'}
                             <DropdownMenu.Item
                                 class="flex w-full flex-row gap-2 md:w-auto"
                                 on:click={() =>
                                     openExportForm('self-evaluations')}
                                 >Export Student Self-Evaluations</DropdownMenu.Item
-                            >
-                            <DropdownMenu.Item
-                                class="flex w-full flex-row gap-2 md:w-auto"
-                                on:click={() =>
-                                    openExportForm('student-assessments')}
-                                >Export Student Assessments</DropdownMenu.Item
                             >
                         {/if}
                     </DropdownMenu.Content>
