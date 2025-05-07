@@ -425,14 +425,14 @@
 <div class="main-screen flex w-full flex-col gap-4 overflow-x-hidden p-4">
     <Header txt="Student List" />
 
-    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+    <div class="flex flex-col items-start justify-between gap-4 md:flex-row">
         <Link class="w-full md:w-auto" href="/dashboard" method="get">
             <Button class="flex w-full flex-row gap-2"
                 ><Icon icon="lets-icons:back" />Back to Dashboard</Button
             ></Link
         >
         <div
-            class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
+            class="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row"
         >
             <div class="flex flex-row w-full md:flex-col gap-2">
                 <Link class="w-full md:w-auto" href="/import/students/upload"
@@ -897,16 +897,27 @@
         </div>
     </div>
 
-    <div class="flex flex-col w-full items-center justify-between gap-4 md:flex-row">
+    <div class="flex flex-col w-full items-center justify-end gap-4 md:flex-row">
         <Button
             on:click={bulkDisable}
             class="flex w-full flex-row gap-2 md:w-auto"
             variant="destructive"
             disabled={!hasSelected}>Disable Selected</Button
         >
+    </div>
+
+    <!-- Name Search Bar -->
+    <div class="flex flex-col md:flex-row gap-2">
+        <Input
+            type="text"
+            placeholder="Search by Name"
+            class="w-auto grow"
+            bind:value={searchQuery}
+            on:keyup={search}
+        />
 
         <div
-            class="flex flex-row flex-wrap items-center justify-center gap-2 md:gap-4"
+            class="flex flex-row flex-wrap items-center justify-center gap-2"
         >
             <Popover.Root>
                 <Popover.Trigger asChild let:builder>
@@ -1009,16 +1020,6 @@
                 </Select.Content>
             </Select.Root>
         </div>
-    </div>
-
-    <!-- Name Search Bar -->
-    <div class="flex flex-row content-center justify-center">
-        <Input
-            type="text"
-            placeholder="Search by Name"
-            bind:value={searchQuery}
-            on:keyup={search}
-        />
     </div>
 
     <!-- List of Students -->
