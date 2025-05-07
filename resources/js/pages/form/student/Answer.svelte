@@ -77,7 +77,7 @@
                     <h2 slot="summary" class="text-2xl">{category_name}</h2>
 
                     <div
-                        class="grid grid-cols-1 items-center justify-center gap-4"
+                        class="grid grid-cols-1 items-center gap-4 overflow-x-auto p-2"
                     >
                         {#each Object.entries($form.categorized_ratings[category_id]) as [rating_id, _]}
                             <div class="flex flex-col gap-2">
@@ -115,7 +115,7 @@
                 <Accordion>
                     <h2 slot="summary" class="text-2xl">{open_question}</h2>
                     <div
-                        class="grid grid-cols-[1fr] items-center justify-center gap-x-4 gap-y-2"
+                        class="grid grid-cols-1 items-center gap-x-4 gap-y-2 overflow-x-auto p-2"
                     >
                         <Textarea bind:value={$form.opens[open_id]} />
                     </div>

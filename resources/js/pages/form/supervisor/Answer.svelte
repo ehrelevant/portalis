@@ -77,10 +77,10 @@
                     <h2 slot="summary" class="text-2xl">{category_name}</h2>
 
                     <div
-                        style="grid-template-columns: auto repeat({Object.keys(
+                        style="grid-template-columns: max-content repeat({Object.keys(
                             categorized_rating_questions[category_id],
-                        ).length},1fr);"
-                        class="grid items-center justify-center gap-2"
+                        ).length},minmax(6em, 1fr));"
+                            class="grid items-center gap-2 overflow-x-auto p-2"
                     >
                         <p />
                         {#each Object.entries(categorized_rating_questions[category_id]) as [_, rating_question]}
@@ -124,7 +124,7 @@
                 <Accordion>
                     <h2 slot="summary" class="text-2xl">{open_question}</h2>
                     <div
-                        class="grid grid-cols-[auto,1fr] items-center justify-center gap-x-4 gap-y-2"
+                        class="grid grid-cols-[max-content,minmax(10em,1fr)] items-center gap-x-4 gap-y-2 overflow-x-auto p-2"
                     >
                         {#each Object.entries(students) as [student_id, student]}
                             {@const { last_name, first_name } = student}
