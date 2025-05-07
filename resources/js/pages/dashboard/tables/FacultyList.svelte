@@ -319,242 +319,249 @@
         <div
             class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
         >
-            {#if isAdmin}
-                <Link class="w-full md:w-auto" href="/import/faculties/upload"
+
+            <div class="flex flex-row md:flex-col gap-2 w-full">
+                {#if isAdmin}
+                    <Link class="w-full md:w-auto" href="/import/faculties/upload"
+                        ><Button
+                            class="flex w-full flex-row gap-2 md:w-auto"
+                            variant="outline"
+                            ><Icon icon="uil:import" />Import</Button
+                        ></Link
+                    >
+                {/if}
+                
+                <Dialog.Root bind:open={isExportModalOpen}>
+                    <Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        variant="outline"
+                        on:click={() => openExportForm('faculty-list')}
+                        ><Icon icon="uil:export" />Export</Button
+                    >
+                    <Dialog.Content
+                        class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                    >
+                        <Dialog.Header>
+                            <Dialog.Title>Export {exportFormText}</Dialog.Title>
+                        </Dialog.Header>
+                        <form
+                            action="/export/faculties/{exportFormRoute}"
+                            class="flex flex-col gap-4"
+                            target="_blank"
+                            bind:this={exportFormElement}
+                            on:submit={redirectExportForm}
+                        >
+                            <div
+                                class="grid grid-cols-[auto,1fr] items-center gap-4"
+                            >
+                                <Label for="export_year">Year</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        id="export_year"
+                                        name="year"
+                                        type="number"
+                                        bind:value={$exportForm.year}
+                                    />
+                                    {#if $exportForm.errors.year}
+                                        <ErrorText>
+                                            {$exportForm.errors.year}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="export_include_enabled"
+                                    >Include Enabled Faculty Accounts</Label
+                                >
+                                <div class="flex flex-col items-center">
+                                    <Checkbox
+                                        id="export_include_enabled"
+                                        name="include_enabled"
+                                        value="1"
+                                        bind:checked={$exportForm.include_enabled}
+                                    />
+                                    {#if $exportForm.errors.include_enabled}
+                                        <ErrorText>
+                                            {$exportForm.errors.include_enabled}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="export_include_disabled"
+                                    >Include Disabled Faculty Accounts</Label
+                                >
+                                <div class="flex flex-col items-center">
+                                    <Checkbox
+                                        id="export_include_disabled"
+                                        name="include_disabled"
+                                        value="1"
+                                        bind:checked={$exportForm.include_disabled}
+                                    />
+                                    {#if $exportForm.errors.include_disabled}
+                                        <ErrorText>
+                                            {$exportForm.errors.include_disabled}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+                            </div>
+
+                            <Dialog.Footer class="flex flex-col-reverse gap-2">
+                                <Dialog.Close>
+                                    <Button class="w-full" variant="outline"
+                                        >Cancel</Button
+                                    >
+                                </Dialog.Close>
+                                <Button type="submit"
+                                    >Export {exportFormText}</Button
+                                >
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </div>
+
+            <div class="flex flex-row md:flex-col gap-2 w-full">
+                <Link class="w-full md:w-auto" href="/add-multiple/faculties/upload"
                     ><Button
                         class="flex w-full flex-row gap-2 md:w-auto"
                         variant="outline"
-                        ><Icon icon="uil:import" />Import</Button
+                        ><Icon icon="uil:import" />Add Multiple</Button
                     ></Link
                 >
-            {/if}
-            <Link class="w-full md:w-auto" href="/add-multiple/faculties/upload"
-                ><Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"
-                    ><Icon icon="uil:import" />Add Multiple</Button
-                ></Link
-            >
-            <Dialog.Root bind:open={isExportModalOpen}>
-                <Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"
-                    on:click={() => openExportForm('faculty-list')}
-                    ><Icon icon="uil:export" />Export</Button
-                >
-                <Dialog.Content
-                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
-                >
-                    <Dialog.Header>
-                        <Dialog.Title>Export {exportFormText}</Dialog.Title>
-                    </Dialog.Header>
-                    <form
-                        action="/export/faculties/{exportFormRoute}"
-                        class="flex flex-col gap-4"
-                        target="_blank"
-                        bind:this={exportFormElement}
-                        on:submit={redirectExportForm}
+
+                <Dialog.Root bind:open={isAddModalOpen}>
+                    <Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        on:click={openAddForm}
+                        ><Icon icon="material-symbols:add" />Add Faculty</Button
                     >
-                        <div
-                            class="grid grid-cols-[auto,1fr] items-center gap-4"
-                        >
-                            <Label for="export_year">Year</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    id="export_year"
-                                    name="year"
-                                    type="number"
-                                    bind:value={$exportForm.year}
-                                />
-                                {#if $exportForm.errors.year}
-                                    <ErrorText>
-                                        {$exportForm.errors.year}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="export_include_enabled"
-                                >Include Enabled Faculty Accounts</Label
-                            >
-                            <div class="flex flex-col items-center">
-                                <Checkbox
-                                    id="export_include_enabled"
-                                    name="include_enabled"
-                                    value="1"
-                                    bind:checked={$exportForm.include_enabled}
-                                />
-                                {#if $exportForm.errors.include_enabled}
-                                    <ErrorText>
-                                        {$exportForm.errors.include_enabled}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="export_include_disabled"
-                                >Include Disabled Faculty Accounts</Label
-                            >
-                            <div class="flex flex-col items-center">
-                                <Checkbox
-                                    id="export_include_disabled"
-                                    name="include_disabled"
-                                    value="1"
-                                    bind:checked={$exportForm.include_disabled}
-                                />
-                                {#if $exportForm.errors.include_disabled}
-                                    <ErrorText>
-                                        {$exportForm.errors.include_disabled}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-                        </div>
-
-                        <Dialog.Footer class="flex flex-col-reverse gap-2">
-                            <Dialog.Close>
-                                <Button class="w-full" variant="outline"
-                                    >Cancel</Button
-                                >
-                            </Dialog.Close>
-                            <Button type="submit"
-                                >Export {exportFormText}</Button
-                            >
-                        </Dialog.Footer>
-                    </form>
-                </Dialog.Content>
-            </Dialog.Root>
-
-            <Dialog.Root bind:open={isAddModalOpen}>
-                <Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    on:click={openAddForm}
-                    ><Icon icon="material-symbols:add" />Add Faculty</Button
-                >
-                <Dialog.Content
-                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
-                >
-                    <Dialog.Header>
-                        <Dialog.Title
-                            >{formUserRoleId
-                                ? 'Edit Faculty'
-                                : 'Add Faculty'}</Dialog.Title
-                        >
-                    </Dialog.Header>
-                    <form
-                        bind:this={userFormElement}
-                        class="flex flex-col gap-4"
-                        on:submit|preventDefault={formUserRoleId
-                            ? updateUser
-                            : addUser}
+                    <Dialog.Content
+                        class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
                     >
-                        <div
-                            class="grid grid-cols-[auto,1fr] items-center gap-4"
-                        >
-                            <Label for="year">
-                                <Required />Year
-                            </Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    name="year"
-                                    type="number"
-                                    bind:value={$userForm.year}
-                                    required
-                                />
-                                {#if $userForm.errors.year}
-                                    <ErrorText>
-                                        {$userForm.errors.year}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="first_name"
-                                ><Required />First Name</Label
-                            >
-                            <div class="flex flex-col">
-                                <Input
-                                    name="first_name"
-                                    type="text"
-                                    bind:value={$userForm.first_name}
-                                    required
-                                />
-                                {#if $userForm.errors.first_name}
-                                    <ErrorText>
-                                        {$userForm.errors.first_name}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="middle_name">Middle Name</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    name="middle_name"
-                                    type="text"
-                                    bind:value={$userForm.middle_name}
-                                />
-                                {#if $userForm.errors.middle_name}
-                                    <ErrorText>
-                                        {$userForm.errors.middle_name}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="last_name"><Required />Last Name</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    name="last_name"
-                                    type="text"
-                                    bind:value={$userForm.last_name}
-                                    required
-                                />
-                                {#if $userForm.errors.last_name}
-                                    <ErrorText>
-                                        {$userForm.errors.last_name}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="email"><Required />Email</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    name="email"
-                                    type="email"
-                                    bind:value={$userForm.email}
-                                    required
-                                />
-                                {#if $userForm.errors.email}
-                                    <ErrorText>
-                                        {$userForm.errors.email}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="section">Section</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    name="section"
-                                    type="text"
-                                    bind:value={$userForm.section}
-                                />
-                                {#if $userForm.errors.section}
-                                    <ErrorText>
-                                        {$userForm.errors.section}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-                        </div>
-                        <Dialog.Footer class="flex flex-col-reverse gap-2">
-                            <Dialog.Close>
-                                <Button class="w-full" variant="outline"
-                                    >Cancel</Button
-                                >
-                            </Dialog.Close>
-                            <Button type="submit"
+                        <Dialog.Header>
+                            <Dialog.Title
                                 >{formUserRoleId
-                                    ? 'Update Faculty'
-                                    : 'Add Faculty'}</Button
+                                    ? 'Edit Faculty'
+                                    : 'Add Faculty'}</Dialog.Title
                             >
-                        </Dialog.Footer>
-                    </form>
-                </Dialog.Content>
-            </Dialog.Root>
+                        </Dialog.Header>
+                        <form
+                            bind:this={userFormElement}
+                            class="flex flex-col gap-4"
+                            on:submit|preventDefault={formUserRoleId
+                                ? updateUser
+                                : addUser}
+                        >
+                            <div
+                                class="grid grid-cols-[auto,1fr] items-center gap-4"
+                            >
+                                <Label for="year">
+                                    <Required />Year
+                                </Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="year"
+                                        type="number"
+                                        bind:value={$userForm.year}
+                                        required
+                                    />
+                                    {#if $userForm.errors.year}
+                                        <ErrorText>
+                                            {$userForm.errors.year}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="first_name"
+                                    ><Required />First Name</Label
+                                >
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="first_name"
+                                        type="text"
+                                        bind:value={$userForm.first_name}
+                                        required
+                                    />
+                                    {#if $userForm.errors.first_name}
+                                        <ErrorText>
+                                            {$userForm.errors.first_name}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="middle_name">Middle Name</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="middle_name"
+                                        type="text"
+                                        bind:value={$userForm.middle_name}
+                                    />
+                                    {#if $userForm.errors.middle_name}
+                                        <ErrorText>
+                                            {$userForm.errors.middle_name}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="last_name"><Required />Last Name</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="last_name"
+                                        type="text"
+                                        bind:value={$userForm.last_name}
+                                        required
+                                    />
+                                    {#if $userForm.errors.last_name}
+                                        <ErrorText>
+                                            {$userForm.errors.last_name}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="email"><Required />Email</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="email"
+                                        type="email"
+                                        bind:value={$userForm.email}
+                                        required
+                                    />
+                                    {#if $userForm.errors.email}
+                                        <ErrorText>
+                                            {$userForm.errors.email}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="section">Section</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="section"
+                                        type="text"
+                                        bind:value={$userForm.section}
+                                    />
+                                    {#if $userForm.errors.section}
+                                        <ErrorText>
+                                            {$userForm.errors.section}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+                            </div>
+                            <Dialog.Footer class="flex flex-col-reverse gap-2">
+                                <Dialog.Close>
+                                    <Button class="w-full" variant="outline"
+                                        >Cancel</Button
+                                    >
+                                </Dialog.Close>
+                                <Button type="submit"
+                                    >{formUserRoleId
+                                        ? 'Update Faculty'
+                                        : 'Add Faculty'}</Button
+                                >
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </div>
         </div>
     </div>
 

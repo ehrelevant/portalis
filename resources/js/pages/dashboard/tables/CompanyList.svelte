@@ -280,179 +280,185 @@
         <div
             class="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row"
         >
-            <Link class="w-full md:w-auto" href="/import/companies/upload"
-                ><Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"><Icon icon="uil:import" />Import</Button
-                ></Link
-            >
-            <Link class="w-full md:w-auto" href="/add-multiple/companies/upload"
-                ><Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"
-                    ><Icon icon="uil:import" />Add Multiple</Button
-                ></Link
-            >
-            <Dialog.Root bind:open={isExportModalOpen}>
-                <Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    variant="outline"
-                    on:click={() => openExportForm('company-list')}
-                    ><Icon icon="uil:export" />Export</Button
+            
+            <div class="flex flex-row md:flex-col gap-2 w-full">
+                <Link class="w-full md:w-auto" href="/import/companies/upload"
+                    ><Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        variant="outline"><Icon icon="uil:import" />Import</Button
+                    ></Link
                 >
-                <Dialog.Content
-                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
-                >
-                    <Dialog.Header>
-                        <Dialog.Title>Export {exportFormText}</Dialog.Title>
-                    </Dialog.Header>
-                    <form
-                        action="/export/companies/{exportFormRoute}"
-                        class="flex flex-col gap-4"
-                        target="_blank"
-                        bind:this={exportFormElement}
-                        on:submit={redirectExportForm}
+                
+                <Dialog.Root bind:open={isExportModalOpen}>
+                    <Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        variant="outline"
+                        on:click={() => openExportForm('company-list')}
+                        ><Icon icon="uil:export" />Export</Button
                     >
-                        <div
-                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                    <Dialog.Content
+                        class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                    >
+                        <Dialog.Header>
+                            <Dialog.Title>Export {exportFormText}</Dialog.Title>
+                        </Dialog.Header>
+                        <form
+                            action="/export/companies/{exportFormRoute}"
+                            class="flex flex-col gap-4"
+                            target="_blank"
+                            bind:this={exportFormElement}
+                            on:submit={redirectExportForm}
                         >
-                            <Label for="export_year">Year</Label>
-                            <div class="flex flex-col">
-                                <Input
-                                    id="export_year"
-                                    name="year"
-                                    type="number"
-                                    bind:value={$exportForm.year}
-                                />
-                                {#if $exportForm.errors.year}
-                                    <ErrorText>
-                                        {$exportForm.errors.year}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-
-                            <Label for="export_include_enabled"
-                                >Include Enabled Companies</Label
+                            <div
+                                class="grid grid-cols-[auto,1fr] items-center gap-4"
                             >
-                            <div class="flex flex-col items-center">
-                                <Checkbox
-                                    id="export_include_enabled"
-                                    name="include_enabled"
-                                    value="1"
-                                    bind:checked={$exportForm.include_enabled}
-                                />
-                                {#if $exportForm.errors.include_enabled}
-                                    <ErrorText>
-                                        {$exportForm.errors.include_enabled}
-                                    </ErrorText>
-                                {/if}
-                            </div>
+                                <Label for="export_year">Year</Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        id="export_year"
+                                        name="year"
+                                        type="number"
+                                        bind:value={$exportForm.year}
+                                    />
+                                    {#if $exportForm.errors.year}
+                                        <ErrorText>
+                                            {$exportForm.errors.year}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
 
-                            <Label for="export_include_disabled"
-                                >Include Disabled Companies</Label
-                            >
-                            <div class="flex flex-col items-center">
-                                <Checkbox
-                                    id="export_include_disabled"
-                                    name="include_disabled"
-                                    value="1"
-                                    bind:checked={$exportForm.include_disabled}
-                                />
-                                {#if $exportForm.errors.include_disabled}
-                                    <ErrorText>
-                                        {$exportForm.errors.include_disabled}
-                                    </ErrorText>
-                                {/if}
-                            </div>
-                        </div>
-
-                        <Dialog.Footer class="flex flex-col-reverse gap-2">
-                            <Dialog.Close>
-                                <Button class="w-full" variant="outline"
-                                    >Cancel</Button
+                                <Label for="export_include_enabled"
+                                    >Include Enabled Companies</Label
                                 >
-                            </Dialog.Close>
-                            <Button type="submit"
-                                >Export {exportFormText}</Button
-                            >
-                        </Dialog.Footer>
-                    </form>
-                </Dialog.Content>
-            </Dialog.Root>
+                                <div class="flex flex-col items-center">
+                                    <Checkbox
+                                        id="export_include_enabled"
+                                        name="include_enabled"
+                                        value="1"
+                                        bind:checked={$exportForm.include_enabled}
+                                    />
+                                    {#if $exportForm.errors.include_enabled}
+                                        <ErrorText>
+                                            {$exportForm.errors.include_enabled}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
 
-            <Dialog.Root bind:open={isAddModalOpen}>
-                <Button
-                    class="flex w-full flex-row gap-2 md:w-auto"
-                    on:click={openAddForm}
-                    ><Icon icon="material-symbols:add" />Add Company</Button
+                                <Label for="export_include_disabled"
+                                    >Include Disabled Companies</Label
+                                >
+                                <div class="flex flex-col items-center">
+                                    <Checkbox
+                                        id="export_include_disabled"
+                                        name="include_disabled"
+                                        value="1"
+                                        bind:checked={$exportForm.include_disabled}
+                                    />
+                                    {#if $exportForm.errors.include_disabled}
+                                        <ErrorText>
+                                            {$exportForm.errors.include_disabled}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+                            </div>
+
+                            <Dialog.Footer class="flex flex-col-reverse gap-2">
+                                <Dialog.Close>
+                                    <Button class="w-full" variant="outline"
+                                        >Cancel</Button
+                                    >
+                                </Dialog.Close>
+                                <Button type="submit"
+                                    >Export {exportFormText}</Button
+                                >
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </div>
+
+            <div class="flex flex-row md:flex-col gap-2 w-full">
+                <Link class="w-full md:w-auto" href="/add-multiple/companies/upload"
+                    ><Button
+                        class="flex w-full flex-row gap-2"
+                        variant="outline"
+                        ><Icon icon="uil:import" />Add Multiple</Button
+                    ></Link
                 >
-                <Dialog.Content
-                    class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
-                >
-                    <Dialog.Header>
-                        <Dialog.Title
-                            >{formCompanyId
-                                ? 'Edit Company'
-                                : 'Add Company'}</Dialog.Title
-                        >
-                    </Dialog.Header>
-                    <form
-                        bind:this={companyFormElement}
-                        class="flex flex-col gap-4"
-                        on:submit|preventDefault={formCompanyId
-                            ? updateCompany
-                            : addCompany}
+                <Dialog.Root bind:open={isAddModalOpen}>
+                    <Button
+                        class="flex w-full flex-row gap-2 md:w-auto"
+                        on:click={openAddForm}
+                        ><Icon icon="material-symbols:add" />Add Company</Button
                     >
-                        <div
-                            class="grid grid-cols-[auto,1fr] items-center gap-4"
+                    <Dialog.Content
+                        class="h-full max-h-full max-w-full overflow-auto sm:h-auto sm:max-h-[80vh] sm:max-w-lg"
+                    >
+                        <Dialog.Header>
+                            <Dialog.Title
+                                >{formCompanyId
+                                    ? 'Edit Company'
+                                    : 'Add Company'}</Dialog.Title
+                            >
+                        </Dialog.Header>
+                        <form
+                            bind:this={companyFormElement}
+                            class="flex flex-col gap-4"
+                            on:submit|preventDefault={formCompanyId
+                                ? updateCompany
+                                : addCompany}
                         >
-                            <Label for="year">
-                                <Required />Year
-                            </Label>
-                            <div class="flex flex-col">
+                            <div
+                                class="grid grid-cols-[auto,1fr] items-center gap-4"
+                            >
+                                <Label for="year">
+                                    <Required />Year
+                                </Label>
+                                <div class="flex flex-col">
+                                    <Input
+                                        name="year"
+                                        type="number"
+                                        bind:value={$companyForm.year}
+                                        required
+                                    />
+                                    {#if $companyForm.errors.year}
+                                        <ErrorText>
+                                            {$companyForm.errors.year}
+                                        </ErrorText>
+                                    {/if}
+                                </div>
+
+                                <Label for="company_name"><Required />Company</Label
+                                >
                                 <Input
-                                    name="year"
-                                    type="number"
-                                    bind:value={$companyForm.year}
+                                    name="company_name"
+                                    type="text"
+                                    bind:value={$companyForm.company_name}
                                     required
                                 />
-                                {#if $companyForm.errors.year}
+                                {#if $companyForm.errors.company_name}
                                     <ErrorText>
-                                        {$companyForm.errors.year}
+                                        {$companyForm.errors.company_name}
                                     </ErrorText>
                                 {/if}
                             </div>
 
-                            <Label for="company_name"><Required />Company</Label
-                            >
-                            <Input
-                                name="company_name"
-                                type="text"
-                                bind:value={$companyForm.company_name}
-                                required
-                            />
-                            {#if $companyForm.errors.company_name}
-                                <ErrorText>
-                                    {$companyForm.errors.company_name}
-                                </ErrorText>
-                            {/if}
-                        </div>
-
-                        <Dialog.Footer class="flex flex-col-reverse gap-2">
-                            <Dialog.Close>
-                                <Button class="w-full" variant="outline"
-                                    >Cancel</Button
+                            <Dialog.Footer class="flex flex-col-reverse gap-2">
+                                <Dialog.Close>
+                                    <Button class="w-full" variant="outline"
+                                        >Cancel</Button
+                                    >
+                                </Dialog.Close>
+                                <Button type="submit"
+                                    >{formCompanyId
+                                        ? 'Update Company'
+                                        : 'Add Company'}</Button
                                 >
-                            </Dialog.Close>
-                            <Button type="submit"
-                                >{formCompanyId
-                                    ? 'Update Company'
-                                    : 'Add Company'}</Button
-                            >
-                        </Dialog.Footer>
-                    </form>
-                </Dialog.Content>
-            </Dialog.Root>
+                            </Dialog.Footer>
+                        </form>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </div>
         </div>
     </div>
 
