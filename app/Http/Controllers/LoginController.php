@@ -85,8 +85,7 @@ class LoginController extends Controller
 
         if (env('SEND_PIN_TO_EMAIL', false)) {
             Mail::to($email)->send(new LoginMail([
-                'title' => 'CS 195 Portal - Login Code',
-                'body' => 'Pin: ' . $generated_pin,
+                'pin' => $generated_pin,
             ]));
         }
 

@@ -31,7 +31,7 @@ class LoginMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'CS 195 Portal - Login Code',
+            subject: 'Portalis - Login PIN',
             from: new Address('login@mail.dev', 'Portalis (CS 195)'),
         );
     }
