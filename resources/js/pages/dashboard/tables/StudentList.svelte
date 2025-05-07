@@ -1276,14 +1276,14 @@
                             }}
                         >
                             <Select.Trigger class="px-4">
-                                <Select.Value placeholder="Supervisor Name" />
+                                <Select.Value class="px-2" placeholder="Supervisor Name" />
                             </Select.Trigger>
-                            <Select.Content>
+                            <Select.Content sameWidth={false} class="overflow-y-auto max-h-96 w-fit">
                                 <Select.Item value={null}>-</Select.Item>
                                 {#each companiesSupervisors as companySupervisors}
                                     {@const { company_name, supervisors } =
                                         companySupervisors}
-                                    <Select.Group>
+                                    <Select.Group class="border-t border-b border-collapse rounded-sm my-2">
                                         <Select.Label
                                             >{company_name ??
                                                 'No Company'}</Select.Label
@@ -1297,6 +1297,7 @@
                                             } = supervisor}
                                             <Select.Item
                                                 value={companySupervisorId}
+                                            class="pl-12 whitespace-nowrap"
                                                 >{last_name}, {first_name}</Select.Item
                                             >
                                         {/each}
