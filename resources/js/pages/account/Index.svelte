@@ -51,7 +51,7 @@
             <form on:submit|preventDefault={() => router.post('/logout')}>
                 <Button
                     type="submit"
-                    class="cursor-pointer bg-dark-primary px-8 text-xl text-white hover:bg-opacity-90"
+                    class="cursor-pointer bg-custom-primary px-8 text-xl text-white hover:bg-opacity-90"
                 >
                     Logout
                 </Button>

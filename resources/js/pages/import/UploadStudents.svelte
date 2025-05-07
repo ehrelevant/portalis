@@ -64,7 +64,7 @@
             <label class="text-xl">
                 <input
                     type="file"
-                    class="text-l block w-full cursor-pointer rounded-lg border border-black bg-gray-50 focus:outline-none dark:bg-gray-800 dark:text-dark-primary-text"
+                    class="text-l block w-full cursor-pointer rounded-lg border border-black bg-gray-50 focus:outline-none dark:bg-gray-800 dark:text-custom-primary-foreground"
                     on:input={(e) => ($form.file = e.currentTarget.files[0])}
                 />
                 <p class="flex justify-end italic">(2MB max)</p>
@@ -85,7 +85,7 @@
             />
 
             {#if errors.file}
-                <div class="dark:text-floating-red-dark pb-1 text-floating-red">
+                <div class="pb-1 text-floating-red-foreground">
                     {errors.file}
                 </div>
             {:else}
@@ -96,7 +96,7 @@
                     type="submit"
                     value="Import CSV"
                     disabled={$form.processing}
-                    class="my-2 w-fit cursor-pointer rounded-lg border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    class="my-2 w-fit cursor-pointer rounded-lg border-2 bg-custom-secondary p-4 text-3xl text-custom-primary-foreground hover:opacity-90"
                 />
 
                 <Link

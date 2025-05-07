@@ -20,7 +20,7 @@
 </script>
 
 <div
-    class="order-r my-2 flex flex-col gap-4 justify-between rounded-xl border-b-2 border-dark-primary bg-muted p-4 lg:flex-row
+    class="order-r my-2 flex flex-col gap-4 justify-between rounded-xl border-b-2 border-custom-primary bg-muted p-4 lg:flex-row
         {isLate ? 'bg-red/30' : ''}"
 >
     <div class="flex flex-col items-center justify-center sm:items-start">
@@ -64,7 +64,7 @@
             >
         {/if}
         {#if isLinkActive}
-        <Button href={submitHref} target="_blank" class="bg-dark-primary hover:bg-opacity-90 text-white w-full sm:w-auto"
+        <Button href={submitHref} target="_blank" class="bg-custom-primary hover:bg-opacity-90 text-white w-full sm:w-auto"
             >Submit</Button
         >
         {/if}

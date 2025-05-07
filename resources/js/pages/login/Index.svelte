@@ -64,7 +64,7 @@
 
                         {#if errors.email}
                             <Label
-                                class="text-md break-words text-floating-red"
+                                class="text-md break-words text-floating-red-foreground"
                             >
                                 {errors.email}
                             </Label>
@@ -90,7 +90,7 @@
                         </div>
 
                         {#if errors.pin}
-                            <p class="pb-4 text-floating-red">
+                            <p class="pb-4 text-floating-red-foreground">
                                 {errors.pin}
                             </p>
                         {/if}

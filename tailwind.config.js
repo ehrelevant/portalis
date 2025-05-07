@@ -28,59 +28,45 @@ const config = {
             colors: {
                 white: '#FFFFFF',
                 black: '#101010',
-                light: {
-                    background: '#F1F1F1',
-                    primary: '#C7EAD2',
-                    secondary: '#227A3D',
-                    'primary-text': '#1E1E1E',
-                    'secondary-text': '#F1F1F1',
-                },
 
-                dark: {
-                    background: '#1E1E1E',
-                    primary: '#227A3D',
-                    secondary: '#C7EAD2',
-                    'primary-text': '#F1F1F1',
-                    'secondary-text': '#1E1E1E',
-                },
-
-                gray: {
-                    50: '#E8E8E8',
-                    100: '#DEDEDE',
-                    200: '#C7C7C7',
-                    300: '#B0B0B0',
-                    400: '#999999',
-                    500: '#828282',
-                    600: '#6E6E6E',
-                    700: '#575757',
-                    800: '#404040',
-                    900: '#292929',
+                custom: {
+                    primary: {
+                        DEFAULT: 'hsl(var(--custom-primary) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--custom-primary-foreground) / <alpha-value>)',
+                    },
+                    secondary: {
+                        DEFAULT: 'hsl(var(--custom-secondary) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--custom-secondary-foreground) / <alpha-value>)',
+                    },
                 },
 
                 floating: {
                     blue: {
-                        light: '#b2c1d1',
-                        DEFAULT: '#2663a6',
+                        DEFAULT: 'hsl(var(--floating-blue) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--floating-blue-foreground) / <alpha-value>)',
                     },
-                    forest: {
-                        light: '#adc8b5',
-                        DEFAULT: '#227a3d',
+                    green: {
+                        DEFAULT: 'hsl(var(--floating-green) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--floating-green-foreground) / <alpha-value>)',
                     },
-                    purple: {
-                        light: '#cbbce3',
-                        DEFAULT: '#8054d0',
-                    },
-                    brown: {
-                        light: '#cbc2b0',
-                        DEFAULT: '#866b26',
+                    yellow: {
+                        DEFAULT: 'hsl(var(--floating-yellow) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--floating-yellow-foreground) / <alpha-value>)',
                     },
                     red: {
-                        light: '#dcafb2',
-                        DEFAULT: '#bf2a30',
+                        DEFAULT: 'hsl(var(--floating-red) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--floating-red-foreground) / <alpha-value>)',
                     },
                     gray: {
-                        light: '#DEDEDE',
-                        DEFAULT: '#6E6E6E',
+                        DEFAULT: 'hsl(var(--floating-gray) / <alpha-value>)',
+                        foreground:
+                            'hsl(var(--floating-gray-foreground) / <alpha-value>)',
                     },
                 },
 
@@ -100,6 +86,20 @@ const config = {
                 blue: {
                     DEFAULT: 'hsl(var(--blue) / <alpha-value>)',
                     foreground: 'hsl(var(--blue-foreground) / <alpha-value>)',
+                },
+                gray: {
+                    DEFAULT: 'hsl(var(--gray) / <alpha-value>)',
+                    foreground: 'hsl(var(--blue-foreground) / <alpha-value>)',
+                    50: '#E8E8E8',
+                    100: '#DEDEDE',
+                    200: '#C7C7C7',
+                    300: '#B0B0B0',
+                    400: '#999999',
+                    500: '#828282',
+                    600: '#6E6E6E',
+                    700: '#575757',
+                    800: '#404040',
+                    900: '#292929',
                 },
 
                 // Shadcn-svelte defaults

@@ -10,8 +10,8 @@
 
     $: isActive =
         '/' + $page.url.split('/')[1] === href
-            ? 'bg-dark-secondary text-dark-secondary-text'
-            : 'hover:text-dark-primary-text text-dark-secondary';
+            ? 'bg-custom-secondary text-black'
+            : 'hover:text-white text-custom-secondary';
 </script>
 
 <Tooltip.Root>

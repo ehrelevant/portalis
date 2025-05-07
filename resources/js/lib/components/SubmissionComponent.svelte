@@ -22,7 +22,7 @@
             {#if student_id && requirement_id && sub_status !== 'pending'}
                 <a
                     href="/file/student/{student_id}/{requirement_id}"
-                    class="flex w-20 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                    class="flex w-20 flex-row items-center justify-center rounded-full bg-custom-primary p-2 hover:opacity-90"
                     >View</a
                 >
             {/if}
@@ -34,7 +34,7 @@
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/reject"
                         method="post"
                         preserveScroll
-                        class="flex w-20 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        class="flex w-20 flex-row items-center justify-center rounded-full bg-floating-red p-2 hover:opacity-90"
                     >
                         Reject
                     </Link>
@@ -43,7 +43,7 @@
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/validate"
                         method="post"
                         preserveScroll
-                        class="flex w-28 flex-row items-center justify-center rounded-full bg-light-primary p-2 hover:opacity-90 dark:bg-dark-primary"
+                        class="flex w-28 flex-row items-center justify-center rounded-full bg-custom-primary p-2 hover:opacity-90"
                     >
                         Validate
                     </Link>
@@ -53,7 +53,7 @@
                         href="/dashboard/faculty/students/{student_id}/{requirement_id}/invalidate"
                         method="post"
                         preserveScroll
-                        class="flex w-28 flex-row items-center justify-center rounded-full bg-floating-red-light p-2 hover:opacity-90 dark:bg-floating-red"
+                        class="flex w-28 flex-row items-center justify-center rounded-full p-2 hover:opacity-90 bg-floating-red"
                     >
                         Invalidate
                     </Link>

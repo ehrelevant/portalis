@@ -11,6 +11,7 @@
     import { Label } from '$lib/components/ui/label/index';
     import { Button } from '$lib/components/ui/button/index';
     import { colorVariants } from '$lib/customVariants';
+    import { Input } from '$lib/components/ui/input/index';
     import { Textarea } from '$lib/components/ui/textarea';
 
     export let phase;
@@ -62,8 +63,8 @@
                                 self_assessment_status: status,
                             } = student}
                             <p>{last_name}, {first_name}</p>
-                            <input
-                                class="bg-white p-2 text-center text-xl text-light-primary-text dark:bg-dark-background dark:text-dark-primary-text"
+                            <Input
+                                class="p-2 text-center text-xl"
                                 value={total_hours}
                                 disabled
                             />

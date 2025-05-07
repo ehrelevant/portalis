@@ -33,7 +33,7 @@
     <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-4">
         <Link href="/dashboard/students">
             <Button
-                class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
+                class="flex h-full w-full grow rounded-xl border-b-custom-primary bg-muted p-3 text-2xl"
                 variant="outline"
             >
                 <div class="flex flex-col items-center justify-center">
@@ -45,7 +45,7 @@
 
         <Link href="/dashboard/supervisors">
             <Button
-                class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
+                class="flex h-full w-full grow rounded-xl border-b-custom-primary bg-muted p-3 text-2xl"
                 variant="outline"
             >
                 <div class="flex flex-col items-center justify-center">
@@ -57,7 +57,7 @@
 
         <Link href="/dashboard/faculties">
             <Button
-                class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
+                class="flex h-full w-full grow rounded-xl border-b-custom-primary bg-muted p-3 text-2xl"
                 variant="outline"
             >
                 <div class="flex flex-col items-center justify-center">
@@ -69,7 +69,7 @@
 
         <Link href="/dashboard/companies">
             <Button
-                class="flex h-full w-full grow rounded-xl border-b-dark-primary bg-muted p-3 text-2xl"
+                class="flex h-full w-full grow rounded-xl border-b-custom-primary bg-muted p-3 text-2xl"
                 variant="outline"
             >
                 <div class="flex flex-col items-center justify-center">
@@ -92,7 +92,7 @@
                     class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
                 >
                     <Label
-                        class="col-span-2 mb-4 border-b-2 border-b-dark-primary text-xl font-bold"
+                        class="col-span-2 mb-4 border-b-2 border-b-custom-primary text-xl font-bold"
                         >Phase</Label
                     >
 
@@ -130,7 +130,7 @@
                     class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
                 >
                     <Label
-                        class="mb-4 border-b-2 border-b-dark-primary text-xl font-bold sm:col-span-2"
+                        class="mb-4 border-b-2 border-b-custom-primary text-xl font-bold sm:col-span-2"
                     >
                         Requirement Deadlines
                     </Label>
@@ -156,7 +156,7 @@
                     class="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-y-0 xl:grid-cols-[max-content,1fr]"
                 >
                     <Label
-                        class="mb-4 border-b-2 border-b-dark-primary text-xl font-bold sm:col-span-2"
+                        class="mb-4 border-b-2 border-b-custom-primary text-xl font-bold sm:col-span-2"
                     >
                         Form Deadlines
                     </Label>
@@ -177,7 +177,7 @@
             </div>
             <Button
                 type="submit"
-                class="w-full cursor-pointer bg-dark-primary p-2 text-xl text-white hover:bg-opacity-90"
+                class="w-full cursor-pointer bg-custom-primary p-2 text-xl text-white hover:bg-opacity-90"
             >
                 Save
             </Button>

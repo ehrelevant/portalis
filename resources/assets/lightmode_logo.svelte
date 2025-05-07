@@ -1,5 +1,5 @@
 <svg
-    class="h-14 active:fill-dark-primary"
+    class="h-14 active:fill-custom-primary"
     xmlns="http://www.w3.org/2000/svg"
     stroke="currentColor"
     fill="none"

@@ -8,8 +8,8 @@
     class="
     aspect-square w-full
     cursor-pointer content-center
-    justify-items-center text-dark-secondary
-    transition-colors hover:text-dark-primary-text"
+    justify-items-center text-custom-secondary
+    transition-colors hover:text-white"
 >
     <Icon
         icon="uil:sun"
