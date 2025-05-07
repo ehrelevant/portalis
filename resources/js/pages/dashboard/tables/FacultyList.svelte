@@ -299,6 +299,12 @@
             return;
         }
 
+        // todo 1: use useForm().get() instead of form action for exportForm
+        // need to find a way to call exportForm.get() on a new tab instance, instead of the current tab
+        // otherwise, form action has to be used instead, and <Input type="checkbox" /> instead of <Checkbox />
+        // todo 2: find a way to call onSuccess for actions in a different tab?
+        /*
+
         $exportForm.get(`/export/faculties/${exportFormRoute}`, {
             preserveScroll: true,
             onSuccess: () => {
@@ -306,6 +312,10 @@
                 isExportModalOpen = false;
             },
         });
+        */
+
+        isExportDropdownOpen = false;
+        isExportModalOpen = false;
     }
 </script>
 
@@ -376,10 +386,11 @@
                                     >Include Enabled Faculty Accounts</Label
                                 >
                                 <div class="flex flex-col items-center">
-                                    <Checkbox
+                                    <Input
                                         id="export_include_enabled"
                                         name="include_enabled"
-                                        value="1"
+                                        type="checkbox"
+                                        value=1
                                         bind:checked={
                                             $exportForm.include_enabled
                                         }
@@ -395,10 +406,11 @@
                                     >Include Disabled Faculty Accounts</Label
                                 >
                                 <div class="flex flex-col items-center">
-                                    <Checkbox
+                                    <Input
                                         id="export_include_disabled"
                                         name="include_disabled"
-                                        value="1"
+                                        type="checkbox"
+                                        value=1
                                         bind:checked={
                                             $exportForm.include_disabled
                                         }
