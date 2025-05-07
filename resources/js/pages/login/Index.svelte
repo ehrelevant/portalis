@@ -53,7 +53,7 @@
 
         <form on:submit|preventDefault={handleSubmit}>
             <Card.Content>
-                <div class="grid w-full max-w-96 items-center gap-4">
+                <div class="w-fullitems-center grid gap-4">
                     <div class="flex flex-col space-y-1.5">
                         <Label for="email">Email:</Label>
                         <Input
