@@ -974,16 +974,20 @@
                         bind:pressed={showColumns.wordpressEmail}
                         >Wordpress Email</Toggle
                     >
+                    {#if isAdmin || phase === 'pre'}
                     <Toggle
                         class="justify-start py-2"
                         bind:pressed={showColumns.submissions}
                         >Document Submissions</Toggle
                     >
+                    {/if}
+                    {#if isAdmin || phase !== 'pre'}
                     <Toggle
                         class="justify-start py-2"
                         bind:pressed={showColumns.forms}
                         >Form Submissions</Toggle
                     >
+                    {/if}
                 </Popover.Content>
             </Popover.Root>
 
