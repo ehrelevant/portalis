@@ -420,10 +420,29 @@ class ExportsController extends Controller
 
     // ---
 
-    public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName, array $tableNames, bool $hasStudentFilters, bool $hasSupervisorFilters, bool $hasFacultyFilters, bool $hasCompanyFilters): StreamedResponse
+    public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName, string $formAnswerer, array $tableNames, bool $hasStudentFilters, bool $hasSupervisorFilters, bool $hasFacultyFilters, bool $hasCompanyFilters): StreamedResponse
     {
+        // $formAnswerer determines which user table to join with form_statuses, based on what user IDs are expected to be found
+        switch ($formAnswerer) {
+            case 'student':
+                $userTable = 'users_students';
+                break;
+            case 'supervisor':
+                $userTable = 'users_supervisors';
+                break;
+            case 'faculty':
+                $userTable = 'users_faculties';
+                break;
+            default:
+                $userTable = 'users_students';
+        }
+
+        // ---
+
         $dbTable1Raw = DB::table('users AS users_students')
             ->where('users_students.role', 'student')
+            ->where('users_supervisors.role', 'supervisor')
+            ->where('users_faculties.role', 'faculty')
             ->where('forms.short_name', $shortName)
 
             ->join('students', 'users_students.role_id', '=', 'students.id')
@@ -433,7 +452,7 @@ class ExportsController extends Controller
             ->leftJoin('supervisors', 'students.supervisor_id', '=', 'supervisors.id')
             ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
 
-            ->leftJoin('form_statuses', 'users_students.id', '=', 'form_statuses.user_id')
+            ->leftJoin('form_statuses', $userTable . '.id', '=', 'form_statuses.user_id')
             ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id')
             ->leftJoin('form_answers', 'form_statuses.id', '=', 'form_answers.form_status_id')
 
@@ -475,7 +494,6 @@ class ExportsController extends Controller
         $dbTable1Raw = self::applyGenericExportFilters($filters, $dbTable1Raw, $tableNames);
         $dbTable1Raw = self::applySpecificExportFilters($filters, $dbTable1Raw, true, $hasStudentFilters, $hasSupervisorFilters, $hasFacultyFilters, $hasCompanyFilters);
         $dbTable1 = $dbTable1Raw->get();
-
 
         // ---
 
@@ -631,46 +649,56 @@ class ExportsController extends Controller
 
     public function exportMidsemReports(Request $request): StreamedResponse
     {
+        $formAnswerer = 'supervisor';
+
         $tableNames = [
             'users_students',
         ];
 
-        return self::exportFormsAsCsv($request, 'midsem', 'midsem_reports', $tableNames, true, false, false, false);
+        return self::exportFormsAsCsv($request, 'midsem', 'midsem_reports', $formAnswerer, $tableNames, true, false, false, false);
     }
 
     public function exportFinalReports(Request $request): StreamedResponse
     {
+        $formAnswerer = 'supervisor';
+
         $tableNames = [
             'users_students',
         ];
 
-        return self::exportFormsAsCsv($request, 'final', 'final_reports', $tableNames,  true, false, false, false);
+        return self::exportFormsAsCsv($request, 'final', 'final_reports', $formAnswerer, $tableNames, true, false, false, false);
     }
 
     public function exportCompanyEvaluations(Request $request): StreamedResponse
     {
+        $formAnswerer = 'student';
+
         $tableNames = [
             'users_students',
         ];
 
-        return self::exportFormsAsCsv($request, 'company-evaluation', 'company_evaluations', $tableNames, true, false, false, false);
+        return self::exportFormsAsCsv($request, 'company-evaluation', 'company_evaluations', $formAnswerer, $tableNames, true, false, false, false);
     }
 
     public function exportStudentSelfEvaluations(Request $request): StreamedResponse
     {
+        $formAnswerer = 'student';
+
         $tableNames = [
             'users_students',
         ];
 
-        return self::exportFormsAsCsv($request, 'self-evaluation', 'self_evaluations', $tableNames, true, false, false, false);
+        return self::exportFormsAsCsv($request, 'self-evaluation', 'self_evaluations', $formAnswerer, $tableNames, true, false, false, false);
     }
 
     public function exportStudentAssessments(Request $request): StreamedResponse
     {
+        $formAnswerer = 'supervisor';
+
         $tableNames = [
             'users_students',
         ];
 
-        return self::exportFormsAsCsv($request, 'intern-evaluation', 'student_assessments', $tableNames, true, false, false, false);
+        return self::exportFormsAsCsv($request, 'intern-evaluation', 'student_assessments', $formAnswerer, $tableNames, true, false, false, false);
     }
 }
