@@ -137,7 +137,7 @@
     }
 
     onMount(() => {
-        const facultyListColumns = localStorage.getItem('facultyListColumns')
+        const facultyListColumns = localStorage.getItem('facultyListColumns');
         if (facultyListColumns) {
             showColumns = JSON.parse(facultyListColumns);
         } else {
@@ -148,7 +148,10 @@
                 email: true,
                 section: true,
             };
-            localStorage.setItem('facultyListColumns', JSON.stringify(showColumns));
+            localStorage.setItem(
+                'facultyListColumns',
+                JSON.stringify(showColumns),
+            );
         }
     });
 
@@ -318,10 +321,11 @@
         <div
             class="flex w-full flex-col items-start gap-2 md:w-auto md:flex-row"
         >
-
-            <div class="flex flex-row md:flex-col gap-2 w-full">
+            <div class="flex w-full flex-row gap-2 md:flex-col">
                 {#if isAdmin}
-                    <Link class="w-full md:w-auto" href="/import/faculties/upload"
+                    <Link
+                        class="w-full md:w-auto"
+                        href="/import/faculties/upload"
                         ><Button
                             class="flex w-full flex-row gap-2 md:w-auto"
                             variant="outline"
@@ -329,7 +333,7 @@
                         ></Link
                     >
                 {/if}
-                
+
                 <Dialog.Root bind:open={isExportModalOpen}>
                     <Button
                         class="flex w-full flex-row gap-2 md:w-auto"
@@ -376,7 +380,9 @@
                                         id="export_include_enabled"
                                         name="include_enabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_enabled}
+                                        bind:checked={
+                                            $exportForm.include_enabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_enabled}
                                         <ErrorText>
@@ -393,11 +399,14 @@
                                         id="export_include_disabled"
                                         name="include_disabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_disabled}
+                                        bind:checked={
+                                            $exportForm.include_disabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_disabled}
                                         <ErrorText>
-                                            {$exportForm.errors.include_disabled}
+                                            {$exportForm.errors
+                                                .include_disabled}
                                         </ErrorText>
                                     {/if}
                                 </div>
@@ -418,8 +427,10 @@
                 </Dialog.Root>
             </div>
 
-            <div class="flex flex-row md:flex-col gap-2 w-full">
-                <Link class="w-full md:w-auto" href="/add-multiple/faculties/upload"
+            <div class="flex w-full flex-row gap-2 md:flex-col">
+                <Link
+                    class="w-full md:w-auto"
+                    href="/add-multiple/faculties/upload"
                     ><Button
                         class="flex w-full flex-row gap-2 md:w-auto"
                         variant="outline"
@@ -501,7 +512,9 @@
                                     {/if}
                                 </div>
 
-                                <Label for="last_name"><Required />Last Name</Label>
+                                <Label for="last_name"
+                                    ><Required />Last Name</Label
+                                >
                                 <div class="flex flex-col">
                                     <Input
                                         name="last_name"
@@ -565,18 +578,20 @@
     </div>
 
     {#if isAdmin}
-    <div class="flex flex-col w-full items-center justify-end gap-4 md:flex-row">
+        <div
+            class="flex w-full flex-col items-center justify-end gap-4 md:flex-row"
+        >
             <Button
                 on:click={bulkDisable}
                 class="flex w-full flex-row gap-2 md:w-auto"
                 variant="destructive"
                 disabled={!hasSelected}>Disable Selected</Button
             >
-    </div>
+        </div>
     {/if}
 
     <!-- Name Search Bar -->
-    <div class="flex flex-col md:flex-row gap-2">
+    <div class="flex flex-col gap-2 md:flex-row">
         <Input
             type="text"
             placeholder="Search by Name"
@@ -585,9 +600,7 @@
             on:keyup={search}
         />
 
-        <div
-            class="flex flex-row flex-wrap items-center justify-center gap-2"
-        >
+        <div class="flex flex-row flex-wrap items-center justify-center gap-2">
             <Popover.Root>
                 <Popover.Trigger asChild let:builder>
                     <Button builders={[builder]} variant="outline"

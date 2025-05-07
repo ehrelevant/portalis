@@ -142,7 +142,9 @@
     }
 
     onMount(() => {
-        const supervisorListColumns = localStorage.getItem('supervisorListColumns')
+        const supervisorListColumns = localStorage.getItem(
+            'supervisorListColumns',
+        );
         if (supervisorListColumns) {
             showColumns = JSON.parse(supervisorListColumns);
         } else {
@@ -154,14 +156,20 @@
                 email: true,
                 forms: true,
             };
-            localStorage.setItem('supervisorListColumns', JSON.stringify(showColumns));
+            localStorage.setItem(
+                'supervisorListColumns',
+                JSON.stringify(showColumns),
+            );
         }
     });
 
     let showColumns = {};
 
     $: if (Object.keys(showColumns).length !== 0) {
-        localStorage.setItem('supervisorListColumns', JSON.stringify(showColumns));
+        localStorage.setItem(
+            'supervisorListColumns',
+            JSON.stringify(showColumns),
+        );
     }
 
     let sortColumn = 'last_name';
@@ -345,14 +353,15 @@
         <div
             class="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row"
         >
-            <div class="flex flex-row md:flex-col gap-2 w-full">
+            <div class="flex w-full flex-row gap-2 md:flex-col">
                 <Link class="w-full md:w-auto" href="/import/supervisors/upload"
                     ><Button
                         class="flex w-full flex-row gap-2 md:w-auto"
-                        variant="outline"><Icon icon="uil:import" />Import</Button
+                        variant="outline"
+                        ><Icon icon="uil:import" />Import</Button
                     ></Link
                 >
-                
+
                 <Dialog.Root bind:open={isExportModalOpen}>
                     <Button
                         class="flex w-full flex-row gap-2 md:w-auto"
@@ -399,7 +408,9 @@
                                         id="export_include_enabled"
                                         name="include_enabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_enabled}
+                                        bind:checked={
+                                            $exportForm.include_enabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_enabled}
                                         <ErrorText>
@@ -416,11 +427,14 @@
                                         id="export_include_disabled"
                                         name="include_disabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_disabled}
+                                        bind:checked={
+                                            $exportForm.include_disabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_disabled}
                                         <ErrorText>
-                                            {$exportForm.errors.include_disabled}
+                                            {$exportForm.errors
+                                                .include_disabled}
                                         </ErrorText>
                                     {/if}
                                 </div>
@@ -480,8 +494,8 @@
                     </Dialog.Content>
                 </Dialog.Root>
             </div>
-        
-            <div class="flex flex-row md:flex-col gap-2 w-full">
+
+            <div class="flex w-full flex-row gap-2 md:flex-col">
                 <Link
                     class="w-full md:w-auto"
                     href="/add-multiple/supervisors/upload"
@@ -566,7 +580,9 @@
                                     {/if}
                                 </div>
 
-                                <Label for="last_name"><Required />Last Name</Label>
+                                <Label for="last_name"
+                                    ><Required />Last Name</Label
+                                >
                                 <div class="flex flex-col">
                                     <Input
                                         name="last_name"
@@ -602,22 +618,27 @@
                                         selected={!$userForm.company_id
                                             ? { label: '-', value: '' }
                                             : {
-                                                label: companies.find(
-                                                    (company) =>
-                                                        company.company_id ===
-                                                        $userForm.company_id,
-                                                ).company_name,
-                                                value: $userForm.company_id,
-                                            }}
+                                                  label: companies.find(
+                                                      (company) =>
+                                                          company.company_id ===
+                                                          $userForm.company_id,
+                                                  ).company_name,
+                                                  value: $userForm.company_id,
+                                              }}
                                         onSelectedChange={(v) => {
-                                            v && ($userForm.company_id = v.value);
+                                            v &&
+                                                ($userForm.company_id =
+                                                    v.value);
                                         }}
                                     >
                                         <Select.Trigger class="px-4">
-                                            <Select.Value placeholder="Company" />
+                                            <Select.Value
+                                                placeholder="Company"
+                                            />
                                         </Select.Trigger>
                                         <Select.Content>
-                                            <Select.Item value="">-</Select.Item>
+                                            <Select.Item value="">-</Select.Item
+                                            >
                                             {#each companies as company}
                                                 {@const {
                                                     company_id,
@@ -650,7 +671,9 @@
         </div>
     </div>
 
-    <div class="flex flex-col w-full items-center justify-end gap-4 md:flex-row">
+    <div
+        class="flex w-full flex-col items-center justify-end gap-4 md:flex-row"
+    >
         <Button
             on:click={bulkDisable}
             class="flex w-full flex-row gap-2 md:w-auto"
@@ -660,7 +683,7 @@
     </div>
 
     <!-- Name Search Bar -->
-    <div class="flex flex-col md:flex-row gap-2">
+    <div class="flex flex-col gap-2 md:flex-row">
         <Input
             type="text"
             placeholder="Search by Name"
@@ -669,9 +692,7 @@
             on:keyup={search}
         />
 
-        <div
-            class="flex flex-row flex-wrap items-center justify-center gap-2"
-        >
+        <div class="flex flex-row flex-wrap items-center justify-center gap-2">
             <Popover.Root>
                 <Popover.Trigger asChild let:builder>
                     <Button builders={[builder]} variant="outline"

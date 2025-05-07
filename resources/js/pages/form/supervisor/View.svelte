@@ -56,7 +56,7 @@
                         style="grid-template-columns: max-content repeat({Object.keys(
                             categorized_rating_questions[category_id],
                         ).length},minmax(6em, 1fr));"
-                            class="grid items-center gap-2 overflow-x-auto p-2"
+                        class="grid items-center gap-2 overflow-x-auto p-2"
                     >
                         <p />
                         {#each Object.entries(categorized_rating_questions[category_id]) as [_, rating_question]}

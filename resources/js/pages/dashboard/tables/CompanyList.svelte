@@ -280,15 +280,15 @@
         <div
             class="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row"
         >
-            
-            <div class="flex flex-row md:flex-col gap-2 w-full">
+            <div class="flex w-full flex-row gap-2 md:flex-col">
                 <Link class="w-full md:w-auto" href="/import/companies/upload"
                     ><Button
                         class="flex w-full flex-row gap-2 md:w-auto"
-                        variant="outline"><Icon icon="uil:import" />Import</Button
+                        variant="outline"
+                        ><Icon icon="uil:import" />Import</Button
                     ></Link
                 >
-                
+
                 <Dialog.Root bind:open={isExportModalOpen}>
                     <Button
                         class="flex w-full flex-row gap-2 md:w-auto"
@@ -335,7 +335,9 @@
                                         id="export_include_enabled"
                                         name="include_enabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_enabled}
+                                        bind:checked={
+                                            $exportForm.include_enabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_enabled}
                                         <ErrorText>
@@ -352,11 +354,14 @@
                                         id="export_include_disabled"
                                         name="include_disabled"
                                         value="1"
-                                        bind:checked={$exportForm.include_disabled}
+                                        bind:checked={
+                                            $exportForm.include_disabled
+                                        }
                                     />
                                     {#if $exportForm.errors.include_disabled}
                                         <ErrorText>
-                                            {$exportForm.errors.include_disabled}
+                                            {$exportForm.errors
+                                                .include_disabled}
                                         </ErrorText>
                                     {/if}
                                 </div>
@@ -377,8 +382,10 @@
                 </Dialog.Root>
             </div>
 
-            <div class="flex flex-row md:flex-col gap-2 w-full">
-                <Link class="w-full md:w-auto" href="/add-multiple/companies/upload"
+            <div class="flex w-full flex-row gap-2 md:flex-col">
+                <Link
+                    class="w-full md:w-auto"
+                    href="/add-multiple/companies/upload"
                     ><Button
                         class="flex w-full flex-row gap-2"
                         variant="outline"
@@ -428,7 +435,8 @@
                                     {/if}
                                 </div>
 
-                                <Label for="company_name"><Required />Company</Label
+                                <Label for="company_name"
+                                    ><Required />Company</Label
                                 >
                                 <Input
                                     name="company_name"
@@ -462,7 +470,9 @@
         </div>
     </div>
 
-    <div class="flex flex-col w-full items-center justify-end gap-4 md:flex-row">
+    <div
+        class="flex w-full flex-col items-center justify-end gap-4 md:flex-row"
+    >
         <Button
             on:click={bulkDisable}
             class="flex w-full flex-row gap-2 md:w-auto"
@@ -472,7 +482,7 @@
     </div>
 
     <!-- Name Search Bar -->
-    <div class="flex flex-col md:flex-row gap-2">
+    <div class="flex flex-col gap-2 md:flex-row">
         <Input
             type="text"
             placeholder="Search by Name"
@@ -481,9 +491,7 @@
             on:keyup={search}
         />
 
-        <div
-            class="flex flex-row flex-wrap items-center justify-center gap-2"
-        >
+        <div class="flex flex-row flex-wrap items-center justify-center gap-2">
             <Select.Root
                 selected={{ label: 'All', value: 'all' }}
                 onSelectedChange={(v) => {

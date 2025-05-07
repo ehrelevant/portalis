@@ -36,7 +36,7 @@
                         >.csv</strong
                     > file:
                 </div>
-                
+
                 <ul class="list-disc pl-6 text-xl">
                     <li><Required />first_name</li>
                     <li>middle_name</li>
@@ -46,8 +46,8 @@
                 </ul>
 
                 <p class="flex justify-end italic">
-                    (column names marked with [*] must have a value
-                    for every row)
+                    (column names marked with [*] must have a value for every
+                    row)
                 </p>
             </div>
 

@@ -45,8 +45,8 @@
                 </ul>
 
                 <p class="flex justify-end italic">
-                    (column names marked with [*] must have a value
-                    for every row)
+                    (column names marked with [*] must have a value for every
+                    row)
                 </p>
             </div>
 

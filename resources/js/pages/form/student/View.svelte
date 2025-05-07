@@ -86,7 +86,11 @@
                     <div
                         class="grid grid-cols-1 items-center gap-x-4 gap-y-2 overflow-x-auto p-2"
                     >
-                        <Textarea class="disabled:opacity-100" value={values.opens[open_id]} disabled />
+                        <Textarea
+                            class="disabled:opacity-100"
+                            value={values.opens[open_id]}
+                            disabled
+                        />
                     </div>
                 </Accordion>
             {/each}
