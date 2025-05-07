@@ -61,7 +61,7 @@
             <label class="text-xl">
                 <input
                     type="file"
-                    class="flex cursor-pointer pt-3"
+                    class="text-l block w-full cursor-pointer rounded-lg border border-black bg-gray-50 focus:outline-none dark:bg-gray-800 dark:text-dark-primary-text"
                     on:input={(e) => ($form.file = e.currentTarget.files[0])}
                 />
                 <p class="flex justify-end italic">(2MB max)</p>
@@ -93,7 +93,7 @@
                     type="submit"
                     value="Import CSV"
                     disabled={$form.processing}
-                    class="my-2 w-fit cursor-pointer rounded-lg border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    class="my-1 w-fit cursor-pointer rounded-lg border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
                 />
 
                 <Link

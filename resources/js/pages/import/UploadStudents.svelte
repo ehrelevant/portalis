@@ -64,7 +64,7 @@
             <label class="text-xl">
                 <input
                     type="file"
-                    class="flex cursor-pointer pt-3"
+                    class="text-l block w-full cursor-pointer rounded-lg border border-black bg-gray-50 focus:outline-none dark:bg-gray-800 dark:text-dark-primary-text"
                     on:input={(e) => ($form.file = e.currentTarget.files[0])}
                 />
                 <p class="flex justify-end italic">(2MB max)</p>
