@@ -145,24 +145,22 @@
                 >Supervisor Forms</Label
             >
             <Accordion.Content class="px-4">
-                <div class="flex flex-col gap-4">
-                    {#each form_statuses as form_status}
-                        {@const {
-                            form_name,
-                            short_name,
-                            status,
-                            deadline,
-                            remarks,
-                        } = form_status}
-                        <ListLink
-                            name="{form_name} Form"
-                            submitHref="/form/{short_name}/answer"
-                            {status}
-                            {deadline}
-                            {remarks}
-                        ></ListLink>
-                    {/each}
-                </div>
+                {#each form_statuses as form_status}
+                    {@const {
+                        form_name,
+                        short_name,
+                        status,
+                        deadline,
+                        remarks,
+                    } = form_status}
+                    <ListLink
+                        name="{form_name} Form"
+                        submitHref="/form/{short_name}/answer"
+                        {status}
+                        {deadline}
+                        {remarks}
+                    ></ListLink>
+                {/each}
             </Accordion.Content>
         </AccordionLocal>
     </div>
