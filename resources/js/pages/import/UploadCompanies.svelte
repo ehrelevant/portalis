@@ -36,14 +36,15 @@
                         >.csv</strong
                     > file:
                 </div>
-                <p class="flex justify-end italic">
-                    (column names marked with [<Required />] must have a value
-                    for every row)
-                </p>
 
                 <ul class="list-disc pl-6 text-xl">
                     <li><Required />company_name</li>
                 </ul>
+
+                <p class="flex justify-end italic">
+                    (column names marked with [*] must have a value
+                    for every row)
+                </p>
             </div>
 
             <br />
@@ -89,12 +90,12 @@
                     type="submit"
                     value="Import CSV"
                     disabled={$form.processing}
-                    class="my-2 w-fit cursor-pointer border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
+                    class="my-2 w-fit cursor-pointer rounded-lg border-2 bg-light-secondary p-4 text-3xl text-dark-primary-text hover:opacity-90"
                 />
 
                 <Link
                     href="/dashboard/companies"
-                    class="w-fit cursor-pointer border-2 px-3 py-2 text-2xl text-dark-primary-text hover:opacity-90"
+                    class="w-fit cursor-pointer rounded-lg border-2 px-3 py-2 text-2xl hover:opacity-90"
                 >
                     Cancel
                 </Link>
