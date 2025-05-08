@@ -422,20 +422,6 @@ class ExportsController extends Controller
 
     public function exportFormsAsCsv(Request $request, string $shortName, string $csvFileName, string $formAnswerer, array $tableNames, bool $hasStudentFilters, bool $hasSupervisorFilters, bool $hasFacultyFilters, bool $hasCompanyFilters): StreamedResponse
     {
-        // $formAnswerer determines which user table to join with form_statuses, based on what user IDs are expected to be found
-        switch ($formAnswerer) {
-            case 'student':
-                $userTable = 'users_students';
-                break;
-            case 'supervisor':
-                $userTable = 'users_supervisors';
-                break;
-            case 'faculty':
-                $userTable = 'users_faculties';
-                break;
-            default:
-                $userTable = 'users_students';
-        }
 
         // ---
 
@@ -450,12 +436,22 @@ class ExportsController extends Controller
             ->leftJoin('faculties', 'students.faculty_id', '=', 'faculties.id')
             ->leftJoin('users AS users_supervisors', 'students.supervisor_id', '=', 'users_supervisors.role_id')
             ->leftJoin('supervisors', 'students.supervisor_id', '=', 'supervisors.id')
-            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id')
+            ->leftJoin('companies', 'supervisors.company_id', '=', 'companies.id');
 
-            ->leftJoin('form_statuses', $userTable . '.id', '=', 'form_statuses.user_id')
-            ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id')
-            ->leftJoin('form_answers', 'form_statuses.id', '=', 'form_answers.form_status_id')
+        // $formAnswerer determines which user table to join with form_statuses, based on what user IDs are expected to be found
+        if ($formAnswerer == 'student') {
+            $dbTable1Raw = $dbTable1Raw
+                ->leftJoin('form_statuses', 'users_students.id', '=', 'form_statuses.user_id')
+                ->leftJoin('form_answers', 'form_statuses.id', '=', 'form_answers.form_status_id')
+                ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id');
+        } else {
+            $dbTable1Raw = $dbTable1Raw
+                ->leftJoin('form_answers', 'users_students.id', '=', 'form_answers.evaluated_user_id')
+                ->leftJoin('form_statuses', 'form_answers.form_status_id', '=', 'form_statuses.id')
+                ->leftJoin('forms', 'form_statuses.form_id' ,'=', 'forms.id');
+        }
 
+        $dbTable1Raw = $dbTable1Raw
             ->leftJoin('rating_scores', 'form_answers.id', '=', 'rating_scores.form_answer_id')
             ->leftJoin('rating_questions', 'rating_scores.rating_question_id', '=', 'rating_questions.id')
             ->leftJoin('open_answers', 'form_answers.id', '=', 'open_answers.form_answer_id')
