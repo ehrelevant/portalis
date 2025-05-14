@@ -36,7 +36,11 @@
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">
-    <Header txt="During Internship Phase" />
+    {#if phase === 'during'}
+        <Header txt="During Internship Phase" />
+    {:else}
+        <Header txt="Post-Internship Phase" />
+    {/if}
 
     <div class="flex flex-col gap-4">
         {#if phase === 'post'}

@@ -7,13 +7,18 @@
     import * as Accordion from '$lib/components/ui/accordion';
     import { Label } from '$lib/components/ui/label';
 
+    export let phase;
     export let form_statuses;
 
     usePoll(5000);
 </script>
 
 <section class="main-screen flex w-full flex-col p-4">
-    <Header txt="During Internship Phase" />
+    {#if phase === 'during'}
+        <Header txt="During Internship Phase" />
+    {:else}
+        <Header txt="Post-Internship Phase" />
+    {/if}
 
     <AccordionLocal>
         <Label slot="summary" class="cursor-pointer text-2xl"

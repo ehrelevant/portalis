@@ -59,6 +59,7 @@ class DashboardController extends Controller
                 $props = [
                     'student_id' => $student_id,
                     'submissions' => $submission_statuses,
+                    'phase' => $phase,
                 ];
 
                 return Inertia::render('dashboard/(student)/RequirementsDashboard', $props);
@@ -92,6 +93,7 @@ class DashboardController extends Controller
                 $props = [
                     'student_id' => $student_id,
                     'form_statuses' => $form_statuses,
+                    'phase' => $phase,
                 ];
 
                 return Inertia::render('dashboard/(student)/FormsDashboard', $props);
