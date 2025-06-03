@@ -32,7 +32,6 @@ class LoginMail extends Mailable
     {
         return new Envelope(
             subject: 'Portalis - Login PIN',
-            from: new Address('login@mail.dev', 'Portalis (CS 195)'),
         );
     }
 
