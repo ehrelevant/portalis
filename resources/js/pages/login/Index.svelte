@@ -140,7 +140,7 @@
                             class="text-sm cursor-pointer"
                             variant="outline"
                         >
-                            Change email address
+                            Back
                         </Button>
                     </div>
                 </Card.Footer>
